@@ -6,7 +6,6 @@
 	);
 	
 	include_once("mysqlSystem.php");
-	include_once("Types.php");
 	$dbS = new MySQLSystem();
 	
 	session_start();
