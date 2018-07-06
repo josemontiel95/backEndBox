@@ -14,6 +14,7 @@ class MySQLSystem{
 	
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
+	private $queryType;
 
 	public function MySQLSystem(){
 		$this->connection =
@@ -35,10 +36,21 @@ class MySQLSystem{
 	public function query($q = "eempty"){
 		if($q == "eempty")
 			$q = $this->query;
-		echo '<p>-'.$q.'-</p>';
+		//echo '<p>-'.$q.'-</p>';
+		$this->logQuery($q);
+
 		$this->resultSet = mysqli_query($this->connection,$q);
 	}
-	
+	public function logQuery($q){
+		$query='
+			INSERT INTO log(query, queryType) VALUES("'.$q.'", "'.$this->queryType.'")
+		';
+		//echo '<p>LOG-'.$query.'-</p>';
+
+		$this->resultSet = mysqli_query($this->connection,$query);
+	}
+
+	//===========
 	public function fetch($rS = "eempty"){
 		if($rS == "eempty")
 			$rS = $this->resultSet;
@@ -69,7 +81,7 @@ class MySQLSystem{
 			return $rows;
 		}
 		else{
-			while($row = mysqli_fetch_array($rS)){
+			while($row = mysqli_fetch_array($rS, MYSQLI_ASSOC)){
 				$rows[] = $row;
 			}
 			return $rows;
@@ -80,23 +92,27 @@ class MySQLSystem{
 		Funciones que podemos llamar
 	*/
 	
-	public function qarray($q = "eempty", $arr = array()){
-		$this->squery($q,$arr);
+	public function qarray($q = "eempty", $arr = array(), $queryType="NS"){
+		$this->queryType= $queryType;
+		$this->squery($q,$arr, $queryType);
 		return $this->fetch();
 	}
 	
-	public function qarrayA($q = "eempty", $arr = array()){
-		$this->squery($q,$arr);
+	public function qarrayA($q = "eempty", $arr = array(), $queryType="NS"){
+		$this->queryType= $queryType;
+		$this->squery($q,$arr,$queryType);
 		return $this->fetchA();
 	}
 
-	public function qAll($q = "eempty", $arr = array()){
-		$this->squery($q,$arr);
+	public function qAll($q = "eempty", $arr = array(), $queryType="NS"){
+		$this->queryType= $queryType;
+		$this->squery($q,$arr, $queryType);
 		return $this->fetchAll();
 	}
 	
-	public function qvalue($q = "eempty", $arr = array()){
-		return $this->qarray($q,$arr)[0];
+	public function qvalue($q = "eempty", $arr = array(), $queryType="NS"){
+		$this->queryType= $queryType;
+		return $this->qarray($q,$arr,$queryType)[0];
 	}
 	
 	public function rows($rS = "eempty"){
@@ -121,7 +137,8 @@ class MySQLSystem{
 		return $str;
 	}
 	
-	public function squery($q = "eempty", $arr = array()){
+	public function squery($q = "eempty", $arr = array(), $queryType="NS"){
+		$this->queryType= $queryType;
 		if(count($arr) == 0)
 			$this->query($q);
 		else

@@ -1,4 +1,4 @@
 <?php
-	$contraseña="123456";
-	echo hash('sha512', $contraseña);
+	$contrasena="123456";
+	echo hash('sha512', $contrasena);
 ?>

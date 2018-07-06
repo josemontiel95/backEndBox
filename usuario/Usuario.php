@@ -11,42 +11,45 @@ class Usuario{
 	private $fechaDeNac;
 	private $foto;
 	private $rol_usuario_id;
-	private $contraseña;
+	private $contrasena;
 	
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 	public function Usuario(){
 	}
 	/*
-	public function Usuario($nombre,$apellido,$email,$fechaDeNac,$foto,$rol_usuario_id,$contraseña){
+	public function Usuario($nombre,$apellido,$email,$fechaDeNac,$foto,$rol_usuario_id,$contrasena){
 		$this->nombre= $nombre;
 		$this->apellido= $apellido;
 		$this->email= $email;
 		$this->fechaDeNac= $fechaDeNac;
 		$this->foto= $foto;
 		$this->rol_usuario_id= $rol_usuario_id;
-		$this->contraseña= $contraseña;
+		$this->contrasena= $contrasena;
 	}
 	*/
-	public function login($email, $contraseña){
-		$respuesta=$this->getByEmail($email);
-		if($respuesta=="success"){
-			$contraseñaSHA= hash('sha512', $contraseña);
-			if($this->contraseña==$contraseñaSHA){
-				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => setToken());
+	public function login($email, $contrasena){
+		if($this->getByEmail($email)=="success"){
+			$contrasenaSHA= hash('sha512', $contrasena);
+			//echo $contrasenaSHA."<br>";
+			//echo $this->contrasena;
+			if($this->contrasena==$contrasenaSHA){
+				$this->deactivateAllSesions();
+				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $this->setToken(),'estatus' => 'exito','error' => 0);
 				return json_encode($arr);
 			}else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'error por constrasela','error' => 0);
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Pasword incorrecto','error' => 1);
 				return json_encode($arr);
 			}
 		}else{
-			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'error por usuario','error' => -1);
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'El usuario no existe','error' => 2);
 				return json_encode($arr);
 		}
 	}
 
 	public function setToken(){
-		$token= getToken();
+		global $dbS;
+		$token= $this->getToken();
 		$s= $dbS->squery("
 			      INSERT INTO sesion (
 			        usuario_id,
@@ -59,14 +62,30 @@ class Usuario{
 			        1
 			        )
 			      ",
-			      array($this->id_usuario,$token)
+			      array($this->id_usuario,$token),
+			      "INSERT"
 			      );
-		return token();
+		return $token;
+	}
+
+	public function deactivateAllSesions(){
+		global $dbS;
+		$s= $dbS->squery("
+			      UPDATE 
+			      	sesion
+			      SET 
+			      	active=0
+			      WHERE
+			        usuario_id=1QQ
+			      ",
+			      array($this->id_usuario),
+			      "UPDATE"
+			      );
 	}
 
 	public function getToken(){
 		$date=date("Y/m/d");
-		$preToken=$date.$id_usuario;
+		$preToken=$date.$this->id_usuario;
 		return encurl($preToken);
 	}
 
@@ -81,16 +100,17 @@ class Usuario{
 			        fechaDeNac,
 			        foto,
 			        rol_usuario_id,
-			        contraseña
+			        contrasena
 			      FROM 
 			        usuario 
 			      WHERE 
+			      	active=1 AND
 			        email = '1QQ'
 			      ",
-			      array($email)
+			      array($email),
+			      "SELECT"
 			      );
 		if($s=="empty"){
-			echo "hola";
 			return "empty";
 		}
 		else{
@@ -100,9 +120,155 @@ class Usuario{
 			$this->fechaDeNac= $s['fechaDeNac'];
 			$this->foto= $s['foto'];
 			$this->rol_usuario_id= $s['rol_usuario_id'];
-			$this->contraseña= $s['contraseña'];
+			$this->contrasena= $s['contrasena'];
 			$this->email= $email;
-			echo $s['id_usuario'];
+			return "success";
+		}
+
+	}
+
+	public function validateSesion($token, $rol_usuario_id){
+		switch($this->getIDByTokenAndValidate($token)){
+			case'success':
+				if($rol_usuario_id==$this->rol_usuario_id){
+					$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,'estatus' => 'Exito. Sesion activa','error' => 0);
+					return json_encode($arr);
+				}
+				else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 4);
+					return json_encode($arr);
+				}
+			break;
+			case'empty':
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'No existe token','error' => 1);
+				return json_encode($arr);
+			break;
+			case'muerta':
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'El token ya expiro','error' => 2);
+				return json_encode($arr);
+			break;
+			case'noActiva':
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'El token ya no es valido','error' => 3);
+				return json_encode($arr);
+			break;
+		}
+	}
+
+	public function cerrarSesion($token){
+		if($this->getIDByTokenAndValidate($token)=="success"){
+			$this->deactivateAllSesions();
+			$arr = array('estatus' => 'Exito. Sesion cerrada','error' => 0);
+			return json_encode($arr);
+		}
+		$arr = array('estatus' => 'Exito. Sesion cerrada','error' => 0);
+		return json_encode($arr);
+	}
+
+	public function getIDByTokenAndValidate($token){
+		global $dbS;
+		$s= $dbS->qarrayA("
+			      SELECT 
+			        id_sesion,
+					usuario_id,
+					active
+			      FROM 
+			        sesion 
+			      WHERE 
+			        token = '1QQ'
+			      ",
+			      array($token),
+			      "SELECT"
+			      );
+		if($s=="empty"){
+			return "empty";
+		}
+		else{
+			if($s['active']==1){	//Sesion activa
+				$u=$dbS->qvalue("
+						SELECT 
+							IF(
+								DATE_SUB(NOW(), INTERVAL 10 MINUTE)<lastEditedON,1, 0) 
+						FROM 
+							sesion 
+						WHERE 
+							id_sesion=1QQ"
+					,
+					array($s['id_sesion']),
+					"SELECT");
+				//echo "<br>".$u;
+				if($u==1){	//Sesion Valida en tiempo.
+					$this->id_usuario=$s['usuario_id'];
+					$this->getByID($this->id_usuario);
+					return "success";
+				}else{		//Sesion muerta.
+					$this->id_usuario=$s['usuario_id'];
+					$this->getByID($this->id_usuario);
+					$this->deactivateAllSesions();
+					return "muerta";
+				}
+			}else{				//Sesion inactiva
+				return "noActiva";
+			}
+		}
+	}
+	public function getAllUsuarios($token){
+		global $dbS;
+		if($this->getIDByTokenAndValidate($token)=="success"){
+			$arr= $dbS->qAll("
+			      SELECT 
+			        id_usuario,
+			        nombre,
+			        apellido,
+			        email,
+			        fechaDeNac,
+			        foto,
+			        rol_usuario_id,
+			        active
+			      FROM 
+			        usuario 
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+			return json_encode($arr);
+		}else{
+			$arr = array('estatus' => 'Exito. Sesion cerrada','error' => 0);
+			return json_encode($arr);
+		}
+	}
+	public function getByID($id_usuario){
+		global $dbS;
+		$s= $dbS->qarrayA("
+			      SELECT 
+			        id_usuario,
+			        nombre,
+			        apellido,
+			        email,
+			        fechaDeNac,
+			        foto,
+			        rol_usuario_id,
+			        contrasena
+			      FROM 
+			        usuario 
+			      WHERE 
+			      	active=1 AND
+			        id_usuario = '1QQ'
+			      ",
+			      array($id_usuario),
+			      "SELECT"
+			      );
+		if($s=="empty"){
+			return "empty";
+		}
+		else{
+			$this->id_usuario= $s['id_usuario'];
+			$this->nombre= $s['nombre'];
+			$this->apellido=$s['apellido'];
+			$this->fechaDeNac= $s['fechaDeNac'];
+			$this->foto= $s['foto'];
+			$this->rol_usuario_id= $s['rol_usuario_id'];
+			$this->contrasena= $s['contrasena'];
+			$this->email= $s['email'];
 			return "success";
 		}
 
