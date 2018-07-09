@@ -273,5 +273,39 @@ class Usuario{
 		}
 
 	}
+
+	public function insert($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena){
+		global $dbS;
+		$dbS->squery("
+						INSERT INTO
+						usuario(nombre,apellido,email,fechaDeNac,rol_usuario_id,contrasena)
+
+						VALUES
+						('$nombre','$apellido','$email','$fechaDeNac','$rol_usuario_id','$constrasena')
+			",array($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena),"INSERT INTO");
+
+	}
+
+
+	public function upDate($id_usuario,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena){
+		global $dbS;
+		$dbS->squery("	UPDATE
+							usuario
+						SET
+							nombre = '$nombre',
+							apellido = '$apellido',
+							email = '$email',
+							fechaDeNac = '$fechaDeNac',
+							rol_usuario_id = '$rol_usuario_id',
+							contrasena = 'constrasena'
+						WHERE
+							active=1 AND
+							id_usuario = '1QQ'
+					 "
+					,array($id_usuario,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena),"UPDATE"
+			      	);
+	}
 }
 ?>
+
+
