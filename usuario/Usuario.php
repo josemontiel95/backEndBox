@@ -276,13 +276,14 @@ class Usuario{
 
 	public function insert($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena){
 		global $dbS;
+		$contrasenaEncriptada=hash('sha512', $constrasena);
 		$dbS->squery("
-						INSERT INTO
+					INSERT INTO
 						usuario(nombre,apellido,email,fechaDeNac,rol_usuario_id,contrasena)
 
-						VALUES
-						('$nombre','$apellido','$email','$fechaDeNac','$rol_usuario_id','$constrasena')
-			",array($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena),"INSERT INTO");
+					VALUES
+						('1QQ','1QQ','1QQ','1QQ',1QQ,'1QQ')
+			",array($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$contrasenaEncriptada),"INSERT");
 
 	}
 

@@ -33,8 +33,14 @@
 		break;
 		case 'insert':
 			$usuario = new Usuario();
+			
+			/*valida la sesion*/
 			echo $usuario->insert($_GET['nombre'],$_GET['apellido'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id'],$_GET['constrasena']);
 		break;
 	}
 
 ?>
+
+
+
+
