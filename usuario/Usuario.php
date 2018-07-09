@@ -313,7 +313,6 @@ class Usuario{
 				return json_encode($arr);
 			}
 		}
-
 	}
 
 
