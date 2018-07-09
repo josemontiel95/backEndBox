@@ -127,6 +127,8 @@ class Usuario{
 
 	}
 
+
+
 	public function validateSesion($token, $rol_usuario_id){
 		switch($this->getIDByTokenAndValidate($token)){
 			case'success':
@@ -163,6 +165,10 @@ class Usuario{
 		$arr = array('estatus' => 'Exito. Sesion cerrada','error' => 0);
 		return json_encode($arr);
 	}
+
+	/*
+		
+	*/
 
 	public function getIDByTokenAndValidate($token){
 		global $dbS;
@@ -252,7 +258,7 @@ class Usuario{
 			        usuario 
 			      WHERE 
 			      	active=1 AND
-			        id_usuario = '1QQ'
+			        id_usuario = 1QQ
 			      ",
 			      array($id_usuario),
 			      "SELECT"
@@ -274,36 +280,58 @@ class Usuario{
 
 	}
 
-	public function insert($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena){
+	public function insert($token,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena){
 		global $dbS;
-		$dbS->squery("
+		if($this->getIDByTokenAndValidate($token) == 'sucess'){
+			if($rol_usuario_id==$this->rol_usuario_id){
+				$contrasenaValida = echo hash('sha512', $constrasena);
+				$dbS->squery("
 						INSERT INTO
 						usuario(nombre,apellido,email,fechaDeNac,rol_usuario_id,contrasena)
 
 						VALUES
-						('$nombre','$apellido','$email','$fechaDeNac','$rol_usuario_id','$constrasena')
-			",array($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena),"INSERT INTO");
+						('1QQ','1QQ','1QQ','1QQ',1QQ,'1QQ')
+				",array($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$contrasenaValida),"INSERT");
+				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Exito de insercion','error' => 0);
+				return json_encode($arr);
+
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
+				return json_encode($arr);
+			}
+		}
 
 	}
 
 
-	public function upDate($id_usuario,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena){
+	public function upDate($id_usuario,$token,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena){
 		global $dbS;
-		$dbS->squery("	UPDATE
+		if($this->getIDByTokenAndValidate($token) == 'sucess'){
+			$dbS->squery("	UPDATE
 							usuario
 						SET
-							nombre = '$nombre',
-							apellido = '$apellido',
-							email = '$email',
-							fechaDeNac = '$fechaDeNac',
-							rol_usuario_id = '$rol_usuario_id',
-							contrasena = 'constrasena'
+							nombre = '1QQ',
+							apellido = '1QQ',
+							email = '1QQ',
+							fechaDeNac = '1QQ',
+							rol_usuario_id = 1QQ,
+							contrasena = '1QQ'
 						WHERE
 							active=1 AND
-							id_usuario = '1QQ'
+							id_usuario = 1QQ
 					 "
 					,array($id_usuario,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena),"UPDATE"
 			      	);
+			$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Exito de insercion','error' => 0);
+			return json_encode($arr);
+			
+		}
+		else{
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
+			return json_encode($arr);
+		}
+		
 	}
 }
 ?>
