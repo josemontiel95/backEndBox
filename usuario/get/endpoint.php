@@ -27,6 +27,14 @@
 			$usuario = new Usuario();
 			echo $usuario->getAllUsuarios($_GET['token']);
 		break;
+		case 'upDate':
+			$usuario = new Usuario();
+			echo $usuario->setUsuario($_GET['id'],$_GET['nombre'],$_GET['apellido'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id'],$_GET['constrasena']);
+		break;
+		case 'insert':
+			$usuario = new Usuario();
+			echo $usuario->insert($_GET['nombre'],$_GET['apellido'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id'],$_GET['constrasena']);
+		break;
 	}
 
 ?>
