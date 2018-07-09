@@ -29,15 +29,15 @@
 		break;
 		case 'upDate':
 			$usuario = new Usuario();
-			echo $usuario->upDate($_GET['id_usuario'],$_GET['token'],$_GET['nombre'],$_GET['apellido'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id'],$_GET['constrasena']);
+			echo $usuario->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario'],$_GET['nombre'],$_GET['apellido'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new'],$_GET['constrasena']);
 		break;
 		case 'insert':
 			$usuario = new Usuario();
-			echo $usuario->insert($_GET['token'],$_GET['nombre'],$_GET['apellido'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id'],$_GET['constrasena']);
+			echo $usuario->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['nombre'],$_GET['apellido'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new'],$_GET['constrasena']);
 		break;
 		case 'deactivate':
 			$usuario = new Usuario();
-			echo $usuario->deactivate($_GET['token'],$_GET['nombre'],);
+			echo $usuario->deactivate($_GET['token'],$_GET['nombre']);
 			break;
 	}
 

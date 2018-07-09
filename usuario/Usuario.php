@@ -292,19 +292,19 @@ class Usuario{
 
 	}
 
-	public function insert($token,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena){
+	public function insert($token,$rol_usuario_id,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id_new,$constrasena){
 		global $dbS;
-		if($this->getIDByTokenAndValidate($token) == 'sucess'){
+		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){ //No es redundante?
-				$contrasenaValida = echo hash('sha512', $constrasena);
+				$contrasenaValida = hash('sha512', $constrasena);
 				$dbS->squery("
 						INSERT INTO
 						usuario(nombre,apellido,email,fechaDeNac,rol_usuario_id,contrasena)
 
 						VALUES
 						('1QQ','1QQ','1QQ','1QQ',1QQ,'1QQ')
-				",array($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$contrasenaValida),"INSERT");
-				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Exito de insercion','error' => 0);
+				",array($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id_new,$contrasenaValida),"INSERT");
+				$arr = array('id_usuario' => 'No dispinible, esto NO es un error', 'nombre' => $nombre, 'token' => $token,	'estatus' => 'Exito de insercion','error' => 0);
 				return json_encode($arr);
 
 			}
@@ -316,9 +316,9 @@ class Usuario{
 	}
 
 
-	public function upDate($id_usuario,$token,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena){
+	public function upDate($token,$rol_usuario_id,$id_usuario,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id_new,$constrasena){
 		global $dbS;
-		if($this->getIDByTokenAndValidate($token) == 'sucess'){
+		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){
 				$dbS->squery("	UPDATE
 							usuario
@@ -333,9 +333,9 @@ class Usuario{
 							active=1 AND
 							id_usuario = 1QQ
 					 "
-					,array($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena),"UPDATE"
+					,array($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id_new,$constrasena),"UPDATE"
 			      	);
-				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Exito de insercion','error' => 0);
+				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Exito de actualizacion','error' => 0);
 				return json_encode($arr);
 			
 
