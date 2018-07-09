@@ -91,6 +91,10 @@ class Usuario{
 
 	public function getByEmail($email){
 		global $dbS;
+		/*
+			qarray: Realiza un query con un array Asociativo
+					Verfica que no exista una inyeccion SQL en el campo $email
+		*/
 		$s= $dbS->qarrayA("
 			      SELECT 
 			        id_usuario,
@@ -114,6 +118,7 @@ class Usuario{
 			return "empty";
 		}
 		else{
+			//s es el arreglo asociativo que obtivo los valores de la tabla y los guarda en variables locales para su posterior uso.
 			$this->id_usuario= $s['id_usuario'];
 			$this->nombre= $s['nombre'];
 			$this->apellido=$s['apellido'];
@@ -169,9 +174,11 @@ class Usuario{
 	/*
 		
 	*/
-
+//Devuelve el valor del toke, si esta activo, si esta muerta o si no esta activa
 	public function getIDByTokenAndValidate($token){
 		global $dbS;
+
+
 		$s= $dbS->qarrayA("
 			      SELECT 
 			        id_sesion,
@@ -189,7 +196,7 @@ class Usuario{
 			return "empty";
 		}
 		else{
-			if($s['active']==1){	//Sesion activa
+			if($s['active']==1){	//Sesion activa 	Valida que la secion no haya expirado por mas de 10 minutos
 				$u=$dbS->qvalue("
 						SELECT 
 							IF(
@@ -242,6 +249,11 @@ class Usuario{
 			return json_encode($arr);
 		}
 	}
+
+	/*
+		SE obtienen todos los campso del usuario mediante el ID
+	*/
+
 	public function getByID($id_usuario){
 		global $dbS;
 		$s= $dbS->qarrayA("
@@ -283,7 +295,7 @@ class Usuario{
 	public function insert($token,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena){
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'sucess'){
-			if($rol_usuario_id==$this->rol_usuario_id){
+			if($rol_usuario_id==$this->rol_usuario_id){ //No es redundante?
 				$contrasenaValida = echo hash('sha512', $constrasena);
 				$dbS->squery("
 						INSERT INTO
@@ -308,7 +320,8 @@ class Usuario{
 	public function upDate($id_usuario,$token,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena){
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'sucess'){
-			$dbS->squery("	UPDATE
+			if($rol_usuario_id==$this->rol_usuario_id){
+				$dbS->squery("	UPDATE
 							usuario
 						SET
 							nombre = '1QQ',
@@ -321,17 +334,24 @@ class Usuario{
 							active=1 AND
 							id_usuario = 1QQ
 					 "
-					,array($id_usuario,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena),"UPDATE"
+					,array($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id,$constrasena),"UPDATE"
 			      	);
-			$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Exito de insercion','error' => 0);
-			return json_encode($arr);
+				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Exito de insercion','error' => 0);
+				return json_encode($arr);
 			
+
+			}
 		}
 		else{
 			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
 			return json_encode($arr);
 		}
 		
+	}
+
+
+	public function deactivate(){
+
 	}
 }
 ?>

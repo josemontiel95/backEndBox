@@ -35,6 +35,10 @@
 			$usuario = new Usuario();
 			echo $usuario->insert($_GET['token'],$_GET['nombre'],$_GET['apellido'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id'],$_GET['constrasena']);
 		break;
+		case 'deactivate':
+			$usuario = new Usuario();
+			echo $usuario->deactivate($_GET['token'],$_GET['nombre'],);
+			break;
 	}
 
 ?>

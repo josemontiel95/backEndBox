@@ -35,9 +35,9 @@ class MySQLSystem{
 	// Esta funcion es la unica que hace como tal una query hacia la base de datos
 	public function query($q = "eempty"){
 		if($q == "eempty")
-			$q = $this->query;
+			$q = $this->query; //this->query no esta vacia?
 		//echo '<p>-'.$q.'-</p>';
-		$this->logQuery($q);
+		$this->logQuery($q); //Registra el tipo de query que se hace en la tabla 
 
 		$this->resultSet = mysqli_query($this->connection,$q);
 	}
@@ -55,7 +55,7 @@ class MySQLSystem{
 		if($rS == "eempty")
 			$rS = $this->resultSet;
 		if (mysqli_num_rows($rS)!=0) {
-			return mysqli_fetch_array($rS);
+			return mysqli_fetch_array($rS);//Obtiene una fila de resultados como un array asociativo, nunerico o ambos.
 		}
 		else{
 			return "empty";
@@ -65,7 +65,7 @@ class MySQLSystem{
 		if($rS == "eempty")
 			$rS = $this->resultSet;
 		if (mysqli_num_rows($rS)!=0) {
-			return mysqli_fetch_array($rS, MYSQLI_ASSOC);
+			return mysqli_fetch_array($rS, MYSQLI_ASSOC); //Obtiene una fila de resultados como un array asociativo, nunerico o ambos.
 		}
 		else{
 			return "empty";
@@ -98,6 +98,10 @@ class MySQLSystem{
 		return $this->fetch();
 	}
 	
+
+	/*
+		Devuelve un array Asociatvo con los campos de la tabla usuario
+	*/
 	public function qarrayA($q = "eempty", $arr = array(), $queryType="NS"){
 		$this->queryType= $queryType;
 		$this->squery($q,$arr,$queryType);
@@ -124,17 +128,17 @@ class MySQLSystem{
 	Prevenir inyeccion SQL
 	*/
 	public function secure($str){
-		$str = preg_replace('/</',"&lt;",$str);
-		$str = preg_replace('/>/',"&gt;",$str);
-		return mysqli_real_escape_string($this->connection,$str);
+		$str = preg_replace('/</',"&lt;",$str); // Que valores cambia?----Los valores asignados cuando se ingresaron los datos.
+		$str = preg_replace('/>/',"&gt;",$str); //
+		return mysqli_real_escape_string($this->connection,$str); //Crea una cadena SQL legal que se puede usar en una sentencia SQL
 	}
 	
 	public function secure_string($str,$arr){
 		foreach($arr as $a){
 			$aa = $this->secure($a);
-			$str = preg_replace($this->wc,$aa,$str,1);
+			$str = preg_replace($this->wc,$aa,$str,1); //Str contiene la cadena para acceder a SQL
 		}
-		return $str;
+		return $str; // Devuelve una sentencia legal para realizar el query
 	}
 	
 	public function squery($q = "eempty", $arr = array(), $queryType="NS"){
