@@ -292,7 +292,8 @@ class Usuario{
 
 	}
 
-	public function insert($token,$rol_usuario_id,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id_new,$constrasena){
+//Meterle el nss
+	public function insert($token,$rol_usuario_id,$nombre,$apellido,$email,$nss,$fechaDeNac,$rol_usuario_id_new,$constrasena){
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){ //No es redundante?
@@ -302,7 +303,7 @@ class Usuario{
 						usuario(nombre,apellido,email,fechaDeNac,rol_usuario_id,contrasena)
 
 						VALUES
-						('1QQ','1QQ','1QQ','1QQ',1QQ,'1QQ')
+						('1QQ','1QQ','1QQ',1QQ,'1QQ',1QQ,'1QQ')
 				",array($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id_new,$contrasenaValida),"INSERT");
 				$arr = array('id_usuario' => 'No dispinible, esto NO es un error', 'nombre' => $nombre, 'token' => $token,	'estatus' => 'Exito de insercion','error' => 0);
 				return json_encode($arr);
@@ -316,7 +317,7 @@ class Usuario{
 	}
 
 
-	public function upDate($token,$rol_usuario_id,$id_usuario,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id_new){
+	public function upDate($token,$rol_usuario_id,$id_usuario,$nombre,$apellido,$email,$nss,$fechaDeNac,$rol_usuario_id_new){
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			//Valida identidad y permisos
@@ -327,14 +328,15 @@ class Usuario{
 							nombre = '1QQ',
 							apellido = '1QQ',
 							email = '1QQ',
+							nss = 1QQ,
 							fechaDeNac = '1QQ',
 							rol_usuario_id = 1QQ,
 						WHERE
 							active=1 AND
 							id_usuario = 1QQ
 					 "
-					,array($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id_new,$id_usuario),"UPDATE"
-			      	);
+					,array($nombre,$apellido,$email,$nss,$fechaDeNac,$rol_usuario_id_new,$id_usuario),"UPDATE"
+			      	); //Como funcionana los parametros
 				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Exito de actualizacion','error' => 0);
 				return json_encode($arr);
 			
@@ -346,7 +348,7 @@ class Usuario{
 			}
 		}
 		else{
-			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 1);
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
 			return json_encode($arr);
 		}
 		
@@ -366,9 +368,9 @@ class Usuario{
 							active=1 AND
 							id_usuario = 1QQ
 					 "
-					,array(),"UPDATE"
+					,array($constrasena,$id_usuario),"UPDATE"
 			      	);
-				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Exito de actualizacion','error' => 0);
+				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Contrasena actualizada','error' => 0);
 				return json_encode($arr);
 			}
 			else{
@@ -377,14 +379,39 @@ class Usuario{
 			}
 		}
 		else{
-			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 1);
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
 			return json_encode($arr);
 		}
 
 	}
 
 
-	public function deactivate(){
+	public function deactivate($token,$rol_usuario_id,$id_usuario){
+		global $dbS;
+		if($this->getIDByTokenAndValidate($token) == 'success'){
+			if($rol_usuario_id==$this->rol_usuario_id){
+				$dbS->squery("	UPDATE
+							usuario
+						SET
+							active = '1QQ'
+						WHERE
+							active=1 AND
+							id_usuario = 1QQ
+					 "
+					,array(0,$id_usuario),"UPDATE"
+			      	);
+				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Cuenta desactivada','error' => 0);
+				return json_encode($arr);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
+				return json_encode($arr);
+			}
+		}
+		else{
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
+			return json_encode($arr);
+		}
 
 	}
 }
