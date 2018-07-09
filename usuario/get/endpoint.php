@@ -29,14 +29,16 @@
 		break;
 		case 'upDate':
 			$usuario = new Usuario();
-			echo $usuario->setUsuario($_GET['id'],$_GET['nombre'],$_GET['apellido'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id'],$_GET['constrasena']);
+			echo $usuario->upDate($_GET['id_usuario'],$_GET['token'],$_GET['nombre'],$_GET['apellido'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id'],$_GET['constrasena']);
 		break;
 		case 'insert':
 			$usuario = new Usuario();
-			
-			/*valida la sesion*/
-			echo $usuario->insert($_GET['nombre'],$_GET['apellido'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id'],$_GET['constrasena']);
+			echo $usuario->insert($_GET['token'],$_GET['nombre'],$_GET['apellido'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id'],$_GET['constrasena']);
 		break;
+		case 'deactivate':
+			$usuario = new Usuario();
+			echo $usuario->deactivate($_GET['token'],$_GET['nombre'],);
+			break;
 	}
 
 ?>
