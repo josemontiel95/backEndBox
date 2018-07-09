@@ -316,9 +316,10 @@ class Usuario{
 	}
 
 
-	public function upDate($token,$rol_usuario_id,$id_usuario,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id_new,$constrasena){
+	public function upDate($token,$rol_usuario_id,$id_usuario,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id_new){
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
+			//Valida identidad y permisos
 			if($rol_usuario_id==$this->rol_usuario_id){
 				$dbS->squery("	UPDATE
 							usuario
@@ -328,24 +329,58 @@ class Usuario{
 							email = '1QQ',
 							fechaDeNac = '1QQ',
 							rol_usuario_id = 1QQ,
-							contrasena = '1QQ'
 						WHERE
 							active=1 AND
 							id_usuario = 1QQ
 					 "
-					,array($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id_new,$constrasena),"UPDATE"
+					,array($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id_new,$id_usuario),"UPDATE"
 			      	);
 				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Exito de actualizacion','error' => 0);
 				return json_encode($arr);
 			
 
 			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
+				return json_encode($arr);
+			}
 		}
 		else{
-			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 1);
 			return json_encode($arr);
 		}
 		
+		
+	}
+
+
+	public function upDateContrasena($token,$rol_usuario_id,$id_usuario,$constrasena){
+		global $dbS;
+		if($this->getIDByTokenAndValidate($token) == 'success'){
+			if($rol_usuario_id==$this->rol_usuario_id){
+				$dbS->squery("	UPDATE
+							usuario
+						SET
+							contrasena = '1QQ'
+						WHERE
+							active=1 AND
+							id_usuario = 1QQ
+					 "
+					,array(),"UPDATE"
+			      	);
+				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Exito de actualizacion','error' => 0);
+				return json_encode($arr);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
+				return json_encode($arr);
+			}
+		}
+		else{
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 1);
+			return json_encode($arr);
+		}
+
 	}
 
 
