@@ -33,7 +33,7 @@
 		break;
 		case 'insert':
 			$usuario = new Usuario();
-			echo $usuario->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['nombre'],$_GET['apellido'],$_GET['email'],$_GET['nss'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new'],$_GET['constrasena']);
+			echo $usuario->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['nombre'],$_GET['apellido'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new'],$_GET['constrasena']);
 		break;
 		case 'upDateContrasena':
 			$usuario = new Usuario();
@@ -42,7 +42,7 @@
 
 		case 'deactivate':
 			$usuario = new Usuario();
-			echo $usuario->deactivate($_GET['token'],,$_GET['rol_usuario_id'],$_GET['id_usuario']);
+			echo $usuario->deactivate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario']);
 			break;
 	}
 

@@ -293,7 +293,7 @@ class Usuario{
 	}
 
 //Meterle el nss
-	public function insert($token,$rol_usuario_id,$nombre,$apellido,$email,$nss,$fechaDeNac,$rol_usuario_id_new,$constrasena){
+	public function insert($token,$rol_usuario_id,$nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id_new,$constrasena){
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){ //No es redundante?
@@ -303,7 +303,7 @@ class Usuario{
 						usuario(nombre,apellido,email,fechaDeNac,rol_usuario_id,contrasena)
 
 						VALUES
-						('1QQ','1QQ','1QQ',1QQ,'1QQ',1QQ,'1QQ')
+						('1QQ','1QQ','1QQ','1QQ',1QQ,'1QQ')
 				",array($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id_new,$contrasenaValida),"INSERT");
 				$arr = array('id_usuario' => 'No dispinible, esto NO es un error', 'nombre' => $nombre, 'token' => $token,	'estatus' => 'Exito de insercion','error' => 0);
 				return json_encode($arr);
