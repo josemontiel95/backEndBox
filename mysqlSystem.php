@@ -39,12 +39,12 @@ class MySQLSystem{
 		//echo '<p>-'.$q.'-</p>';
 		$this->logQuery($q); //Registra el tipo de query que se hace en la tabla 
 
-		$this->resultSet = mysqli_query($this->connection,$q);
+		$this->resultSet = mysqli_query($this->connection,$q); //Devuelve el valor de la consulta, false en caso de error
 	}
 	public function logQuery($q){
 		$query='
-			INSERT INTO log(query, queryType) VALUES("'.$q.'", "'.$this->queryType.'")
-		';
+			INSERT INTO log(query, queryType) VALUES("'.$q.'", "'.$this->queryType.'") 
+		';//Aqui ingresa la query al registro de querys
 		//echo '<p>LOG-'.$query.'-</p>';
 
 		$this->resultSet = mysqli_query($this->connection,$query);
@@ -64,7 +64,7 @@ class MySQLSystem{
 	public function fetchA($rS = "eempty"){
 		if($rS == "eempty")
 			$rS = $this->resultSet;
-		if (mysqli_num_rows($rS)!=0) {
+		if (mysqli_num_rows($rS)!=0) { //Aqui solo se tiene un valor
 			return mysqli_fetch_array($rS, MYSQLI_ASSOC); //Obtiene una fila de resultados como un array asociativo, nunerico o ambos.
 		}
 		else{
@@ -74,14 +74,14 @@ class MySQLSystem{
 
 	public function fetchAll($rS = "eempty"){
 		if($rS == "eempty"){
-			$rS = $this->resultSet;
+			$rS = $this->resultSet; //Aqui contiene el valor de la consulta
 		}
 		if (mysqli_num_rows($rS)==0) {
 			$rows="empty";
 			return $rows;
 		}
 		else{
-			while($row = mysqli_fetch_array($rS, MYSQLI_ASSOC)){
+			while($row = mysqli_fetch_array($rS, MYSQLI_ASSOC)){ //Existe un arreglo con varios registros que coinciden con el id que se quiere saber, en un campo seleccionado
 				$rows[] = $row;
 			}
 			return $rows;
@@ -111,7 +111,7 @@ class MySQLSystem{
 	public function qAll($q = "eempty", $arr = array(), $queryType="NS"){
 		$this->queryType= $queryType;
 		$this->squery($q,$arr, $queryType);
-		return $this->fetchAll();
+		return $this->fetchAll(); //Devuelve los valores de la consulta en caso de exito
 	}
 	
 	public function qvalue($q = "eempty", $arr = array(), $queryType="NS"){
