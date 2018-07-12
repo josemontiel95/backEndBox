@@ -49,6 +49,10 @@
 			$usuario = new Usuario();
 			echo $usuario->upLoadFoto($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario']);
 		break;
+		case 'getIDByToken':
+			$usuario = new Usuario();
+			echo $usuario->getIDByToken($_GET['token'],$_GET['rol_usuario_id']);
+		break;
 /*
 		case 'insertRol':
 			$usuario = new Usuario();

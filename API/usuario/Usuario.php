@@ -171,6 +171,35 @@ class Usuario{
 		return json_encode($arr);
 	}
 
+	public function getIDByToken($token, $rol_usuario_id){
+		global $dbS;
+		if($this->getIDByTokenAndValidate($token) == 'success'){
+			//Valida identidad y permisos
+			if($rol_usuario_id==$this->rol_usuario_id){
+			
+				$arr = array('id_usuario' => $this->id_usuario,
+							 'nombre' => $this->nombre, 
+							 'apellido' => $this->apellido,
+							 'email' => $this->email, 
+							 'fechaDeNac' => $this->fechaDeNac, 
+							 'foto' => $this->foto, 
+							 'rol_usuario_id' => $this->rol_usuario_id, 
+							 'token' => $token,	
+							 'estatus' => 'Exito',
+							 'error' => 0);
+				return json_encode($arr);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
+				return json_encode($arr);
+			}
+		}
+		else{
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
+			return json_encode($arr);
+		}
+	}
+
 	/*
 		
 	*/
@@ -299,6 +328,11 @@ class Usuario{
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){ //No es redundante?
+
+				/*
+					Llamar a una funcion que verifique el el email no sera el mismo.
+				*/
+					
 				$contrasenaValida = hash('sha512', $constrasena);
 				$dbS->squery("
 						INSERT INTO
@@ -307,12 +341,18 @@ class Usuario{
 						VALUES
 						('1QQ','1QQ','1QQ','1QQ',1QQ,'1QQ')
 				",array($nombre,$apellido,$email,$fechaDeNac,$rol_usuario_id_new,$contrasenaValida),"INSERT");
-				$arr = array('id_usuario' => 'No dispinible, esto NO es un error', 'nombre' => $nombre, 'token' => $token,	'estatus' => 'Exito de insercion','error' => 0);
-				return json_encode($arr);
+				if(!$dbS->didQuerydied){
+					$id=$dbS->lastInsertedID;
+					$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
+					return json_encode($arr);
+				}else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 2);
+					return json_encode($arr);
+				}
 
 			}
 			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto, este comportamiento sera registrado y se cerrara el sistema','error' => 1);
 				return json_encode($arr);
 			}
 		}
@@ -486,6 +526,8 @@ class Usuario{
 						array($foto,$id_usuario),"UPDATE"
 
 					);
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,'estatus' => 'La foto se subio correctamente','error' => 0);
+				return json_encode($arr);
 				
 			}else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);

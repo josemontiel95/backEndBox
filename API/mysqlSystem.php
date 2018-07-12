@@ -10,6 +10,9 @@ class MySQLSystem{
 	/* Variables de buffer */
 	private $resultSet;
 	private $query;
+	public $lastInsertedID;
+	public $lastInsertedLogID;
+	public $didQuerydied;
 	private $connection;
 	
 	/* Variables de utilería */
@@ -40,14 +43,31 @@ class MySQLSystem{
 		$this->logQuery($q); //Registra el tipo de query que se hace en la tabla 
 
 		$this->resultSet = mysqli_query($this->connection,$q); //Devuelve el valor de la consulta, false en caso de error
+		$this->lastInsertedID=mysqli_insert_id($this->connection);
+		if($this->resultSet==false){
+			$this->didQuerydied=true;
+			$query='
+				UPDATE log SET status="FAILED"  WHERE id_log='.$this->lastInsertedLogID
+			;//Aqui ingresa la query al registro de querys
+			//echo '<p>LOG-'.$query.'-</p>';
+			mysqli_query($this->connection,$query);
+		}else{
+			$this->didQuerydied=false;
+			$query='
+				UPDATE log SET status="PASSED" WHERE id_log='.$this->lastInsertedLogID
+			;//Aqui ingresa la query al registro de querys
+			//echo '<p>LOG-'.$query.'-</p>';
+			mysqli_query($this->connection,$query);
+		}
+		
 	}
 	public function logQuery($q){
 		$query='
 			INSERT INTO log(query, queryType) VALUES("'.$q.'", "'.$this->queryType.'") 
 		';//Aqui ingresa la query al registro de querys
 		//echo '<p>LOG-'.$query.'-</p>';
-
-		$this->resultSet = mysqli_query($this->connection,$query);
+		mysqli_query($this->connection,$query);
+		$this->lastInsertedLogID=mysqli_insert_id($this->connection);
 	}
 
 	//===========
