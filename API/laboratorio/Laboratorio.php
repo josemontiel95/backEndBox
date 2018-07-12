@@ -13,23 +13,30 @@ class Laboratorio{
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
-	public function insert($laboratorio,$estado,$municipio){
+	public function insert($token,$rol_usuario_id,$laboratorio,$estado,$municipio){
 		global $dbS;
-		$dbS->squery("
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("
 						INSERT INTO
 						laboratorio(laboratorio,estado,municipio)
 
 						VALUES
 						('1QQ','1QQ','1QQ')
 				",array($laboratorio,$estado,$municipio),"INSERT");
-		$arr = array('id_laboratorio' => 'No disponible, esto NO es un error', 'laboratorio' => $laboratorio, 'estatus' => 'Exito en insercion', 'error' => 0);
+			$arr = array('id_laboratorio' => 'No disponible, esto NO es un error', 'laboratorio' => $laboratorio, 'estatus' => 'Exito en insercion', 'error' => 0);
+		}
 		return json_encode($arr);
 
 	}
 
-	public function upDate($id_laboratorio,$laboratorio,$estado,$municipio){
+	public function upDate($token,$rol_usuario_id,$id_laboratorio,$laboratorio,$estado,$municipio){
 		global $dbS;
-		$dbS->squery("	UPDATE
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
 							laboratorio
 						SET
 							laboratorio ='1QQ',
@@ -41,13 +48,17 @@ class Laboratorio{
 					 "
 					,array($laboratorio,$estado,$municipio,$id_laboratorio),"UPDATE"
 			      	);
-		$arr = array('id_laboratorio' => $id_laboratorio, 'laboratorio' => $laboratorio,'estatus' => 'Exito de actualizacion','error' => 0);
+			$arr = array('id_laboratorio' => $id_laboratorio, 'laboratorio' => $laboratorio,'estatus' => 'Exito de actualizacion','error' => 0);
+		}		
 		return json_encode($arr);
 	}
 
-	public function deactivate($id_laboratorio){
+	public function deactivate($token,$rol_usuario_id,$id_laboratorio){
 		global $dbS;
-		$dbS->squery("	UPDATE
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
 							laboratorio
 						SET
 							active = 1QQ
@@ -57,12 +68,13 @@ class Laboratorio{
 					 "
 					,array(0,$id_laboratorio),"UPDATE"
 			      	);
-		$arr = array('id_laboratorio' => $id_laboratorio,'estatus' => 'Laboratorio desactivado','error' => 0);
+			$arr = array('id_laboratorio' => $id_laboratorio,'estatus' => 'Laboratorio desactivado','error' => 0);
+		}
 		return json_encode($arr);
 	}
 
 
-	/*	Cuando se cree la vista del usuario (pagina web) con esta funcion el usuario puede ingresar el id y se reflejaran los datos de los usuario que esten vinculados con ese laboratorio. Posteriormente el usuario podra filtarlos a su gusto-----No tiene caso porque en las tablas que ya existen los usuarios ya pueden filtrar el numero de id_laboratorio */
+	/*	Cuando se cree la vista del usuario (pagina web) con esta funcion el usuario puede ingresar el id y se reflejaran los datos de los usuario que esten vinculados con ese laboratorio. Posteriormente el usuario podra filtarlos a su gusto-----No tiene caso porque en las tablas que ya existen los usuarios ya pueden filtrar el numero de id_laboratorio y getallordenes de servicio*/
 
 	public function getAllUsuarios($id_laboratorio){
 		global $dbS;
@@ -88,10 +100,6 @@ class Laboratorio{
 			return json_encode($arr);
 		}
 	}
-
-
-	public function getAll
-
 
 }
 

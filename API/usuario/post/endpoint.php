@@ -18,7 +18,7 @@
 		case 'upLoadFoto':
 			
 			$target_dir = "./../../../SystemData/UserData/".$_POST['id_usuario']."/";
-			$dirDatabase = "./SystemData/UserData/".$_POST['id_usuario']."/";
+			$dirDatabase = "SystemData/UserData/".$_POST['id_usuario']."/";
 			if (!file_exists($target_dir)) {
 			    mkdir($target_dir, 0777, true);
 			}

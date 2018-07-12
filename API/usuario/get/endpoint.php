@@ -7,11 +7,14 @@
 	if(!empty($_GET)){
 		$function= $_GET['function'];
 	}else{
-		return -2;
+		echo -2;
 	}
 	include_once("./../Usuario.php");
 
 	switch ($function){
+		case'hola':
+			echo 'como estas?';
+		break;
 		case'login':
 			$usuario = new Usuario();
 			echo $usuario->login($_GET['email'],$_GET['constrasena']);
@@ -30,11 +33,11 @@
 		break;
 		case 'upDate':
 			$usuario = new Usuario();
-			echo $usuario->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario'],$_GET['nombre'],$_GET['apellido'],$_GET['email'],$_GET['nss'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new']);
+			echo $usuario->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario'],$_GET['nombre'],$_GET['apellido'],$_GET['laboratorio_id'],$_GET['nss'],$_GET['email'],$_GET['nss'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new']);
 		break;
 		case 'insert':
 			$usuario = new Usuario();
-			echo $usuario->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['nombre'],$_GET['apellido'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new'],$_GET['constrasena']);
+			echo $usuario->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['nombre'],$_GET['apellido'],$_GET['laboratorio_id'],$_GET['nss'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new'],$_GET['constrasena']);
 		break;
 		case 'upDateContrasena':
 			$usuario = new Usuario();

@@ -20,8 +20,8 @@ class Rol{
 	function getAll($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
-		$arr = $usuario->validateSesion($token, $rol_usuario_id);
-		if(strpos($arr,"error\":0") != 0){
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      SELECT 
 			        id_rol_usuario
@@ -42,11 +42,11 @@ class Rol{
 	public function insert($token,$rol_usuario_id,$rol){
 		global $dbS;
 		$usuario = new Usuario();
-		$arr = $usuario->validateSesion($token, $rol_usuario_id);
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		//echo strpos($arr,":0");	Inspecciono si la cadena generada por json_encode contiene la bandera de que no existe error
 		//echo strpos($arr,"error\":0");
 		
-		if(strpos($arr,"error\":0") != 0){
+		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
 						rol_usuario(rol)
@@ -63,8 +63,8 @@ class Rol{
 	public function upDate($token,$rol_usuario_id,$id_rol_usuario,$rol){
 		global $dbS;
 		$usuario = new Usuario();
-		$arr = $usuario->validateSesion($token, $rol_usuario_id);
-		if(strpos($arr,"error\":0") != 0){
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
 			$dbS->squery("	UPDATE
 							rol_usuario
 						SET
@@ -80,9 +80,12 @@ class Rol{
 		return json_encode($arr);
 	}
 
-	public function deactive($id_rol_usuario){
+	public function deactive($token,$rol_usuario_id,$id_rol_usuario){
 		global $dbS;
-		$dbS->squery("	UPDATE
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
 							rol_usuario
 						SET
 							active = '1QQ'
@@ -92,7 +95,8 @@ class Rol{
 					 "
 					,array(0,$id_rol_usuario),"UPDATE"
 			      	);
-		$arr = array('id_rol_usuario' => $id_rol_usuario,'estatus' => 'Rol desactivado','error' => 0);
+			$arr = array('id_rol_usuario' => $id_rol_usuario,'estatus' => 'Rol desactivado','error' => 0);
+		}
 		return json_encode($arr);
 	}
 
