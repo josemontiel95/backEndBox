@@ -283,11 +283,8 @@ class Usuario{
 			        usuario,rol_usuario,laboratorio
 			      WHERE
 			      	laboratorio_id = id_laboratorio AND
-<<<<<<< HEAD
 			      	rol_usuario_id = id_rol_usuario
-=======
-			      	rol_usuario_id = id_rol_usuario 
->>>>>>> 61d948c3e12b43ff24e9753e87a5078a1ec039f6
+
 			      ",
 			      array(),
 			      "SELECT"
@@ -354,16 +351,6 @@ class Usuario{
 
 	}
 
-
-	public function emailValidate($email){
-/*
-	Transformar todos los correos a minusculas
-	
-*/
-
-		strnatcasecmp(str1, str2)
-
-	}
 
 	
 
