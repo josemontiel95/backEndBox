@@ -283,7 +283,8 @@ class Usuario{
 			        usuario,rol_usuario,laboratorio
 			      WHERE
 			      	laboratorio_id = id_laboratorio AND
-			      	rol_usuario_id = id_rol_usuario 
+			      	rol_usuario_id = id_rol_usuario
+
 			      ",
 			      array(),
 			      "SELECT"
@@ -349,18 +350,6 @@ class Usuario{
 		}
 
 	}
-
-
-	public function emailValidate($email){
-/*
-	Transformar todos los correos a minusculas
-	
-*/
-
-		
-
-	}
-
 	
 
 //Meterle el nss
