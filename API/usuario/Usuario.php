@@ -350,8 +350,6 @@ class Usuario{
 		}
 
 	}
-
-
 	
 
 //Meterle el nss
