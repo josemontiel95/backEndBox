@@ -31,10 +31,6 @@
 			$usuario = new Usuario();
 			echo $usuario->getAllUsuarios($_GET['token']);
 		break;
-		case 'upDate':
-			$usuario = new Usuario();
-			echo $usuario->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario'],$_GET['nombre'],$_GET['apellido'],$_GET['laboratorio_id'],$_GET['nss'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new']);
-		break;
 		case 'insert':
 			$usuario = new Usuario();
 			echo $usuario->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['nombre'],$_GET['apellido'],$_GET['laboratorio_id'],$_GET['nss'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new'],$_GET['constrasena']);
@@ -61,28 +57,13 @@
 			echo $usuario->activate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario']);
 		break;
 /*
-		case 'insertRol':
-			$usuario = new Usuario();
-			echo $usuario->insertRol($_GET['token'],$_GET['rol_usuario_id'],$_GET['rol']);
-		break;
-
-		case 'upDateRol':
-			$usuario = new Usuario();
-			echo $usuario->upDateRol($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_rol_usuario'],$_GET['rol']);
-		break;
+		
 
 		case 'deactivateRol':
 			$usuario = new Usuario();
 			echo $usuario->deactivateRol($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_rol_usuario']);
 		break;
-		case 'insertLab':
-			$usuario = new Usuario();
-			echo $usuario->insertLab($_GET['token'],$_GET['rol_usuario_id'],$_GET['laboratorio'],$_GET['estado'],$_GET['municipio']);
-		break;
-		case 'upDateLab':
-			$usuario = new Usuario();
-			echo $usuario->upDateLab($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_laboratorio'],$_GET['laboratorio'],$_GET['estado'],$_GET['municipio']);
-		break;
+		
 		case 'deactivateLab':
 			$usuario = new Usuario();
 			echo $usuario->deactivateLab($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_laboratorio']);

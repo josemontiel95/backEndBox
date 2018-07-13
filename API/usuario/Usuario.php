@@ -350,34 +350,56 @@ class Usuario{
 		}
 
 	}
-	
+
+
+
+	public function emailValidate($email){
+		global $dbS;
+		$query_resultado = $dbS->qarrayA("
+						SELECT
+							email
+						FROM 
+							usuario
+						WHERE
+							email = '1QQ'
+						
+						",array($email),"SELECT");				
+		if($query_resultado == "empty")
+			return true;
+		else
+			return false;
+	}
 
 //Meterle el nss
 	public function insert($token,$rol_usuario_id,$nombre,$apellido,$laboratorio_id,$nss,$email,$fechaDeNac,$rol_usuario_id_new,$constrasena){
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
-			if($rol_usuario_id==$this->rol_usuario_id){ 
+			if($rol_usuario_id==$this->rol_usuario_id){
+				$email =  strtolower($email);
+				if($this->emailValidate($email)){
+					$contrasenaValida = hash('sha512', $constrasena);
+					$dbS->squery("
+							INSERT INTO
+							usuario(nombre,apellido,laboratorio_id,nss,email,fechaDeNac,rol_usuario_id,contrasena)
 
-				/*
-					Llamar a una funcion que verifique el el email no sera el mismo.
-				*/
-					
-				$contrasenaValida = hash('sha512', $constrasena);
-				$dbS->squery("
-						INSERT INTO
-						usuario(nombre,apellido,laboratorio_id,nss,email,fechaDeNac,rol_usuario_id,contrasena)
-
-						VALUES
-						('1QQ','1QQ',1QQ,1QQ,'1QQ','1QQ',1QQ,'1QQ')
-				",array($nombre,$apellido,$laboratorio_id,$nss,$email,$fechaDeNac,$rol_usuario_id_new,$contrasenaValida),"INSERT");				
-				if(!$dbS->didQuerydied){
-					$id=$dbS->lastInsertedID;
-					$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
-					return json_encode($arr);
-				}else{
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 2);
-					return json_encode($arr);
+							VALUES
+							('1QQ','1QQ',1QQ,1QQ,'1QQ','1QQ',1QQ,'1QQ')
+							",array($nombre,$apellido,$laboratorio_id,$nss,$email,$fechaDeNac,$rol_usuario_id_new,$contrasenaValida),"INSERT");				
+					if(!$dbS->didQuerydied){
+						$id=$dbS->lastInsertedID;
+						$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
+						return json_encode($arr);
+					}else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 2);
+						return json_encode($arr);
+					}
 				}
+				else{
+					//Mensaje de error---PENDIENTE---
+					$arr = array('estatus'=>'Ese correo ya existe','error' => 4);
+					return json_encode($arr);
+				}					
+				
 			}
 			else{
 				

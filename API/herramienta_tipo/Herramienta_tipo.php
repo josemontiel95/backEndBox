@@ -4,10 +4,11 @@ include_once("./../../configSystem.php");
 include_once("./../../usuario/Usuario.php");
 
 
-class Rol{
+class Herramienta_tipo{
 	//Variables de BD
-	private $id_rol_usuario;
-	private $rol;
+	private $id_herramienta_tipo;
+	private $tipo;
+	private $placas;
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
@@ -24,99 +25,98 @@ class Rol{
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      SELECT 
-			        id_rol_usuario,
-					rol
+			        id_herramienta_tipo,
+					tipo
 			      FROM 
-			        rol_usuario
+			        Herramienta_tipo
 			      WHERE
 			      	 active = 1
 			      ",
 			      array(),
 			      "SELECT"
 			      );
-			if($arr == "empty")
+			if($arr = "empty") //Si esta bien el count porque si fuera un error la funcion devolveria 0 porque no lo ejecutaria correctamente
 				$arr = array('estatus' =>"No hay registros", 'error' => 1); //Pendiente
 		}
 		return json_encode($arr);	
+
 	}
 
-	public function insert($token,$rol_usuario_id,$rol){
+	public function insert($token,$rol_usuario_id,$tipo,$placas){
 		global $dbS;
 		$usuario = new Usuario();
-		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		//echo strpos($arr,":0");	Inspecciono si la cadena generada por json_encode contiene la bandera de que no existe error
-		//echo strpos($arr,"error\":0");
-		
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);		
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						rol_usuario(rol)
+						herramienta_tipo(tipo,placas)
 
 						VALUES
-						('1QQ')
-				",array($rol),"INSERT");
-			$arr = array('id_rol_usuario' => 'No dispinible, esto NO es un error', 'rol' => $rol,'estatus' => 'Exito de insercion','error' => 0);
+						('1QQ','1QQ')
+				",array($tipo,$placas),"INSERT");
+			$arr = array('id_herramienta_tipo' => 'No dispinible, esto NO es un error','estatus' => 'Exito de insercion','error' => 0);
 		}
 		return json_encode($arr);
 	}
 
 
-	public function upDate($token,$rol_usuario_id,$id_rol_usuario,$rol){
+	public function upDate($token,$rol_usuario_id,$id_herramienta_tipo,$tipo,$placas){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("	UPDATE
-							rol_usuario
+							herramienta_tipo
 						SET
-							rol = '1QQ'
+							tipo = '1QQ',
+							placas = '1QQ'
 						WHERE
 							active=1 AND
-							id_rol_usuario = 1QQ
+							id_herramienta_tipo = 1QQ
 					 "
-					,array($rol,$id_rol_usuario),"UPDATE"
+					,array($tipo,$placas,$id_herramienta_tipo),"UPDATE"
 			      	);
-			$arr = array('id_rol_usuario' => $id_rol_usuario, 'rol' => $rol,'estatus' => 'Exito de actualizacion','error' => 0);
+			$arr = array('id_herramienta_tipo' => $id_herramienta_tipo, 'tipo' => $tipo,'estatus' => 'Exito de actualizacion','error' => 0);
 		}
 		return json_encode($arr);
 	}
 
-	public function deactive($token,$rol_usuario_id,$id_rol_usuario){
+	public function deactive($token,$rol_usuario_id,$id_herramienta_tipo){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("	UPDATE
-							rol_usuario
+							herramienta_tipo
 						SET
 							active = '1QQ'
 						WHERE
 							active=1 AND
-							id_rol_usuario = 1QQ
+							id_herramienta_tipo = 1QQ
 					 "
-					,array(0,$id_rol_usuario),"UPDATE"
+					,array(0,$id_herramienta_tipo),"UPDATE"
 			      	);
-			$arr = array('id_rol_usuario' => $id_rol_usuario,'estatus' => 'Rol desactivado','error' => 0);
+			$arr = array('id_herramienta_tipo' => $id_herramienta_tipo,'estatus' => 'Herramienta_tipo desactivado','error' => 0);
 		}
 		return json_encode($arr);
 	}
 
-	public function active($token,$rol_usuario_id,$id_rol_usuario){
+	public function deactive($token,$rol_usuario_id,$id_herramienta_tipo){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("	UPDATE
-							rol_usuario
+							herramienta_tipo
 						SET
 							active = '1QQ'
 						WHERE
-							active=0 AND
-							id_rol_usuario = 1QQ
+							active=1 AND
+							id_herramienta_tipo = 1QQ
 					 "
-					,array(1,$id_rol_usuario),"UPDATE"
+					,array(0,$id_herramienta_tipo),"UPDATE"
 			      	);
-			$arr = array('id_rol_usuario' => $id_rol_usuario,'estatus' => 'Rol activado','error' => 0);
+			$arr = array('id_herramienta_tipo' => $id_herramienta_tipo,'estatus' => 'Herramienta_tipo desactivado','error' => 0);
 		}
 		return json_encode($arr);
 	}

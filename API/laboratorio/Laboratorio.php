@@ -76,6 +76,28 @@ class Laboratorio{
 	}
 
 
+
+	public function activate($token,$rol_usuario_id,$id_laboratorio){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+							laboratorio
+						SET
+							active = 1QQ
+						WHERE
+							active=0 AND
+							id_laboratorio = 1QQ
+					 "
+					,array(1,$id_laboratorio),"UPDATE"
+			      	);
+			$arr = array('id_laboratorio' => $id_laboratorio,'estatus' => 'Laboratorio activado','error' => 0);
+		}
+		return json_encode($arr);
+	}
+
+
 	public function getAll($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
