@@ -278,12 +278,12 @@ class Usuario{
 			        fechaDeNac,
 			        foto,
 			        rol_usuario_id,
-			        active
+			        usuario.active
 			      FROM 
 			        usuario,rol_usuario,laboratorio
 			      WHERE
 			      	laboratorio_id = id_laboratorio AND
-			      	rol_usuario_id = id_rol_usuario AND
+			      	rol_usuario_id = id_rol_usuario 
 			      ",
 			      array(),
 			      "SELECT"
@@ -323,7 +323,7 @@ class Usuario{
 			      	laboratorio_id = id_laboratorio AND
 			      	rol_usuario_id = id_rol_usuario AND
 
-			      	active=1 AND
+			      	usuario.active=1 AND
 			        id_usuario = 1QQ
 			      ",
 			      array($id_usuario),
@@ -347,6 +347,17 @@ class Usuario{
 			$this->email= $s['email'];
 			return "success";
 		}
+
+	}
+
+
+	public function emailValidate($email){
+/*
+	Transformar todos los correos a minusculas
+	
+*/
+
+		strnatcasecmp(str1, str2)
 
 	}
 
@@ -380,6 +391,7 @@ class Usuario{
 				}
 			}
 			else{
+				
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto, este comportamiento sera registrado y se cerrara el sistema','error' => 1);
 				return json_encode($arr);
 			}
@@ -411,7 +423,7 @@ class Usuario{
 					 "
 					,array($nombre,$apellido,$laboratorio_id,$nss,$email,$fechaDeNac,$rol_usuario_id_new,$id_usuario),"UPDATE"
 			      	);
-				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Exito de actualizacion','error' => 0);
+				$arr = array('id_usuario' => $id_usuario, 'nombre' => $nombre, 'token' => $token,	'estatus' => 'Exito de actualizacion','error' => 0);
 				return json_encode($arr);
 			
 
@@ -503,7 +515,7 @@ class Usuario{
 					 "
 					,array(1,$id_usuario),"UPDATE"
 			      	);
-				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Cuenta desactivada','error' => 0);
+				$arr = array('id_usuario' => $id_usuario,'token' => $token,	'estatus' => 'Cuenta activada','error' => 0);
 				return json_encode($arr);
 			}
 			else{

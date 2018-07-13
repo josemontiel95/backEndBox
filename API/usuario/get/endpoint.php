@@ -33,7 +33,7 @@
 		break;
 		case 'upDate':
 			$usuario = new Usuario();
-			echo $usuario->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario'],$_GET['nombre'],$_GET['apellido'],$_GET['laboratorio_id'],$_GET['nss'],$_GET['email'],$_GET['nss'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new']);
+			echo $usuario->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario'],$_GET['nombre'],$_GET['apellido'],$_GET['laboratorio_id'],$_GET['nss'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new']);
 		break;
 		case 'insert':
 			$usuario = new Usuario();
@@ -55,6 +55,10 @@
 		case 'getIDByToken':
 			$usuario = new Usuario();
 			echo $usuario->getIDByToken($_GET['token'],$_GET['rol_usuario_id']);
+		break;
+		case 'activate':
+			$usuario = new Usuario();
+			echo $usuario->activate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario']);
 		break;
 /*
 		case 'insertRol':
