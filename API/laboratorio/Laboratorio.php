@@ -1,4 +1,6 @@
 <?php 
+include_once("./../../configSystem.php");
+include_once("./../../usuario/Usuario.php");
 
 class Laboratorio{
 	//Variables de BD
@@ -69,6 +71,30 @@ class Laboratorio{
 					,array(0,$id_laboratorio),"UPDATE"
 			      	);
 			$arr = array('id_laboratorio' => $id_laboratorio,'estatus' => 'Laboratorio desactivado','error' => 0);
+		}
+		return json_encode($arr);
+	}
+
+
+	public function getAll($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      SELECT 
+			        id_laboratorio,
+					laboratorio
+			      FROM 
+			        laboratorio
+			      WHERE
+			      	 active = 1
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+			if(count($arr) == 0)
+				$arr = array('estatus' =>"No hay registros", 'error' => 1); //Pendiente
 		}
 		return json_encode($arr);
 	}

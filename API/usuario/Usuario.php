@@ -357,7 +357,7 @@ class Usuario{
 	
 */
 
-		strnatcasecmp(str1, str2)
+		
 
 	}
 

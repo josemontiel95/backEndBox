@@ -24,10 +24,12 @@ class Rol{
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      SELECT 
-			        id_rol_usuario
+			        id_rol_usuario,
 					rol
 			      FROM 
-			        rol_usuario 
+			        rol_usuario
+			      WHERE
+			      	 active = 1
 			      ",
 			      array(),
 			      "SELECT"
