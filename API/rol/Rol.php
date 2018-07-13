@@ -34,11 +34,10 @@ class Rol{
 			      array(),
 			      "SELECT"
 			      );
-			if(count($arr) == 0)
+			if($arr == "empty")
 				$arr = array('estatus' =>"No hay registros", 'error' => 1); //Pendiente
 		}
 		return json_encode($arr);	
-
 	}
 
 	public function insert($token,$rol_usuario_id,$rol){
