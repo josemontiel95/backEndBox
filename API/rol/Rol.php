@@ -102,6 +102,26 @@ class Rol{
 		return json_encode($arr);
 	}
 
+	public function active($token,$rol_usuario_id,$id_rol_usuario){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+							rol_usuario
+						SET
+							active = '1QQ'
+						WHERE
+							active=0 AND
+							id_rol_usuario = 1QQ
+					 "
+					,array(1,$id_rol_usuario),"UPDATE"
+			      	);
+			$arr = array('id_rol_usuario' => $id_rol_usuario,'estatus' => 'Rol activado','error' => 0);
+		}
+		return json_encode($arr);
+	}
+
 
 
 

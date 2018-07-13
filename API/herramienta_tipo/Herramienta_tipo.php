@@ -101,6 +101,26 @@ class Herramienta_tipo{
 		return json_encode($arr);
 	}
 
+	public function deactive($token,$rol_usuario_id,$id_herramienta_tipo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+							herramienta_tipo
+						SET
+							active = '1QQ'
+						WHERE
+							active=1 AND
+							id_herramienta_tipo = 1QQ
+					 "
+					,array(0,$id_herramienta_tipo),"UPDATE"
+			      	);
+			$arr = array('id_herramienta_tipo' => $id_herramienta_tipo,'estatus' => 'Herramienta_tipo desactivado','error' => 0);
+		}
+		return json_encode($arr);
+	}
+
 
 
 
