@@ -278,12 +278,12 @@ class Usuario{
 			        fechaDeNac,
 			        foto,
 			        rol_usuario_id,
-			        active
+			        usuario.active
 			      FROM 
 			        usuario,rol_usuario,laboratorio
 			      WHERE
 			      	laboratorio_id = id_laboratorio AND
-			      	rol_usuario_id = id_rol_usuario AND
+			      	rol_usuario_id = id_rol_usuario
 			      ",
 			      array(),
 			      "SELECT"
@@ -323,7 +323,7 @@ class Usuario{
 			      	laboratorio_id = id_laboratorio AND
 			      	rol_usuario_id = id_rol_usuario AND
 
-			      	active=1 AND
+			      	usuario.active=1 AND
 			        id_usuario = 1QQ
 			      ",
 			      array($id_usuario),
