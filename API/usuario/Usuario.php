@@ -493,6 +493,7 @@ class Usuario{
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){
+				$contrasenaValida = hash('sha512', $constrasena);
 				$dbS->squery("	UPDATE
 							usuario
 						SET
@@ -501,20 +502,15 @@ class Usuario{
 							active=1 AND
 							id_usuario = 1QQ
 					 "
-					,array($constrasena,$id_usuario),"UPDATE"
+					,array($contrasenaValida,$id_usuario),"UPDATE"
 			      	);
 				if(!$dbS->didQuerydied){
-					$id=$dbS->lastInsertedID;
-					$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
+					$arr = array('id_usuario' => $id_usuario,'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
 					return json_encode($arr);
 				}else{
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion, verifica tus datos y vuelve a intentarlo','error' => 3);
+					$arr = array('id_usuario' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion, verifica tus datos y vuelve a intentarlo','error' => 3);
 					return json_encode($arr);
 				}
-
-
-
-				//----------------------
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
