@@ -499,7 +499,6 @@ class Usuario{
 						SET
 							contrasena = '1QQ'
 						WHERE
-							active=1 AND
 							id_usuario = 1QQ
 					 "
 					,array($contrasenaValida,$id_usuario),"UPDATE"
