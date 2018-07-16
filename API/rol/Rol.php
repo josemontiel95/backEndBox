@@ -34,16 +34,15 @@ class Rol{
 			      array(),
 			      "SELECT"
 			      );
+
 			if(!$dbS->didQuerydied){
 						if(count($arr) == 0)
 							$arr = array('estatus' =>"No hay registros", 'error' => 1); //Pendiente
 						
 			}else
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 2);
-						
 		}
 		return json_encode($arr);	
-
 	}
 
 	public function insert($token,$rol_usuario_id,$rol){
