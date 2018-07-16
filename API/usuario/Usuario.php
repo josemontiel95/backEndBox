@@ -370,6 +370,29 @@ class Usuario{
 			return false;
 	}
 
+
+	public function emailValidateUpDate($email,$id_usuario){
+		global $dbS;
+		$query_resultado = $dbS->qarrayA("
+						SELECT
+							id_usuario,
+							email
+						FROM 
+							usuario
+						WHERE
+							email = '1QQ'
+						
+						",array($email),"SELECT");				
+		if($query_resultado == "empty")
+			return true;
+		else
+			if($query_resultado['id_usuario'] == $id_usuario)
+				return true;
+			else
+				return false;
+
+	}
+
 //Meterle el nss
 	public function insert($token,$rol_usuario_id,$nombre,$apellido,$laboratorio_id,$nss,$email,$fechaDeNac,$rol_usuario_id_new,$constrasena){
 		global $dbS;
@@ -418,26 +441,39 @@ class Usuario{
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			//Valida identidad y permisos
 			if($rol_usuario_id==$this->rol_usuario_id){
-				$dbS->squery("	UPDATE
-							usuario
-						SET
-							nombre = '1QQ',
-							apellido = '1QQ',
-							laboratorio_id = 1QQ,
-							nss = 1QQ,
-							email = '1QQ',
-							fechaDeNac = '1QQ',
-							rol_usuario_id = 1QQ
-						WHERE
-							active=1 AND
-							id_usuario = 1QQ
-					 "
-					,array($nombre,$apellido,$laboratorio_id,$nss,$email,$fechaDeNac,$rol_usuario_id_new,$id_usuario),"UPDATE"
-			      	);
-				$arr = array('id_usuario' => $id_usuario, 'nombre' => $nombre, 'token' => $token,	'estatus' => 'Exito de actualizacion','error' => 0);
-				return json_encode($arr);
-			
-
+				$email =  strtolower($email);
+				if($this->emailValidateUpDate($email,$id_usuario)){
+					$dbS->squery("	UPDATE
+								usuario
+							SET
+								nombre = '1QQ',
+								apellido = '1QQ',
+								laboratorio_id = 1QQ,
+								nss = 1QQ,
+								email = '1QQ',
+								fechaDeNac = '1QQ',
+								rol_usuario_id = 1QQ
+							WHERE
+								active=1 AND
+								id_usuario = 1QQ
+					 	"
+						,array($nombre,$apellido,$laboratorio_id,$nss,$email,$fechaDeNac,$rol_usuario_id_new,$id_usuario),"UPDATE"
+			      		);
+					if(!$dbS->didQuerydied){
+						$id=$dbS->lastInsertedID;
+						$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
+						return json_encode($arr);
+					}else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion, verifica tus datos y vuelve a intentarlo','error' => 2);
+						return json_encode($arr);
+					}
+				}
+				else{
+					//Mensaje de error---PENDIENTE---
+					$arr = array('estatus'=>'Ese correo ya existe','error' => 4);
+					return json_encode($arr);
+				}
+							
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
@@ -497,8 +533,15 @@ class Usuario{
 					 "
 					,array(0,$id_usuario),"UPDATE"
 			      	);
-				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Cuenta desactivada','error' => 0);
-				return json_encode($arr);
+
+				if(!$dbS->didQuerydied){
+						$id=$dbS->lastInsertedID;
+						$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
+						return json_encode($arr);
+				}else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion, verifica tus datos y vuelve a intentarlo','error' => 2);
+						return json_encode($arr);
+				}
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
@@ -526,8 +569,15 @@ class Usuario{
 					 "
 					,array(1,$id_usuario),"UPDATE"
 			      	);
-				$arr = array('id_usuario' => $id_usuario,'token' => $token,	'estatus' => 'Cuenta activada','error' => 0);
-				return json_encode($arr);
+
+				if(!$dbS->didQuerydied){
+						$id=$dbS->lastInsertedID;
+						$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
+						return json_encode($arr);
+				}else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la activacion, verifica tus datos y vuelve a intentarlo','error' => 2);
+						return json_encode($arr);
+				}
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
@@ -558,9 +608,14 @@ class Usuario{
 						array($foto,$id_usuario),"UPDATE"
 
 					);
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,'estatus' => 'La foto se subio correctamente','error' => 0);
-				return json_encode($arr);
-				
+				if(!$dbS->didQuerydied){
+						$id=$dbS->lastInsertedID;
+						$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
+						return json_encode($arr);
+				}else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en subir la foto, verifica tus datos y vuelve a intentarlo','error' => 2);
+						return json_encode($arr);
+				}			
 			}else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
 				return json_encode($arr);
@@ -571,6 +626,33 @@ class Usuario{
 			return json_encode($arr);
 		}
 	}
+
+	public function getUserByID($token,$rol_usuario_id,$id_usuario){
+		global $dbS;
+		if($this->getIDByTokenAndValidate($token) == 'success'){
+			if($rol_usuario_id==$this->rol_usuario_id){
+				$query_resultado = getByID($id_usuario);
+				if($query_resultado = "empty"){
+						$id=$dbS->lastInsertedID;
+						$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
+						return json_encode($arr);
+				}else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la activacion, verifica tus datos y vuelve a intentarlo','error' => 2);
+						return json_encode($arr);
+				}
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
+				return json_encode($arr);
+			}
+		}
+		else{
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
+			return json_encode($arr);
+		}
+	}
+
+
 	/*
 	
 

@@ -17,7 +17,7 @@ class Rol{
 		Siguiendo la metodologia de POO las acciones las seguiria haciendo el usuario
 	*/
 
-	function getAll($token,$rol_usuario_id){
+	public function getAll($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -34,8 +34,15 @@ class Rol{
 			      array(),
 			      "SELECT"
 			      );
-			if(count($arr) == 0)
-				$arr = array('estatus' =>"No hay registros", 'error' => 1); //Pendiente
+			if(!$dbS->didQuerydied){
+						$id=$dbS->lastInsertedID;
+						$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
+						if(count($arr) == 0)
+							$arr = array('estatus' =>"No hay registros", 'error' => 1); //Pendiente
+						
+			}else
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 2);
+						
 		}
 		return json_encode($arr);	
 
@@ -56,7 +63,11 @@ class Rol{
 						VALUES
 						('1QQ')
 				",array($rol),"INSERT");
-			$arr = array('id_rol_usuario' => 'No dispinible, esto NO es un error', 'rol' => $rol,'estatus' => 'Exito de insercion','error' => 0);
+				if(!$dbS->didQuerydied){
+					$id=$dbS->lastInsertedID;
+					$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
+				}else
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 2);
 		}
 		return json_encode($arr);
 	}
@@ -77,7 +88,12 @@ class Rol{
 					 "
 					,array($rol,$id_rol_usuario),"UPDATE"
 			      	);
-			$arr = array('id_rol_usuario' => $id_rol_usuario, 'rol' => $rol,'estatus' => 'Exito de actualizacion','error' => 0);
+			if(!$dbS->didQuerydied){
+				$id=$dbS->lastInsertedID;
+				$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
+			}else
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 2);
+		
 		}
 		return json_encode($arr);
 	}
@@ -97,7 +113,12 @@ class Rol{
 					 "
 					,array(0,$id_rol_usuario),"UPDATE"
 			      	);
-			$arr = array('id_rol_usuario' => $id_rol_usuario,'estatus' => 'Rol desactivado','error' => 0);
+			if(!$dbS->didQuerydied){
+				$id=$dbS->lastInsertedID;
+				$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
+			}else
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 2);
+		
 		}
 		return json_encode($arr);
 	}
@@ -117,7 +138,12 @@ class Rol{
 					 "
 					,array(1,$id_rol_usuario),"UPDATE"
 			      	);
-			$arr = array('id_rol_usuario' => $id_rol_usuario,'estatus' => 'Rol activado','error' => 0);
+			if(!$dbS->didQuerydied){
+				$id=$dbS->lastInsertedID;
+				$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
+			}else
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la activacion , verifica tus datos y vuelve a intentarlo','error' => 2);
+
 		}
 		return json_encode($arr);
 	}

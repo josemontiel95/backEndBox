@@ -56,24 +56,19 @@
 			$usuario = new Usuario();
 			echo $usuario->activate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario']);
 		break;
+		//Hacerlo enviar los datos que necesitan
+		case 'getUserByID':
+			$usuario = new Usuario();
+			echo $usuario->getUserByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario']);
+		break;
+	/*	case 'upDate':
+			$usuario = new Usuario();
+			echo $usuario->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario'],$_GET['nombre'],$_GET['apellido'],$_GET['laboratorio_id'],$_GET['nss'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new']);
+		break;*/
 /*
 		
 
-		case 'deactivateRol':
-			$usuario = new Usuario();
-			echo $usuario->deactivateRol($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_rol_usuario']);
-		break;
 		
-		case 'deactivateLab':
-			$usuario = new Usuario();
-			echo $usuario->deactivateLab($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_laboratorio']);
-		break;
-		//Funcion que devuelve una lista de todos los usuarios que trabajen en el laboratorio solicitado 
-		case 'getAllUsuariosLab':
-			$usuario = new Usuario();
-			echo $usuario->getAllUsuariosLab($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_laboratorio']);
-		break;
-
 		case 'insertHerra':
 			$usuario = new Usuario();
 			echo $usuario->insertHerra($_GET['token'],$_GET['rol_usuario_id'],$_GET['herramienta_tipo_id'],$_GET['fechaDeCompra'],$_GET['condicion']);
