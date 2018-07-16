@@ -641,7 +641,7 @@ class Usuario{
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){
-				$query_resultado = getByID($id_usuario);
+				$query_resultado = $this->getByID($id_usuario);
 				if($query_resultado != "empty"){
 						$id=$dbS->lastInsertedID;
 						$arr = array('id_usuario' => $this->id_usuario,
