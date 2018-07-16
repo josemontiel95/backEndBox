@@ -406,7 +406,7 @@ class Usuario{
 							usuario(nombre,apellido,laboratorio_id,nss,email,fechaDeNac,rol_usuario_id,contrasena)
 
 							VALUES
-							('1QQ','1QQ',1QQ,1QQ,'1QQ','1QQ',1QQ,'1QQ')
+							('1QQ','1QQ',1QQ,'1QQ','1QQ','1QQ',1QQ,'1QQ')
 							",array($nombre,$apellido,$laboratorio_id,$nss,$email,$fechaDeNac,$rol_usuario_id_new,$contrasenaValida),"INSERT");				
 					if(!$dbS->didQuerydied){
 						$id=$dbS->lastInsertedID;
@@ -503,8 +503,18 @@ class Usuario{
 					 "
 					,array($constrasena,$id_usuario),"UPDATE"
 			      	);
-				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $token,	'estatus' => 'Contrasena actualizada','error' => 0);
-				return json_encode($arr);
+				if(!$dbS->didQuerydied){
+					$id=$dbS->lastInsertedID;
+					$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
+					return json_encode($arr);
+				}else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion, verifica tus datos y vuelve a intentarlo','error' => 3);
+					return json_encode($arr);
+				}
+
+
+
+				//----------------------
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
@@ -632,12 +642,22 @@ class Usuario{
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){
 				$query_resultado = getByID($id_usuario);
-				if($query_resultado = "empty"){
+				if($query_resultado != "empty"){
 						$id=$dbS->lastInsertedID;
-						$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
+						$arr = array('id_usuario' => $this->id_usuario,
+							 'nombre' => $this->nombre, 
+							 'apellido' => $this->apellido,
+							 'laboratorio' => $this->laboratorio,
+							 'nss' => $this->nss,
+							 'rol' => $this->rol,
+							 'email' => $this->email, 
+							 'fechaDeNac' => $this->fechaDeNac, 
+							 'foto' => $this->foto, 	
+							 'estatus' => 'Exito',
+							 'error' => 0);
 						return json_encode($arr);
 				}else{
-						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la activacion, verifica tus datos y vuelve a intentarlo','error' => 2);
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la function getUserByID','error' => 3);
 						return json_encode($arr);
 				}
 			}
