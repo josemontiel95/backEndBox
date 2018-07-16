@@ -30,6 +30,7 @@ class Laboratorio{
 			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 2);
 			}
+		}
 		return json_encode($arr);
 
 	}
