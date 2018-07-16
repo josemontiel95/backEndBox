@@ -16,32 +16,37 @@
 
 	switch ($function){
 		case 'upLoadFoto':
-			
-			$target_dir = "./../../../SystemData/UserData/".$_POST['id_usuario']."/";
-			$dirDatabase = "SystemData/UserData/".$_POST['id_usuario']."/";
-			if (!file_exists($target_dir)) {
-			    mkdir($target_dir, 0777, true);
-			}
-		    $json = array();
-		    $postData = file_get_contents("php://input");
-		    $input = json_decode($postData);
-			$json['_FILES'] = $_FILES;
 			$imageFileType = strtolower(pathinfo($_FILES["uploadFile"]["name"],PATHINFO_EXTENSION));
-		    $target_file = $target_dir . "foto_perfil.".$imageFileType;
-		    $target_fileDB = $dirDatabase . "foto_perfil.".$imageFileType;
-			if (move_uploaded_file($_FILES["uploadFile"]["tmp_name"], $target_file))  {  
-				$json['uploadOK'] = 1;
-			}else{
-				$json['uploadOK'] = 0;
+			if($imageFileType == "png" || $imageFileType == "jpg"){
+				$target_dir = "./../../../SystemData/UserData/".$_POST['id_usuario']."/";
+				$dirDatabase = "SystemData/UserData/".$_POST['id_usuario']."/";
+				if (!file_exists($target_dir)) {
+				    mkdir($target_dir, 0777, true);
+				}
+		    	$json = array();
+		    	$postData = file_get_contents("php://input");
+		    	$input = json_decode($postData);
+				$json['_FILES'] = $_FILES;
+				
+		    	$target_file = $target_dir . "foto_perfil.".$imageFileType;
+		    	$target_fileDB = $dirDatabase . "foto_perfil.".$imageFileType;
+				if (move_uploaded_file($_FILES["uploadFile"]["tmp_name"], $target_file))  {  
+					$json['uploadOK'] = 1;
+				}else{
+					$json['uploadOK'] = 0;
+				}
+		    	if($json['uploadOK']==1){
+			    	$usuario = new Usuario();
+		    		echo $usuario->upLoadFoto($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_usuario'],$target_fileDB);
+		    	}else{
+			    	$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Error al subir la foto','error' => 3);
+					echo json_encode($arr);
+		    	}	
 			}
-		    if($json['uploadOK']==1){
-		    	$usuario = new Usuario();
-		    	echo $usuario->upLoadFoto($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_usuario'],$target_fileDB);
-		    }else{
-		    	$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Error al subir la foto','error' => 3);
-				echo json_encode($arr);
-		    }	
-
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Erro invalido, solo aceptamos jpg y png','error' => 4);
+					echo json_encode($arr);
+			}
 		break;
 		case 'upDate':
 			$usuario = new Usuario();
