@@ -63,6 +63,7 @@ class Rol{
 				if($dbS->didQuerydied){
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 2);
 				}
+		}
 		return json_encode($arr);
 	}
 
@@ -84,8 +85,8 @@ class Rol{
 			      	);
 			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 2);
-		
-			}
+			}		
+		}
 		return json_encode($arr);
 	}
 
@@ -107,6 +108,7 @@ class Rol{
 			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 2);
 			}
+		}
 		return json_encode($arr);
 	}
 
@@ -128,6 +130,7 @@ class Rol{
 			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la activacion , verifica tus datos y vuelve a intentarlo','error' => 2);
 			}
+		}
 		return json_encode($arr);
 	}
 
