@@ -27,13 +27,9 @@ class Laboratorio{
 						VALUES
 						('1QQ','1QQ','1QQ')
 				",array($laboratorio,$estado,$municipio),"INSERT");
-			if(!$dbS->didQuerydied){
-				$id=$dbS->lastInsertedID;
-				$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
-			}else
+			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 2);
-		
-		}
+			}
 		return json_encode($arr);
 
 	}
@@ -55,12 +51,9 @@ class Laboratorio{
 					 "
 					,array($laboratorio,$estado,$municipio,$id_laboratorio),"UPDATE"
 			      	);
-			if(!$dbS->didQuerydied){
-				$id=$dbS->lastInsertedID;
-				$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
-			}else
+			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 2);
-		}		
+			}		
 		return json_encode($arr);
 	}
 
@@ -79,13 +72,9 @@ class Laboratorio{
 					 "
 					,array(0,$id_laboratorio),"UPDATE"
 			      	);
-			if(!$dbS->didQuerydied){
-				$id=$dbS->lastInsertedID;
-				$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
-			}else
+			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 2);
-		
-		}
+			}
 		return json_encode($arr);
 	}
 
@@ -106,13 +95,9 @@ class Laboratorio{
 					 "
 					,array(1,$id_laboratorio),"UPDATE"
 			      	);
-			if(!$dbS->didQuerydied){
-				$id=$dbS->lastInsertedID;
-				$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
-			}else
+			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la activacion , verifica tus datos y vuelve a intentarlo','error' => 2);
-		
-		}
+			}
 		return json_encode($arr);
 	}
 
@@ -136,8 +121,6 @@ class Laboratorio{
 			      );
 
 			if(!$dbS->didQuerydied){
-				$id=$dbS->lastInsertedID;
-				$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
 				if(count($arr) == 0)
 					$arr = array('estatus' =>"No hay registros", 'error' => 1); //Pendiente
 			}else
