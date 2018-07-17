@@ -26,8 +26,8 @@ class Herramienta{
 					condicion,
 					id_herramienta_tipo,
 					tipo,
-					createdON,
-					lastEditedON,
+					herramientas.createdON,
+					herramientas.lastEditedON,
 					herramientas.active
 			      FROM 
 			        herramienta_tipo,
