@@ -291,7 +291,7 @@ class Usuario{
 			      );
 			return json_encode($arr);
 		}else{
-			$arr = array('estatus' => 'Exito. Sesion cerrada','error' => 0);
+			$arr = array('estatus' => 'Tu token ya no es valido','error' => 1);
 			return json_encode($arr);
 		}
 	}
@@ -639,17 +639,21 @@ class Usuario{
 				$query_resultado = $this->getByID($id_usuario);
 				if($query_resultado != "empty"){
 						$id=$dbS->lastInsertedID;
-						$arr = array('id_usuario' => $this->id_usuario,
-							 'nombre' => $this->nombre, 
-							 'apellido' => $this->apellido,
-							 'laboratorio' => $this->laboratorio,
-							 'nss' => $this->nss,
-							 'rol' => $this->rol,
-							 'email' => $this->email, 
-							 'fechaDeNac' => $this->fechaDeNac, 
-							 'foto' => $this->foto, 	
-							 'estatus' => 'Exito',
-							 'error' => 0);
+						$arr = array(	'id_usuario' => $this->id_usuario,
+							 			'nombre' => $this->nombre, 
+							 			'apellido' => $this->apellido,
+							 			'laboratorio_id' => $this->laboratorio_id,
+							 			'laboratorio' => $this->laboratorio,
+							 			'nss' => $this->nss,
+							 			'rol' => $this->rol,
+							 			'email' => $this->email, 
+							 			'fechaDeNac' => $this->fechaDeNac, 
+							 			'foto' => $this->foto, 
+							 			'rol_usuario_id' => $this->rol_usuario_id, 
+							 			'token' => $token,	
+							 			'estatus' => 'Exito',
+							 			'error' => 0
+							 		);
 						return json_encode($arr);
 				}else{
 						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la function getUserByID','error' => 3);
