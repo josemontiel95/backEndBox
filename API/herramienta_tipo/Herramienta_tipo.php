@@ -28,16 +28,20 @@ class Herramienta_tipo{
 			        id_herramienta_tipo,
 					tipo
 			      FROM 
-			        Herramienta_tipo
+			        herramienta_tipo
 			      WHERE
 			      	 active = 1
 			      ",
 			      array(),
 			      "SELECT"
 			      );
-			if($arr = "empty") //Si esta bien el count porque si fuera un error la funcion devolveria 0 porque no lo ejecutaria correctamente
-				$arr = array('estatus' =>"No hay registros", 'error' => 1); //Pendiente
-		}
+			if(!$dbS->didQuerydied){
+						if(count($arr) == 0)
+							$arr = array('estatus' =>"No hay registros", 'error' => 1); //Pendiente
+						
+			}else
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 2);
+			}
 		return json_encode($arr);	
 
 	}
@@ -101,25 +105,7 @@ class Herramienta_tipo{
 		return json_encode($arr);
 	}
 
-	public function deactive($token,$rol_usuario_id,$id_herramienta_tipo){
-		global $dbS;
-		$usuario = new Usuario();
-		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		if($arr['error'] == 0){
-			$dbS->squery("	UPDATE
-							herramienta_tipo
-						SET
-							active = '1QQ'
-						WHERE
-							active=1 AND
-							id_herramienta_tipo = 1QQ
-					 "
-					,array(0,$id_herramienta_tipo),"UPDATE"
-			      	);
-			$arr = array('id_herramienta_tipo' => $id_herramienta_tipo,'estatus' => 'Herramienta_tipo desactivado','error' => 0);
-		}
-		return json_encode($arr);
-	}
+	
 
 
 
