@@ -25,5 +25,9 @@
 			$herra = new Herramienta();
 			echo $herra->getAll($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		case 'getHerramientaByID':
+			$herra = new Herramienta();
+			echo $herra->getHerramientaByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta']);
+		break;
 	}
 ?>
