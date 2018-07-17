@@ -232,7 +232,7 @@ class Usuario{
 //Devuelve el valor del toke, si esta activo, si esta muerta o si no esta activa
 	public function getIDByTokenAndValidate($token){
 		global $dbS;
-		$this->tokenUpDateLive($token)
+		$this->tokenUpDateLive($token);
 		$s= $dbS->qarrayA("
 			      SELECT 
 			        id_sesion,
