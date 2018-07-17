@@ -171,8 +171,10 @@ class Usuario{
 			$arr = array('estatus' => 'Exito. Sesion cerrada','error' => 0);
 			return json_encode($arr);
 		}
-		$arr = array('estatus' => 'Exito. Sesion cerrada','error' => 0);
-		return json_encode($arr);
+		else{
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'El token no existe o ya no es valido','error' => 1);
+			return json_encode($arr);
+		}
 	}
 
 	public function getIDByToken($token, $rol_usuario_id){
@@ -208,14 +210,29 @@ class Usuario{
 		}
 	}
 
+
+
+	public function tokenUpDateLive($token){
+		global $dbS;
+		$resultado = $dbS->squery(" 
+									UPDATE
+										sesion
+									SET
+										consultasAlBack = consultasAlBack+1
+									WHERE 
+										token = '1QQ'
+
+									",
+									array($token),"UPDATE");
+	}
+
 	/*
 		
 	*/
 //Devuelve el valor del toke, si esta activo, si esta muerta o si no esta activa
 	public function getIDByTokenAndValidate($token){
 		global $dbS;
-
-
+		$this->tokenUpDateLive($token)
 		$s= $dbS->qarrayA("
 			      SELECT 
 			        id_sesion,

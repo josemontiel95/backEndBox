@@ -37,10 +37,10 @@ class Rol{
 
 			if(!$dbS->didQuerydied){
 						if(count($arr) == 0)
-							$arr = array('estatus' =>"No hay registros", 'error' => 1); //Pendiente
+							$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
 						
 			}else
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 2);
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 6);
 		}
 		return json_encode($arr);	
 	}
@@ -61,7 +61,7 @@ class Rol{
 						('1QQ')
 				",array($rol),"INSERT");
 				if($dbS->didQuerydied){
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 2);
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
 				}
 		}
 		return json_encode($arr);
@@ -84,7 +84,7 @@ class Rol{
 					,array($rol,$id_rol_usuario),"UPDATE"
 			      	);
 			if($dbS->didQuerydied){
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 2);
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}		
 		}
 		return json_encode($arr);
@@ -106,7 +106,7 @@ class Rol{
 					,array(0,$id_rol_usuario),"UPDATE"
 			      	);
 			if($dbS->didQuerydied){
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 2);
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}
 		}
 		return json_encode($arr);
@@ -128,7 +128,7 @@ class Rol{
 					,array(1,$id_rol_usuario),"UPDATE"
 			      	);
 			if($dbS->didQuerydied){
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la activacion , verifica tus datos y vuelve a intentarlo','error' => 2);
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la activacion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}
 		}
 		return json_encode($arr);
