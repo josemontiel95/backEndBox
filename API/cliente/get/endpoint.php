@@ -25,5 +25,14 @@
 			$cliente = new Cliente();
 			echo $cliente->getAll($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		case 'deactive':
+			$cliente = new Cliente();
+			echo $cliente->deactive($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_cliente']);
+		break;
+
+		case 'active':
+			$cliente = new Cliente();
+			echo $cliente->active($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_cliente']);
+		break;
 	}
 ?>

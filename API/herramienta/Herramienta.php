@@ -161,7 +161,7 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
-	public function deactivate($token,$rol_usuario_id,$id_herramienta){
+	public function deactive($token,$rol_usuario_id,$id_herramienta){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -188,7 +188,7 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
-	public function activate($token,$rol_usuario_id,$id_herramienta){
+	public function active($token,$rol_usuario_id,$id_herramienta){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);

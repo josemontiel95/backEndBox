@@ -100,7 +100,55 @@ class Cliente{
 		return json_encode($arr);	
 	}
 
+	public function deactive($token,$rol_usuario_id,$id_cliente){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+							cliente
+						SET
+							active = '1QQ'
+						WHERE
+							active=1 AND
+							id_cliente = 1QQ
+					 "
+					,array(0,$id_cliente),"UPDATE"
+			      	);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_cliente' => $id_cliente,'estatus' => 'Cliente se desactivo','error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
 
+	public function active($token,$rol_usuario_id,$id_cliente){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+							cliente
+						SET
+							active = '1QQ'
+						WHERE
+							active=0 AND
+							id_cliente = 1QQ
+					 "
+					,array(1,$id_cliente),"UPDATE"
+			      	);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_cliente' => $id_cliente,'estatus' => 'Cliente se activo','error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la activacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
 
 
 	
