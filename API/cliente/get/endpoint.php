@@ -34,5 +34,10 @@
 			$cliente = new Cliente();
 			echo $cliente->getClienteByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_cliente']);
 		break;
+		case 'getAllUser';
+			$cliente = new Cliente();
+			echo $cliente->getAllUser($_GET['token'],$_GET['rol_usuario_id']);
+		break;
+
 	}
 ?>

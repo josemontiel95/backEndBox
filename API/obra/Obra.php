@@ -15,18 +15,18 @@ class Obra{
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
-	public function insert($token,$rol_usuario_id,$obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera,$tipo){
+	public function insert($token,$rol_usuario_id,$obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera_id,$tipo){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						obra(obra,prefijo,fechaDeCreacion,descripcion,cliente_id,concretera,tipo)
+						obra(obra,prefijo,fechaDeCreacion,descripcion,cliente_id,concretera_id,tipo)
 
 						VALUES
-						('1QQ','1QQ','1QQ','1QQ',1QQ,'1QQ','1QQ')
-				",array($obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera,$tipo),"INSERT");
+						('1QQ','1QQ','1QQ','1QQ',1QQ,1QQ,1QQ)
+				",array($obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera_id,$tipo),"INSERT");
 				$arr = array('id_obra' => 'No disponible, esto NO es un error', 'obra' => $obra, 'estatus' => 'Exito en insercion', 'error' => 0);
 			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
@@ -35,7 +35,7 @@ class Obra{
 		return json_encode($arr);
 	}
 
-	public function upDate($token,$rol_usuario_id,$id_obra,$obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera,$tipo){
+	public function upDate($token,$rol_usuario_id,$id_obra,$obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera_id,$tipo){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -48,13 +48,13 @@ class Obra{
 							fechaDeCreacion = '1QQ',
 							descripcion ='1QQ',
 							cliente_id = '1QQ', 
-							concretera = '1QQ',
-							tipo = '1QQ'
+							concretera_id = 1QQ,
+							tipo = 1QQ
 						WHERE
 							active=1 AND
 							id_obra = 1QQ
 					 "
-					,array($obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera,$tipo,$id_obra),"UPDATE"
+					,array($obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera_id,$tipo,$id_obra),"UPDATE"
 			      	);
 			$arr = array('id_obra' => $id_obra, 'obra' => $obra,'estatus' => 'Exito de actualizacion','error' => 0);
 			if($dbS->didQuerydied){
@@ -78,17 +78,19 @@ class Obra{
 					prefijo,
 					fechaDeCreacion,
 					descripcion,
-					cliente_id,
-					concretera,
+					id_cliente,
+					nombre,
 					tipo,
 					obra.createdON,
 					obra.lastEditedON, 
-					nombre,
+					id_concretera,
+					concretera,
 					IF(obra.active = 1,'Si','No') AS active
 			      FROM 
-			        obra,cliente
+			        cliente,obra,concretera
 			      WHERE
-			      	 cliente_id = id_cliente
+			      	 cliente_id = id_cliente AND
+			      	 concretera_id = id_concretera
 			      ",
 			      array(),
 			      "SELECT"
