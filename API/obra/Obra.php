@@ -22,7 +22,7 @@ class Obra{
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						obra(obra,prefijo,fechaDeCreacion,descripcion,cliente_id,concretera_id,tipo, $revenimiento, $incertidumbre)
+						obra(obra,prefijo,fechaDeCreacion,descripcion,cliente_id,concretera_id,tipo, revenimiento, incertidumbre)
 
 						VALUES
 						('1QQ','1QQ','1QQ','1QQ',1QQ,1QQ,1QQ,'1QQ','1QQ')
