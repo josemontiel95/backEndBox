@@ -65,6 +65,7 @@ class Cliente{
 
 	}
 
+	//Mandar direccion----PENDIENTE
 	public function getAll($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -76,6 +77,7 @@ class Cliente{
 					rfc,
 					razonSocial,
 					nombre,
+					direccion,
 					email,
 					telefono,
 					nombreContacto,

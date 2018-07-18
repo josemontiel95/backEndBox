@@ -187,6 +187,50 @@ class Obra{
 	}
 
 
+	public function getObraByID($token,$rol_usuario_id,$id_obra){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA("
+			      SELECT
+			      	id_obra, 
+			        obra,
+					prefijo,
+					fechaDeCreacion,
+					descripcion,
+					tipo,
+					id_concretera,
+					concretera,
+					id_cliente,
+					nombre
+			      FROM 
+			      	cliente,obra,concretera
+			      WHERE
+			      	cliente_id = id_cliente AND
+			      	concretera_id = id_concretera AND 
+			      	id_obra = 1QQ
+			      ",
+			      array($id_obra),
+			      "SELECT"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'ID no existe','error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getObraByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		return json_encode($arr);
+	}
+
+
 
 
 
