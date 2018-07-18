@@ -17,13 +17,27 @@
 			$cliente = new Cliente();
 			echo $cliente->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['rfc'],$_GET['razonSocial'],$_GET['nombre'],$_GET['direccion'],$_GET['email'],$_GET['telefono'],$_GET['nombreContacto'],$_GET['telefonoDeContacto']);		
 		break;
-		case 'upDate':
-			$cliente = new Cliente();
-			echo $cliente->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_cliente'],$_GET['rfc'],$_GET['razonSocial'],$_GET['nombre'],$_GET['direccion'],$_GET['email'],$_GET['telefono'],$_GET['nombreContacto'],$_GET['telefonoDeContacto']);
-		break;
 		case 'getAll':
 			$cliente = new Cliente();
 			echo $cliente->getAll($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		case 'deactive':
+			$cliente = new Cliente();
+			echo $cliente->deactive($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_cliente']);
+		break;
+
+		case 'active':
+			$cliente = new Cliente();
+			echo $cliente->active($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_cliente']);
+		break;
+		case 'getClienteByID':
+			$cliente = new Cliente();
+			echo $cliente->getClienteByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_cliente']);
+		break;
+		case 'getAllUser';
+			$cliente = new Cliente();
+			echo $cliente->getAllUser($_GET['token'],$_GET['rol_usuario_id']);
+		break;
+
 	}
 ?>

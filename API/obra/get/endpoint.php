@@ -29,5 +29,19 @@
 			$obra = new Obra();
 			echo $obra->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		case 'deactive':
+			$obra = new Obra();
+			echo $obra->deactive($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_obra']);
+		break;
+		case 'active':
+			$obra = new Obra();
+			echo $obra->active($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_obra']);
+		break;
+		case 'getObraByID':
+			$obra = new Obra();
+			echo $obra->getObraByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_obra']);
+		break;
+
+
 	}
 ?>
