@@ -83,9 +83,9 @@ class Obra{
 					tipo,
 					obra.createdON,
 					obra.lastEditedON,
-					obra.active,
 					id_cliente,
-					nombre
+					nombre,
+					IF(obra.active = 1,'Si','No') AS active
 			      FROM 
 			        obra,cliente
 			      WHERE
