@@ -1,0 +1,19 @@
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/josemontiel/.ssh/id_rsa.
+Your public key has been saved in /home/josemontiel/.ssh/id_rsa.pub.
+The key fingerprint is:
+bc:3d:fe:89:ad:8c:8f:6b:0c:e0:5a:93:e0:75:f5:2b 
+The key's randomart image is:
++--[ RSA 2048]----+
+|                 |
+|        .        |
+|       . .       |
+|  . o ..  .      |
+| . + +  S  .     |
+|  . = . Eo.      |
+|   o . o..o      |
+|  .     o= + .   |
+|       .+o*o+    |
++-----------------+
