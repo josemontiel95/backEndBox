@@ -143,14 +143,11 @@ class Herramienta{
 				}
 				else{
 					$arr = array(			'id_herramienta' => $s['id_herramienta'],
-								 			'herramienta_tipo_id' => $s['herramienta_tipo_id'], 
 								 			'fechaDeCompra' => $s['fechaDeCompra'],
+								 			'herramienta_tipo_id' => $s['herramienta_tipo_id'],
 								 			'placas' => $s['placas'],
 							 				'condicion' => $s['condicion'],
-							 				'id_herramienta_tipo' => $s['id_herramienta_tipo'],
 							 				'tipo' => $s['tipo'],
-							 				'createdON' => $s['createdON'],
-							 				'lastEditedON' => $s['lastEditedON'],
 							 				'active' => $s['active'],
 							 				'estatus' => 'Exito',
 							 				'error' => 0
