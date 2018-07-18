@@ -151,6 +151,48 @@ class Cliente{
 	}
 
 
+
+	public function getClienteByID($token,$rol_usuario_id,$id_cliente){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA("
+			      SELECT
+			      	id_cliente, 
+			        rfc,
+					razonSocial,
+					nombre,
+					direccion,
+					email,
+					telefono,
+					nombreContacto,
+					telefonoDeContacto
+			      FROM 
+			      	cliente
+			      WHERE 
+			      	id_cliente = 1QQ
+			      ",
+			      array($id_cliente),
+			      "SELECT"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					return "empty";
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getClienteByID , verifica tus datos y vuelve a intentarlo','error' => 2);
+			}
+		}
+		return json_encode($arr);
+	}
+
+
 	
 
 
