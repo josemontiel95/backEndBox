@@ -134,24 +134,24 @@ class Obra{
 	}
 
 
-	public function deactive($token,$rol_usuario_id,$id_cliente){
+	public function deactive($token,$rol_usuario_id,$id_obra){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("	UPDATE
-							cliente
+							obra
 						SET
 							active = 1QQ
 						WHERE
 							active=1 AND
-							id_cliente = 1QQ
+							id_obra = 1QQ
 					 "
-					,array(0,$id_cliente),"UPDATE"
+					,array(0,$id_obra),"UPDATE"
 			      	);
 		//PENDIENTE por la herramienta_tipo_id para poderla imprimir tengo que cargar las variables de la base de datos?
 			if(!$dbS->didQuerydied){
-				$arr = array('id_cliente' => $id_cliente,'estatus' => 'Cliente se desactivo','error' => 0);
+				$arr = array('id_obra' => $id_obra,'estatus' => 'Obra se desactivo','error' => 0);
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 5);
@@ -161,23 +161,23 @@ class Obra{
 		return json_encode($arr);
 	}
 
-	public function active($token,$rol_usuario_id,$id_cliente){
+	public function active($token,$rol_usuario_id,$id_obra){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("	UPDATE
-							cliente
+							obra
 						SET
 							active = 1QQ
 						WHERE
 							active=0 AND
-							id_cliente = 1QQ
+							id_obra = 1QQ
 					 "
-					,array(1,$id_cliente),"UPDATE"
+					,array(1,$id_obra),"UPDATE"
 			      	);
 			if(!$dbS->didQuerydied){
-				$arr = array('id_cliente' => $id_cliente,'estatus' => 'Cliente se activo','error' => 0);
+				$arr = array('id_obra' => $id_obra,'estatus' => 'Obra se activo','error' => 0);
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la activacion , verifica tus datos y vuelve a intentarlo','error' => 5);
