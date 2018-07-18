@@ -178,18 +178,44 @@ class Herramienta{
 			      	);
 		//PENDIENTE por la herramienta_tipo_id para poderla imprimir tengo que cargar las variables de la base de datos?
 			if(!$dbS->didQuerydied){
-				$arr = array('id_herramienta' => $id_herramienta, 'herramienta_tipo_id' => $herramienta_tipo_id,'estatus' => 'Herramienta se desactivo','error' => 0);
+				$arr = array('id_herramienta' => $id_herramienta,'estatus' => 'Herramienta se desactivo','error' => 0);
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}
 
-
-
-		
 		}
 		return json_encode($arr);
 	}
+
+	public function activate($token,$rol_usuario_id,$id_herramienta){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+							herramientas
+						SET
+							active = 1QQ
+						WHERE
+							active=0 AND
+							id_herramienta = 1QQ
+					 "
+					,array(1,$id_herramienta),"UPDATE"
+			      	);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_herramienta' => $id_herramienta,'estatus' => 'Herramienta se activo','error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la activacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
+
+
+
+
 
 
 

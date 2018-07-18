@@ -29,5 +29,14 @@
 			$herra = new Herramienta();
 			echo $herra->getHerramientaByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta']);
 		break;
+		case 'deactivate':
+			$herra_tipo = new Herramienta();
+			echo $herra_tipo->deactivate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta']);
+		break;
+
+		case 'activate':
+			$herra_tipo = new Herramienta();
+			echo $herra_tipo->activate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta']);
+		break;
 	}
 ?>
