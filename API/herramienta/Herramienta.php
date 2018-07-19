@@ -109,7 +109,7 @@ class Herramienta{
 	}
 
 
-
+	//PENDIENTE----Borrar la duplicacion de informacion en el id_herramienta_tipo
 	public function getHerramientaByID($token,$rol_usuario_id,$id_herramienta){
 		global $dbS;
 		$usuario = new Usuario();
