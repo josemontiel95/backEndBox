@@ -15,11 +15,11 @@
 	switch ($function) {
 		case 'insert':
 			$herra = new Herramienta();
-			echo $herra->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['herramienta_tipo_id'],$_GET['fechaDeCompra'],$_GET['condicion']);		
+			echo $herra->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['herramienta_tipo_id'],$_GET['fechaDeCompra'],$_GET['placas'],$_GET['condicion']);		
 		break;
 		case 'upDate':
 			$herra = new Herramienta();
-			echo $herra->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta'],$_GET['herramienta_tipo_id'],$_GET['fechaDeCompra'],$_GET['condicion']);
+			echo $herra->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta'],$_GET['herramienta_tipo_id'],$_GET['fechaDeCompra'],$_GET['placas'],$_GET['condicion']);
 		break;
 		case 'getAll':
 			$herra = new Herramienta();

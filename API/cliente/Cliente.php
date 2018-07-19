@@ -65,7 +65,6 @@ class Cliente{
 
 	}
 
-	//Mandar direccion----PENDIENTE
 	public function getAll($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -102,11 +101,10 @@ class Cliente{
 		return json_encode($arr);	
 	}
 
-	//---PENDIENTE NO TENGO LOS PRIVILEGIOS
 	public function getAllUser($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
-		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$arr = json_decode($usuario->validateSesion($token,$rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      SELECT 
@@ -116,6 +114,8 @@ class Cliente{
 			        cliente
 			      WHERE
 			      	 active = 1
+			      ORDER BY
+			      	nombre
 			      ",
 			      array(),
 			      "SELECT"
