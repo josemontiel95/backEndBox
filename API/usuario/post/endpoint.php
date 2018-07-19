@@ -44,7 +44,7 @@
 		    	}	
 			}
 			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Erro invalido, solo aceptamos jpg y png','error' => 4);
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Error invalido, solo aceptamos jpg y png y tu ingresaste un:'.$imageFileType,'error' => 4);
 					echo json_encode($arr);
 			}
 		break;

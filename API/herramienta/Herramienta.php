@@ -57,18 +57,18 @@ class Herramienta{
 	}
 
 
-	public function insert($token,$rol_usuario_id,$herramienta_tipo_id,$fechaDeCompra,$condicion){
+	public function insert($token,$rol_usuario_id,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						herramientas(herramienta_tipo_id,fechaDeCompra,condicion)
+						herramientas(herramienta_tipo_id,fechaDeCompra,placas,condicion)
 
 						VALUES
-						('1QQ','1QQ','1QQ')
-				",array($herramienta_tipo_id,$fechaDeCompra,$condicion),"INSERT");
+						('1QQ','1QQ','1QQ','1QQ')
+				",array($herramienta_tipo_id,$fechaDeCompra,$placas,$condicion),"INSERT");
 
 			if(!$dbS->didQuerydied){
 				$arr = array('id_herramienta' => 'No disponible, esto NO es un error', 'herramienta_tipo_id' => $herramienta_tipo_id, 'estatus' => 'Exito en insercion', 'error' => 0);
@@ -80,7 +80,7 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
-	public function upDate($token,$rol_usuario_id,$id_herramienta,$herramienta_tipo_id,$fechaDeCompra,$condicion){
+	public function upDate($token,$rol_usuario_id,$id_herramienta,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -89,13 +89,14 @@ class Herramienta{
 							herramientas
 						SET
 							herramienta_tipo_id ='1QQ',
-							fechaDeCompra = '1QQ', 
+							fechaDeCompra = '1QQ',
+							placas = '1QQ', 
 							condicion = '1QQ'
 						WHERE
 							active=1 AND
 							id_herramienta = 1QQ
 					 "
-					,array($herramienta_tipo_id,$fechaDeCompra,$condicion,$id_herramienta),"UPDATE"
+					,array($herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$id_herramienta),"UPDATE"
 			      	);
 			if(!$dbS->didQuerydied){
 				$arr = array('id_herramienta' => 'No disponible, esto NO es un error', 'herramienta_tipo_id' => $herramienta_tipo_id, 'estatus' => 'Exito en actualizacion', 'error' => 0);

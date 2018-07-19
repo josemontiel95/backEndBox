@@ -18,7 +18,7 @@ class Herramienta_tipo{
 		Siguiendo la metodologia de POO las acciones las seguiria haciendo el usuario
 	*/
 
-	function getAll($token,$rol_usuario_id){
+	function getAllUser($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -31,6 +31,8 @@ class Herramienta_tipo{
 			        herramienta_tipo
 			      WHERE
 			      	 active = 1
+			      ORDER BY
+			     	 tipo
 			      ",
 			      array(),
 			      "SELECT"
@@ -46,25 +48,30 @@ class Herramienta_tipo{
 
 	}
 
-	public function insert($token,$rol_usuario_id,$tipo,$placas){
+	public function insert($token,$rol_usuario_id,$tipo){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);		
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						herramienta_tipo(tipo,placas)
+						herramienta_tipo(tipo)
 
 						VALUES
-						('1QQ','1QQ')
-				",array($tipo,$placas),"INSERT");
-			$arr = array('id_herramienta_tipo' => 'No dispinible, esto NO es un error','estatus' => 'Exito de insercion','error' => 0);
+						('1QQ')
+				",array($tipo),"INSERT");
+			if(!$dbS->didQuerydied){
+				$arr = array('id_herramienta_tipo' => 'No disponible, esto NO es un error', 'tipo' => $tipo, 'estatus' => 'Exito en insercion', 'error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
 		}
 		return json_encode($arr);
 	}
 
 
-	public function upDate($token,$rol_usuario_id,$id_herramienta_tipo,$tipo,$placas){
+	public function upDate($token,$rol_usuario_id,$id_herramienta_tipo,$tipo){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -72,15 +79,19 @@ class Herramienta_tipo{
 			$dbS->squery("	UPDATE
 							herramienta_tipo
 						SET
-							tipo = '1QQ',
-							placas = '1QQ'
+							tipo = '1QQ'
 						WHERE
 							active=1 AND
 							id_herramienta_tipo = 1QQ
 					 "
-					,array($tipo,$placas,$id_herramienta_tipo),"UPDATE"
+					,array($tipo,$id_herramienta_tipo),"UPDATE"
 			      	);
-			$arr = array('id_herramienta_tipo' => $id_herramienta_tipo, 'tipo' => $tipo,'estatus' => 'Exito de actualizacion','error' => 0);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_herramienta_tipo' => $id_herramienta_tipo, 'tipo' => $tipo, 'estatus' => 'Exito en actualizacion', 'error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
 		}
 		return json_encode($arr);
 	}
@@ -93,14 +104,44 @@ class Herramienta_tipo{
 			$dbS->squery("	UPDATE
 							herramienta_tipo
 						SET
-							active = '1QQ'
+							active = 1QQ
 						WHERE
 							active=1 AND
 							id_herramienta_tipo = 1QQ
 					 "
 					,array(0,$id_herramienta_tipo),"UPDATE"
 			      	);
-			$arr = array('id_herramienta_tipo' => $id_herramienta_tipo,'estatus' => 'Herramienta_tipo desactivado','error' => 0);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_herramienta_tipo' => $id_herramienta_tipo,'estatus' => 'Herramienta_tipo se desactivo','error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function active($token,$rol_usuario_id,$id_herramienta_tipo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+							herramienta_tipo
+						SET
+							active = 1QQ
+						WHERE
+							active=0 AND
+							id_herramienta_tipo = 1QQ
+					 "
+					,array(1,$id_herramienta_tipo),"UPDATE"
+			      	);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_herramienta_tipo' => $id_herramienta_tipo,'estatus' => 'Herramienta_tipo se desactivo','error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
 		}
 		return json_encode($arr);
 	}
