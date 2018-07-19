@@ -14,7 +14,7 @@ class Cliente{
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
-	public function insert($token,$rol_usuario_id,$rfc,$razonSocial,$nombre,$direccion,$email,$telefono,$nombreContacto,$telefonoDeContacto){
+	public function insertAdmin($token,$rol_usuario_id,$rfc,$razonSocial,$nombre,$direccion,$email,$telefono,$nombreContacto,$telefonoDeContacto){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -34,7 +34,7 @@ class Cliente{
 		return json_encode($arr);
 	}
 
-	public function upDate($token,$rol_usuario_id,$id_cliente,$rfc,$razonSocial,$nombre,$direccion,$email,$telefono,$nombreContacto,$telefonoDeContacto){
+	public function upDateAdmin($token,$rol_usuario_id,$id_cliente,$rfc,$razonSocial,$nombre,$direccion,$email,$telefono,$nombreContacto,$telefonoDeContacto){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -65,7 +65,7 @@ class Cliente{
 
 	}
 
-	public function getAll($token,$rol_usuario_id){
+	public function getAllAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -83,7 +83,7 @@ class Cliente{
 					telefonoDeContacto,
 					createdON,
 					lastEditedON,
-					active
+					IF(active = 1,'Si','No') AS active
 			      FROM 
 			        cliente
 			      ",
@@ -101,7 +101,7 @@ class Cliente{
 		return json_encode($arr);	
 	}
 
-	public function getAllUser($token,$rol_usuario_id){
+	public function getForDroptdownAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token,$rol_usuario_id),true);
@@ -109,11 +109,10 @@ class Cliente{
 			$arr= $dbS->qAll("
 			      SELECT 
 			        id_cliente,
-					nombre
+					nombre,
+					active
 			      FROM 
 			        cliente
-			      WHERE
-			      	 active = 1
 			      ORDER BY
 			      	nombre
 			      ",
@@ -131,7 +130,7 @@ class Cliente{
 		return json_encode($arr);	
 	}
 
-	public function deactive($token,$rol_usuario_id,$id_cliente){
+	public function deactivate($token,$rol_usuario_id,$id_cliente){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -156,7 +155,7 @@ class Cliente{
 		return json_encode($arr);
 	}
 
-	public function active($token,$rol_usuario_id,$id_cliente){
+	public function activate($token,$rol_usuario_id,$id_cliente){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -183,7 +182,7 @@ class Cliente{
 
 
 
-	public function getClienteByID($token,$rol_usuario_id,$id_cliente){
+	public function getByIDAdmin($token,$rol_usuario_id,$id_cliente){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -198,7 +197,8 @@ class Cliente{
 					email,
 					telefono,
 					nombreContacto,
-					telefonoDeContacto
+					telefonoDeContacto,
+					active
 			      FROM 
 			      	cliente
 			      WHERE 

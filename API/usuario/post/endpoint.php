@@ -48,9 +48,9 @@
 					echo json_encode($arr);
 			}
 		break;
-		case 'upDate':
+		case 'upDateAdmin':
 			$usuario = new Usuario();
-			echo $usuario->upDate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_usuario'],$_POST['nombre'],$_POST['apellido'],$_POST['laboratorio_id'],$_POST['nss'],$_POST['email'],$_POST['fechaDeNac'],$_POST['rol_usuario_id_new']);
+			echo $usuario->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_usuario'],$_POST['nombre'],$_POST['apellido'],$_POST['laboratorio_id'],$_POST['nss'],$_POST['email'],$_POST['fechaDeNac'],$_POST['rol_usuario_id_new']);
 		break;
 		case 'insertAdmin':
 			$usuario = new Usuario();

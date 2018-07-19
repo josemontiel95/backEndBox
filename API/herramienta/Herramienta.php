@@ -19,7 +19,38 @@ class Herramienta{
 
 
 
-	public function getAll($token,$rol_usuario_id){
+	public function getForDroptdownAdmin($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      SELECT 
+			      	id_herramienta,
+			        tipo,
+					herramientas.active
+			      FROM 
+			        herramienta_tipo,herramientas
+			       WHERE
+			       	id_herramienta_tipo=herramienta_tipo_id
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if(count($arr) == 0)
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
+
+
+	public function getAllAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -35,7 +66,7 @@ class Herramienta{
 					tipo,
 					herramientas.createdON,
 					herramientas.lastEditedON,
-					herramientas.active
+					IF(herramientas.active = 1,'Si','No') AS active
 			      FROM 
 			        herramienta_tipo,
 					herramientas
@@ -57,7 +88,7 @@ class Herramienta{
 	}
 
 
-	public function insert($token,$rol_usuario_id,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion){
+	public function insertAdmin($token,$rol_usuario_id,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -80,7 +111,7 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
-	public function upDate($token,$rol_usuario_id,$id_herramienta,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion){
+	public function upDateAdmin($token,$rol_usuario_id,$id_herramienta,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -93,7 +124,6 @@ class Herramienta{
 							placas = '1QQ', 
 							condicion = '1QQ'
 						WHERE
-							active=1 AND
 							id_herramienta = 1QQ
 					 "
 					,array($herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$id_herramienta),"UPDATE"
@@ -108,9 +138,7 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
-
-	//PENDIENTE----Borrar la duplicacion de informacion en el id_herramienta_tipo
-	public function getHerramientaByID($token,$rol_usuario_id,$id_herramienta){
+	public function getByIDAdmin($token,$rol_usuario_id,$id_herramienta){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -122,7 +150,6 @@ class Herramienta{
 			        fechaDeCompra,
 			        placas,
 			        condicion,
-			        id_herramienta_tipo,
 					tipo,
 					herramientas.createdON,
 					herramientas.lastEditedON,
@@ -162,7 +189,7 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
-	public function deactive($token,$rol_usuario_id,$id_herramienta){
+	public function deactivate($token,$rol_usuario_id,$id_herramienta){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -189,7 +216,7 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
-	public function active($token,$rol_usuario_id,$id_herramienta){
+	public function activate($token,$rol_usuario_id,$id_herramienta){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);

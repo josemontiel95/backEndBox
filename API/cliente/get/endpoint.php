@@ -13,30 +13,18 @@
 	include_once("./../Cliente.php");
 
 	switch ($function) {
-		case 'insert':
+		
+		case 'getAllAdmin':
 			$cliente = new Cliente();
-			echo $cliente->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['rfc'],$_GET['razonSocial'],$_GET['nombre'],$_GET['direccion'],$_GET['email'],$_GET['telefono'],$_GET['nombreContacto'],$_GET['telefonoDeContacto']);		
+			echo $cliente->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
-		case 'getAll':
+		case 'getByIDAdmin':
 			$cliente = new Cliente();
-			echo $cliente->getAll($_GET['token'],$_GET['rol_usuario_id']);
+			echo $cliente->getByIDAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_cliente']);
 		break;
-		case 'deactive':
+		case 'getForDroptdownAdmin';
 			$cliente = new Cliente();
-			echo $cliente->deactive($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_cliente']);
-		break;
-
-		case 'active':
-			$cliente = new Cliente();
-			echo $cliente->active($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_cliente']);
-		break;
-		case 'getClienteByID':
-			$cliente = new Cliente();
-			echo $cliente->getClienteByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_cliente']);
-		break;
-		case 'getAllUser';
-			$cliente = new Cliente();
-			echo $cliente->getAllUser($_GET['token'],$_GET['rol_usuario_id']);
+			echo $cliente->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
 
 	}

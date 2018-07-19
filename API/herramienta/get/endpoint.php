@@ -13,30 +13,19 @@
 	include_once("./../Herramienta.php");
 
 	switch ($function) {
-		case 'insert':
+		case 'getAllAdmin':
 			$herra = new Herramienta();
-			echo $herra->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['herramienta_tipo_id'],$_GET['fechaDeCompra'],$_GET['placas'],$_GET['condicion']);		
+			echo $herra->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
-		case 'upDate':
+		case 'getByIDAdmin':
 			$herra = new Herramienta();
-			echo $herra->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta'],$_GET['herramienta_tipo_id'],$_GET['fechaDeCompra'],$_GET['placas'],$_GET['condicion']);
+			echo $herra->getByIDAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta']);
 		break;
-		case 'getAll':
+		case 'getForDroptdownAdmin':
 			$herra = new Herramienta();
-			echo $herra->getAll($_GET['token'],$_GET['rol_usuario_id']);
-		break;
-		case 'getHerramientaByID':
-			$herra = new Herramienta();
-			echo $herra->getHerramientaByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta']);
-		break;
-		case 'deactive':
-			$herra_tipo = new Herramienta();
-			echo $herra_tipo->deactive($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta']);
+			echo $herra->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
 
-		case 'active':
-			$herra_tipo = new Herramienta();
-			echo $herra_tipo->active($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta']);
-		break;
+		
 	}
 ?>
