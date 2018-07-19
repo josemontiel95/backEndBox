@@ -15,6 +15,8 @@ class Usuario{
 	private $foto;
 	private $rol_usuario_id;
 	private $rol;
+	private $createdON;
+	private $lastEditedON;
 	private $contrasena;
 	
 	/* Variables de utilería */
@@ -279,7 +281,7 @@ class Usuario{
 			}
 		}
 	}
-	public function getAllUsuarios($token){
+	public function getAllAdmin($token){
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token)=="success"){
 			$arr= $dbS->qAll("
@@ -295,13 +297,14 @@ class Usuario{
 			        fechaDeNac,
 			        foto,
 			        rol_usuario_id,
+			        createdON,
+					lastEditedON,
 			        usuario.active
 			      FROM 
 			        usuario,rol_usuario,laboratorio
 			      WHERE
 			      	laboratorio_id = id_laboratorio AND
 			      	rol_usuario_id = id_rol_usuario
-
 			      ",
 			      array(),
 			      "SELECT"
@@ -332,6 +335,8 @@ class Usuario{
 			        foto,
 			        rol_usuario_id,
 			        rol,
+			        createdON,
+					lastEditedON,
 			        contrasena
 			      FROM 
 			        usuario,
@@ -340,8 +345,6 @@ class Usuario{
 			      WHERE 
 			      	laboratorio_id = id_laboratorio AND
 			      	rol_usuario_id = id_rol_usuario AND
-
-			      	usuario.active=1 AND
 			        id_usuario = 1QQ
 			      ",
 			      array($id_usuario),
@@ -361,8 +364,13 @@ class Usuario{
 			$this->foto= $s['foto'];
 			$this->rol = $s['rol'];
 			$this->rol_usuario_id= $s['rol_usuario_id'];
-			$this->contrasena= $s['contrasena'];
-			$this->email= $s['email'];
+
+			$this->rol = $s['rol'];
+			$this->rol_usuario_id= $s['rol_usuario_id'];
+
+
+			$this->createdON= $s['createdON'];
+			$this->lastEditedON= $s['lastEditedON'];
 			return "success";
 		}
 
@@ -410,8 +418,36 @@ class Usuario{
 
 	}
 
-//Meterle el nss
-	public function insert($token,$rol_usuario_id,$nombre,$apellido,$laboratorio_id,$nss,$email,$fechaDeNac,$rol_usuario_id_new,$constrasena){
+	public function getForDroptdownAdmin($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      SELECT 
+			        id_usuario,
+					nombre,
+					active
+			      FROM 
+			        usuario
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if(count($arr) == 0)
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
+
+
+	public function insertAdmin($token,$rol_usuario_id,$nombre,$apellido,$laboratorio_id,$nss,$email,$fechaDeNac,$rol_usuario_id_new,$constrasena){
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){
@@ -435,7 +471,6 @@ class Usuario{
 					}
 				}
 				else{
-					//Mensaje de error---PENDIENTE---
 					$arr = array('estatus'=>'Ese correo ya existe','error' => 4);
 					return json_encode($arr);
 				}					
@@ -453,10 +488,9 @@ class Usuario{
 	}
 
 
-	public function upDate($token,$rol_usuario_id,$id_usuario,$nombre,$apellido,$laboratorio_id,$nss,$email,$fechaDeNac,$rol_usuario_id_new){
+	public function upDateAdmin($token,$rol_usuario_id,$id_usuario,$nombre,$apellido,$laboratorio_id,$nss,$email,$fechaDeNac,$rol_usuario_id_new){
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
-			//Valida identidad y permisos
 			if($rol_usuario_id==$this->rol_usuario_id){
 				$email =  strtolower($email);
 				if($this->emailValidateUpDate($email,$id_usuario)){
@@ -486,7 +520,6 @@ class Usuario{
 					}
 				}
 				else{
-					//Mensaje de error---PENDIENTE---
 					$arr = array('estatus'=>'Ese correo ya existe','error' => 4);
 					return json_encode($arr);
 				}
@@ -649,7 +682,7 @@ class Usuario{
 		}
 	}
 
-	public function getUserByID($token,$rol_usuario_id,$id_usuario){
+	public function getByIDAdmin($token,$rol_usuario_id,$id_usuario){
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){
@@ -664,7 +697,11 @@ class Usuario{
 							 			'nss' => $this->nss,
 							 			'rol' => $this->rol,
 							 			'email' => $this->email, 
-							 			'fechaDeNac' => $this->fechaDeNac, 
+							 			'fechaDeNac' => $this->fechaDeNac,
+
+							 			'createdON' => $this->createdON, 
+							 			'lastEditedON' => $this->lastEditedON,
+
 							 			'foto' => $this->foto, 
 							 			'rol_usuario_id' => $this->rol_usuario_id, 
 							 			'token' => $token,	
@@ -687,179 +724,6 @@ class Usuario{
 			return json_encode($arr);
 		}
 	}
-
-
-	/*
-	
-
-
-	public function insertHerra($token,$rol_usuario_id,$herramienta_tipo_id,$fechaDeCompra,$condicion){
-		if($this->getIDByTokenAndValidate($token) == 'success'){
-			if($rol_usuario_id==$this->rol_usuario_id){
-				$herra = new Herramienta();
-				return $herra->insert($herramienta_tipo_id,$fechaDeCompra,$condicion);
-			}
-			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
-				return json_encode($arr);
-			}
-		}
-		else{
-			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
-			return json_encode($arr);
-		}
-	}
-
-
-	public function upDateHerra($token,$rol_usuario_id,$id_herramienta,$herramienta_tipo_id,$fechaDeCompra,$condicion){
-		if($this->getIDByTokenAndValidate($token) == 'success'){
-			if($rol_usuario_id==$this->rol_usuario_id){
-				$herra = new Herramienta();
-				return $herra->upDate($id_herramienta,$herramienta_tipo_id,$fechaDeCompra,$condicion);
-			}
-			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
-				return json_encode($arr);
-			}
-		}
-		else{
-			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
-			return json_encode($arr);
-		}
-
-	}
-
-	public function deactivateHerra($token,$rol_usuario_id,$id_herramienta){
-		if($this->getIDByTokenAndValidate($token) == 'success'){
-			if($rol_usuario_id==$this->rol_usuario_id){
-				$herra = new Herramienta();
-				return $herra->deactivate($id_herramienta);
-			}
-			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
-				return json_encode($arr);
-			}
-		}
-		else{
-			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
-			return json_encode($arr);
-		}
-
-	}
-
-
-	public function insertObra($token,$rol_usuario_id,$obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera,$tipo){
-		if($this->getIDByTokenAndValidate($token) == 'success'){
-			if($rol_usuario_id==$this->rol_usuario_id){
-				$obra = new Obra();
-				return $obra->insert($obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera,$tipo);
-			}
-			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
-				return json_encode($arr);
-			}
-		}
-		else{
-			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
-			return json_encode($arr);
-		}
-	}
-
-	public function upDateObra($token,$rol_usuario_id,$id_obra,$obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera,$tipo){
-		if($this->getIDByTokenAndValidate($token) == 'success'){
-			if($rol_usuario_id==$this->rol_usuario_id){
-				$obra = new Obra();
-				return $obra->upDate($id_obra,$obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera,$tipo);
-			}
-			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
-				return json_encode($arr);
-			}
-		}
-		else{
-			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
-			return json_encode($arr);
-		}
-	}
-
-	//Desactivar obra PENDIENTE
-
-	public function insertCliente($token,$rol_usuario_id,$rfc,$razonSocial,$email,$telefono,$nombreContacto,$telefonoDeContacto){
-		if($this->getIDByTokenAndValidate($token) == 'success'){
-			if($rol_usuario_id==$this->rol_usuario_id){
-				$cliente = new Cliente();
-				return $cliente->insert($rfc,$razonSocial,$email,$telefono,$nombreContacto,$telefonoDeContacto);
-			}
-			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
-				return json_encode($arr);
-			}
-		}
-		else{
-			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
-			return json_encode($arr);
-		}
-
-	}
-
-	public function upDateCliente($token,$rol_usuario_id,$id_cliente,$rfc,$razonSocial,$email,$telefono,$nombreContacto,$telefonoDeContacto){
-		if($this->getIDByTokenAndValidate($token) == 'success'){
-			if($rol_usuario_id==$this->rol_usuario_id){
-				$cliente = new Cliente();
-				return $cliente->upDate($id_cliente,$rfc,$razonSocial,$email,$telefono,$nombreContacto,$telefonoDeContacto);
-			}
-			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
-				return json_encode($arr);
-			}
-		}
-		else{
-			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
-			return json_encode($arr);
-		}
-
-	}
-
-	public function insertFormato($token,$rol_usuario_id,$formato,$titulo,$noCamposHeader,$noCamposTecnico,$noCamposMuestras,$noCamposFooter,$noFirmas){
-		if($this->getIDByTokenAndValidate($token) == 'success'){
-			if($rol_usuario_id==$this->rol_usuario_id){
-				$formato = new Formato();
-				return $formato->insert($formato,$titulo,$noCamposHeader,$noCamposTecnico,$noCamposMuestras,$noCamposFooter,$noFirmas);
-			}
-			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
-				return json_encode($arr);
-			}
-		}
-		else{
-			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
-			return json_encode($arr);
-		}
-	}
-
-	public function upDateFormato($token,$rol_usuario_id,$id_formato,$formato,$titulo,$noCamposHeader,$noCamposTecnico,$noCamposMuestras,$noCamposFooter,$noFirmas){
-		if($this->getIDByTokenAndValidate($token) == 'success'){
-			if($rol_usuario_id==$this->rol_usuario_id){
-				$formato = new Formato();
-				return $formato->upDate($id_formato,$formato,$titulo,$noCamposHeader,$noCamposTecnico,$noCamposMuestras,$noCamposFooter,$noFirmas);
-			}
-			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
-				return json_encode($arr);
-			}
-		}
-		else{
-			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
-			return json_encode($arr);
-		}
-
-
-	}
-	*/
-
-
-
-
 
 
 }
