@@ -15,9 +15,21 @@
 	include_once("./../Cliente.php");
 
 	switch ($function){
-		case 'upDate':
+		case 'upDateAdmin':
 			$cliente = new Cliente();
-			echo $cliente->upDate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_cliente'],$_POST['rfc'],$_POST['razonSocial'],$_POST['nombre'],$_POST['direccion'],$_POST['email'],$_POST['telefono'],$_POST['nombreContacto'],$_POST['telefonoDeContacto']);
+			echo $cliente->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_cliente'],$_POST['rfc'],$_POST['razonSocial'],$_POST['nombre'],$_POST['direccion'],$_POST['email'],$_POST['telefono'],$_POST['nombreContacto'],$_POST['telefonoDeContacto']);
+		break;
+		case 'insertAdmin':
+			$cliente = new Cliente();
+			echo $cliente->insertAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['rfc'],$_POST['razonSocial'],$_POST['nombre'],$_POST['direccion'],$_POST['email'],$_POST['telefono'],$_POST['nombreContacto'],$_POST['telefonoDeContacto']);		
+		break;
+		case 'deactivate':
+			$cliente = new Cliente();
+			echo $cliente->deactivate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_cliente']);
+		break;
+		case 'activate':
+			$cliente = new Cliente();
+			echo $cliente->activate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_cliente']);
 		break;
 	}
 

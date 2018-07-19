@@ -300,7 +300,7 @@ class Usuario{
 			        rol_usuario_id,
 			        usuario.createdON,
 					usuario.lastEditedON,
-			        usuario.active
+					IF(usuario.active = 1,'Si','No') AS active			        
 			      FROM 
 			        usuario,rol_usuario,laboratorio
 			      WHERE

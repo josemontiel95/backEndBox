@@ -12,18 +12,26 @@
 
 	include_once("./../Herramienta_tipo.php");
 
-	switch ($function) {
-		case 'insert':
-			$herra_tipo = new Herramienta_tipo();
-			echo $herra_tipo->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['tipo']);		
-		break;
-		case 'upDate':
-			$herra_tipo = new Herramienta_tipo();
-			echo $herra_tipo->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta_tipo'],$_GET['tipo']);
-		break;
+	switch ($function){
 		case 'getAllUser':
 			$herra_tipo = new Herramienta_tipo();
 			echo $herra_tipo->getAllUser($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		case 'getAllAdmin':
+			$herra_tipo = new Herramienta_tipo();
+			echo $herra_tipo->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);
+		break;
+		case 'getForDroptdownAdmin':
+			$herra_tipo = new Herramienta_tipo();
+			echo $herra_tipo->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
+		break;
+		case 'getByIDAdmin':
+			$herra_tipo = new Herramienta_tipo();
+			echo $herra_tipo->getByIDAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta_tipo']);
+		break;
+
+
+
+
 	}
 ?>
