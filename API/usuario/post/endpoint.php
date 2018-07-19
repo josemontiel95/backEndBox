@@ -52,6 +52,18 @@
 			$usuario = new Usuario();
 			echo $usuario->upDate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_usuario'],$_POST['nombre'],$_POST['apellido'],$_POST['laboratorio_id'],$_POST['nss'],$_POST['email'],$_POST['fechaDeNac'],$_POST['rol_usuario_id_new']);
 		break;
+		case 'insertAdmin':
+			$usuario = new Usuario();
+			echo $usuario->insertAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['nombre'],$_POST['apellido'],$_POST['laboratorio_id'],$_POST['nss'],$_POST['email'],$_POST['fechaDeNac'],$_POST['rol_usuario_id_new'],$_POST['constrasena']);
+		break;
+		case 'deactivate':
+			$usuario = new Usuario();
+			echo $usuario->deactivate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_usuario']);
+		break;
+		case 'activate':
+			$usuario = new Usuario();
+			echo $usuario->activate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_usuario']);
+		break;
 	}
 
 	

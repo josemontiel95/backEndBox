@@ -18,6 +18,7 @@ class Usuario{
 	private $createdON;
 	private $lastEditedON;
 	private $contrasena;
+	private $active;
 	
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
@@ -297,8 +298,8 @@ class Usuario{
 			        fechaDeNac,
 			        foto,
 			        rol_usuario_id,
-			        createdON,
-					lastEditedON,
+			        usuario.createdON,
+					usuario.lastEditedON,
 			        usuario.active
 			      FROM 
 			        usuario,rol_usuario,laboratorio
@@ -335,8 +336,9 @@ class Usuario{
 			        foto,
 			        rol_usuario_id,
 			        rol,
-			        createdON,
-					lastEditedON,
+			        usuario.createdON,
+					usuario.lastEditedON,
+					usuario.active,
 			        contrasena
 			      FROM 
 			        usuario,
@@ -358,6 +360,7 @@ class Usuario{
 			$this->nombre= $s['nombre'];
 			$this->apellido=$s['apellido'];
 			$this->laboratorio_id=$s['laboratorio_id'];
+			$this->email=$s['email'];
 			$this->laboratorio=$s['laboratorio'];
 			$this->nss=$s['nss'];
 			$this->fechaDeNac= $s['fechaDeNac'];
@@ -368,6 +371,7 @@ class Usuario{
 			$this->rol = $s['rol'];
 			$this->rol_usuario_id= $s['rol_usuario_id'];
 
+			$this->active= $s['active'];
 
 			$this->createdON= $s['createdON'];
 			$this->lastEditedON= $s['lastEditedON'];
@@ -505,7 +509,6 @@ class Usuario{
 								fechaDeNac = '1QQ',
 								rol_usuario_id = 1QQ
 							WHERE
-								active=1 AND
 								id_usuario = 1QQ
 					 	"
 						,array($nombre,$apellido,$laboratorio_id,$nss,$email,$fechaDeNac,$rol_usuario_id_new,$id_usuario),"UPDATE"
@@ -701,6 +704,8 @@ class Usuario{
 
 							 			'createdON' => $this->createdON, 
 							 			'lastEditedON' => $this->lastEditedON,
+
+							 			'active' => $this->active,
 
 							 			'foto' => $this->foto, 
 							 			'rol_usuario_id' => $this->rol_usuario_id, 
