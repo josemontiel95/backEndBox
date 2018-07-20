@@ -15,11 +15,11 @@
 	switch ($function) {
 		case 'getAllAdmin':
 			$concretera = new Concretera();
-			echo $rol->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);		
+			echo $concretera->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);		
 		break;
 		case 'insert':
 			$concretera = new Concretera();
-			echo $rol->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['concretera']);		
+			echo $concretera->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['concretera']);		
 		break;
 		case 'upDate':
 			$concretera = new Concretera();
