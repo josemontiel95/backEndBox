@@ -89,6 +89,8 @@ class Obra{
 					concretera,
 					revenimiento,
 					incertidumbre,
+					cliente.active AS isClienteActive,
+					concretera.active AS isConcreteraActive,
 					IF(obra.active = 1,'Si','No') AS active
 			      FROM 
 			        cliente,obra,concretera
