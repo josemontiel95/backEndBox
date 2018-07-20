@@ -433,10 +433,13 @@ class Usuario{
 			$arr= $dbS->qAll("
 			      SELECT 
 			        id_usuario,
-					nombre,
-					active
+					nombre
 			      FROM 
 			        usuario
+			      WHERE
+			      	active = 1
+			      ORDER BY 
+			      	nombre
 			      ",
 			      array(),
 			      "SELECT"
@@ -447,7 +450,7 @@ class Usuario{
 					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
 			}
 			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 6);	
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query, verifica tus datos y vuelve a intentarlo','error' => 6);	
 			}
 		}
 		return json_encode($arr);

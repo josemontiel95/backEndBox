@@ -13,9 +13,9 @@
 	include_once("./../Obra.php");
 
 	switch ($function) {
-		case 'getAllUser':
+		case 'getForDroptdownAdmin':
 			$obra = new Obra();
-			echo $obra->getAllUser($_GET['token'],$_GET['rol_usuario_id']);
+			echo $obra->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
 		case 'getAllAdmin':
 			$obra = new Obra();
