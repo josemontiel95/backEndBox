@@ -10,6 +10,8 @@ class Cliente{
 	private $telefono;
 	private $nombreContacto;
 	private $telefonoDeContacto;
+	private $contrasena;
+	private $foto;
 
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
@@ -219,6 +221,57 @@ class Cliente{
 			}
 			else{
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getClienteByID , verifica tus datos y vuelve a intentarlo','error' => 2);
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function upDateContrasena($token,$rol_usuario_id,$id_cliente,$constrasena){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$contrasenaValida = hash('sha512', $constrasena);
+			$dbS->squery("	UPDATE
+							cliente
+						SET
+							contrasena = '1QQ'
+						WHERE
+							id_cliente = 1QQ
+					 "
+					,array($contrasenaValida,$id_cliente),"UPDATE"
+			      	);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_cliente' => $id_cliente,'estatus' => 'Se actualizo la contraseña correctamente','error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion de la conttraseña , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function upLoadFoto($token,$rol_usuario_id,$id_cliente,$foto){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("
+						UPDATE
+							cliente
+						SET
+							foto = '1QQ'
+						WHERE
+							id_cliente = 1QQ
+						",
+						array($foto,$id_cliente),"UPDATE"
+
+					);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_cliente' => $id_cliente,'estatus' => '¡Exito!, redireccionando...','error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en subir la foto, verifica tus datos y vuelve a intentarlo','error' => 5);
 			}
 		}
 		return json_encode($arr);

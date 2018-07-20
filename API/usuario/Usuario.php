@@ -513,7 +513,7 @@ class Usuario{
 								nombre = '1QQ',
 								apellido = '1QQ',
 								laboratorio_id = 1QQ,
-								nss = 1QQ,
+								nss = '1QQ',
 								email = '1QQ',
 								fechaDeNac = '1QQ',
 								rol_usuario_id = 1QQ

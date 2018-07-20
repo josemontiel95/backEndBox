@@ -31,6 +31,43 @@
 			$cliente = new Cliente();
 			echo $cliente->activate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_cliente']);
 		break;
+		case 'upLoadFoto':
+			$imageFileType = strtolower(pathinfo($_FILES["uploadFile"]["name"],PATHINFO_EXTENSION));
+			if($imageFileType == "png" || $imageFileType == "jpg"){
+				$target_dir = "./../../../SystemData/ClienteData/".$_POST['id_cliente']."/";
+				$dirDatabase = "SystemData/ClienteData/".$_POST['id_cliente']."/";
+				if (!file_exists($target_dir)) {
+				    mkdir($target_dir, 0777, true);
+				}
+		    	$json = array();
+		    	$postData = file_get_contents("php://input");
+		    	$input = json_decode($postData);
+				$json['_FILES'] = $_FILES;
+				
+		    	$target_file = $target_dir . "foto_perfil.".$imageFileType;
+		    	$target_fileDB = $dirDatabase . "foto_perfil.".$imageFileType;
+				if (move_uploaded_file($_FILES["uploadFile"]["tmp_name"], $target_file))  {  
+					$json['uploadOK'] = 1;
+				}else{
+					$json['uploadOK'] = 0;
+				}
+		    	if($json['uploadOK']==1){
+			    	$cliente = new Cliente();
+		    		echo $cliente->upLoadFoto($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_cliente'],$target_fileDB);
+		    	}else{
+			    	$arr = array('id_cliente' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Error al subir la foto','error' => 6);
+					echo json_encode($arr);
+		    	}	
+			}
+			else{
+				$arr = array('id_cliente' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Error invalido, solo aceptamos jpg y png y tu ingresaste un:'.$imageFileType,'error' => 7);
+					echo json_encode($arr);
+			}
+		break;
+		case 'upDateContrasena':
+			$cliente = new Cliente();
+			echo $cliente->upDateContrasena($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_cliente'],$_POST['constrasena']);
+		break;
 	}
 
 	
