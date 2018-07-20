@@ -30,6 +30,8 @@ class Rol{
 			        rol_usuario
 			      WHERE 
 			      	active=1
+			      ORDER BY 
+			      	rol
 			      ",
 			      array(),
 			      "SELECT"

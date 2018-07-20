@@ -28,11 +28,14 @@ class Herramienta{
 			      SELECT 
 			      	id_herramienta,
 			        tipo,
-					herramientas.active
+			        placas
 			      FROM 
 			        herramienta_tipo,herramientas
 			       WHERE
-			       	id_herramienta_tipo=herramienta_tipo_id
+			       	id_herramienta_tipo=herramienta_tipo_id AND
+			       	herramientas.active = 1
+			      ORDER BY 
+			      	tipo
 			      ",
 			      array(),
 			      "SELECT"
@@ -43,7 +46,7 @@ class Herramienta{
 					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
 			}
 			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 6);	
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
 			}
 		}
 		return json_encode($arr);

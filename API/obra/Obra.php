@@ -113,7 +113,7 @@ class Obra{
 
 
 
-	public function getAllUser($token,$rol_usuario_id){
+	public function getForDroptdownAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);

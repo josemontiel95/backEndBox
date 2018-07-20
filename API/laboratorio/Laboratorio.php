@@ -119,6 +119,8 @@ class Laboratorio{
 			        laboratorio
 			      WHERE
 			      	 active = 1
+			      ORDER BY 
+			      	laboratorio
 			      ",
 			      array(),
 			      "SELECT"
