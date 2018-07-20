@@ -21,9 +21,9 @@
 			$concretera = new Concretera();
 			echo $concretera->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_concretera'],$_GET['concretera']);
 		break;
-		case 'getAll':
+		case 'getForDroptdownAdmin':
 			$concretera = new Concretera();
-			echo $concretera->getAll($_GET['token'],$_GET['rol_usuario_id']);
+			echo $concretera->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
 	}
 ?>

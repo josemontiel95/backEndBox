@@ -109,10 +109,11 @@ class Cliente{
 			$arr= $dbS->qAll("
 			      SELECT 
 			        id_cliente,
-					nombre,
-					active
+					nombre
 			      FROM 
 			        cliente
+			      WHERE
+			      	active=1
 			      ORDER BY
 			      	nombre
 			      ",

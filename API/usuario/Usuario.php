@@ -19,6 +19,7 @@ class Usuario{
 	private $lastEditedON;
 	private $contrasena;
 	private $active;
+	private $isRolActive;
 	
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
@@ -235,7 +236,6 @@ class Usuario{
 //Devuelve el valor del toke, si esta activo, si esta muerta o si no esta activa
 	public function getIDByTokenAndValidate($token){
 		global $dbS;
-		$this->tokenUpDateLive($token);
 		$s= $dbS->qarrayA("
 			      SELECT 
 			        id_sesion,
@@ -258,7 +258,7 @@ class Usuario{
 				$u=$dbS->qvalue("
 						SELECT 
 							IF(
-								DATE_SUB(NOW(), INTERVAL 10 MINUTE)<lastEditedON,1, 0) 
+								DATE_SUB(NOW(), INTERVAL 20 MINUTE)<lastEditedON,1, 0) 
 						FROM 
 							sesion 
 						WHERE 
@@ -269,6 +269,7 @@ class Usuario{
 				//echo "<br>".$u;
 				if($u==1){	//Sesion Valida en tiempo.
 					$this->id_usuario=$s['usuario_id'];
+					$this->tokenUpDateLive($token);
 					$this->getByID($this->id_usuario);
 					return "success";
 				}else{		//Sesion muerta.
@@ -336,6 +337,7 @@ class Usuario{
 			        foto,
 			        rol_usuario_id,
 			        rol,
+			        rol_usuario.active AS isRolActive,
 			        usuario.createdON,
 					usuario.lastEditedON,
 					usuario.active,
@@ -375,6 +377,7 @@ class Usuario{
 
 			$this->createdON= $s['createdON'];
 			$this->lastEditedON= $s['lastEditedON'];
+			$this->isRolActive= $s['isRolActive'];
 			return "success";
 		}
 
@@ -711,7 +714,8 @@ class Usuario{
 							 			'rol_usuario_id' => $this->rol_usuario_id, 
 							 			'token' => $token,	
 							 			'estatus' => 'Exito',
-							 			'error' => 0
+							 			'error' => 0,
+							 			'isRolActive'=>$this->isRolActive
 							 		);
 						return json_encode($arr);
 				}else{

@@ -17,7 +17,7 @@ class Concretera{
 		Siguiendo la metodologia de POO las acciones las seguiria haciendo el usuario
 	*/
 
-	public function getAll($token,$rol_usuario_id){
+	public function getForDroptdownAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -30,6 +30,8 @@ class Concretera{
 			        concretera
 			      WHERE
 			      	 active = 1
+			      ORDER BY
+			      	concretera
 			      ",
 			      array(),
 			      "SELECT"

@@ -15,7 +15,7 @@ class Obra{
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
-	public function insert($token,$rol_usuario_id,$obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera_id,$tipo, $revenimiento, $incertidumbre){
+	public function insertAdmin($token,$rol_usuario_id,$obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera_id,$tipo, $revenimiento, $incertidumbre){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -35,7 +35,7 @@ class Obra{
 		return json_encode($arr);
 	}
 
-	public function upDate($token,$rol_usuario_id,$id_obra,$obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre){
+	public function upDateAdmin($token,$rol_usuario_id,$id_obra,$obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -82,7 +82,7 @@ class Obra{
 					descripcion,
 					id_cliente,
 					nombre,
-					tipo,
+					IF(obra.tipo = 2,'Unitario','Iguala') AS tipo,
 					obra.createdON,
 					obra.lastEditedON, 
 					id_concretera,
@@ -142,7 +142,7 @@ class Obra{
 	}
 
 
-	public function deactive($token,$rol_usuario_id,$id_obra){
+	public function deactivate($token,$rol_usuario_id,$id_obra){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -169,7 +169,7 @@ class Obra{
 		return json_encode($arr);
 	}
 
-	public function active($token,$rol_usuario_id,$id_obra){
+	public function activate($token,$rol_usuario_id,$id_obra){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -195,7 +195,7 @@ class Obra{
 	}
 
 
-	public function getObraByID($token,$rol_usuario_id,$id_obra){
+	public function getByIDAdmin($token,$rol_usuario_id,$id_obra){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);

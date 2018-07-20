@@ -21,9 +21,9 @@
 			$lab = new Laboratorio();
 			echo $lab->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_laboratorio'],$_GET['laboratorio'],$_GET['estado'],$_GET['municipio']);
 		break;
-		case 'getAll':
+		case 'getForDroptdownAdmin':
 			$lab = new Laboratorio();
-			echo $lab->getAll($_GET['token'],$_GET['rol_usuario_id']);
+			echo $lab->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
 	}
 ?>

@@ -31,13 +31,10 @@
 			$usuario = new Usuario();
 			echo $usuario->getAllAdmin($_GET['token']);
 		break;
-		
 		case 'upDateContrasena':
 			$usuario = new Usuario();
 			echo $usuario->upDateContrasena($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario'],$_GET['constrasena']);
 		break;
-
-		
 		case 'upLoadFoto':
 			$usuario = new Usuario();
 			echo $usuario->upLoadFoto($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario']);

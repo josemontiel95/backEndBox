@@ -56,10 +56,13 @@ class Herramienta_tipo{
 			$arr= $dbS->qAll("
 			      SELECT 
 			      	id_herramienta_tipo,
-			        tipo,
-					active
+			        tipo
 			      FROM 
 			        herramienta_tipo
+			      WHERE
+			      	active=1
+			      ORDER BY
+			      	tipo
 			      ",
 			      array(),
 			      "SELECT"
