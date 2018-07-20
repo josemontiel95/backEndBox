@@ -13,6 +13,10 @@
 	include_once("./../Concretera.php");
 
 	switch ($function) {
+		case 'getAllAdmin':
+			$concretera = new Concretera();
+			echo $rol->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);		
+		break;
 		case 'insert':
 			$concretera = new Concretera();
 			echo $rol->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['concretera']);		
