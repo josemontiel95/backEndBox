@@ -156,7 +156,8 @@ class Herramienta{
 					tipo,
 					herramientas.createdON,
 					herramientas.lastEditedON,
-					herramientas.active
+					herramientas.active,
+					herramienta_tipo.active AS isHerramienta_tipoActive
 			      FROM 
 			      	herramienta_tipo,
 					herramientas
@@ -173,16 +174,7 @@ class Herramienta{
 					return "empty";
 				}
 				else{
-					$arr = array(			'id_herramienta' => $s['id_herramienta'],
-								 			'fechaDeCompra' => $s['fechaDeCompra'],
-								 			'herramienta_tipo_id' => $s['herramienta_tipo_id'],
-								 			'placas' => $s['placas'],
-							 				'condicion' => $s['condicion'],
-							 				'tipo' => $s['tipo'],
-							 				'active' => $s['active'],
-							 				'estatus' => 'Exito',
-							 				'error' => 0
-							 		);
+					return json_encode($s);
 				}
 			}
 			else{

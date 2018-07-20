@@ -20,6 +20,7 @@ class Usuario{
 	private $contrasena;
 	private $active;
 	private $isRolActive;
+	private $isLaboratorioActive;
 	
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
@@ -338,6 +339,7 @@ class Usuario{
 			        rol_usuario_id,
 			        rol,
 			        rol_usuario.active AS isRolActive,
+			        laboratorio.active AS isLaboratorioActive,
 			        usuario.createdON,
 					usuario.lastEditedON,
 					usuario.active,
@@ -378,6 +380,7 @@ class Usuario{
 			$this->createdON= $s['createdON'];
 			$this->lastEditedON= $s['lastEditedON'];
 			$this->isRolActive= $s['isRolActive'];
+			$this->isLaboratorioActive = $s['isLaboratorioActive'];
 			return "success";
 		}
 
@@ -718,7 +721,8 @@ class Usuario{
 							 			'token' => $token,	
 							 			'estatus' => 'Exito',
 							 			'error' => 0,
-							 			'isRolActive'=>$this->isRolActive
+							 			'isRolActive'=>$this->isRolActive,
+							 			'isLaboratorioActive'=>$this->isLaboratorioActive
 							 		);
 						return json_encode($arr);
 				}else{

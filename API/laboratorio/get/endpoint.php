@@ -25,5 +25,13 @@
 			$lab = new Laboratorio();
 			echo $lab->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		case 'deactivate':
+			$lab = new Laboratorio();
+			echo $lab->deactivate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_laboratorio']);
+		break;
+		case 'activate':
+			$lab = new Laboratorio();
+			echo $lab->activate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_laboratorio']);
+		break;
 	}
 ?>
