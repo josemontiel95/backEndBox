@@ -214,6 +214,8 @@ class Obra{
 					concretera,
 					id_cliente,
 					nombre,
+					cliente.active AS isClienteActive,
+					concretera.active AS isConcreteraActive,
 					revenimiento,
 					incertidumbre
 			      FROM 
