@@ -13,7 +13,6 @@ class OrdenDeServicio{
 
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
-	/*
 	public function getForDroptdownAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -21,15 +20,15 @@ class OrdenDeServicio{
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      SELECT 
-			      	obra,
-			        id_ordenDeServicio
+			      	id_ordenDeServicio,
+			      	obra
 			      FROM 
 			        obra,ordenDeServicio
 			       WHERE
-			       	id_herramienta_tipo=herramienta_tipo_id AND
-			       	herramientas.active = 1
+			       	obra_id = id_obra AND
+			       	ordenDeServicio.active = 1
 			      ORDER BY 
-			      	tipo
+			      	obra
 			      ",
 			      array(),
 			      "SELECT"
@@ -44,9 +43,9 @@ class OrdenDeServicio{
 			}
 		}
 		return json_encode($arr);
-	}*/
+	}
 
-
+	/*
 	public function getAllAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -54,19 +53,21 @@ class OrdenDeServicio{
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      SELECT 
-			        id_herramienta,
-					herramienta_tipo_id,
-					fechaDeCompra,
-					placas,
-					condicion,
-					id_herramienta_tipo,
-					tipo,
-					herramientas.createdON,
-					herramientas.lastEditedON,
-					IF(herramientas.active = 1,'Si','No') AS active
+			        id_ordenDeServicio,
+					obra_id,
+					fecha,
+					hora,
+					lugar,
+					jefa_lab_id,
+					jefe_brigada_id,
+					ordenDeServicio.laboratorio_id,
+					ordenDeServicio.createdON,
+					ordenDeServicio.lastEditedON,
+					IF(ordenDeServicio.active = 1,'Si','No') AS active
 			      FROM 
-			        herramienta_tipo,
-					herramientas
+			        obra,
+					usuario,
+					laboratorio
 			      WHERE
 			      	 id_herramienta_tipo =  herramienta_tipo_id
 			      ",
@@ -82,7 +83,7 @@ class OrdenDeServicio{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 2);
 		}
 		return json_encode($arr);	
-	}
+	}*/
 
 
 	public function insertAdmin($token,$rol_usuario_id,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion){
