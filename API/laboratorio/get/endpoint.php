@@ -13,25 +13,17 @@
 	include_once("./../Laboratorio.php");
 
 	switch ($function) {
-		case 'insert':
+		case 'getAllAdmin':
 			$lab = new Laboratorio();
-			echo $lab->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['laboratorio'],$_GET['estado'],$_GET['municipio']);		
+			echo $lab->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
-		case 'upDate':
+		case 'getByIDAdmin':
 			$lab = new Laboratorio();
-			echo $lab->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_laboratorio'],$_GET['laboratorio'],$_GET['estado'],$_GET['municipio']);
+			echo $lab->getByIDAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_laboratorio']);
 		break;
 		case 'getForDroptdownAdmin':
 			$lab = new Laboratorio();
 			echo $lab->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
-		break;
-		case 'deactivate':
-			$lab = new Laboratorio();
-			echo $lab->deactivate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_laboratorio']);
-		break;
-		case 'activate':
-			$lab = new Laboratorio();
-			echo $lab->activate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_laboratorio']);
 		break;
 	}
 ?>
