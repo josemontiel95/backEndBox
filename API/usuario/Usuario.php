@@ -37,6 +37,10 @@ class Usuario{
 		$this->contrasena= $contrasena;
 	}
 	*/
+	public function getRootRol(){
+
+	}
+
 	public function login($email, $contrasena){
 		if($this->getByEmail($email)=="success"){
 			$contrasenaSHA= hash('sha512', $contrasena);
@@ -113,10 +117,12 @@ class Usuario{
 			        fechaDeNac,
 			        foto,
 			        rol_usuario_id,
-			        contrasena
+			        contrasena,
+			        root
 			      FROM 
-			        usuario 
+			        usuario, rol_usuario
 			      WHERE 
+			      	id_rol_usuario=rol_usuario_id. AND
 			      	active=1 AND
 			        email = '1QQ'
 			      ",
