@@ -21,15 +21,15 @@
 		break;
 		case 'upDateAdmin':
 			$concretera = new Concretera();
-			echo $concretera->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_herramienta'],$_POST['herramienta_tipo_id'],$_POST['fechaDeCompra'],$_POST['placas'],$_POST['condicion']);
+			echo $concretera->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_concretera'],$_POST['concretera']);
 		break;
 		case 'deactivate':
 			$concretera = new Concretera();
-			echo $concretera->deactivate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_herramienta']);
+			echo $concretera->deactivate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_concretera']);
 		break;
 		case 'activate':
 			$concretera = new Concretera();
-			echo $concretera->activate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_herramienta']);
+			echo $concretera->activate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_concretera']);
 		break;
 	}
 
