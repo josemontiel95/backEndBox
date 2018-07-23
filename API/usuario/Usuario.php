@@ -21,6 +21,7 @@ class Usuario{
 	private $active;
 	private $isRolActive;
 	private $isLaboratorioActive;
+	private $root;
 	
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
@@ -48,7 +49,7 @@ class Usuario{
 			//echo $this->contrasena;
 			if($this->contrasena==$contrasenaSHA){
 				$this->deactivateAllSesions();
-				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $this->setToken(),'estatus' => 'exito','error' => 0);
+				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $this->setToken(),'root'=> $this->root, 'estatus' => 'exito','error' => 0);
 				return json_encode($arr);
 			}else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Pasword incorrecto','error' => 1);
@@ -122,8 +123,8 @@ class Usuario{
 			      FROM 
 			        usuario, rol_usuario
 			      WHERE 
-			      	id_rol_usuario=rol_usuario_id. AND
-			      	active=1 AND
+			      	id_rol_usuario=rol_usuario_id AND
+			      	usuario.active=1 AND
 			        email = '1QQ'
 			      ",
 			      array($email),
@@ -142,6 +143,7 @@ class Usuario{
 			$this->rol_usuario_id= $s['rol_usuario_id'];
 			$this->contrasena= $s['contrasena'];
 			$this->email= $email;
+			$this->root = $s['root'];
 			return "success";
 		}
 
