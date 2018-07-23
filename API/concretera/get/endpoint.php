@@ -17,17 +17,15 @@
 			$concretera = new Concretera();
 			echo $concretera->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);		
 		break;
-		case 'insert':
-			$concretera = new Concretera();
-			echo $concretera->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['concretera']);		
-		break;
-		case 'upDate':
-			$concretera = new Concretera();
-			echo $concretera->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_concretera'],$_GET['concretera']);
-		break;
 		case 'getForDroptdownAdmin':
 			$concretera = new Concretera();
 			echo $concretera->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		case 'getByIDAdmin':
+			$concretera = new Concretera();
+			echo $concretera->getByIDAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_concretera']);
+		break;
+
+
 	}
 ?>

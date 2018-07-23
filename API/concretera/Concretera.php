@@ -78,7 +78,7 @@ class Concretera{
 		return json_encode($arr);	
 	}
 
-	public function insert($token,$rol_usuario_id,$concretera){
+	public function insertAdmin($token,$rol_usuario_id,$concretera){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -93,7 +93,10 @@ class Concretera{
 						VALUES
 						('1QQ')
 				",array($concretera),"INSERT");
-				if($dbS->didQuerydied){
+				if(!$dbS->didQuerydied){
+				$arr = array('id_herramienta' => 'No disponible, esto NO es un error', 'concretera' => $concretera, 'estatus' => 'Exito en insercion', 'error' => 0);
+				}
+				else{
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
 				}
 		}
@@ -101,7 +104,7 @@ class Concretera{
 	}
 
 
-	public function upDate($token,$rol_usuario_id,$id_concretera,$concretera){
+	public function upDateAdmin($token,$rol_usuario_id,$id_concretera,$concretera){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -115,14 +118,17 @@ class Concretera{
 					 "
 					,array($concretera,$id_concretera),"UPDATE"
 			      	);
-			if($dbS->didQuerydied){
+			if(!$dbS->didQuerydied){
+				$arr = array('id_concretera' => 'No disponible, esto NO es un error', 'concretera' => $concretera, 'estatus' => 'Exito en actualizacion', 'error' => 0);
+			}
+			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}		
 		}
 		return json_encode($arr);
 	}
 
-	public function deactive($token,$rol_usuario_id,$id_concretera){
+	public function deactivate($token,$rol_usuario_id,$id_concretera){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -137,14 +143,17 @@ class Concretera{
 					 "
 					,array(0,$id_concretera),"UPDATE"
 			      	);
-			if($dbS->didQuerydied){
+			if(!$dbS->didQuerydied){
+				$arr = array('id_concretera' => $id_concretera,'estatus' => 'Concretera se desactivo','error' => 0);
+			}
+			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}
 		}
 		return json_encode($arr);
 	}
 
-	public function active($token,$rol_usuario_id,$id_concretera){
+	public function activate($token,$rol_usuario_id,$id_concretera){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -159,12 +168,54 @@ class Concretera{
 					 "
 					,array(1,$id_concretera),"UPDATE"
 			      	);
-			if($dbS->didQuerydied){
+			if(!$dbS->didQuerydied){
+				$arr = array('id_concretera' => $id_concretera,'estatus' => 'Concretera se activo','error' => 0);
+			}
+			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la activacion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}
 		}
 		return json_encode($arr);
 	}
+
+	public function getByIDAdmin($token,$rol_usuario_id,$id_concretera){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA("
+			      SELECT 
+			        id_concretera,
+			        concretera,
+			        createdON,
+			        lastEditedON,
+			        active
+			      FROM 
+			      	concretera
+			      WHERE 
+			      	id_concretera = 1QQ
+			      ",
+			      array($id_concretera),
+			      "SELECT"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					return "empty";
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getByID , verifica tus datos y vuelve a intentarlo','error' => 2);
+			}
+		}
+		return json_encode($arr);
+	}
+
+
+
 
 
 
