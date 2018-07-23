@@ -12,7 +12,7 @@
 		echo json_encode(2);
 	}
 
-	include_once("./../Usuario.php");
+	include_once("./../Herramienta_tipo.php");
 
 	switch ($function){
 		case 'insertAdmin':
