@@ -49,7 +49,7 @@ class Usuario{
 			//echo $this->contrasena;
 			if($this->contrasena==$contrasenaSHA){
 				$this->deactivateAllSesions();
-				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre, 'token' => $this->setToken(),'root'=> $this->root, 'estatus' => 'exito','error' => 0);
+				$arr = array('id_usuario' => $this->id_usuario, 'nombre' => $this->nombre,'rol'=> $this->rol, 'token' => $this->setToken(),'root'=> $this->root, 'estatus' => 'exito','error' => 0);
 				return json_encode($arr);
 			}else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Pasword incorrecto','error' => 1);
