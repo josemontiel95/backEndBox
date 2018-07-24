@@ -101,7 +101,9 @@ CREATE TABLE obra(
 	prefijo VARCHAR(4) NOT NULL,
 	fechaDeCreacion DATE NOT NULL,
 	descripcion TEXT,
-
+	nombre_residente VARCHAR(50) NOT NULL,
+	telefono_residente VARCHAR(15) NOT NULL,
+	correo_residente VARCHAR(40) NOT NULL,
 	cliente_id INT(11),
 	concretera_id INT(11),
 	tipo INT(11) NOT NULL,

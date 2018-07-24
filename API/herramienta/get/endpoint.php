@@ -25,6 +25,10 @@
 			$herra = new Herramienta();
 			echo $herra->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		case 'getAllJefaLab':
+			$herra = new Herramienta();
+			echo $herra->getAllJefaLab($_GET['token'],$_GET['rol_usuario_id']);
+		break;
 
 		
 	}

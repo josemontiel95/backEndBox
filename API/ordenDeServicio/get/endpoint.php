@@ -25,6 +25,5 @@
 			$orden = new OrdenDeServicio();
 			echo $orden->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
-		
 	}
 ?>
