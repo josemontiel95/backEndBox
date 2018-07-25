@@ -2,10 +2,10 @@
 include_once("./../../configSystem.php");
 include_once("./../../usuario/Usuario.php");
 class herramienta_ordenDeSevicio{
-	private $id_herramienta;
-	private $herramienta_tipo_id;
-	private $fechaDeCompra;
-	private $condicion;
+	private $ordenDeServicio_id;
+	private $herramienta_id;
+	private $fechaDevolucion;
+	private $status;
 
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
@@ -17,8 +17,8 @@ class herramienta_ordenDeSevicio{
 
 	*/
 
-
-
+		/*
+	//Esta funcion no sirve, se deven realizar los cambio necesarios para que sirva
 	public function getForDroptdownAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -52,7 +52,7 @@ class herramienta_ordenDeSevicio{
 		return json_encode($arr);
 	}
 
-
+	//Esta funcion no sirve, se deven realizar los cambio necesarios para que sirva
 	public function getAllAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -176,8 +176,57 @@ class herramienta_ordenDeSevicio{
 		}
 		return json_encode($arr);
 	}
+	*/
+	public function getByIDAdminHerra($token,$rol_usuario_id,$id_herramienta){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA("
+			      SELECT 
+			        ordenDeServicio_id,
+			        herramienta_id,
+			        nombre AS nombre_jefe_brigada,
+			        jefe_brigada_id,
+					ordenDeServicio.fecha AS fechaDePrestamo,
+			        fechaDevolucion,
+					status,
+					CASE
+		  				WHEN herramienta_ordenDeSevicio.active = 1 AND CURDATE()>ordenDeServicio.fecha THEN 'En Curso'
+		    			WHEN herramienta_ordenDeSevicio.active = 0 AND CURDATE()>ordenDeServicio.fecha THEN 'Completado'
+		    			WHEN herramienta_ordenDeSevicio.active = 1 AND CURDATE()<ordenDeServicio.fecha THEN 'Agendado'
+		    				ELSE 'Error'
+					END AS estado
+				  FROM 
+			      	ordenDeServicio,usuario,herramienta_ordenDeSevicio
+			      WHERE 
+			      		ordenDeServicio_id = id_ordenDeServicio AND
+			      		id_usuario = jefe_brigada_id AND	
+			      		herramienta_id = 1QQ  
+			      ",
+			      array($id_herramienta),
+			      "SELECT"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					return "empty";
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 2);
+			}
+		}
+		return json_encode($arr);
+	}
 
-	public function getByIDAdmin($token,$rol_usuario_id,$id_herramienta){
+	/*
+
+	//Realizar cambios pertinenetes para que la funcion sirva
+	public function getByIDAdminOrden($token,$rol_usuario_id,$ordenDeServicio_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -219,6 +268,10 @@ class herramienta_ordenDeSevicio{
 		}
 		return json_encode($arr);
 	}
+
+
+
+
 
 	public function deactivate($token,$rol_usuario_id,$id_herramienta){
 		global $dbS;
@@ -272,7 +325,7 @@ class herramienta_ordenDeSevicio{
 		return json_encode($arr);
 	}
 
-
+	*/
 
 
 

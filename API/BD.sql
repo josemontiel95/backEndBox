@@ -218,7 +218,8 @@ ALTER TABLE herramientas AUTO_INCREMENT=1001;
 CREATE TABLE herramienta_ordenDeSevicio(
 	ordenDeServicio_id INT(11),
 	herramienta_id INT(11),
-	status INT(11) NOT NULL,
+	fechaDevolucion DATE NOT NULL,
+	status VARCHAR(10) NOT NULL,
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
