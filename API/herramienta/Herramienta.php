@@ -17,7 +17,53 @@ class Herramienta{
 		Completar las funciones
 
 	*/
+		/*
+	public function getAllHerraAvailable($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      SELECT 
+			        id_herramienta,
+					herramienta_tipo_id,
+					fechaDeCompra,
+					placas,
+					condicion,
+					tipo,
+					observaciones,
+					herramientas.createdON,
+					herramientas.lastEditedON
+					CASE
+		    			WHEN herramienta_ordenDeSevicio.active = 0 AND CURDATE()>ordenDeServicio.fecha THEN 'Completado'
+		    			WHEN herramienta_ordenDeSevicio.active = 1 AND CURDATE()<ordenDeServicio.fecha THEN 'Agendado'
+		    				ELSE 'Error'
+					END AS estado
+			      FROM 
+			        herramienta_tipo,
+					herramientas,
+					herramienta_ordenDeSevicio,
+					ordenDeServicio
+			      WHERE
+			      	 id_herramienta_tipo =  herramienta_tipo_id AND
+			      	 herramientas.active = 1 AND
+			      	 (estado = 'Completado' OR estado = 'Agendado')
+			      ",
+			      array(),
+			      "SELECT"
+			      );
 
+			if(!$dbS->didQuerydied){
+				if(count($arr) == 0)
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
+	*/
 
 	public function getForDroptdownAdmin($token,$rol_usuario_id){
 		global $dbS;

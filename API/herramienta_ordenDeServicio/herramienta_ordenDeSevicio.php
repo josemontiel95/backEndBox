@@ -177,12 +177,16 @@ class herramienta_ordenDeSevicio{
 		return json_encode($arr);
 	}
 	*/
+
+	
+
+
 	public function getByIDAdminHerra($token,$rol_usuario_id,$id_herramienta){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$s= $dbS->qarrayA("
+			$s= $dbS->qAll("
 			      SELECT 
 			        ordenDeServicio_id,
 			        herramienta_id,
@@ -217,7 +221,7 @@ class herramienta_ordenDeSevicio{
 				}
 			}
 			else{
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 2);
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion query , verifica tus datos y vuelve a intentarlo','error' => 2);
 			}
 		}
 		return json_encode($arr);
