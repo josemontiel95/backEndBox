@@ -190,6 +190,7 @@ class herramienta_ordenDeSevicio{
 			      SELECT 
 			        ordenDeServicio_id,
 			        herramienta_id,
+			        placas,
 			        nombre AS nombre_jefe_brigada,
 			        jefe_brigada_id,
 					ordenDeServicio.fecha AS fechaDePrestamo,
@@ -202,10 +203,11 @@ class herramienta_ordenDeSevicio{
 		    				ELSE 'Error'
 					END AS estado
 				  FROM 
-			      	ordenDeServicio,usuario,herramienta_ordenDeSevicio
+			      	ordenDeServicio,usuario,herramienta_ordenDeSevicio,herramientas
 			      WHERE 
 			      		ordenDeServicio_id = id_ordenDeServicio AND
 			      		id_usuario = jefe_brigada_id AND	
+			      		herramienta_id = id_herramienta AND
 			      		herramienta_id = 1QQ  
 			      ",
 			      array($id_herramienta),
