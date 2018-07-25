@@ -6,6 +6,7 @@ class Herramienta{
 	private $herramienta_tipo_id;
 	private $fechaDeCompra;
 	private $condicion;
+	public  $observaciones;
 
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
@@ -16,7 +17,6 @@ class Herramienta{
 		Completar las funciones
 
 	*/
-
 
 
 	public function getForDroptdownAdmin($token,$rol_usuario_id){
@@ -67,6 +67,7 @@ class Herramienta{
 					condicion,
 					id_herramienta_tipo,
 					tipo,
+					observaciones,
 					herramientas.createdON,
 					herramientas.lastEditedON,
 					IF(herramientas.active = 1,'Si','No') AS active
@@ -103,6 +104,7 @@ class Herramienta{
 					placas,
 					condicion,
 					tipo,
+					observaciones,
 					herramientas.createdON,
 					herramientas.lastEditedON
 			      FROM 
@@ -127,18 +129,18 @@ class Herramienta{
 	}
 
 
-	public function insertAdmin($token,$rol_usuario_id,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion){
+	public function insertAdmin($token,$rol_usuario_id,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						herramientas(herramienta_tipo_id,fechaDeCompra,placas,condicion)
+						herramientas(herramienta_tipo_id,fechaDeCompra,placas,condicion,observaciones)
 
 						VALUES
-						('1QQ','1QQ','1QQ','1QQ')
-				",array($herramienta_tipo_id,$fechaDeCompra,$placas,$condicion),"INSERT");
+						('1QQ','1QQ','1QQ','1QQ','1QQ')
+				",array($herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones),"INSERT");
 
 			if(!$dbS->didQuerydied){
 				$arr = array('id_herramienta' => 'No disponible, esto NO es un error', 'herramienta_tipo_id' => $herramienta_tipo_id, 'estatus' => 'Exito en insercion', 'error' => 0);
@@ -150,7 +152,7 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
-	public function upDateAdmin($token,$rol_usuario_id,$id_herramienta,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion){
+	public function upDateAdmin($token,$rol_usuario_id,$id_herramienta,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -161,11 +163,12 @@ class Herramienta{
 							herramienta_tipo_id ='1QQ',
 							fechaDeCompra = '1QQ',
 							placas = '1QQ', 
-							condicion = '1QQ'
+							condicion = '1QQ',
+							observaciones = '1QQ'
 						WHERE
 							id_herramienta = 1QQ
 					 "
-					,array($herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$id_herramienta),"UPDATE"
+					,array($herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones,$id_herramienta),"UPDATE"
 			      	);
 			if(!$dbS->didQuerydied){
 				$arr = array('id_herramienta' => 'No disponible, esto NO es un error', 'herramienta_tipo_id' => $herramienta_tipo_id, 'estatus' => 'Exito en actualizacion', 'error' => 0);
@@ -190,6 +193,7 @@ class Herramienta{
 			        placas,
 			        condicion,
 					tipo,
+					observaciones,
 					herramientas.createdON,
 					herramientas.lastEditedON,
 					herramientas.active,
