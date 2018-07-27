@@ -178,7 +178,10 @@ class herramienta_ordenDeSevicio{
 	}
 	*/
 
-	
+	/*
+	public function insertAdmin($token,$rol_usuario_id,$id_herramienta){
+
+	}*/
 
 
 	public function getByIDAdminHerra($token,$rol_usuario_id,$id_herramienta){
@@ -193,13 +196,13 @@ class herramienta_ordenDeSevicio{
 			        placas,
 			        nombre AS nombre_jefe_brigada,
 			        jefe_brigada_id,
-					ordenDeServicio.fecha AS fechaDePrestamo,
+					ordenDeServicio.fechaInicio AS fechaDePrestamo,
 			        fechaDevolucion,
 					status,
 					CASE
-		  				WHEN herramienta_ordenDeSevicio.active = 1 AND CURDATE()>ordenDeServicio.fecha THEN 'En Curso'
-		    			WHEN herramienta_ordenDeSevicio.active = 0 AND CURDATE()>ordenDeServicio.fecha THEN 'Completado'
-		    			WHEN herramienta_ordenDeSevicio.active = 1 AND CURDATE()<ordenDeServicio.fecha THEN 'Agendado'
+		  				WHEN herramienta_ordenDeSevicio.active = 1 AND CURDATE()>ordenDeServicio.fechaInicio THEN 'En Curso'
+		    			WHEN herramienta_ordenDeSevicio.active = 0 AND CURDATE()>ordenDeServicio.fechaInicio THEN 'Completado'
+		    			WHEN herramienta_ordenDeSevicio.active = 1 AND CURDATE()<ordenDeServicio.fechaInicio THEN 'Agendado'
 		    				ELSE 'Error'
 					END AS estado
 				  FROM 
