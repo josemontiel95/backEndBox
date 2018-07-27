@@ -131,17 +131,25 @@ CREATE TABLE obra(
 
 ALTER TABLE obra AUTO_INCREMENT=1001;
 
+
+
+//El lugar no deberia estar porque ya lo contempla la obra PENDIENTE
 CREATE TABLE ordenDeServicio(
 	id_ordenDeServicio INT(11) NOT NULL AUTO_INCREMENT,
+	cotizacion_id INT(11),
 	obra_id INT(11),
-	fecha DATE NOT NULL,
-	hora DATE NULL,
+	actividades TEXT,
+	condicionesTrabajo TEXT,
+	jefe_brigada_id INT(11),
+	fechaInicio DATE NOT NULL,
+	fechaFin DATE NOT NULL,
+	horaInicio TIME NOT NULL,
+	horaFin TIME NOT NULL,
+	observaciones TEXT,
+
 	lugar VARCHAR(150) NOT NULL,
 	jefa_lab_id INT(11),
-	jefe_brigada_id INT(11),
 	laboratorio_id INT(11),
-
-
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	active INT NOT NULL DEFAULT 1,
@@ -151,6 +159,7 @@ CREATE TABLE ordenDeServicio(
 	FOREIGN KEY(obra_id) 
 	REFERENCES obra(id_obra)
 	ON DELETE SET NULL ON UPDATE CASCADE,
+
 
 	FOREIGN KEY(jefa_lab_id) 
 	REFERENCES usuario(id_usuario)
@@ -392,10 +401,10 @@ DROP TABLE campos;
 DROP TABLE tipo_campo;
 DROP TABLE formatos_orden;
 DROP TABLE formato;
-DROP TABLE herramienta_ordenDeSevicio;
 DROP TABLE herramientas;
 DROP TABLE herramienta_tipo;
 DROP TABLE tecnicosDeOrden;
+DROP TABLE herramienta_ordenDeSevicio;
 DROP TABLE ordenDeServicio;
 DROP TABLE obra;
 DROP TABLE concretera;
@@ -448,6 +457,9 @@ INSERT INTO obra(obra,prefijo,fechaDeCreacion,descripcion,cliente_id,concretera_
 [10:22, 20/7/2018] +52 1 222 578 0650: INSERT INTO concretera (concretera) VALUES("Cruz Azul");
 [10:28, 20/7/2018] +52 1 222 578 0650: INSERT INTO laboratorio (laboratorio) VALUES("CDMX");
 [10:28, 20/7/2018] +52 1 222 578 0650: INSERT INTO concretera (concretera) VALUES("Apasco");
+
+
+INSERT INTO ordenDeServicio(cotizacion_id,obra_id,actividades,condicionesTrabajo,jefe_brigada_id,fechaInicio,fechaFin,horaInicio,horaFin,observaciones) VALUES (1001,1001,"actividades1","condiciones1",1007,"2002-12-12","2003-12-12","15:32","15:32","observaciones1");
 
 
 ---------------------------

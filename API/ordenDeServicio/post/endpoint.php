@@ -17,11 +17,11 @@
 	switch ($function){
 		case 'insertAdmin':
 			$orden = new OrdenDeServicio();
-			echo $orden->insertAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['obra_id'],$_POST['fecha'],$_POST['hora'],$_POST['lugar'],$_POST['jefa_lab_id'],$_POST['jefe_brigada_id'],$_POST['laboratorio_id']);
+			echo $orden->insertAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['cotizacion_id'],$_POST['obra_id'],$_POST['actividades'],$_POST['condicionesTrabajo'],$_POST['fechaInicio'],$_POST['fechaFin'],$_POST['horaInicio'],$_POST['horaFin'],$_POST['observaciones'],$_POST['lugar'],$_POST['jefa_lab_id'],$_POST['jefe_brigada_id'],$_POST['laboratorio_id']);
 		break;
 		case 'upDateAdmin':
 			$orden = new OrdenDeServicio();
-			echo $orden->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ordenDeServicio'],$_POST['obra_id'],$_POST['fecha'],$_POST['hora'],$_POST['lugar'],$_POST['jefa_lab_id'],$_POST['jefe_brigada_id'],$_POST['laboratorio_id']);
+			echo $orden->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ordenDeServicio'],$_POST['cotizacion_id'],$_POST['obra_id'],$_POST['actividades'],$_POST['condicionesTrabajo'],$_POST['fechaInicio'],$_POST['fechaFin'],$_POST['horaInicio'],$_POST['horaFin'],$_POST['observaciones'],$_POST['lugar'],$_POST['jefa_lab_id'],$_POST['jefe_brigada_id'],$_POST['laboratorio_id']);
 		break;
 		case 'deactivate':
 			$orden = new OrdenDeServicio();

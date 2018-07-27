@@ -13,6 +13,55 @@ class OrdenDeServicio{
 
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
+	
+	//Añadimos a que obra esta agendada????
+	public function getAllHerraAvailable($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      SELECT 
+			        id_herramienta,
+					herramienta_tipo_id,
+					fechaDeCompra,
+					placas,
+					condicion,
+					tipo,
+					herramientas.observaciones,
+					herramientas.createdON,
+					herramientas.lastEditedON,
+					CASE
+		    			WHEN herramienta_ordenDeSevicio.active = 0 AND CURDATE()>ordenDeServicio.fechaInicio THEN 'Completado'
+		    			WHEN herramienta_ordenDeSevicio.active = 1 AND CURDATE()<ordenDeServicio.fechaInicio THEN 'Agendado'
+		    				ELSE 'Error'
+					END AS estado
+			      FROM 
+			        herramienta_tipo,
+					herramientas,
+					herramienta_ordenDeSevicio,
+					ordenDeServicio
+			      WHERE
+			      	 id_herramienta_tipo =  herramienta_tipo_id AND
+			      	 herramientas.active = 1 AND
+
+			      	 ((herramienta_ordenDeSevicio.active = 0 AND CURDATE()>ordenDeServicio.fechaInicio) OR (herramienta_ordenDeSevicio.active = 1 AND CURDATE()<ordenDeServicio.fechaInicio))
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if($arr == "empty")
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); 
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
+	
 	public function getForDroptdownAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -35,7 +84,7 @@ class OrdenDeServicio{
 			      );
 
 			if(!$dbS->didQuerydied){
-				if(count($arr) == 0)
+				if($arr == "empty")
 					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
 			}
 			else{
@@ -54,11 +103,19 @@ class OrdenDeServicio{
 			$arr= $dbS->qAll("
 			      		SELECT 
 							id_ordenDeServicio,
+							cotizacion_id,
 							obra_id,
 							obra.obra,
-							fecha,
-							hora,
+
+							actividades,
+							condicionesTrabajo,
+							fechaInicio,
+							fechaFin,
+							horaInicio,
+							horaFin,
+							observaciones,
 							lugar,
+
 							ordenDeServicio.laboratorio_id,
 							laboratorio,
 							usuario.nombre AS nombre_jefe_brigada_id,
@@ -91,7 +148,7 @@ class OrdenDeServicio{
 			      );
 
 			if(!$dbS->didQuerydied){
-						if(count($arr) == 0)
+						if($arr == "empty")
 							$arr = array('estatus' =>"No hay registros", 'error' => 5); 
 						
 			}else
@@ -101,18 +158,18 @@ class OrdenDeServicio{
 	}
 
 
-	public function insertAdmin($token,$rol_usuario_id,$obra_id,$fecha,$hora,$lugar,$jefa_lab_id,$jefe_brigada_id,$laboratorio_id){
+	public function insertAdmin($token,$rol_usuario_id,$cotizacion_id,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefa_lab_id,$jefe_brigada_id,$laboratorio_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						ordenDeServicio(obra_id,fecha,hora,lugar,jefa_lab_id,jefe_brigada_id,laboratorio_id)
+						ordenDeServicio(cotizacion_id,obra_id,actividades,condicionesTrabajo,fechaInicio,fechaFin,horaInicio,horaFin,observaciones,lugar,jefa_lab_id,jefe_brigada_id,laboratorio_id)
 
 						VALUES
-						(1QQ,'1QQ','1QQ','1QQ',1QQ,1QQ,1QQ)
-				",array($obra_id,$fecha,$hora,$lugar,$jefa_lab_id,$jefe_brigada_id,$laboratorio_id),"INSERT");
+						(1QQ,1QQ,'1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ',1QQ,1QQ)
+				",array($cotizacion_id,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefa_lab_id,$jefe_brigada_id,$laboratorio_id),"INSERT");
 			if(!$dbS->didQuerydied){
 				$arr = array('id_ordenDeServicio' => 'No disponible, esto NO es un error','estatus' => 'Exito en insercion', 'error' => 0);
 			}
@@ -123,7 +180,7 @@ class OrdenDeServicio{
 		return json_encode($arr);
 	}
 
-	public function upDateAdmin($token,$rol_usuario_id,$id_ordenDeServicio,$obra_id,$fecha,$hora,$lugar,$jefa_lab_id,$jefe_brigada_id,$laboratorio_id){
+	public function upDateAdmin($token,$rol_usuario_id,$id_ordenDeServicio,$cotizacion_id,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefa_lab_id,$jefe_brigada_id,$laboratorio_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -131,9 +188,15 @@ class OrdenDeServicio{
 			$dbS->squery("	UPDATE
 							ordenDeServicio
 						SET
+							cotizacion_id = 1QQ,
 							obra_id = 1QQ,
-							fecha = '1QQ',
-							hora = '1QQ', 
+							actividades = '1QQ', 
+							condicionesTrabajo = '1QQ',
+							fechaInicio = '1QQ',
+							fechaFin = '1QQ',
+							horaInicio = '1QQ',
+							horaFin = '1QQ',
+							observaciones = '1QQ',
 							lugar = '1QQ',
 							jefa_lab_id = 1QQ,
 							jefe_brigada_id = 1QQ,
@@ -141,7 +204,7 @@ class OrdenDeServicio{
 						WHERE
 							id_ordenDeServicio = 1QQ
 					 "
-					,array($obra_id,$fecha,$hora,$lugar,$jefa_lab_id,$jefe_brigada_id,$laboratorio_id,$id_ordenDeServicio),"UPDATE"
+					,array($cotizacion_id,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefa_lab_id,$jefe_brigada_id,$laboratorio_id,$id_ordenDeServicio),"UPDATE"
 			      	);
 			if(!$dbS->didQuerydied){
 				$arr = array('id_ordenDeServicio' => 'No disponible, esto NO es un error','estatus' => 'Exito en actualizacion', 'error' => 0);
@@ -162,10 +225,17 @@ class OrdenDeServicio{
 			$s= $dbS->qarrayA("
 			        SELECT 
 							id_ordenDeServicio,
+							cotizacion_id,
+							actividades,
+							condicionesTrabajo,
+							fechaInicio,
+							fechaFin,
+							horaInicio,
+							horaFin,
+							observaciones,
+
 							obra_id,
 							obra.obra,
-							fecha,
-							hora,
 							lugar,
 							ordenDeServicio.laboratorio_id,
 							laboratorio,

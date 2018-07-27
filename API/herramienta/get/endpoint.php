@@ -29,11 +29,5 @@
 			$herra = new Herramienta();
 			echo $herra->getAllJefaLab($_GET['token'],$_GET['rol_usuario_id']);
 		break;
-		case 'getAllHerraAvailable':
-			$herra = new Herramienta();
-			echo $herra->getAllHerraAvailable($_GET['token'],$_GET['rol_usuario_id']);
-		break;
-
-		
 	}
 ?>
