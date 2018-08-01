@@ -179,9 +179,31 @@ class herramienta_ordenDeSevicio{
 	*/
 
 	/*
-	public function insertAdmin($token,$rol_usuario_id,$id_herramienta){
+		-El campo de fecha de devolucion´podria estar asociado a la fecha de termino de la orden de servicio?
+		-La funcion que imprime las herramientas disponibles para asignarlas a una nueva orden de servicio deberian estar en la clase herramientas?
+	*/
+	public function insertAdmin($token,$rol_usuario_id,$ordenDeServicio_id,$herramienta_id,$fechaDevolucion,$status){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("
+						INSERT INTO
+						herramienta_ordenDeSevicio(ordenDeServicio_id,herramienta_id,fechaDevolucion,status)
 
-	}*/
+						VALUES
+						(1QQ,1QQ,'1QQ','1QQ')
+				",array($ordenDeServicio_id,$herramienta_id,$fechaDevolucion,$status),"INSERT");
+
+			if(!$dbS->didQuerydied){
+				$arr = array('id_herramienta_ordenDeServicio' => 'No disponible, esto NO es un error', 'estatus' => 'Exito en insercion', 'error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
 
 
 	public function getByIDAdminHerra($token,$rol_usuario_id,$id_herramienta){
