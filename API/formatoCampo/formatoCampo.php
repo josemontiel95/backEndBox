@@ -27,17 +27,17 @@ class formatoCampo{
 
 
 
-	public function insertJefeBrigada($token,$rol_usuario_id,$informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud,$status){
+	public function insertJefeBrigada($token,$rol_usuario_id,$informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						formatoCampo(informeNo,ordenDeTrabajo_id,tipo,cono_id,varilla_id,flexometro_id,termometro_id,posInicial,status)
+						formatoCampo(informeNo,ordenDeTrabajo_id,tipo,cono_id,varilla_id,flexometro_id,termometro_id,posInicial)
 						VALUES
-						('1QQ',1QQ,'1QQ',1QQ,1QQ,1QQ,1QQ,PointFromText('POINT(1QQ 1QQ)'),1QQ)
-				",array($informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud,$status),"INSERT");
+						('1QQ',1QQ,'1QQ',1QQ,1QQ,1QQ,1QQ,PointFromText('POINT(1QQ 1QQ)'))
+				",array($informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud),"INSERT");
 			if(!$dbS->didQuerydied){
 				$id=$dbS->lastInsertedID;
 				$arr = array('id_formatoCampo' =>$id,'estatus' => 'Exito en insercion', 'error' => 0);
