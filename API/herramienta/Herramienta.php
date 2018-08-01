@@ -18,9 +18,7 @@ class Herramienta{
 
 	*/
 
-	
-
-	public function getForDroptdownAdmin($token,$rol_usuario_id){
+	public function getForDroptdownJefeBrigadaCono($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -28,15 +26,14 @@ class Herramienta{
 			$arr= $dbS->qAll("
 			      SELECT 
 			      	id_herramienta,
-			        tipo,
 			        placas
 			      FROM 
 			        herramienta_tipo,herramientas
 			       WHERE
 			       	id_herramienta_tipo=herramienta_tipo_id AND
-			       	herramientas.active = 1
-			      ORDER BY 
-			      	tipo
+			       	herramientas.active = 1 AND 
+			       	id_herramienta_tipo = 1001
+
 			      ",
 			      array(),
 			      "SELECT"
@@ -53,6 +50,103 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+	public function getForDroptdownJefeBrigadaVarilla($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			     SELECT 
+			      	id_herramienta,
+			        placas
+			      FROM 
+			        herramienta_tipo,herramientas
+			       WHERE
+			       	id_herramienta_tipo=herramienta_tipo_id AND
+			       	herramientas.active = 1 AND 
+			       	id_herramienta_tipo = 1002
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if(count($arr) == 0)
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
+
+
+
+	
+
+	public function getForDroptdownJefeBrigadaFlexometro($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			       SELECT 
+			      	id_herramienta,
+			        placas
+			      FROM 
+			        herramienta_tipo,herramientas
+			       WHERE
+			       	id_herramienta_tipo=herramienta_tipo_id AND
+			       	herramientas.active = 1 AND 
+			       	id_herramienta_tipo = 1003
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if(count($arr) == 0)
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
+
+
+	public function getForDroptdownJefeBrigadaTermometro($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      SELECT 
+			      	id_herramienta,
+			        placas
+			      FROM 
+			        herramienta_tipo,herramientas
+			       WHERE
+			       	id_herramienta_tipo=herramienta_tipo_id AND
+			       	herramientas.active = 1 AND 
+			       	id_herramienta_tipo = 1004
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if(count($arr) == 0)
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
 
 	public function getAllAdmin($token,$rol_usuario_id){
 		global $dbS;
