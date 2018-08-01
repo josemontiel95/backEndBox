@@ -12,24 +12,24 @@
 		echo json_encode(2);
 	}
 
-	include_once("./../OrdenDeServicio.php");
+	include_once("./../ordenDeTrabajo.php");
 
 	switch ($function){
 		case 'insertAdmin':
-			$orden = new OrdenDeServicio();
+			$orden = new ordenDeTrabajo();
 			echo $orden->insertAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['cotizacion_id'],$_POST['obra_id'],$_POST['actividades'],$_POST['condicionesTrabajo'],$_POST['fechaInicio'],$_POST['fechaFin'],$_POST['horaInicio'],$_POST['horaFin'],$_POST['observaciones'],$_POST['lugar'],$_POST['jefa_lab_id'],$_POST['jefe_brigada_id'],$_POST['laboratorio_id']);
 		break;
 		case 'upDateAdmin':
-			$orden = new OrdenDeServicio();
-			echo $orden->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ordenDeServicio'],$_POST['cotizacion_id'],$_POST['obra_id'],$_POST['actividades'],$_POST['condicionesTrabajo'],$_POST['fechaInicio'],$_POST['fechaFin'],$_POST['horaInicio'],$_POST['horaFin'],$_POST['observaciones'],$_POST['lugar'],$_POST['jefa_lab_id'],$_POST['jefe_brigada_id'],$_POST['laboratorio_id']);
+			$orden = new ordenDeTrabajo();
+			echo $orden->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ordenDeTrabajo'],$_POST['cotizacion_id'],$_POST['obra_id'],$_POST['actividades'],$_POST['condicionesTrabajo'],$_POST['fechaInicio'],$_POST['fechaFin'],$_POST['horaInicio'],$_POST['horaFin'],$_POST['observaciones'],$_POST['lugar'],$_POST['jefa_lab_id'],$_POST['jefe_brigada_id'],$_POST['laboratorio_id']);
 		break;
 		case 'deactivate':
-			$orden = new OrdenDeServicio();
-			echo $orden->deactivate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ordenDeServicio']);
+			$orden = new ordenDeTrabajo();
+			echo $orden->deactivate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ordenDeTrabajo']);
 		break;
 		case 'activate':
-			$orden = new OrdenDeServicio();
-			echo $orden->activate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ordenDeServicio']);
+			$orden = new ordenDeTrabajo();
+			echo $orden->activate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ordenDeTrabajo']);
 		break;
 	}
 

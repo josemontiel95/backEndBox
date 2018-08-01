@@ -101,6 +101,7 @@ CREATE TABLE obra(
 	prefijo VARCHAR(4) NOT NULL,
 	fechaDeCreacion DATE NOT NULL,
 	descripcion TEXT,
+	localizacion TEXT NOT NULL,
 	nombre_residente VARCHAR(50) NOT NULL,
 	telefono_residente VARCHAR(15) NOT NULL,
 	correo_residente VARCHAR(40) NOT NULL,
@@ -132,10 +133,14 @@ CREATE TABLE obra(
 ALTER TABLE obra AUTO_INCREMENT=1001;
 
 
+INSERT INTO obra(obra,prefijo,fechaDeCreacion,descripcion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento,incertidumbre) 
+VALUES("obra1","prefijo1","fechaDeCreacion1","descripcion1","localizacion1","nombre_residente1",1234,"correo_residente1",1001,1001,1,123,123);
+
+
 
 //El lugar no deberia estar porque ya lo contempla la obra PENDIENTE
-CREATE TABLE ordenDeServicio(
-	id_ordenDeServicio INT(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE ordenDeTrabajo(
+	id_ordenDeTrabajo INT(11) NOT NULL AUTO_INCREMENT,
 	cotizacion_id INT(11),
 	obra_id INT(11),
 	actividades TEXT,
@@ -154,7 +159,7 @@ CREATE TABLE ordenDeServicio(
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	active INT NOT NULL DEFAULT 1,
 
-	PRIMARY KEY(id_ordenDeServicio),
+	PRIMARY KEY(id_ordenDeTrabajo),
 
 	FOREIGN KEY(obra_id) 
 	REFERENCES obra(id_obra)
@@ -173,7 +178,13 @@ CREATE TABLE ordenDeServicio(
 	REFERENCES laboratorio(id_laboratorio)
 	ON DELETE SET NULL ON UPDATE CASCADE
 )ENGINE=INNODB;
-ALTER TABLE ordenDeServicio AUTO_INCREMENT=1001;
+ALTER TABLE ordenDeTrabajo AUTO_INCREMENT=1001;
+
+INSERT INTO ordenDeTrabajo(cotizacion_id,obra_id,actividades,condicionesTrabajo,jefe_brigada_id,fechaInicio,fechaFin,horaInicio,horaFin,observaciones,lugar,jefa_lab_id,laboratorio_id)
+VALUES ("cotizacion_id1",1001,"actividades1","condicionesTrabajo1",1029,"fechaInicio1","fechaFin1","horaInicio1","horaFin1","observaciones1","lugar1",1028,1001);
+
+
+//MODIFICAR LOS CA
 
 CREATE TABLE tecnicosDeOrden(
 	tecnico_id INT(11),
@@ -188,7 +199,7 @@ CREATE TABLE tecnicosDeOrden(
 	ON DELETE SET NULL ON UPDATE CASCADE,
 
 	FOREIGN KEY(orden_id) 
-	REFERENCES ordenDeServicio(id_ordenDeServicio)
+	REFERENCES ordenDeTrabajo(id_ordenDeTrabajo)
 	ON DELETE SET NULL ON UPDATE CASCADE
 )ENGINE=INNODB;
 
@@ -225,8 +236,8 @@ CREATE TABLE herramientas(
 ALTER TABLE herramientas AUTO_INCREMENT=1001;
 
 
-CREATE TABLE herramienta_ordenDeSevicio(
-	ordenDeServicio_id INT(11),
+CREATE TABLE herramienta_ordenDeTrabajo(
+	ordenDeTrabajo_id INT(11),
 	herramienta_id INT(11),
 	fechaDevolucion DATE NOT NULL,
 	status VARCHAR(10) NOT NULL,
@@ -239,8 +250,8 @@ CREATE TABLE herramienta_ordenDeSevicio(
 	REFERENCES herramientas(id_herramienta)
 	ON DELETE SET NULL ON UPDATE CASCADE,
 
-	FOREIGN KEY(ordenDeServicio_id) 
-	REFERENCES ordenDeServicio(id_ordenDeServicio)
+	FOREIGN KEY(ordenDeTrabajo_id) 
+	REFERENCES ordenDeTrabajo(id_ordenDeTrabajo)
 	ON DELETE SET NULL ON UPDATE CASCADE
 
 )ENGINE=INNODB;
@@ -328,7 +339,7 @@ CREATE TABLE formatos_orden(
 	ON DELETE SET NULL ON UPDATE CASCADE,
 
 	FOREIGN KEY(orden_id) 
-	REFERENCES ordenDeServicio(id_ordenDeServicio)
+	REFERENCES ordenDeTrabajo_id(id_ordenDeTrabajo_id)
 	ON DELETE SET NULL ON UPDATE CASCADE
 )ENGINE=INNODB;
 ALTER TABLE formatos_orden AUTO_INCREMENT=1001;
@@ -394,6 +405,60 @@ CREATE TABLE log(
 )ENGINE=INNODB;
 
 
+//PENDIENTE
+CREATE TABLE formatoCampo(
+	id_formatoCampo INT(11) NOT NULL AUTO_INCREMENT,
+	informeNo VARCHAR(30) NOT NULL,
+	ordenDeTrabajo_id INT(11),
+	observaciones TEXT,
+	tipo VARCHAR(20) NOT NULL,
+	posInicial 
+	posFinal
+
+	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	active INT NOT NULL DEFAULT 1,
+
+
+	PRIMARY KEY(id_formatoCampo),
+
+	FOREIGN KEY(ordenDeTrabajo_id) 
+	REFERENCES ordenDeTrabajo(id_ordenDeTrabajo)
+	ON DELETE SET NULL ON UPDATE CASCADE
+
+)ENGINE=INNODB;
+ALTER TABLE sesion AUTO_INCREMENT=1001;
+
+CREATE TABLE registrosCampo(
+	formatoCampo_id INT(11),
+	claveEspecimen VARCHAR(20),
+	fecha DATE,
+	fprima VARCHAR(10),
+	revProyecto INT, 
+	revObra INT,
+	tamagregado INT,
+	volumen FLOAT(5.2),
+	tipoConcreto VARCHAR(5),
+	herramienta_id INT,
+	horaMuestreo TIME,
+	tempMuestreo INT,
+	tempRecoleccion INT,
+	localizacion TEXT,
+	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	active INT NOT NULL DEFAULT 1,
+
+
+	FOREIGN KEY(formatoCampo_id) 
+	REFERENCES formatoCampo(id_formatoCampo)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(herramienta_id) 
+	REFERENCES herramientas(id_herramienta)
+	ON DELETE SET NULL ON UPDATE CASCADE
+)ENGINE=INNODB;
+
+
 
 ================
 DROP TABLE dato;
@@ -404,8 +469,12 @@ DROP TABLE formato;
 DROP TABLE herramientas;
 DROP TABLE herramienta_tipo;
 DROP TABLE tecnicosDeOrden;
-DROP TABLE herramienta_ordenDeSevicio;
-DROP TABLE ordenDeServicio;
+DROP TABLE herramienta_ordenDeTrabajo;
+
+DROP TABLE registrosCampo;
+DROP TABLE formatoCampo;
+
+DROP TABLE ordenDeTrabajo;
 DROP TABLE obra;
 DROP TABLE concretera;
 DROP TABLE cliente;
@@ -414,6 +483,8 @@ DROP TABLE usuario;
 DROP TABLE laboratorio;
 DROP TABLE rol_usuario;
 DROP TABLE log;
+
+
 
 ================
 
@@ -459,7 +530,7 @@ INSERT INTO obra(obra,prefijo,fechaDeCreacion,descripcion,cliente_id,concretera_
 [10:28, 20/7/2018] +52 1 222 578 0650: INSERT INTO concretera (concretera) VALUES("Apasco");
 
 
-INSERT INTO ordenDeServicio(cotizacion_id,obra_id,actividades,condicionesTrabajo,jefe_brigada_id,fechaInicio,fechaFin,horaInicio,horaFin,observaciones) VALUES (1001,1001,"actividades1","condiciones1",1007,"2002-12-12","2003-12-12","15:32","15:32","observaciones1");
+INSERT INTO ordenDeTrabajo(cotizacion_id,obra_id,actividades,condicionesTrabajo,jefe_brigada_id,fechaInicio,fechaFin,horaInicio,horaFin,observaciones) VALUES (1001,1001,"actividades1","condiciones1",1007,"2002-12-12","2003-12-12","15:32","15:32","observaciones1");
 
 
 ---------------------------
