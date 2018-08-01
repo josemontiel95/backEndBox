@@ -27,22 +27,9 @@
 			$usuario = new Usuario();
 			echo $usuario->cerrarSesion($_GET['token']);
 		break;
-		case'getAllUsuarios':
+		case'getAllAdmin':
 			$usuario = new Usuario();
-			echo $usuario->getAllUsuarios($_GET['token']);
-		break;
-		case 'insert':
-			$usuario = new Usuario();
-			echo $usuario->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['nombre'],$_GET['apellido'],$_GET['laboratorio_id'],$_GET['nss'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new'],$_GET['constrasena']);
-		break;
-		case 'upDateContrasena':
-			$usuario = new Usuario();
-			echo $usuario->upDateContrasena($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario'],$_GET['constrasena']);
-		break;
-
-		case 'deactivate':
-			$usuario = new Usuario();
-			echo $usuario->deactivate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario']);
+			echo $usuario->getAllAdmin($_GET['token']);
 		break;
 		case 'upLoadFoto':
 			$usuario = new Usuario();
@@ -52,15 +39,20 @@
 			$usuario = new Usuario();
 			echo $usuario->getIDByToken($_GET['token'],$_GET['rol_usuario_id']);
 		break;
-		case 'activate':
-			$usuario = new Usuario();
-			echo $usuario->activate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario']);
-		break;
+		
 		//Hacerlo enviar los datos que necesitan
-		case 'getUserByID':
+		case 'getByIDAdmin':
 			$usuario = new Usuario();
-			echo $usuario->getUserByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario']);
+			echo $usuario->getByIDAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario']);
 		break;
+		case 'getForDroptdownAdmin':
+			$usuario = new Usuario();
+			echo $usuario->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
+		break;
+	/*	case 'upDateAdmin':
+			$usuario = new Usuario();
+			echo $usuario->upDateAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario'],$_GET['nombre'],$_GET['apellido'],$_GET['laboratorio_id'],$_GET['nss'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new']);
+		break;*/
 	/*	case 'upDate':
 			$usuario = new Usuario();
 			echo $usuario->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario'],$_GET['nombre'],$_GET['apellido'],$_GET['laboratorio_id'],$_GET['nss'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new']);

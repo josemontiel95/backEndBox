@@ -15,7 +15,7 @@ class Laboratorio{
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
-	public function insert($token,$rol_usuario_id,$laboratorio,$estado,$municipio){
+	public function insertAdmin($token,$rol_usuario_id,$laboratorio,$estado,$municipio){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -27,15 +27,18 @@ class Laboratorio{
 						VALUES
 						('1QQ','1QQ','1QQ')
 				",array($laboratorio,$estado,$municipio),"INSERT");
-			if($dbS->didQuerydied){
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 2);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_herramienta' => 'No disponible, esto NO es un error', 'laboratorio' => $laboratorio, 'estatus' => 'Exito en insercion', 'error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}
 		}
 		return json_encode($arr);
 
 	}
 
-	public function upDate($token,$rol_usuario_id,$id_laboratorio,$laboratorio,$estado,$municipio){
+	public function upDateAdmin($token,$rol_usuario_id,$id_laboratorio,$laboratorio,$estado,$municipio){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -52,8 +55,11 @@ class Laboratorio{
 					 "
 					,array($laboratorio,$estado,$municipio,$id_laboratorio),"UPDATE"
 			      	);
-			if($dbS->didQuerydied){
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 2);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_herramienta' => 'No disponible, esto NO es un error', 'laboratorio' => $laboratorio, 'estatus' => 'Exito en actualizacion', 'error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}
 		}		
 		return json_encode($arr);
@@ -74,8 +80,11 @@ class Laboratorio{
 					 "
 					,array(0,$id_laboratorio),"UPDATE"
 			      	);
-			if($dbS->didQuerydied){
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 2);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_laboratorio' => $id_laboratorio,'estatus' => 'Laboratorio se desactivo','error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}
 		}
 		return json_encode($arr);
@@ -98,15 +107,18 @@ class Laboratorio{
 					 "
 					,array(1,$id_laboratorio),"UPDATE"
 			      	);
-			if($dbS->didQuerydied){
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la activacion , verifica tus datos y vuelve a intentarlo','error' => 2);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_laboratorio' => $id_laboratorio,'estatus' => 'Laboratorio se activo','error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la activacion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}
 		}
 		return json_encode($arr);
 	}
 
 
-	public function getAll($token,$rol_usuario_id){
+	public function getForDroptdownAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -119,6 +131,8 @@ class Laboratorio{
 			        laboratorio
 			      WHERE
 			      	 active = 1
+			      ORDER BY 
+			      	laboratorio
 			      ",
 			      array(),
 			      "SELECT"
@@ -134,6 +148,79 @@ class Laboratorio{
 		}
 		return json_encode($arr);
 	}
+
+
+	public function getByIDAdmin($token,$rol_usuario_id,$id_laboratorio){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA("
+			      SELECT 
+			        id_laboratorio,
+			        laboratorio,
+			        estado,
+			        municipio,
+			        createdON,
+					lastEditedON,
+					active
+			      FROM 
+			      	laboratorio
+			      WHERE 
+			      	id_laboratorio = 1QQ
+			      ",
+			      array($id_laboratorio),
+			      "SELECT"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					return "empty";
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getByID , verifica tus datos y vuelve a intentarlo','error' => 2);
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function getAllAdmin($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      SELECT 
+			        id_laboratorio,
+					laboratorio,
+					estado,
+					municipio,
+					createdON,
+					lastEditedON,
+					IF(active = 1,'Si','No') AS active
+			      FROM 
+			        laboratorio
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+						if(count($arr) == 0)
+							$arr = array('estatus' =>"No hay registros", 'error' => 5);
+						
+			}else
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 6);
+		}
+		return json_encode($arr);	
+	}
+
+
+
 
 
 	/*	Cuando se cree la vista del usuario (pagina web) con esta funcion el usuario puede ingresar el id y se reflejaran los datos de los usuario que esten vinculados con ese laboratorio. Posteriormente el usuario podra filtarlos a su gusto-----No tiene caso porque en las tablas que ya existen los usuarios ya pueden filtrar el numero de id_laboratorio y getallordenes de servicio*/
