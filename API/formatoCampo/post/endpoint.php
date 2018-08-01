@@ -13,11 +13,20 @@
 	}
 
 	include_once("./../formatoCampo.php");
+	include_once("./../registrosCampo.php");
 
 	switch ($function){
 		case 'insertJefeBrigada':
-			$obra = new formatoCampo();
-			echo $obra->insertJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['informeNo'],$_POST['ordenDeTrabajo_id'],$_POST['tipo'],$_POST['cono_id'],$_POST['varilla_id'],$_POST['flexometro_id'],$_POST['termometro_id'],$_POST['longitud'],$_POST['latitud'],$_POST['status']);		
+			$formatocampo = new formatoCampo();
+			echo $formatocampo->insertJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['informeNo'],$_POST['ordenDeTrabajo_id'],$_POST['tipo'],$_POST['cono_id'],$_POST['varilla_id'],$_POST['flexometro_id'],$_POST['termometro_id'],$_POST['longitud'],$_POST['latitud'],$_POST['status']);		
+		break;
+		case 'initInsert':
+			$registrocampo = new registrosCampo();
+			echo $registrocampo->initInsert($_POST['token'],$_POST['rol_usuario_id'],$_POST['formatoCampo_id']);
+		break;
+		case 'insertRegistroJefeBrigada':
+			$registrocampo = new registrosCampo();
+			echo $registrocampo->insertRegistroJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['campo'],$_POST['valor'],$_POST['id_registrosCampo']);
 		break;
 		/*
 		case 'upDateAdmin':

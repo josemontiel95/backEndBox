@@ -452,6 +452,7 @@ CREATE TABLE formatoCampo(
 ALTER TABLE formatoCampo AUTO_INCREMENT=1001;
 
 CREATE TABLE registrosCampo(
+	id_registrosCampo INT(11) NOT NULL AUTO_INCREMENT,
 	formatoCampo_id INT(11),
 	claveEspecimen VARCHAR(20),
 	fecha DATE,
@@ -470,16 +471,16 @@ CREATE TABLE registrosCampo(
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	active INT NOT NULL DEFAULT 1,
 
+	PRIMARY KEY (id_registrosCampo),
 
-	FOREIGN KEY(formatoCampo_id) 
-	REFERENCES formatoCampo(id_formatoCampo)
-	ON DELETE SET NULL ON UPDATE CASCADE,
+
 
 	FOREIGN KEY(herramienta_id) 
 	REFERENCES herramientas(id_herramienta)
 	ON DELETE SET NULL ON UPDATE CASCADE
 )ENGINE=INNODB;
 
+ALTER TABLE registrosCampo AUTO_INCREMENT=1001;
 
 
 ================

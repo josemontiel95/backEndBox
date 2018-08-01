@@ -18,27 +18,59 @@ class registrosCampo{
 	private $localizacion;
 
 	private $wc = '/1QQ/';
-	/*
-	public function insertJefeBrigada(){
+
+
+	public function initInsert($token,$rol_usuario_id,$formatoCampo_id){
+		echo "asdas";
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						registrosCampo(${'1QQ'})
+							registrosCampo(formatoCampo_id)
 
 						VALUES
-						('1QQ')
-				",array($formatoCampo_id,$claveEspecimen,$fecha,$fprima,$revProyecto,$revObra,$tamagregado,$volumen,$tipoConcreto,$unidad,$horaMuestreo,$tempMuestreo,$tempRecoleccion,$localizacion),"INSERT");
+							(1QQ)
+				",array($formatoCampo_id),"INSERT");
+			if(!$dbS->didQuerydied){
+				$id=$dbS->lastInsertedID;
+				$arr = array('id_registrosCampo' => $id,'estatus' => '¡Exito en la inicializacion','error' => 0);
+				return json_encode($arr);
+			}else{
+				$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+				return json_encode($arr);
+			}
+		}
+		return json_encode($arr);
+
+	}
+	
+	public function insertRegistroJefeBrigada($token,$rol_usuario_id,$campo,$valor,$id_registrosCampo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("
+						UPDATE
+							registrosCampo
+						SET
+							1QQ = '1QQ'
+						WHERE
+							id_registrosCampo = 1QQ
+
+				",array($campo,$valor,$id_registrosCampo),"INSERT");
 			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
-			if($dbS->didQuerydied){
-					$arr = array('token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => '¡Exito en la inserccion de un registro!','error' => 0);
+				return json_encode($arr);
+			}else{
+				$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+				return json_encode($arr);
 			}
 		}
 		return json_encode($arr);
 	}
-	/*
 
 
 	/*
