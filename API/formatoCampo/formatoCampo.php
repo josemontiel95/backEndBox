@@ -15,6 +15,28 @@ class formatoCampo{
 
 
 
+	public function insertJefeBrigada($token,$rol_usuario_id,$informeNo,$ordenDeTrabajo_id,$observaciones,$tipo,$posInicial,$posFinal){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("
+						INSERT INTO
+						formatoCampo(informeNo,ordenDeTrabajo_id,observaciones,tipo,posInicial,posFinal)
+						VALUES
+						('1QQ',1QQ,'1QQ','1QQ','1QQ','1QQ')
+				",array($informeNo,$ordenDeTrabajo_id,$observaciones,$tipo,$posInicial,$posFinal),"INSERT");
+			$arr = array('id_formatoCampo' => 'No disponible, esto NO es un error','estatus' => 'Exito en insercion', 'error' => 0);
+			if($dbS->didQuerydied){
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+
+	}
+
+
+
 	public function getHeader($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
