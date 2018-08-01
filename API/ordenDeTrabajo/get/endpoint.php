@@ -10,23 +10,23 @@
 		return -2;
 	}
 
-	include_once("./../OrdenDeServicio.php");
+	include_once("./../ordenDeTrabajo.php");
 
 	switch ($function) {
 		case 'getAllAdmin':
-			$orden = new OrdenDeServicio();
+			$orden = new ordenDeTrabajo();
 			echo $orden->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
 		case 'getByIDAdmin':
-			$orden = new OrdenDeServicio();
-			echo $orden->getByIDAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeServicio']);
+			$orden = new ordenDeTrabajo();
+			echo $orden->getByIDAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
 		break;
 		case 'getForDroptdownAdmin':
-			$orden = new OrdenDeServicio();
+			$orden = new ordenDeTrabajo();
 			echo $orden->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
 		case 'getAllHerraAvailable':
-			$herra = new OrdenDeServicio();
+			$herra = new ordenDeTrabajo();
 			echo $herra->getAllHerraAvailable($_GET['token'],$_GET['rol_usuario_id']);
 		break;
 	}

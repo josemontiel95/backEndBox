@@ -10,32 +10,26 @@
 		return -2;
 	}
 
-	include_once("./../herramienta_ordenDeSevicio.php");
+	include_once("./../formatoCampo.php");
 
 	switch ($function) {
-		case 'getByIDAdminHerra':
-			$herra = new herramienta_ordenDeSevicio();
-			echo $herra->getByIDAdminHerra($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta']);
+		case 'getHeader':
+			$herra = new formatoCampo();
+			echo $herra->getHeader($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
 		break;
-		case 'insertAdmin':
-			$herra = new herramienta_ordenDeSevicio();
-			echo $herra->insertAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['ordenDeServicio_id'],$_GET['herramienta_id'],$_GET['fechaDevolucion'],$_GET['status']);
-		break;
-
 		/*
 		case 'getByIDAdmin':
-			$herra = new Herramienta();
+			$herra = new formatoCampo();
 			echo $herra->getByIDAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta']);
 		break;
 		case 'getForDroptdownAdmin':
-			$herra = new Herramienta();
+			$herra = new formatoCampo();
 			echo $herra->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
 		case 'getAllJefaLab':
-			$herra = new Herramienta();
+			$herra = new formatoCampo();
 			echo $herra->getAllJefaLab($_GET['token'],$_GET['rol_usuario_id']);
-		break;*/
-
-		
+		break;
+		*/
 	}
 ?>

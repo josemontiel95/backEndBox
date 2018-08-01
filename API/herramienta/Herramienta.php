@@ -1,5 +1,5 @@
 <?php 
-include_once("./../../configSystem.php");
+
 include_once("./../../usuario/Usuario.php");
 class Herramienta{
 	private $id_herramienta;
