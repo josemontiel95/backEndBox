@@ -38,9 +38,7 @@ class Usuario{
 		$this->contrasena= $contrasena;
 	}
 	*/
-	public function getRootRol(){
 
-	}
 
 	public function login($email, $contrasena){
 		if($this->getByEmail($email)=="success"){
@@ -467,6 +465,70 @@ class Usuario{
 		return json_encode($arr);
 	}
 
+	public function getJefesBrigadaForDroptdown($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      SELECT 
+			        id_usuario,
+					nombre
+			      FROM 
+			        usuario
+			      WHERE
+			      	active = 1 AND 
+			      	rol_usuario_id = 1003
+			      ORDER BY 
+			      	nombre
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if($arr == "empty")
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query, verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function getJefesLabForDroptdown($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      SELECT 
+			        id_usuario,
+					nombre
+			      FROM 
+			        usuario
+			      WHERE
+			      	active = 1 AND 
+			      	rol_usuario_id = 1002
+			      ORDER BY 
+			      	nombre
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if($arr == "empty")
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query, verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
+
 
 	public function insertAdmin($token,$rol_usuario_id,$nombre,$apellido,$laboratorio_id,$nss,$email,$fechaDeNac,$rol_usuario_id_new,$constrasena){
 		global $dbS;
@@ -748,6 +810,9 @@ class Usuario{
 			return json_encode($arr);
 		}
 	}
+
+
+
 
 
 }
