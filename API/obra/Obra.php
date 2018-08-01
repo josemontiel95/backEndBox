@@ -241,7 +241,7 @@ class Obra{
 			
 			if(!$dbS->didQuerydied){
 				if($s=="empty"){
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'ID no existe','error' => 5);
+					$arr = array('id_obra' => $id_obra,'estatus' => 'Error no se encontro ese id','error' => 5);
 				}
 				else{
 					return json_encode($s);

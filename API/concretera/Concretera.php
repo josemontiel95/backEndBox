@@ -201,14 +201,14 @@ class Concretera{
 			
 			if(!$dbS->didQuerydied){
 				if($s=="empty"){
-					return "empty";
+					$arr = array('id_concretera' => $id_concretera,'estatus' => 'Error no se encontro ese id','error' => 5);
 				}
 				else{
 					return json_encode($s);
 				}
 			}
 			else{
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getByID , verifica tus datos y vuelve a intentarlo','error' => 2);
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 			}
 		}
 		return json_encode($arr);
