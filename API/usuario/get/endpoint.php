@@ -12,9 +12,6 @@
 	include_once("./../Usuario.php");
 
 	switch ($function){
-		case'hola':
-			echo 'como estas?';
-		break;
 		case'login':
 			$usuario = new Usuario();
 			echo $usuario->login($_GET['email'],$_GET['constrasena']);
@@ -48,6 +45,14 @@
 		case 'getForDroptdownAdmin':
 			$usuario = new Usuario();
 			echo $usuario->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
+		break;
+		case 'getJefesLabForDroptdown':
+			$usuario = new Usuario();
+			echo $usuario->getJefesLabForDroptdown($_GET['token'],$_GET['rol_usuario_id']);
+		break;
+		case 'getJefesBrigadaForDroptdown':
+			$usuario = new Usuario();
+			echo $usuario->getJefesBrigadaForDroptdown($_GET['token'],$_GET['rol_usuario_id']);
 		break;
 	/*	case 'upDateAdmin':
 			$usuario = new Usuario();
