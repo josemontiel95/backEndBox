@@ -412,8 +412,16 @@ CREATE TABLE formatoCampo(
 	ordenDeTrabajo_id INT(11),
 	observaciones TEXT,
 	tipo VARCHAR(20) NOT NULL,
-	posInicial 
-	posFinal
+
+	cono_id INT(11),
+	varilla_id INT(11),
+	flexometro_id INT(11),
+	termometro_id INT(11),
+
+	posInicial POINT NOT NULL,
+	posFinal POINT,
+
+	status INT NOT NULL,
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -422,12 +430,26 @@ CREATE TABLE formatoCampo(
 
 	PRIMARY KEY(id_formatoCampo),
 
-	FOREIGN KEY(ordenDeTrabajo_id) 
-	REFERENCES ordenDeTrabajo(id_ordenDeTrabajo)
+	FOREIGN KEY(cono_id) 
+	REFERENCES herramientas(id_herramienta)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(varilla_id) 
+	REFERENCES herramientas(id_herramienta)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(flexometro_id) 
+	REFERENCES herramientas(id_herramienta)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(termometro_id) 
+	REFERENCES herramientas(id_herramienta)
 	ON DELETE SET NULL ON UPDATE CASCADE
 
+
+
 )ENGINE=INNODB;
-ALTER TABLE sesion AUTO_INCREMENT=1001;
+ALTER TABLE formatoCampo AUTO_INCREMENT=1001;
 
 CREATE TABLE registrosCampo(
 	formatoCampo_id INT(11),
@@ -466,13 +488,14 @@ DROP TABLE campos;
 DROP TABLE tipo_campo;
 DROP TABLE formatos_orden;
 DROP TABLE formato;
+DROP TABLE formatoCampo;
 DROP TABLE herramientas;
 DROP TABLE herramienta_tipo;
 DROP TABLE tecnicosDeOrden;
-DROP TABLE herramienta_ordenDeTrabajo;
+
 
 DROP TABLE registrosCampo;
-DROP TABLE formatoCampo;
+
 
 DROP TABLE ordenDeTrabajo;
 DROP TABLE obra;

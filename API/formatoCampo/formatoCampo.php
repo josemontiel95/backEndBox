@@ -13,22 +13,37 @@ class formatoCampo{
 
 	private $wc = '/1QQ/';
 
+	/*
+	public function insertPositionFinal($position,$point){
+		$longitud = $point[0];	$latitud = $point[1];
+		$dbS->squery("
+						INSERT INTO
+						formatoCampo(${position})
+						VALUES
+						(geomfromtext('point(1QQ,1QQ)'))
+				",array($informeNo,$ordenDeTrabajo_id,$observaciones,$tipo,$posInicial,$posFinal),"INSERT");
+
+	}*/
 
 
-	public function insertJefeBrigada($token,$rol_usuario_id,$informeNo,$ordenDeTrabajo_id,$observaciones,$tipo,$posInicial,$posFinal){
+
+	public function insertJefeBrigada($token,$rol_usuario_id,$informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud,$status){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						formatoCampo(informeNo,ordenDeTrabajo_id,observaciones,tipo,posInicial,posFinal)
+						formatoCampo(informeNo,ordenDeTrabajo_id,tipo,cono_id,varilla_id,flexometro_id,termometro_id,posInicial,status)
 						VALUES
-						('1QQ',1QQ,'1QQ','1QQ','1QQ','1QQ')
-				",array($informeNo,$ordenDeTrabajo_id,$observaciones,$tipo,$posInicial,$posFinal),"INSERT");
-			$arr = array('id_formatoCampo' => 'No disponible, esto NO es un error','estatus' => 'Exito en insercion', 'error' => 0);
-			if($dbS->didQuerydied){
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+						('1QQ',1QQ,'1QQ',1QQ,1QQ,1QQ,1QQ,PointFromText('POINT(1QQ 1QQ)'),1QQ)
+				",array($informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud,$status),"INSERT");
+			if(!$dbS->didQuerydied){
+				$id=$dbS->lastInsertedID;
+				$arr = array('id_formatoCampo' =>$id,'estatus' => 'Exito en insercion', 'error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}
 		}
 		return json_encode($arr);

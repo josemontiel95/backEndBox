@@ -17,7 +17,7 @@
 	switch ($function){
 		case 'insertJefeBrigada':
 			$obra = new formatoCampo();
-			echo $obra->insertJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['informeNo'],$_POST['ordenDeTrabajo_id'],$_POST['observaciones'],$_POST['tipo'],$_POST['posInicial'],$_POST['posFinal']);		
+			echo $obra->insertJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['informeNo'],$_POST['ordenDeTrabajo_id'],$_POST['tipo'],$_POST['cono_id'],$_POST['varilla_id'],$_POST['flexometro_id'],$_POST['termometro_id'],$_POST['longitud'],$_POST['latitud'],$_POST['status']);		
 		break;
 		/*
 		case 'upDateAdmin':
