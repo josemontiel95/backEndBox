@@ -132,7 +132,8 @@ class ordenDeTrabajo{
 							usuario.nombre AS nombre_jefe_brigada_id,
 							jefe_brigada_id,
 							jefa.nombre AS nombre_jefa_lab_id,
-							ordenDeTrabajo.jefa_lab_id
+							ordenDeTrabajo.jefa_lab_id,
+							IF(ordenDeTrabajo.active = 1,'Si','No') AS active
 						from
 							usuario,ordenDeTrabajo,obra,laboratorio,
 							(SELECT 
@@ -253,7 +254,8 @@ class ordenDeTrabajo{
 							usuario.nombre AS nombre_jefe_brigada_id,
 							jefe_brigada_id,
 							jefa.nombre AS nombre_jefa_lab_id,
-							ordenDeTrabajo.jefa_lab_id
+							ordenDeTrabajo.jefa_lab_id,
+							IF(ordenDeTrabajo.active = 1,'Si','No') AS active
 						from
 							usuario,ordenDeTrabajo,obra,laboratorio,
 							(SELECT 
@@ -270,11 +272,11 @@ class ordenDeTrabajo{
 
 								id_usuario = jefa_lab_id) AS jefa
 						WHERE
-							id_ordenDeTrabajo = 1QQ AND
 							obra_id = id_obra AND
 							ordenDeTrabajo.laboratorio_id = id_laboratorio AND
 							id_usuario = jefe_brigada_id AND
-							jefa.jefa_lab_id = ordenDeTrabajo.jefa_lab_id
+							jefa.jefa_lab_id = ordenDeTrabajo.jefa_lab_id AND
+							id_ordenDeTrabajo = 1QQ
 			      ",
 			      array($id_ordenDeTrabajo),
 			      "SELECT"
@@ -282,14 +284,14 @@ class ordenDeTrabajo{
 			
 			if(!$dbS->didQuerydied){
 				if($s=="empty"){
-					return "empty";
+					$arr = array('id_ordenDeTrabajo' => $id_ordenDeTrabajo,'estatus' => 'Error no se encontro ese id','error' => 5);
 				}
 				else{
 					return json_encode($s);
 				}
 			}
 			else{
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query, verifica tus datos y vuelve a intentarlo','error' => 2);
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query, verifica tus datos y vuelve a intentarlo','error' => 6);
 			}
 		}
 		return json_encode($arr);
