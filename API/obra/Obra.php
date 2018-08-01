@@ -15,18 +15,18 @@ class Obra{
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
-	public function insertAdmin($token,$rol_usuario_id,$obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera_id,$tipo, $revenimiento, $incertidumbre){
+	public function insertAdmin($token,$rol_usuario_id,$obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						obra(obra,prefijo,fechaDeCreacion,descripcion,cliente_id,concretera_id,tipo, revenimiento, incertidumbre)
+						obra(obra,prefijo,fechaDeCreacion,descripcion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento, incertidumbre)
 
 						VALUES
-						('1QQ','1QQ','1QQ','1QQ',1QQ,1QQ,1QQ,'1QQ','1QQ')
-				",array($obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre),"INSERT");
+						('1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ',1QQ,1QQ,1QQ,1QQ,1QQ)
+				",array($obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre),"INSERT");
 				$arr = array('id_obra' => 'No disponible, esto NO es un error', 'obra' => $obra, 'estatus' => 'Exito en insercion', 'error' => 0);
 			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
@@ -35,7 +35,7 @@ class Obra{
 		return json_encode($arr);
 	}
 
-	public function upDateAdmin($token,$rol_usuario_id,$id_obra,$obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre){
+	public function upDateAdmin($token,$rol_usuario_id,$id_obra,$obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -47,7 +47,11 @@ class Obra{
 							prefijo = '1QQ', 
 							fechaDeCreacion = '1QQ',
 							descripcion ='1QQ',
-							cliente_id = '1QQ', 
+							localizacion = '1QQ',
+							nombre_residente = '1QQ',
+							telefono_residente = '1QQ',
+							correo_residente = '1QQ',
+							cliente_id = 1QQ, 
 							concretera_id = 1QQ,
 							tipo = 1QQ,
 							revenimiento='1QQ',
@@ -56,7 +60,7 @@ class Obra{
 							active=1 AND
 							id_obra = 1QQ
 					 "
-					,array($obra,$prefijo,$fechaDeCreacion,$descripcion,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,$id_obra),"UPDATE"
+					,array($obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,$id_obra),"UPDATE"
 			      	);
 			$arr = array('id_obra' => $id_obra, 'obra' => $obra,'estatus' => 'Exito de actualizacion','error' => 0);
 			if($dbS->didQuerydied){
@@ -80,6 +84,8 @@ class Obra{
 					prefijo,
 					fechaDeCreacion,
 					descripcion,
+					localizacion,
+					nombre_residente,
 					id_cliente,
 					nombre,
 					IF(obra.tipo = 2,'Unitario','Iguala') AS tipo,
@@ -209,6 +215,10 @@ class Obra{
 					prefijo,
 					fechaDeCreacion,
 					descripcion,
+					localizacion,
+					nombre_residente,
+					telefono_residente,
+					correo_residente,
 					tipo,
 					id_concretera,
 					concretera,

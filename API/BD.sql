@@ -100,6 +100,7 @@ CREATE TABLE obra(
 	obra VARCHAR(40) NOT NULL,
 	prefijo VARCHAR(4) NOT NULL,
 	fechaDeCreacion DATE NOT NULL,
+	descripcion TEXT,
 	localizacion TEXT NOT NULL,
 	nombre_residente VARCHAR(50) NOT NULL,
 	telefono_residente VARCHAR(15) NOT NULL,
@@ -132,8 +133,8 @@ CREATE TABLE obra(
 ALTER TABLE obra AUTO_INCREMENT=1001;
 
 
-INSERT INTO obra(obra,prefijo,fechaDeCreacion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento,incertidumbre) 
-VALUES("obra1","prefijo1","fechaDeCreacion1","localizacion1","nombre_residente1",1234,"correo_residente1",1001,1001,1,123,123);
+INSERT INTO obra(obra,prefijo,fechaDeCreacion,descripcion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento,incertidumbre) 
+VALUES("obra1","prefijo1","fechaDeCreacion1","descripcion1","localizacion1","nombre_residente1",1234,"correo_residente1",1001,1001,1,123,123);
 
 
 
@@ -404,13 +405,15 @@ CREATE TABLE log(
 )ENGINE=INNODB;
 
 
-
+//PENDIENTE
 CREATE TABLE formatoCampo(
 	id_formatoCampo INT(11) NOT NULL AUTO_INCREMENT,
 	informeNo VARCHAR(30) NOT NULL,
 	ordenDeTrabajo_id INT(11),
 	observaciones TEXT,
 	tipo VARCHAR(20) NOT NULL,
+	posInicial 
+	posFinal
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
