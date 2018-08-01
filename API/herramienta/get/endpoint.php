@@ -25,9 +25,30 @@
 			$herra = new Herramienta();
 			echo $herra->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+
+		case 'getForDroptdownJefeBrigadaCono':
+			$herra = new Herramienta();
+			echo $herra->getForDroptdownJefeBrigadaCono($_GET['token'],$_GET['rol_usuario_id']);
+		break;
+
+		case 'getForDroptdownJefeBrigadaVarilla':
+			$herra = new Herramienta();
+			echo $herra->getForDroptdownJefeBrigadaVarilla($_GET['token'],$_GET['rol_usuario_id']);
+		break;
+
+		case 'getForDroptdownJefeBrigadaFlexometro':
+			$herra = new Herramienta();
+			echo $herra->getForDroptdownJefeBrigadaFlexometro($_GET['token'],$_GET['rol_usuario_id']);
+		break;
+
+		case 'getForDroptdownJefeBrigadaTermometro':
+			$herra = new Herramienta();
+			echo $herra->getForDroptdownJefeBrigadaTermometro($_GET['token'],$_GET['rol_usuario_id']);
+		break;
 		case 'getAllJefaLab':
 			$herra = new Herramienta();
 			echo $herra->getAllJefaLab($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+
 	}
 ?>
