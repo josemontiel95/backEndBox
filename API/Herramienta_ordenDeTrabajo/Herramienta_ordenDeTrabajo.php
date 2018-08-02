@@ -1,7 +1,7 @@
 <?php 
 include_once("./../../configSystem.php");
 include_once("./../../usuario/Usuario.php");
-class herramienta_ordenDeSevicio{
+class herramienta_ordenDeTrabajo{
 	private $ordenDeServicio_id;
 	private $herramienta_id;
 	private $fechaDevolucion;
@@ -258,7 +258,7 @@ class herramienta_ordenDeSevicio{
 
 	*/
 	
-	/*			-----------------PENDIENTE
+
 	public function getAllHerraOrden($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
@@ -266,8 +266,8 @@ class herramienta_ordenDeSevicio{
 		if($arr['error'] == 0){
 			$s= $dbS->qAll("
 			      SELECT 
-			        tipo
-					placas
+			        tipo,
+					placas,
 					condicion
 				  FROM 
 			      	ordenDeTrabajo,herramientas,herramienta_tipo,herramienta_ordenDeTrabajo
@@ -283,7 +283,7 @@ class herramienta_ordenDeSevicio{
 			
 			if(!$dbS->didQuerydied){
 				if($s=="empty"){
-					$arr = array('id_herramienta' => $id_herramienta,'estatus' => 'Error no se encontro ese id','error' => 5);
+					$arr = array("No hay herramientas asociadas a la orden:" => $id_ordenDeTrabajo, "error" =>5);
 				}
 				else{
 					return json_encode($s);
@@ -295,7 +295,7 @@ class herramienta_ordenDeSevicio{
 		}
 		return json_encode($arr);
 	}
-	*/
+
 
 
 

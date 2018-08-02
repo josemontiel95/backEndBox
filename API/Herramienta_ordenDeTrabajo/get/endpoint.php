@@ -10,17 +10,22 @@
 		return -2;
 	}
 
-	include_once("./../herramienta_ordenDeSevicio.php");
+	include_once("./../herramienta_ordenDeTrabajo.php");
 
 	switch ($function) {
 		case 'getByIDAdminHerra':
-			$herra = new herramienta_ordenDeSevicio();
+			$herra = new herramienta_ordenDeTrabajo();
 			echo $herra->getByIDAdminHerra($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta']);
 		break;
 		case 'insertAdmin':
-			$herra = new herramienta_ordenDeSevicio();
+			$herra = new herramienta_ordenDeTrabajo();
 			echo $herra->insertAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['ordenDeServicio_id'],$_GET['herramienta_id'],$_GET['fechaDevolucion'],$_GET['status']);
 		break;
+		case 'getAllHerraOrden':
+			$herra = new herramienta_ordenDeTrabajo();
+			echo $herra->getAllHerraOrden($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
+		break;
+
 
 		/*
 		case 'getByIDAdmin':
