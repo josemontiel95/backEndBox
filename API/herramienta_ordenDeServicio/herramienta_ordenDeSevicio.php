@@ -257,7 +257,8 @@ class herramienta_ordenDeSevicio{
 	}
 
 	*/
-	/*
+	
+	/*			-----------------PENDIENTE
 	public function getAllHerraOrden($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
@@ -294,8 +295,10 @@ class herramienta_ordenDeSevicio{
 		}
 		return json_encode($arr);
 	}
+	*/
 
-	/*
+
+
 	/*
 
 	//Realizar cambios pertinenetes para que la funcion sirva
