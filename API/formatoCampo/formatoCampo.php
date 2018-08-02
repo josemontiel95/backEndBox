@@ -36,7 +36,7 @@ class formatoCampo{
 						INSERT INTO
 						formatoCampo(informeNo,ordenDeTrabajo_id,tipo,cono_id,varilla_id,flexometro_id,termometro_id,posInicial)
 						VALUES
-						('1QQ',1QQ,'1QQ',1QQ,1QQ,1QQ,1QQ,PointFromText('POINT(1QQ 1QQ)'))
+						('1QQ',1QQ,'1QQ','1QQ','1QQ','1QQ','1QQ',PointFromText('POINT(1QQ 1QQ)'))
 				",array($informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud),"INSERT");
 			if(!$dbS->didQuerydied){
 				$id=$dbS->lastInsertedID;

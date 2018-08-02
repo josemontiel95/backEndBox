@@ -246,6 +246,11 @@ class ordenDeTrabajo{
 							horaFin,
 							observaciones,
 
+							razonSocial,
+							cliente.nombre,
+							nombreContacto,
+							telefonoDeContacto,
+
 							obra_id,
 							obra.obra,
 							lugar,
@@ -257,7 +262,7 @@ class ordenDeTrabajo{
 							ordenDeTrabajo.jefa_lab_id,
 							IF(ordenDeTrabajo.active = 1,'Si','No') AS active
 						from
-							usuario,ordenDeTrabajo,obra,laboratorio,
+							usuario,ordenDeTrabajo,obra,laboratorio,cliente,
 							(SELECT 
 
 									jefa_lab_id,
@@ -276,6 +281,7 @@ class ordenDeTrabajo{
 							ordenDeTrabajo.laboratorio_id = id_laboratorio AND
 							id_usuario = jefe_brigada_id AND
 							jefa.jefa_lab_id = ordenDeTrabajo.jefa_lab_id AND
+							obra.cliente_id = id_cliente AND
 							id_ordenDeTrabajo = 1QQ
 			      ",
 			      array($id_ordenDeTrabajo),
