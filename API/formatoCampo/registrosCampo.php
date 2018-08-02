@@ -71,7 +71,56 @@ class registrosCampo{
 		}
 		return json_encode($arr);
 	}
+	/*
+		Obtienes todos los registros relacionados con un formato de Campo
+	
+	public function getAllRegistrosByID($token,$rol_usuario_id,$formatoCampo_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA("
+			      SELECT
+			      	id_registrosCampo,
+					formatoCampo_id,
+			        claveEspecimen,
+					fecha,
+					fprima,
+					revProyecto,
+					revObra,
+					tamagregado,
+					volumen,
+					tipoConcreto,
+					herramienta_id,
+					horaMuestreo,
+					tempMuestreo,
+					tempRecoleccion,
+					localizacion
+			      FROM 
+			      	registrosCampo
+			      WHERE 
+			      	formatoCampo_id = 1QQ
+			      ",
+			      array($id_herramienta),
+			      "SELECT"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => 'Error no se encontro ese id','error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		return json_encode($arr);
 
+	}
+	*/
 
 	/*
 
