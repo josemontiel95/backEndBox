@@ -11,11 +11,16 @@
 	}
 
 	include_once("./../formatoCampo.php");
+	include_once("./../registrosCampo.php");
 
 	switch ($function) {
 		case 'getHeader':
-			$herra = new formatoCampo();
-			echo $herra->getHeader($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
+			$formato = new formatoCampo();
+			echo $formato->getHeader($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
+		break;
+		case 'getAllRegistrosByID':
+			$registro = new registrosCampo();
+			echo $registro->getAllRegistrosByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
 		break;
 		/*
 		case 'getByIDAdmin':
