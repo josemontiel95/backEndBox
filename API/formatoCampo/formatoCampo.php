@@ -14,6 +14,7 @@ class formatoCampo{
 	private $wc = '/1QQ/';
 
 	/*
+	PENDIENTE
 	public function insertPositionFinal($position,$point){
 		$longitud = $point[0];	$latitud = $point[1];
 		$dbS->squery("
