@@ -32,11 +32,23 @@ class formatoCampo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
+			if($cono_id == -1)
+				$cono_id = NULL;
+
+			if($varilla_id == -1)
+				$varilla_id = NULL;
+
+			if($flexometro_id == -1)
+				$flexometro_id = NULL;
+			
+			if($termometro_id == -1)
+				$termometro_id = NULL;
+
 			$dbS->squery("
 						INSERT INTO
 						formatoCampo(informeNo,ordenDeTrabajo_id,tipo,cono_id,varilla_id,flexometro_id,termometro_id,posInicial)
 						VALUES
-						('1QQ',1QQ,'1QQ','1QQ','1QQ','1QQ','1QQ',PointFromText('POINT(1QQ 1QQ)'))
+						('1QQ',1QQ,'1QQ',1QQ,1QQ,1QQ,1QQ,PointFromText('POINT(1QQ 1QQ)'))
 				",array($informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud),"INSERT");
 			if(!$dbS->didQuerydied){
 				$id=$dbS->lastInsertedID;
