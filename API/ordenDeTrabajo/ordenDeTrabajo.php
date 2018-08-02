@@ -245,7 +245,7 @@ class ordenDeTrabajo{
 							horaInicio,
 							horaFin,
 							observaciones,
-
+							id_cliente,
 							razonSocial,
 							cliente.nombre,
 							nombreContacto,
