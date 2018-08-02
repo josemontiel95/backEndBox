@@ -73,13 +73,13 @@ class registrosCampo{
 	}
 	/*
 		Obtienes todos los registros relacionados con un formato de Campo
-	
-	public function getAllRegistrosByID($token,$rol_usuario_id,$formatoCampo_id){
+	*/
+	public function getAllRegistrosByID($token,$rol_usuario_id,$id_formatoCampo){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$s= $dbS->qarrayA("
+			$s= $dbS->qAll("
 			      SELECT
 			      	id_registrosCampo,
 					formatoCampo_id,
@@ -95,19 +95,20 @@ class registrosCampo{
 					horaMuestreo,
 					tempMuestreo,
 					tempRecoleccion,
-					localizacion
+					localizacion,
+					IF(status = 0,'PENDIENTE','COMPLETO') AS estado
 			      FROM 
 			      	registrosCampo
 			      WHERE 
 			      	formatoCampo_id = 1QQ
 			      ",
-			      array($id_herramienta),
+			      array($id_formatoCampo),
 			      "SELECT"
 			      );
 			
 			if(!$dbS->didQuerydied){
 				if($s=="empty"){
-					$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => 'Error no se encontro ese id','error' => 5);
+					$arr = array('No existen registro relacionados con el id_formatoCampo'=>$id_formatoCampo,'error' => 5);
 				}
 				else{
 					return json_encode($s);
@@ -120,7 +121,7 @@ class registrosCampo{
 		return json_encode($arr);
 
 	}
-	*/
+	
 
 	/*
 
