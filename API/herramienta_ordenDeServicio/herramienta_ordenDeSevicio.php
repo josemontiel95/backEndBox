@@ -182,6 +182,8 @@ class herramienta_ordenDeSevicio{
 		-El campo de fecha de devolucion´podria estar asociado a la fecha de termino de la orden de servicio?
 		-La funcion que imprime las herramientas disponibles para asignarlas a una nueva orden de servicio deberian estar en la clase herramientas?
 	*/
+
+	/*			PENDIENTE
 	public function insertAdmin($token,$rol_usuario_id,$ordenDeServicio_id,$herramienta_id,$fechaDevolucion,$status){
 		global $dbS;
 		$usuario = new Usuario();
@@ -254,6 +256,46 @@ class herramienta_ordenDeSevicio{
 		return json_encode($arr);
 	}
 
+	*/
+	/*
+	public function getAllHerraOrden($token,$rol_usuario_id,$id_ordenDeTrabajo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qAll("
+			      SELECT 
+			        tipo
+					placas
+					condicion
+				  FROM 
+			      	ordenDeTrabajo,herramientas,herramienta_tipo,herramienta_ordenDeTrabajo
+			      WHERE 
+			      		herramienta_id = id_herramienta AND
+			      		herramienta_tipo_id = id_herramienta_tipo AND
+			      		ordenDeTrabajo_id = 1QQ 
+
+			      ",
+			      array($id_ordenDeTrabajo),
+			      "SELECT"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('id_herramienta' => $id_herramienta,'estatus' => 'Error no se encontro ese id','error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion query , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		return json_encode($arr);
+	}
+
+	/*
 	/*
 
 	//Realizar cambios pertinenetes para que la funcion sirva
