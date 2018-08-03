@@ -26,7 +26,7 @@ class formatoCampo{
 
 	}*/
 
-	
+	/*
 	public function getAllAdmin(){
 		global $dbS;
 		$usuario = new Usuario();
@@ -41,50 +41,21 @@ class formatoCampo{
 					tipo,
 					createdON,
 					lastEditedON,
-					IF(varilla.id_herramienta = formatoCampo.varilla_id,varilla.placas,'NO EXISTE') AS VARILLA,
-					IF(flexometro.id_herramienta = formatoCampo.flexometro_id,flexometro.placas,'NO EXISTE') AS FLEXOMETRO,
 					IF(formatoCampo.active = 1,'Si','No') AS active
 			      FROM 
 			        formatoCampo,
-			    	(
-			        	SELECT
-			        		id_herramienta,
-							placas
-			        	FROM
-			        		herramientas
-			        	WHERE
-			        		herramienta_tipo_id = 1001
-			        )AS cono,
 			        (
 			        	SELECT
 			        		id_herramienta,
 							placas
 			        	FROM
-			        		herramientas
+			        		herramientas,formatoCampo
 			        	WHERE
-			        		herramienta_tipo_id = 1002
+			        		herramienta_tipo_id = 1002 AND 
+			        		cono_id = id_herramienta
 			        )AS varilla,
-			        (
-			        	SELECT
-			        		id_herramienta,
-							placas
-			        	FROM
-			        		herramientas
-			        	WHERE
-			        		herramienta_tipo_id = 1003
-			        )AS flexometro,
-			        (
-			        	SELECT
-			        		id_herramienta,
-							placas
-			        	FROM
-			        		herramientas
-			        	WHERE
-			        		herramienta_tipo_id = 1004
+			        
 			        )AS termometro
-			        WHERE 
-			        	varilla.id_herramienta = formatoCampo.varilla_id OR
-			        	flexometro.id_herramienta = formatoCampo.flexometro_id
 
 			      ",
 			      array(),
@@ -100,7 +71,7 @@ class formatoCampo{
 		}
 		return json_encode($arr);	
 	}
-	
+	*/
 
 
 	public function insertJefeBrigada($token,$rol_usuario_id,$informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud){
