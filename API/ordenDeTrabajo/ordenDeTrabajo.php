@@ -131,7 +131,6 @@ class ordenDeTrabajo{
 							laboratorio,
 							usuario.nombre AS nombre_jefe_brigada_id,
 							jefe_brigada_id,
-							ordenDeTrabajo.jefa_lab_id,
 							IF(ordenDeTrabajo.active = 1,'Si','No') AS active
 						from
 							usuario,ordenDeTrabajo,obra,laboratorio
@@ -242,7 +241,6 @@ class ordenDeTrabajo{
 							laboratorio,
 							usuario.nombre AS nombre_jefe_brigada_id,
 							jefe_brigada_id,
-							ordenDeTrabajo.jefa_lab_id,
 							IF(ordenDeTrabajo.active = 1,'Si','No') AS active
 						from
 							usuario,ordenDeTrabajo,obra,laboratorio,cliente
