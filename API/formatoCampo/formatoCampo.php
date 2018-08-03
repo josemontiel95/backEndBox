@@ -53,9 +53,7 @@ class formatoCampo{
 			        	WHERE
 			        		herramienta_tipo_id = 1002 AND 
 			        		cono_id = id_herramienta
-			        )AS varilla,
-			        
-			        )AS termometro
+			        )AS varilla,		        
 
 			      ",
 			      array(),
@@ -72,7 +70,6 @@ class formatoCampo{
 		return json_encode($arr);	
 	}
 	*/
-
 
 	public function insertJefeBrigada($token,$rol_usuario_id,$informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud){
 		global $dbS;
