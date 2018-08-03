@@ -26,6 +26,76 @@ class formatoCampo{
 
 	}*/
 
+	/*
+	public function getAllAdmin(){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      SELECT 
+			        id_formatoCampo,
+					informeNo,
+					ordenDeTrabajo_id,
+					observaciones,
+					tipo,
+					createdON,
+					lastEditedON,
+					IF(formatoCampo.active = 1,'Si','No') AS active
+			      FROM 
+			        formatoCampo,
+			    	(
+			        	SELECT
+			        		id_herramienta,
+							placas
+			        	FROM
+			        		herramientas
+			        	WHERE
+			        		herramienta_tipo_id = 1001
+			        )AS cono,
+			        (
+			        	SELECT
+			        		id_herramienta,
+							placas
+			        	FROM
+			        		herramientas
+			        	WHERE
+			        		herramienta_tipo_id = 1002
+			        )AS varilla,
+			        (
+			        	SELECT
+			        		id_herramienta,
+							placas
+			        	FROM
+			        		herramientas
+			        	WHERE
+			        		herramienta_tipo_id = 1003
+			        )AS flexometro,
+			        (
+			        	SELECT
+			        		id_herramienta,
+							placas
+			        	FROM
+			        		herramientas
+			        	WHERE
+			        		herramienta_tipo_id = 1004
+			        )AS termometro
+
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+						if(count($arr) == 0)
+							$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+						
+			}else
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 6);
+		}
+		return json_encode($arr);	
+	}
+	*/
 
 
 	public function insertJefeBrigada($token,$rol_usuario_id,$informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud){
@@ -55,22 +125,24 @@ class formatoCampo{
 
 
 
-	public function getHeader($token,$rol_usuario_id,$id_ordenDeTrabajo){
+	public function getHeader($token,$rol_usuario_id,$id_ordenDeTrabajo,$id_formatoCampo){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$s= $dbS->qarrayA("
-			      SELECT 
+			      SELECT
+			      	informeNo,
 			        obra,
 					localizacion,
 					razonSocial,
 					direccion
 			      FROM 
-			        ordenDeTrabajo,cliente,obra
+			        ordenDeTrabajo,cliente,obra,formatoCampo
 			      WHERE 
 			      	obra_id = id_obra AND
 			      	cliente_id = id_cliente AND
+			      	id_formatoCampo = 1QQ AND
 			      	id_ordenDeTrabajo = 1QQ  
 			      ",
 			      array($id_ordenDeTrabajo),
