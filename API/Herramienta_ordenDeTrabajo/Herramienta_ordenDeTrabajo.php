@@ -1,7 +1,7 @@
 <?php 
 include_once("./../../configSystem.php");
 include_once("./../../usuario/Usuario.php");
-class herramienta_ordenDeTrabajo{
+class Herramienta_ordenDeTrabajo{
 	private $ordenDeServicio_id;
 	private $herramienta_id;
 	private $fechaDevolucion;
