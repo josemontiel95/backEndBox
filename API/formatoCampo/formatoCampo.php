@@ -39,9 +39,13 @@ class formatoCampo{
 						informeNo,
 						observaciones,
 						tipo,
+						formatoCampo.cono_id,
 						CONO,
+						formatoCampo.varilla_id,
 						VARILLA,
+						formatoCampo.flexometro_id,
 						FLEXOMETRO,
+						formatoCampo.termometro_id,
 						TERMOMETRO
 					FROM
 						formatoCampo,
@@ -157,9 +161,13 @@ class formatoCampo{
 					razonSocial,
 					direccion,
 					formatoCampo.tipo,
+					formatoCampo.cono_id,
 					CONO,
+					formatoCampo.varilla_id,
 					VARILLA,
+					formatoCampo.flexometro_id,
 					FLEXOMETRO,
+					formatoCampo.termometro_id,	
 					TERMOMETRO
 			      FROM 
 			        ordenDeTrabajo,cliente,obra,formatoCampo,
@@ -214,6 +222,7 @@ class formatoCampo{
 					varilla.id_formatoCampo = formatoCampo.id_formatoCampo AND
 					flexometro.id_formatoCampo = formatoCampo.id_formatoCampo AND
 					termometro.id_formatoCampo = formatoCampo.id_formatoCampo AND
+					ordenDeTrabajo.id_ordenDeTrabajo = formatoCampo.ordenDeTrabajo_id AND
 			      	formatoCampo.id_formatoCampo = 1QQ
 			      ",
 			      array($id_formatoCampo),
