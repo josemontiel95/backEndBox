@@ -26,6 +26,7 @@ class formatoCampo{
 
 	}*/
 
+
 	
 	public function getAllAdmin($token,$rol_usuario_id){
 		global $dbS;
@@ -135,6 +136,99 @@ class formatoCampo{
 	}
 
 
+	public function getInfoByID($token,$rol_usuario_id,$id_formatoCampo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA("
+			      SELECT
+			      	informeNo,
+			        obra,
+					localizacion,
+					nombre,
+					razonSocial,
+					direccion,
+					formatoCampo.tipo,
+					CONO,
+					VARILLA,
+					FLEXOMETRO,
+					TERMOMETRO
+			      FROM 
+			        ordenDeTrabajo,cliente,obra,formatoCampo,
+			        (
+							SELECT
+								id_formatoCampo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS CONO
+							FROM
+								formatoCampo
+							LEFT JOIN
+								herramientas
+							ON
+								formatoCampo.cono_id = herramientas.id_herramienta
+						)AS cono,
+						(
+							SELECT
+								id_formatoCampo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS VARILLA
+							FROM
+								formatoCampo
+							LEFT JOIN
+								herramientas
+							ON
+								formatoCampo.varilla_id = herramientas.id_herramienta
+						)AS varilla,
+						(
+							SELECT
+								id_formatoCampo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS FLEXOMETRO
+							FROM
+								formatoCampo
+							LEFT JOIN
+								herramientas
+							ON
+								formatoCampo.flexometro_id = herramientas.id_herramienta
+						)AS flexometro,
+						(
+							SELECT
+								id_formatoCampo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS TERMOMETRO
+							FROM
+								formatoCampo
+							LEFT JOIN
+								herramientas
+							ON
+								formatoCampo.termometro_id = herramientas.id_herramienta
+						)AS termometro
+			      WHERE 
+			      	obra_id = id_obra AND
+			      	cliente_id = id_cliente AND
+			      	cono.id_formatoCampo = formatoCampo.id_formatoCampo AND
+					varilla.id_formatoCampo = formatoCampo.id_formatoCampo AND
+					flexometro.id_formatoCampo = formatoCampo.id_formatoCampo AND
+					termometro.id_formatoCampo = formatoCampo.id_formatoCampo AND
+			      	formatoCampo.id_formatoCampo = 1QQ
+			      ",
+			      array($id_formatoCampo),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro ese id','error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		return json_encode($arr);
+	}
+
+
 
 	public function getHeader($token,$rol_usuario_id,$id_ordenDeTrabajo,$id_formatoCampo){
 		global $dbS;
@@ -171,6 +265,34 @@ class formatoCampo{
 			else{
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getClienteByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 			}
+		}
+		return json_encode($arr);
+	}
+
+	public function updateFooter($token,$rol_usuario_id,$id_formatoCampo,$observaciones,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$tipo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+								formatoCampo
+							SET
+								observaciones ='1QQ',
+								cono_id = 1QQ,
+								varilla_id = 1QQ,
+								flexometro_id = 1QQ,
+								termometro_id = 1QQ,
+								tipo ='1QQ'
+							WHERE
+								active=1 AND
+								id_formatoCampo = 1QQ
+					 "
+					,array($observaciones,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$tipo,$id_formatoCampo),"UPDATE"
+			      	);
+			$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito de actualizacion de footer','error' => 0);	
+			if($dbS->didQuerydied){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}		
 		}
 		return json_encode($arr);
 	}

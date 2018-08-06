@@ -14,15 +14,21 @@
 	include_once("./../registrosCampo.php");
 
 	switch ($function) {
+		/*	ERROR EN PARAMETRO, NO SE UTILIZA, PENDIENTE DE AUTORIZACION
 		case 'getHeader':
 			$formato = new formatoCampo();
 			echo $formato->getHeader($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
+		break;
+		*/
+		case 'getInfoByID':
+			$formato = new formatoCampo();
+			echo $formato->getInfoByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
 		break;
 		case 'getAllAdmin':
 			$formato = new formatoCampo();
 			echo $formato->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
-		//FUNCIONES DE LA CLASE REGISTROS
+		//								FUNCIONES DE LA CLASE REGISTROS
 		case 'getAllRegistrosByID':
 			$registro = new registrosCampo();
 			echo $registro->getAllRegistrosByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
