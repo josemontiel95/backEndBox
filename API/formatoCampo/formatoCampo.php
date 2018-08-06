@@ -26,34 +26,72 @@ class formatoCampo{
 
 	}*/
 
-	/*
-	public function getAllAdmin(){
+	
+	public function getAllAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
-			      SELECT 
-			        id_formatoCampo,
-					informeNo,
-					ordenDeTrabajo_id,
-					observaciones,
-					tipo,
-					createdON,
-					lastEditedON,
-					IF(formatoCampo.active = 1,'Si','No') AS active
-			      FROM 
-			        formatoCampo,
-			        (
-			        	SELECT
-			        		id_herramienta,
-							placas
-			        	FROM
-			        		herramientas,formatoCampo
-			        	WHERE
-			        		herramienta_tipo_id = 1002 AND 
-			        		cono_id = id_herramienta
-			        )AS varilla,		        
+			     	SELECT
+						formatoCampo.id_formatoCampo,
+						CONO,
+						VARILLA,
+						FLEXOMETRO,
+						TERMOMETRO
+					FROM
+						formatoCampo,
+						(
+							SELECT
+								id_formatoCampo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS CONO
+							FROM
+								formatoCampo
+							LEFT JOIN
+								herramientas
+							ON
+								formatoCampo.cono_id = herramientas.id_herramienta
+						)AS cono,
+						(
+							SELECT
+								id_formatoCampo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS VARILLA
+							FROM
+								formatoCampo
+							LEFT JOIN
+								herramientas
+							ON
+								formatoCampo.varilla_id = herramientas.id_herramienta
+						)AS varilla,
+						(
+							SELECT
+								id_formatoCampo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS FLEXOMETRO
+							FROM
+								formatoCampo
+							LEFT JOIN
+								herramientas
+							ON
+								formatoCampo.flexometro_id = herramientas.id_herramienta
+						)AS flexometro,
+						(
+							SELECT
+								id_formatoCampo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS TERMOMETRO
+							FROM
+								formatoCampo
+							LEFT JOIN
+								herramientas
+							ON
+								formatoCampo.termometro_id = herramientas.id_herramienta
+						)AS termometro
+					WHERE
+						cono.id_formatoCampo = formatoCampo.id_formatoCampo AND
+						varilla.id_formatoCampo = formatoCampo.id_formatoCampo AND
+						flexometro.id_formatoCampo = formatoCampo.id_formatoCampo AND
+						termometro.id_formatoCampo = formatoCampo.id_formatoCampo 
+					ORDER BY 
+						formatoCampo.id_formatoCampo	        
 
 			      ",
 			      array(),
@@ -61,15 +99,15 @@ class formatoCampo{
 			      );
 
 			if(!$dbS->didQuerydied){
-						if(count($arr) == 0)
-							$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+						if($arr == "empty")
+							$arr = array('estatus' =>"No hay registros", 'error' => 5); 
 						
 			}else
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 6);
 		}
 		return json_encode($arr);	
 	}
-	*/
+	
 
 	public function insertJefeBrigada($token,$rol_usuario_id,$informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud){
 		global $dbS;
