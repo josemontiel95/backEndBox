@@ -18,6 +18,11 @@
 			$formato = new formatoCampo();
 			echo $formato->getHeader($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
 		break;
+		case 'getAllAdmin':
+			$formato = new formatoCampo();
+			echo $formato->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);
+		break;
+		//FUNCIONES DE LA CLASE REGISTROS
 		case 'getAllRegistrosByID':
 			$registro = new registrosCampo();
 			echo $registro->getAllRegistrosByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
