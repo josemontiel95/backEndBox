@@ -146,6 +146,7 @@ class formatoCampo{
 			      	informeNo,
 			        obra,
 					localizacion,
+					formatoCampo.observaciones,
 					nombre,
 					razonSocial,
 					direccion,
