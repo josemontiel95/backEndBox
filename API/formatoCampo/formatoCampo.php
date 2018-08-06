@@ -28,7 +28,7 @@ class formatoCampo{
 
 
 	
-	public function getAllAdmin($token,$rol_usuario_id){
+	public function getAllAdmin($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -36,6 +36,9 @@ class formatoCampo{
 			$arr= $dbS->qAll("
 			     	SELECT
 						formatoCampo.id_formatoCampo,
+						informeNo,
+						observaciones,
+						tipo,
 						CONO,
 						VARILLA,
 						FLEXOMETRO,
@@ -90,12 +93,13 @@ class formatoCampo{
 						cono.id_formatoCampo = formatoCampo.id_formatoCampo AND
 						varilla.id_formatoCampo = formatoCampo.id_formatoCampo AND
 						flexometro.id_formatoCampo = formatoCampo.id_formatoCampo AND
-						termometro.id_formatoCampo = formatoCampo.id_formatoCampo 
+						termometro.id_formatoCampo = formatoCampo.id_formatoCampo AND
+						formatoCampo.ordenDeTrabajo_id = 1QQ
 					ORDER BY 
 						formatoCampo.id_formatoCampo	        
 
 			      ",
-			      array(),
+			      array($id_ordenDeTrabajo),
 			      "SELECT"
 			      );
 
@@ -119,9 +123,9 @@ class formatoCampo{
 
 			$dbS->squery("
 						INSERT INTO
-						formatoCampo(informeNo,ordenDeTrabajo_id,tipo,cono_id,varilla_id,flexometro_id,termometro_id,posInicial)
+						formatoCampo(informeNo,ordenDeTrabajo_id,tipo,cono_id,varilla_id,flexometro_id,termometro_id,posInicial,observaciones)
 						VALUES
-						('1QQ',1QQ,'1QQ',1QQ,1QQ,1QQ,1QQ,PointFromText('POINT(1QQ 1QQ)'))
+						('1QQ',1QQ,'1QQ',1QQ,1QQ,1QQ,1QQ,PointFromText('POINT(1QQ 1QQ)'),'NO HAY OBSERVACIONES')
 				",array($informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud),"INSERT");
 			if(!$dbS->didQuerydied){
 				$id=$dbS->lastInsertedID;
@@ -134,6 +138,8 @@ class formatoCampo{
 		return json_encode($arr);
 
 	}
+
+
 
 
 	public function getInfoByID($token,$rol_usuario_id,$id_formatoCampo){
@@ -291,6 +297,29 @@ class formatoCampo{
 					,array($observaciones,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$tipo,$id_formatoCampo),"UPDATE"
 			      	);
 			$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito de actualizacion de footer','error' => 0);	
+			if($dbS->didQuerydied){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}		
+		}
+		return json_encode($arr);
+	}
+
+	public function updateHeader($token,$rol_usuario_id,$id_formatoCampo,$informeNo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+								formatoCampo
+							SET
+								informeNo ='1QQ'
+							WHERE
+								active=1 AND
+								id_formatoCampo = 1QQ
+					 "
+					,array($informeNo,$id_formatoCampo),"UPDATE"
+			      	);
+			$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito de actualizacion de header','error' => 0);	
 			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}		
