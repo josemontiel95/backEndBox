@@ -371,6 +371,74 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+				
+
+	public function getForDroptdownTipo($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      	SELECT
+   				       	id_herramienta_tipo,
+   				       	tipo
+   				    FROM
+   				        herramienta_tipo
+   				    WHERE
+            			herramienta_tipo.active = 1;
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if(count($arr) == 0)
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+
+
+	}
+
+
+	public function getAllFromTipo($token,$rol_usuario_id,$herramienta_tipo_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      	SELECT 
+				      	id_herramienta,
+				      	placas,
+						id_herramienta_tipo,
+						tipo,
+						condicion
+				    FROM 
+				        herramienta_tipo,herramientas
+				    WHERE
+				       	herramientas.active = 1 AND
+				        herramienta_tipo_id = id_herramienta_tipo AND
+				        herramienta_tipo_id = 1QQ
+			      ",
+			      array($herramienta_tipo_id),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if(count($arr) == 0)
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
+
 
 
 
