@@ -330,8 +330,6 @@ class ordenDeTrabajo{
 
 
 
-
-
 }
 
 

@@ -183,22 +183,22 @@ class Herramienta_ordenDeTrabajo{
 		-La funcion que imprime las herramientas disponibles para asignarlas a una nueva orden de servicio deberian estar en la clase herramientas?
 	*/
 
-	/*			PENDIENTE
-	public function insertAdmin($token,$rol_usuario_id,$ordenDeServicio_id,$herramienta_id,$fechaDevolucion,$status){
+
+	public function insertAdmin($token,$rol_usuario_id,$ordenDeTrabajo_id,$herramienta_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						herramienta_ordenDeSevicio(ordenDeServicio_id,herramienta_id,fechaDevolucion,status)
+						herramienta_ordenDeTrabajo(ordenDeTrabajo_id,herramienta_id,status)
 
 						VALUES
-						(1QQ,1QQ,'1QQ','1QQ')
-				",array($ordenDeServicio_id,$herramienta_id,$fechaDevolucion,$status),"INSERT");
+						(1QQ,1QQ,'PENDIENTE')
+				",array($ordenDeTrabajo_id,$herramienta_id),"INSERT");
 
 			if(!$dbS->didQuerydied){
-				$arr = array('id_herramienta_ordenDeServicio' => 'No disponible, esto NO es un error', 'estatus' => 'Exito en insercion', 'error' => 0);
+				$arr = array('id_herramienta_ordenDeTrabajo' => 'No disponible, esto NO es un error', 'estatus' => 'Exito en insercion', 'error' => 0);
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
@@ -215,24 +215,24 @@ class Herramienta_ordenDeTrabajo{
 		if($arr['error'] == 0){
 			$s= $dbS->qAll("
 			      SELECT 
-			        ordenDeServicio_id,
+			        ordenDeTrabajo_id,
 			        herramienta_id,
 			        placas,
 			        nombre AS nombre_jefe_brigada,
 			        jefe_brigada_id,
-					ordenDeServicio.fechaInicio AS fechaDePrestamo,
-			        fechaDevolucion,
+					ordenDeTrabajo.fechaInicio AS fechaDePrestamo,
+			        IF(fechaDevolucion = '0000-00-00','NO SE HA DEVUELTO','fechaDevolucion')AS FECHA_DE_DEVOLUCION,
 					status,
 					CASE
-		  				WHEN herramienta_ordenDeSevicio.active = 1 AND CURDATE()>ordenDeServicio.fechaInicio THEN 'En Curso'
-		    			WHEN herramienta_ordenDeSevicio.active = 0 AND CURDATE()>ordenDeServicio.fechaInicio THEN 'Completado'
-		    			WHEN herramienta_ordenDeSevicio.active = 1 AND CURDATE()<ordenDeServicio.fechaInicio THEN 'Agendado'
+		  				WHEN herramienta_ordenDeTrabajo.active = 1 AND CURDATE()>ordenDeTrabajo.fechaInicio THEN 'En Curso'
+		    			WHEN herramienta_ordenDeTrabajo.active = 0 AND CURDATE()>ordenDeTrabajo.fechaInicio THEN 'Completado'
+		    			WHEN herramienta_ordenDeTrabajo.active = 1 AND CURDATE()<ordenDeTrabajo.fechaInicio THEN 'Agendado'
 		    				ELSE 'Error'
 					END AS estado
 				  FROM 
-			      	ordenDeServicio,usuario,herramienta_ordenDeSevicio,herramientas
+			      	ordenDeTrabajo,usuario,herramienta_ordenDeTrabajo,herramientas
 			      WHERE 
-			      		ordenDeServicio_id = id_ordenDeServicio AND
+			      		ordenDeTrabajo_id = id_ordenDeTrabajo AND
 			      		id_usuario = jefe_brigada_id AND	
 			      		herramienta_id = id_herramienta AND
 			      		herramienta_id = 1QQ  
@@ -256,8 +256,6 @@ class Herramienta_ordenDeTrabajo{
 		return json_encode($arr);
 	}
 
-	*/
-	
 
 	public function getAllHerraOrden($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
@@ -266,6 +264,8 @@ class Herramienta_ordenDeTrabajo{
 		if($arr['error'] == 0){
 			$s= $dbS->qAll("
 			      SELECT 
+			      	id_herramienta,
+					id_herramienta_tipo,
 			        tipo,
 					placas,
 					condicion
@@ -274,6 +274,7 @@ class Herramienta_ordenDeTrabajo{
 			      WHERE 
 			      		herramienta_id = id_herramienta AND
 			      		herramienta_tipo_id = id_herramienta_tipo AND
+			      		ordenDeTrabajo_id = id_ordenDeTrabajo AND
 			      		ordenDeTrabajo_id = 1QQ 
 
 			      ",
