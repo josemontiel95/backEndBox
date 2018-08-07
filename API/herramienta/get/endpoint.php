@@ -49,6 +49,15 @@
 			$herra = new Herramienta();
 			echo $herra->getAllJefaLab($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		case 'getForDroptdownTipo':
+			$herra = new Herramienta();
+			echo $herra->getForDroptdownTipo($_GET['token'],$_GET['rol_usuario_id']);
+		break;
+		case 'getAllFromTipo':
+			$herra = new Herramienta();
+			echo $herra->getAllFromTipo($_GET['token'],$_GET['rol_usuario_id'],$_GET['herramienta_tipo_id']);
+		break;
+
 
 	}
 ?>
