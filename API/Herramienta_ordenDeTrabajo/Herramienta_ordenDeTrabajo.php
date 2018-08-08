@@ -183,6 +183,8 @@ class Herramienta_ordenDeTrabajo{
 		-La funcion que imprime las herramientas disponibles para asignarlas a una nueva orden de servicio deberian estar en la clase herramientas?
 	*/
 
+	/*		SOLO INSERTA UNO, PENDIENTE DE AUTORIZACION POR REDUNDANCIA CON LA QUE INSERTA VARIOS
+
 
 	public function insertAdmin($token,$rol_usuario_id,$ordenDeTrabajo_id,$herramienta_id){
 		global $dbS;
@@ -205,6 +207,32 @@ class Herramienta_ordenDeTrabajo{
 			}
 		}
 		return json_encode($arr);
+	}
+	*/	
+	public function insertAdmin($token,$rol_usuario_id,$ordenDeTrabajo_id,$herramientasArray){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			foreach ($herramientasArray as $herramienta_id){
+				$dbS->squery("
+						INSERT INTO
+						herramienta_ordenDeTrabajo(ordenDeTrabajo_id,herramienta_id,status)
+
+						VALUES
+						(1QQ,1QQ,'PENDIENTE')",array($ordenDeTrabajo_id,$herramienta_id),"INSERT");
+
+				if(!$dbS->didQuerydied){
+					$arr = array('id_herramienta_ordenDeTrabajo' => 'No disponible, esto NO es un error', 'estatus' => 'Exito en insercion', 'error' => 0);
+				}
+				else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+					break;
+				}
+			}
+		}
+		return json_encode($arr);
+
 	}
 
 
@@ -270,11 +298,10 @@ class Herramienta_ordenDeTrabajo{
 					placas,
 					condicion
 				  FROM 
-			      	ordenDeTrabajo,herramientas,herramienta_tipo,herramienta_ordenDeTrabajo
+			      	herramientas,herramienta_tipo,herramienta_ordenDeTrabajo
 			      WHERE 
 			      		herramienta_id = id_herramienta AND
 			      		herramienta_tipo_id = id_herramienta_tipo AND
-			      		ordenDeTrabajo_id = id_ordenDeTrabajo AND
 			      		ordenDeTrabajo_id = 1QQ 
 
 			      ",
@@ -296,6 +323,9 @@ class Herramienta_ordenDeTrabajo{
 		}
 		return json_encode($arr);
 	}
+
+
+
 
 
 

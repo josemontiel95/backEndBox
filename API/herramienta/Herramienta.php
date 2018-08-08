@@ -439,6 +439,55 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+	//Añadimos a que obra esta agendada???? PENDIENTE
+	public function getAllHerraAvailable($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      	SELECT 
+					    id_herramienta,
+						fechaDeCompra,
+						placas,
+						condicion,
+						herramientas.observaciones,
+						herramientas.createdON,
+						herramientas.lastEditedON
+					FROM 
+						herramientas LEFT JOIN
+						(
+							SELECT
+								herramienta_id,
+								IF(herramienta_ordenDeTrabajo.active = 0 AND CURDATE()>ordenDeTrabajo.fechaInicio, 'SI','NO') AS estado
+							FROM
+								herramienta_ordenDeTrabajo,
+								ordenDeTrabajo
+							WHERE
+								ordenDeTrabajo_id = id_ordenDeTrabajo 
+						) AS estado_herramienta
+						ON herramientas.id_herramienta = estado_herramienta.herramienta_id
+					WHERE
+					  	herramientas.active = 1 AND
+					  	(estado_herramienta.estado="SI" OR estado_herramienta.estado IS NULL)
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if($arr == "empty")
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); 
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
+
+
+
 
 
 
