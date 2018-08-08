@@ -238,22 +238,23 @@ class FormatoRegistroRev{
 		return json_encode($arr);
 	}
 
-	public function updateHeader($token,$rol_usuario_id,$id_formatoCampo,$informeNo){
+	public function updateHeader($token,$rol_usuario_id,$id_formatoRegistroRev,$regNo,$localizacion){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("	UPDATE
-								formatoCampo
+								formatoRegistroRev
 							SET
-								informeNo ='1QQ'
+								regNo ='1QQ',
+								localizacion = '1QQ'
 							WHERE
 								active=1 AND
-								id_formatoCampo = 1QQ
+								id_formatoRegistroRev = 1QQ
 					 "
-					,array($informeNo,$id_formatoCampo),"UPDATE"
+					,array($regNo,$localizacion,$id_formatoRegistroRev),"UPDATE"
 			      	);
-			$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito de actualizacion de header','error' => 0);	
+			$arr = array('id_formatoRegistroRev' => $id_formatoRegistroRev,'estatus' => 'Exito de actualizacion de header','error' => 0);	
 			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}		

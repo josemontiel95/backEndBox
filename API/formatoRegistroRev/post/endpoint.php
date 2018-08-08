@@ -22,6 +22,10 @@
 			$formato = new FormatoRegistroRev();
 			echo $formato->updateFooter($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev'],$_POST['observaciones'],$_POST['cono_id'],$_POST['varilla_id'],$_POST['flexometro_id']);
 		break;
+		case 'updateHeader':
+			$formato = new FormatoRegistroRev();
+			echo $formato->updateHeader($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev'],$_POST['regNo'],$_POST['localizacion']);
+		break;
 		/*
 		case 'initInsert':
 			$registrocampo = new registrosCampo();
