@@ -438,9 +438,7 @@ class Herramienta{
 		}
 		return json_encode($arr);
 	}
-	/*
 
-		PROBLEMAS NO SE RECONOCE ALGO
 	//Añadimos a que obra esta agendada???? PENDIENTE
 	public function getAllHerraAvailable($token,$rol_usuario_id){
 		global $dbS;
@@ -471,7 +469,7 @@ class Herramienta{
 						ON herramientas.id_herramienta = estado_herramienta.herramienta_id
 					WHERE
 					  	herramientas.active = 1 AND
-					  	(estado_herramienta.estado="SI" OR estado_herramienta.estado IS NULL)
+					  	(estado_herramienta.estado='SI' OR estado_herramienta.estado IS NULL)
 			      ",
 			      array(),
 			      "SELECT"
@@ -487,7 +485,7 @@ class Herramienta{
 		}
 		return json_encode($arr);
 	}
-	*/
+	
 
 
 

@@ -99,6 +99,7 @@ class registrosCampo{
 			      FROM 
 			      	registrosCampo
 			      WHERE 
+			      	registrosCampo.active = 1 AND
 			      	formatoCampo_id = 1QQ
 			      ",
 			      array($id_formatoCampo),
@@ -119,6 +120,33 @@ class registrosCampo{
 		}
 		return json_encode($arr);
 
+	}
+
+	public function deactivate($token,$rol_usuario_id,$id_registrosCampo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+							registrosCampo
+						SET
+							active = 1QQ
+						WHERE
+							active=1 AND
+							id_registrosCampo = 1QQ
+					 "
+					,array(0,$id_registrosCampo),"UPDATE"
+			      	);
+		//PENDIENTE por la herramienta_tipo_id para poderla imprimir tengo que cargar las variables de la base de datos?
+			if(!$dbS->didQuerydied){
+				$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => 'Registro se desactivo','error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+
+		}
+		return json_encode($arr);
 	}
 	
 
