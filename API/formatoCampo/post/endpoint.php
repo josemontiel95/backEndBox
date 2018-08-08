@@ -36,6 +36,12 @@
 			$formatocampo = new formatoCampo();
 			echo $formatocampo->updateHeader($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoCampo'],$_POST['informeNo']);
 		break;
+		case 'deactivate':
+			$formatocampo = new registrosCampo();
+			echo $formatocampo->deactivate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_registrosCampo']);
+		break;
+
+
 
 		/*
 		case 'upDateAdmin':
