@@ -438,7 +438,9 @@ class Herramienta{
 		}
 		return json_encode($arr);
 	}
+	/*
 
+		PROBLEMAS NO SE RECONOCE ALGO
 	//Añadimos a que obra esta agendada???? PENDIENTE
 	public function getAllHerraAvailable($token,$rol_usuario_id){
 		global $dbS;
@@ -485,7 +487,7 @@ class Herramienta{
 		}
 		return json_encode($arr);
 	}
-
+	*/
 
 
 
