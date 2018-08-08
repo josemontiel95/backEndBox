@@ -185,9 +185,9 @@ VALUES ("cotizacion_id1",1001,"actividades1","condicionesTrabajo1",1029,"fechaIn
 
 //MODIFICAR LOS CA
 
-CREATE TABLE tecnicosDeOrden(
+CREATE TABLE tecnicos_ordenDeTrabajo(
 	tecnico_id INT(11),
-	orden_id INT(11),
+	ordenDeTrabajo_id INT(11),
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -197,7 +197,7 @@ CREATE TABLE tecnicosDeOrden(
 	REFERENCES usuario(id_usuario)
 	ON DELETE SET NULL ON UPDATE CASCADE,
 
-	FOREIGN KEY(orden_id) 
+	FOREIGN KEY(ordenDeTrabajo_id) 
 	REFERENCES ordenDeTrabajo(id_ordenDeTrabajo)
 	ON DELETE SET NULL ON UPDATE CASCADE
 )ENGINE=INNODB;
@@ -428,6 +428,10 @@ CREATE TABLE formatoCampo(
 
 	PRIMARY KEY(id_formatoCampo),
 
+	FOREIGN KEY(ordenDeTrabajo_id) 
+	REFERENCES ordenDeTrabajo(id_ordenDeTrabajo)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
 	FOREIGN KEY(cono_id) 
 	REFERENCES herramientas(id_herramienta)
 	ON DELETE SET NULL ON UPDATE CASCADE,
@@ -449,6 +453,8 @@ CREATE TABLE formatoCampo(
 )ENGINE=INNODB;
 ALTER TABLE formatoCampo AUTO_INCREMENT=1001;
 
+
+
 CREATE TABLE registrosCampo(
 	id_registrosCampo INT(11) NOT NULL AUTO_INCREMENT,
 	formatoCampo_id INT(11),
@@ -457,7 +463,7 @@ CREATE TABLE registrosCampo(
 	fprima VARCHAR(10),
 	revProyecto INT, 
 	revObra INT,
-	tamagregado INT,
+	tamAgregado INT,
 	volumen FLOAT(5.2),
 	tipoConcreto VARCHAR(5),
 	herramienta_id INT,
@@ -482,6 +488,80 @@ CREATE TABLE registrosCampo(
 )ENGINE=INNODB;
 
 ALTER TABLE registrosCampo AUTO_INCREMENT=1001;
+
+
+CREATE TABLE formatoRegistroRev(
+	id_formatoRegistroRev INT(11) NOT NULL AUTO_INCREMENT,
+	regNo VARCHAR(30) NOT NULL,
+	ordenDeTrabajo_id INT(11),
+	localizacion TEXT NOT NULL,
+	observaciones TEXT,
+
+	cono_id INT(11),
+	varilla_id INT(11),
+	flexometro_id INT(11),
+
+	posInicial POINT NOT NULL,
+	posFinal POINT,
+
+	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	active INT NOT NULL DEFAULT 1,
+
+	PRIMARY KEY(id_formatoRegistroRev),
+
+	FOREIGN KEY(ordenDeTrabajo_id) 
+	REFERENCES ordenDeTrabajo(id_ordenDeTrabajo)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(cono_id) 
+	REFERENCES herramientas(id_herramienta)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(varilla_id) 
+	REFERENCES herramientas(id_herramienta)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(flexometro_id) 
+	REFERENCES herramientas(id_herramienta)
+	ON DELETE SET NULL ON UPDATE CASCADE
+
+)ENGINE=INNODB;
+
+ALTER TABLE formatoRegistroRev AUTO_INCREMENT=1001;
+
+
+CREATE TABLE registrosRev(
+	id_registrosRev INT(11) NOT NULL AUTO_INCREMENT,
+	fecha DATE,
+	revProyecto INT,
+	revObtenido INT,
+	tamAgregado INT,
+	idenConcreto VARCHAR(20),
+	volumen FLOAT(5.2),
+	horaDeterminacion TIME,
+	herramienta_id INT,
+	concretera_id INT,
+	remisionNo INT,
+	horaSalida TIME,
+	horaLlegada TIME,
+
+	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	active INT NOT NULL DEFAULT 1,
+
+	PRIMARY KEY(id_registrosRev),
+
+	FOREIGN KEY(herramienta_id)
+	REFERENCES herramientas(id_herramienta)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(concretera_id)
+	REFERENCES concretera(id_concretera)
+	ON DELETE SET NULL ON UPDATE CASCADE
+)ENGINE=INNODB;
+
+ALTER TABLE registrosRev AUTO_INCREMENT=1001;
 
 
 ================

@@ -21,7 +21,6 @@ class registrosCampo{
 
 
 	public function initInsert($token,$rol_usuario_id,$formatoCampo_id){
-		echo "asdas";
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);

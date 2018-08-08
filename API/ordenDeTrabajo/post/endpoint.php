@@ -32,5 +32,6 @@
 			echo $orden->activate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ordenDeTrabajo']);
 		break;
 	}
+?>
 
 	
