@@ -50,6 +50,49 @@ class registrosCampo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
+			switch ($campo) {
+				case '1':
+					$campo = 'claveEspecimen';
+					break;
+				case '2':
+					$campo = 'fecha';
+					break;
+				case '3':
+					$campo = 'fprima';
+					break;
+				case '4':
+					$campo = 'revProyecto';
+					break;
+				case '5':
+					$campo = 'revObra';
+					break;
+				case '6':
+					$campo = 'tamAgregado';
+					break;
+				case '7':
+					$campo = 'volumen';
+					break;
+				case '8':
+					$campo = 'tipoConcreto';
+					break;
+				case '9':
+					$campo = 'herramienta_id';
+					break;
+				case '10':
+					$campo = 'horaMuestreo';
+					break;
+				case '11':
+					$campo = 'tempMuestreo';
+					break;
+				case '12':
+					$campo = 'tempRecoleccion';
+					break;
+				case '13':
+					$campo = 'localizacion';
+					break;
+
+			}
+
 			$dbS->squery("
 						UPDATE
 							registrosCampo
@@ -58,7 +101,7 @@ class registrosCampo{
 						WHERE
 							id_registrosCampo = 1QQ
 
-				",array($campo,$valor,$id_registrosCampo),"INSERT");
+				",array($campo,$valor,$id_registrosCampo),"UPDATE");
 			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
 			if(!$dbS->didQuerydied){
 				$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => '¡Exito en la inserccion de un registro!','error' => 0);
