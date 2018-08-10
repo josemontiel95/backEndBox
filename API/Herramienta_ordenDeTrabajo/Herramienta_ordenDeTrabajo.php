@@ -36,7 +36,7 @@ class Herramienta_ordenDeTrabajo{
 		EN EL PRIMER PARAMETRO (EL ARRAY), SE COLOCA EL ARRAY QUE SE ASOCIARA AL SEGUNDO PARAMETRO QUE ES EL DESTINO
     */
 
-	//TESTEADO 
+	/* 								USAR PARA TESTEADO 
 	public function insertAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -60,10 +60,9 @@ class Herramienta_ordenDeTrabajo{
 		return json_encode($arr);
 
 	}
+	*/
 
 
-	/*	
-				----FUNCION---
 
 	public function insertAdmin($token,$rol_usuario_id,$ordenDeTrabajo_id,$herramientasArray){
 		global $dbS;
@@ -74,7 +73,9 @@ class Herramienta_ordenDeTrabajo{
 						INSERT INTO
 						herramienta_ordenDeTrabajo(herramienta_id,ordenDeTrabajo_id,status)
 						VALUES
-						(1QQ,1QQ,'PENDIENTE')",array($herramientasArray,$ordenDeTrabajo_id),"INSERT");
+						(1QQ,1QQ,'PENDIENTE')"
+						,$herramientasArray,$ordenDeTrabajo_id,
+						"INSERT_TS");
 
 				if(!$dbS->didQuerydied){
 					$arr = array('id_herramienta_ordenDeTrabajo' => 'No disponible, esto NO es un error', 'estatus' => 'Exito en insercion', 'error' => 0);
@@ -90,7 +91,7 @@ class Herramienta_ordenDeTrabajo{
 	}
 
 
-	*/
+	
 
 	//FUNCION QUE DESACTIVA UNA HERRAMIENTA RELACIONADA CON LA ORDEN DE TRABAJO
 	public function deactivateHerra($token,$rol_usuario_id,$herramientasArray){

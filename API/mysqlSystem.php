@@ -216,6 +216,18 @@ class MySQLSystem{
 		}
 	}
 
+	/*	MEJORA EN DESARROLLO
+	
+	public function transaction($arrQuery){
+		$this->beginTransaction();
+		foreach ($arrQuery as $q) {
+			foreach ($arrThings as $a) {
+				$id = $this->squery($q,)
+			}
+		}
+	}
+	*/
+
 	/*
 									¿SEPARAR EL INICIO DE LA TRANSACCION?
 	*/
