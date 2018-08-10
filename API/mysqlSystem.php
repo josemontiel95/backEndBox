@@ -168,5 +168,46 @@ class MySQLSystem{
 		else
 			$this->query($this->secure_string($q,$arr));
 	}
+
+
+	/*
+
+						-----------------APORTACIONES BRYAN---------------
+
+	*/
+	public function transquery($q = "eempty",$arrThings = array(),$destino,$queryType="NS"){
+		$this->query('BEGIN');	//SE INSERTA COMO SI SE TRATARA DE LA TERMINAL, EL INICIO DE LA TRANSACCION
+		foreach ($arrThings as $a){
+				$array_aux = array($a,$destino); //ARRAY AUXILIAR PARA PODER EJECUTAR LA "squery"
+				$this->squery($q,$array_aux,$queryType);
+				/*
+				if($this->didQuerydied){
+					echo 'Entro a la opcion del ROLLBACK';
+					$this->query('ROLLBACK'); //EN CASO DE ERROR REALIZAMOS UN ROLLBACK E INTERRUMPIMOS EL FOR
+					$this->didQuerydied = false;
+					break;
+				}*/
+				if($this->didQuerydied)//POR CADA ITERACION SE REVISA SI NO HA MUERTO LA QUERY
+					break;
+		}
+		if (!$this->didQuerydied) {
+			$this->query('COMMIT');
+			return (0);
+		}
+		else{
+			$this->query('ROLLBACK'); //EJECUTAMOS EL ROLL BACK PARA VOLVER AL ESTADO DE LA TABLA ANTES DE REALIZAR CAMBIOS
+			$this->squery($q,$array_aux,$queryType);
+			$this->logQuery("ROLLBACK","INSERT");
+			$this->didQuerydied = true;
+			
+			return ($a);
+		}
+		
+
+	}
+
+	/*
+									¿SEPARAR EL INICIO DE LA TRANSACCION?
+	*/
 }
 ?>

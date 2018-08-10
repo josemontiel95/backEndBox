@@ -24,6 +24,10 @@
 			$formato = new formatoCampo();
 			echo $formato->getInfoByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
 		break;
+		case 'getRegistrosByID':
+			$registro = new registrosCampo();
+			echo $registro->getRegistrosByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_registrosCampo']);
+		break;
 		case 'getAllAdmin':
 			$formato = new formatoCampo();
 			echo $formato->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);

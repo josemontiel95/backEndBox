@@ -12,7 +12,8 @@ class FormatoRegistroRev{
 
 
 	private $wc = '/1QQ/';
-	/*
+
+	
 	public function getAllAdmin($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
@@ -20,72 +21,58 @@ class FormatoRegistroRev{
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			     	SELECT
-						formatoCampo.id_formatoCampo,
-						informeNo,
+						formatoRegistroRev.id_formatoRegistroRev,
+						regNo,
+						formatoRegistroRev.localizacion,
 						observaciones,
-						tipo,
-						formatoCampo.cono_id,
+						formatoRegistroRev.cono_id,
 						CONO,
-						formatoCampo.varilla_id,
+						formatoRegistroRev.varilla_id,
 						VARILLA,
-						formatoCampo.flexometro_id,
-						FLEXOMETRO,
-						formatoCampo.termometro_id,
-						TERMOMETRO
+						formatoRegistroRev.flexometro_id,
+						FLEXOMETRO
 					FROM
-						formatoCampo,
+						formatoRegistroRev,
 						(
 							SELECT
-								id_formatoCampo,
+								id_formatoRegistroRev,
 								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS CONO
 							FROM
-								formatoCampo
+								formatoRegistroRev
 							LEFT JOIN
 								herramientas
 							ON
-								formatoCampo.cono_id = herramientas.id_herramienta
+								formatoRegistroRev.cono_id = herramientas.id_herramienta
 						)AS cono,
 						(
 							SELECT
-								id_formatoCampo,
+								id_formatoRegistroRev,
 								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS VARILLA
 							FROM
-								formatoCampo
+								formatoRegistroRev
 							LEFT JOIN
 								herramientas
 							ON
-								formatoCampo.varilla_id = herramientas.id_herramienta
+								formatoRegistroRev.varilla_id = herramientas.id_herramienta
 						)AS varilla,
 						(
 							SELECT
-								id_formatoCampo,
+								id_formatoRegistroRev,
 								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS FLEXOMETRO
 							FROM
-								formatoCampo
+								formatoRegistroRev
 							LEFT JOIN
 								herramientas
 							ON
-								formatoCampo.flexometro_id = herramientas.id_herramienta
-						)AS flexometro,
-						(
-							SELECT
-								id_formatoCampo,
-								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS TERMOMETRO
-							FROM
-								formatoCampo
-							LEFT JOIN
-								herramientas
-							ON
-								formatoCampo.termometro_id = herramientas.id_herramienta
-						)AS termometro
+								formatoRegistroRev.flexometro_id = herramientas.id_herramienta
+						)AS flexometro
 					WHERE
-						cono.id_formatoCampo = formatoCampo.id_formatoCampo AND
-						varilla.id_formatoCampo = formatoCampo.id_formatoCampo AND
-						flexometro.id_formatoCampo = formatoCampo.id_formatoCampo AND
-						termometro.id_formatoCampo = formatoCampo.id_formatoCampo AND
-						formatoCampo.ordenDeTrabajo_id = 1QQ
+						cono.id_formatoRegistroRev = formatoRegistroRev.id_formatoRegistroRev AND
+						varilla.id_formatoRegistroRev = formatoRegistroRev.id_formatoRegistroRev AND
+						flexometro.id_formatoRegistroRev = formatoRegistroRev.id_formatoRegistroRev AND
+						formatoRegistroRev.ordenDeTrabajo_id = 1QQ
 					ORDER BY 
-						formatoCampo.id_formatoCampo	        
+						formatoRegistroRev.id_formatoRegistroRev	        
 
 			      ",
 			      array($id_ordenDeTrabajo),
@@ -101,8 +88,6 @@ class FormatoRegistroRev{
 		}
 		return json_encode($arr);	
 	}
-
-	*/
 
 	public function insertJefeBrigada($token,$rol_usuario_id,$regNo,$ordenDeTrabajo_id,$localizacion,$cono_id,$varilla_id,$flexometro_id,$longitud,$latitud){
 		global $dbS;
@@ -262,52 +247,5 @@ class FormatoRegistroRev{
 		return json_encode($arr);
 	}
 
-
-	/*
-	
-
-
-
-	public function getHeader($token,$rol_usuario_id,$id_ordenDeTrabajo,$id_formatoCampo){
-		global $dbS;
-		$usuario = new Usuario();
-		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		if($arr['error'] == 0){
-			$s= $dbS->qarrayA("
-			      SELECT
-			      	informeNo,
-			        obra,
-					localizacion,
-					razonSocial,
-					direccion
-			      FROM 
-			        ordenDeTrabajo,cliente,obra,formatoCampo
-			      WHERE 
-			      	obra_id = id_obra AND
-			      	cliente_id = id_cliente AND
-			      	id_formatoCampo = 1QQ AND
-			      	id_ordenDeTrabajo = 1QQ  
-			      ",
-			      array($id_ordenDeTrabajo),
-			      "SELECT"
-			      );
-
-			if(!$dbS->didQuerydied){
-				if($s=="empty"){
-					$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro ese id','error' => 5);
-				}
-				else{
-					return json_encode($s);
-				}
-			}
-			else{
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getClienteByID , verifica tus datos y vuelve a intentarlo','error' => 6);
-			}
-		}
-		return json_encode($arr);
-	}
-
-	
-	*/
 }
 ?>
