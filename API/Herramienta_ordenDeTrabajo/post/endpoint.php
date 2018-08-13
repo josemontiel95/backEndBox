@@ -15,17 +15,18 @@
 	include_once("./../Herramienta_ordenDeTrabajo.php");
 
 	switch ($function){
-		/*		FUNCION BIEN
+		
 		case 'insertAdmin':
 			$herra = new Herramienta_ordenDeTrabajo();
-			echo $herra->insertAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['ordenDeTrabajo_id'],$_POST['herramienta_id']);
+			echo $herra->insertAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['ordenDeTrabajo_id'],$_POST['herramientasArray']);
 		break;
-		*/
-		//PRUEBA
+		
+		/*PRUEBA
 		case 'insertAdmin':
 			$herra = new Herramienta_ordenDeTrabajo();
 			echo $herra->insertAdmin($_POST['token'],$_POST['rol_usuario_id']);
 		break;
+		*/
 		case 'deactivateHerra':
 			$herra = new Herramienta_ordenDeTrabajo();
 			echo $herra->deactivateHerra($_POST['token'],$_POST['rol_usuario_id'],$_POST['herramienta_id']);
