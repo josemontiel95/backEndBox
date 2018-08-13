@@ -466,7 +466,7 @@ CREATE TABLE registrosCampo(
 	tamAgregado INT,
 	volumen FLOAT(5.2),
 	tipoConcreto VARCHAR(5),
-	herramienta_id INT,
+	herramienta_id VARCHAR(20),
 	horaMuestreo TIME,
 	tempMuestreo INT,
 	tempRecoleccion INT,
@@ -478,13 +478,7 @@ CREATE TABLE registrosCampo(
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	active INT NOT NULL DEFAULT 1,
 
-	PRIMARY KEY (id_registrosCampo),
-
-
-
-	FOREIGN KEY(herramienta_id) 
-	REFERENCES herramientas(id_herramienta)
-	ON DELETE SET NULL ON UPDATE CASCADE
+	PRIMARY KEY (id_registrosCampo)
 )ENGINE=INNODB;
 
 ALTER TABLE registrosCampo AUTO_INCREMENT=1001;
