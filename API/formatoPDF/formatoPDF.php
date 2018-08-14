@@ -113,7 +113,7 @@
 	}
 
 	$fuente_titulo = 'Arial';
-	$fuente_cuerpo = ''
+	$fuente_cuerpo = 'Arial';
 
 
 
@@ -123,19 +123,99 @@
 	$pdf->AddPage();
 
 	//Imprimimos el titulo (La informacion de Lacocs)
-	$pdf->SetFont('Arial','B',15); //Antes que todo necesitamos definir la fuente
+	$pdf->SetFont($fuente_titulo,'B',10); //Antes que todo necesitamos definir la fuente
 	$titulo = 'LABORATORIO DE CONTROL DE CALIDAD Y SUPERVISIÓN S.A DE C.V';
 	$tam_cell = $pdf->GetStringWidth($titulo)+6; //Calculamos el tamaño de nuestra cadena y asi obtener una referencia del tamaño de nuestra celda
 	$pdf->SetX((297-$tam_cell)/2); //Calculamos el centro del documento
-	$pdf->Cell($tam_cell,9,utf8_decode($titulo),1,1,'C');
+	$pdf->Cell($tam_cell,8,utf8_decode($titulo),0,1,'C');
 
+
+	//Posicion de del titulo del formato, lo calculamos antes para tomarlo como referencia para la fecha el telefono y el fax
+	$pdf->SetFont($fuente_titulo,'B',8);
+	$titulo_informe = '"INFORME DE PRUEBAS A COMPRESIÓN DE CUBOS DE CONCRETO HIDRÁULICO"';
+	$tam_tituloInforme = $pdf->GetStringWidth($titulo_informe)+120;
+
+	//Fecha
+	$pdf->SetFont($fuente_titulo,'B',7);
 	$direccion_lacocs = '35 NORTE No.3023, UNIDAD HABITACIONAL AQUILES SERDAN, PUEBLA, PUE.';
-	$pdf->Cell(100,5,$direccion_lacocs,1,2,'C');
+	$tam_direccion = $pdf->GetStringWidth($direccion_lacocs)+6;
+	$pdf->SetX(-$tam_tituloInforme-10);
+	$pdf->Cell($tam_direccion,5,$direccion_lacocs,0,0,'C');
+
+	//Telefono
+	$pdf->SetX($pdf->GetX()+20);
+	$telefono = 'TELS. 8686-973/ 8686-974';
+	$pdf->Cell( $pdf->GetStringWidth($telefono)+6,5,$telefono,0,0,'C');
+
+	//FAX
+	$pdf->SetX($pdf->GetX()+15);
+	$FAX = 'FAX. 2315-836';
+	$pdf->Cell( $pdf->GetStringWidth($FAX)+6,5,$FAX,0,0,'C');
+
+	$pdf->Ln();
+
+	//Titulo del informe
+	$pdf->SetFont($fuente_titulo,'B',8);
+	$pdf->SetX(-$tam_tituloInforme-10);
+	$pdf->Cell($tam_tituloInforme,5,utf8_decode($titulo_informe),1,2,'C');
+	$pdf->ln(2);
+
+	//-Informacion del documento
+	//Numero del informe
+	$informeNo = 'INFORME No.';
+	$tam_informeNo = $pdf->GetStringWidth($informeNo)+6;
+	$pdf->SetX(-$tam_informeNo-50);
+	$pdf->Cell($tam_informeNo,5,$informeNo,0,0,'C');
+
+	//Caja de texto
+	$pdf->Cell(0,5,'','B');
 
 
+	$pdf->Ln(7);
+
+	//-Informe al cual sustituye
 
 
+	$sustituyeInforme = 'ESTE INFORME SUSTITUYE A:';
+	$tam_sustituyeInforme = $pdf->GetStringWidth($sustituyeInforme)+6;
+	$pdf->SetX(-$tam_sustituyeInforme-50);
+	$pdf->Cell($tam_sustituyeInforme,5,$sustituyeInforme,0,0,'C');
 
+	//Caja de texto
+	$pdf->Cell(0,5,'','B');
+
+
+	$pdf->Ln(8);
+
+	$pdf->SetFont($fuente_cuerpo,'',8);
+	//Cuadro con informacion
+	$obra = 'Nombre de la Obra:';
+	$pdf->Cell($pdf->GetStringWidth($obra)+2,5,$obra,0);
+
+	//Caja de texto
+	$pdf->SetX(50);
+	$pdf->Cell(0,4,'','B');
+
+	$pdf->Ln(5);
+
+	$locObra = 'Localización de la Obra:';
+	$pdf->Cell($pdf->GetStringWidth($locObra)+2,5,utf8_decode($locObra),0);
+
+	//Caja de texto
+	$pdf->SetX(50);
+	$pdf->Cell(0,4,'','B');
+
+	$pdf->Ln(5);
+
+	$nomCli = 'Nombre del Cliente:';
+	$pdf->Cell($pdf->GetStringWidth($nomCli)+2,5,utf8_decode($nomCli
+	),0);
+
+	//Caja de texto
+	$pdf->SetX(50);
+	$pdf->Cell(0,4,'','B');
+
+	$pdf->Ln(5);
 
 
 	$pdf->SetX(0);
@@ -154,6 +234,8 @@
 
 	//Declaramos los campos en un array
 
+	/*
+
 	$titulo_campos = array('Clave del especimen','Unidad','Localización');
 	for($i = 0;$i<=2;$i++) {
 		$pdf->SetFont('Arial','B',15);
@@ -165,7 +247,7 @@
 			$pdf->SetFont('Arial','B',15);
 			$pdf->cell($pdf->GetStringWidth($titulo_campos[$i])+4,6,'',1);
 	}
-
+	*/
 
 
 
