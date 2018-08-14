@@ -90,6 +90,9 @@ class registrosCampo{
 				case '13':
 					$campo = 'localizacion';
 					break;
+				case '14':
+					$campo = 'status';
+					break;
 
 			}
 
