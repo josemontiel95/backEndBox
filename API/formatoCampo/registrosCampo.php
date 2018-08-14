@@ -189,7 +189,7 @@ class registrosCampo{
 					tempMuestreo,
 					tempRecoleccion,
 					localizacion,
-					IF(status = 0,'PENDIENTE','COMPLETO') AS estado
+					status
 			      FROM 
 			      	registrosCampo
 			      WHERE 
