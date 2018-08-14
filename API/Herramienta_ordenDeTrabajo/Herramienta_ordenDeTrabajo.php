@@ -83,7 +83,6 @@ class Herramienta_ordenDeTrabajo{
 				else{
 					$id=$dbS->lastInsertedID;
 					$arr = array('Se detecto error en id:' => $id, 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
-					break;
 				}
 		}
 		return json_encode($arr);
