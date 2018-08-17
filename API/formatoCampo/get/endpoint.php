@@ -30,7 +30,7 @@
 		break;
 		case 'getAllAdmin':
 			$formato = new formatoCampo();
-			echo $formato->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);
+			echo $formato->getAllAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
 		break;
 		//								FUNCIONES DE LA CLASE REGISTROS
 		case 'getAllRegistrosByID':
