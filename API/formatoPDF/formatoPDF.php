@@ -185,7 +185,7 @@
 	$pdf->Cell(0,5,'','B');
 
 
-	$pdf->Ln(8);
+	$pdf->Ln(7);
 
 	$pdf->SetFont($fuente_cuerpo,'',8);
 	//Cuadro con informacion
@@ -217,9 +217,37 @@
 
 	$pdf->Ln(5);
 
+	//Direccion del cliente
+	$dirCliente = 'Dirección del Cliente:';
+	$pdf->Cell($pdf->GetStringWidth($nomCli)+2,5,utf8_decode($dirCliente),0);
+	//Caja de texto
+	$pdf->SetX(50);
+	$pdf->Cell(0,4,'','B');
+	
+	//-----------------------SEPARACION EN LA TABLA-------------------------
+	$pdf->Ln(8);
 
-	$pdf->SetX(0);
-	$pdf->ln(40);
+	//Guardamos la posicion de la Y para evitar problemas con el salto de linea de los multicell
+	$posicion_y = $pdf->GetY();
+
+
+	$falla = 'FALLA';
+	$tam_falla = $pdf->GetStringWidth($falla)+3;
+	$pdf->SetX(275.37255);
+	$pdf->multicell($tam_falla,5,utf8_decode($pdf->GetX().'N°'),1,'C');
+
+	//Resistencia
+
+
+	$resistencia = 'RESISTENCIA';
+	$tam_resistencia = $pdf->GetStringWidth($resistencia)+3;
+	//$pdf->SetY($posicion_y);
+	//$pdf->SetX(-(($tam_falla+10) + $tam_resistencia));
+	//$pdf->SetX(-(($tam_falla + 10) + $tam_resistencia));
+	//$pdf->SetX($pdf->GetX() - $tam_resistencia);
+	$pdf->multicell($tam_resistencia,5,utf8_decode('% DE'."\n".$pdf->GetX()),1,'C');
+	
+	
 	/*
 		Falta definir la cadena mas larga del titulo par acalcular correctamente el tamaño de la cell
 	*/
