@@ -811,6 +811,50 @@ class Usuario{
 		}
 	}
 
+	public function getTecnicosForDroptdown($token,$rol_usuario_id){
+		global $dbS;
+		if($this->getIDByTokenAndValidate($token) == 'success'){
+			if($rol_usuario_id==$this->rol_usuario_id){
+				$arr= $dbS->qAll("
+							      SELECT 
+							        id_usuario,
+									nombre
+							      FROM 
+							        usuario
+							      WHERE
+							      	active = 1 AND 
+							      	rol_usuario_id = 1004
+							      ORDER BY 
+							      	nombre
+							      ",
+							      array(),
+							      "SELECT"
+			     			 );
+
+				if(!$dbS->didQuerydied){
+					if($arr == "empty"){
+						$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+						
+					}
+					return json_encode($arr);
+				}
+				else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query, verifica tus datos y vuelve a intentarlo','error' => 6);	
+					return json_encode($arr);
+				}
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
+				return json_encode($arr);
+			}
+		}
+		else{
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
+			return json_encode($arr);
+		}
+
+	}
+
 
 
 

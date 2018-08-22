@@ -54,6 +54,11 @@
 			$usuario = new Usuario();
 			echo $usuario->getJefesBrigadaForDroptdown($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		case 'getTecnicosForDroptdown':
+			$usuario = new Usuario();
+			echo $usuario->getTecnicosForDroptdown($_GET['token'],$_GET['rol_usuario_id']);
+		break;
+
 	/*	case 'upDateAdmin':
 			$usuario = new Usuario();
 			echo $usuario->upDateAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario'],$_GET['nombre'],$_GET['apellido'],$_GET['laboratorio_id'],$_GET['nss'],$_GET['email'],$_GET['fechaDeNac'],$_GET['rol_usuario_id_new']);
