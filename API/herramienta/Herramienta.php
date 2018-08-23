@@ -170,7 +170,8 @@ class Herramienta{
 			        herramienta_tipo,
 					herramientas
 			      WHERE
-			      	 id_herramienta_tipo =  herramienta_tipo_id
+			      	 id_herramienta_tipo =  herramienta_tipo_id AND
+			      	 id_herramienta > 1000
 			      ",
 			      array(),
 			      "SELECT"
@@ -207,7 +208,8 @@ class Herramienta{
 					herramientas
 			      WHERE
 			      	 id_herramienta_tipo =  herramienta_tipo_id AND
-			      	 herramientas.active = 1
+			      	 herramientas.active = 1 AND
+			      	 id_herramienta > 1000
 			      ",
 			      array(),
 			      "SELECT"
@@ -385,7 +387,7 @@ class Herramienta{
    				    FROM
    				        herramienta_tipo
    				    WHERE
-            			herramienta_tipo.active = 1;
+            			herramienta_tipo.active = 1 ;
 			      ",
 			      array(),
 			      "SELECT"
@@ -422,7 +424,8 @@ class Herramienta{
 				    WHERE
 				       	herramientas.active = 1 AND
 				        herramienta_tipo_id = id_herramienta_tipo AND
-				        herramienta_tipo_id = 1QQ
+				        herramienta_tipo_id = 1QQ AND 
+				        id_herramienta > 1000
 			      ",
 			      array($herramienta_tipo_id),
 			      "SELECT"
@@ -469,7 +472,9 @@ class Herramienta{
 						ON herramientas.id_herramienta = estado_herramienta.herramienta_id
 					WHERE
 					  	herramientas.active = 1 AND
-					  	(estado_herramienta.estado='SI' OR estado_herramienta.estado IS NULL)
+					  	(estado_herramienta.estado='SI' OR estado_herramienta.estado IS NULL) AND 
+				        id_herramienta > 1000
+
 			      ",
 			      array(),
 			      "SELECT"
