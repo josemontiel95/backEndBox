@@ -527,6 +527,7 @@ ALTER TABLE formatoRegistroRev AUTO_INCREMENT=1001;
 
 CREATE TABLE registrosRev(
 	id_registrosRev INT(11) NOT NULL AUTO_INCREMENT,
+	formatoRegistroRev_id INT(11),
 	fecha DATE,
 	revProyecto INT,
 	revObtenido INT,
@@ -539,6 +540,8 @@ CREATE TABLE registrosRev(
 	remisionNo INT,
 	horaSalida TIME,
 	horaLlegada TIME,
+
+	status INT NOT NULL DEFAULT 0,
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

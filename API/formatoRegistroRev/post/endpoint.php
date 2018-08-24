@@ -26,21 +26,19 @@
 			$formato = new FormatoRegistroRev();
 			echo $formato->updateHeader($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev'],$_POST['regNo'],$_POST['localizacion']);
 		break;
-		/*
 		case 'initInsert':
-			$registrocampo = new registrosCampo();
-			echo $registrocampo->initInsert($_POST['token'],$_POST['rol_usuario_id'],$_POST['formatoCampo_id']);
+			$registrorev = new RegistrosRev();
+			echo $registrorev->initInsert($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev']);
 		break;
 		case 'insertRegistroJefeBrigada':
-			$registrocampo = new registrosCampo();
-			echo $registrocampo->insertRegistroJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['campo'],$_POST['valor'],$_POST['id_registrosCampo']);
+			$registrorev = new RegistrosRev();
+			echo $registrorev->insertRegistroJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['campo'],$_POST['valor'],$_POST['id_registrosRev']);
 		break;
-		
-		case 'updateHeader':
-			$formatocampo = new formatoCampo();
-			echo $formatocampo->updateHeader($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoCampo'],$_POST['informeNo']);
+		case 'deactivate':
+					$formatocampo = new RegistrosRev();
+					echo $formatocampo->deactivate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_registrosRev']);
 		break;
-		*/
+
 	}
 
 ?>
