@@ -34,19 +34,20 @@
 			if($arr['error'] == 0){
 				$formato = new FormatoCampo();	$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
 				$registros = new registrosCampo(); $regisFormato = json_decode($registros->getAllRegistrosByID($token,$rol_usuario_id,$id_formatoCampo),true);
+				//echo $infoFormato['tipo'];
 
 				switch ($infoFormato['tipo']) {
 					case 'CUBO':
 						$pdf = new InformeCubos();	$pdf->CreateNew($infoFormato,$regisFormato);
 						break;
 					case 'CILINDRO':
-						$pdf = new InformeCilindros();	$pdf->CreateNew($infoFormato,$regisFormato);
+						//$pdf = new InformeCilindros();	$pdf->CreateNew($infoFormato,$regisFormato);
 						break;
 
 				
 				}
 			}
-			return json_encode($arr);
+			//return json_encode($arr);
 		}
 	}
 

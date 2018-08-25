@@ -250,7 +250,7 @@
 
 			//Especimenes
 			$especimenes = 'ESPECIMENES';
-			$tam_especimenes = ($tam_area + $tam_altura + $tam_diametro + $tam_edad + $tam_peso + $tam_rev);
+			$tam_especimenes = ($tam_area + $tam_altura + $tam_lado1 + $tam_lado2 + $tam_edad + $tam_peso + $tam_rev);
 			$this->SetY($posicion_y); $this->SetX($posicion_x); 
 			$this->cell($tam_especimenes,1.5*($tam_font_head - 3),$especimenes,1,2,'C');
 
@@ -431,7 +431,7 @@
 
 		//Funcion que crea un nuevo formato
 		function CreateNew($infoFormato,$regisFormato){
-			$pdf  = new informeCilindros('L','mm','Letter');
+			$pdf  = new InformeCubos('L','mm','Letter');
 			$pdf->AddPage();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables();
