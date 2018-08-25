@@ -26,17 +26,17 @@ class RegistrosRev{
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-							registrosRev(id_formatoRegistroRev)
+							registrosRev(formatoRegistroRev_id)
 
 						VALUES
 							(1QQ)
 				",array($id_formatoRegistroRev),"INSERT");
 			if(!$dbS->didQuerydied){
 				$id=$dbS->lastInsertedID;
-				$arr = array('id_formatoRegistroRev' => $id,'estatus' => '¡Exito en la inicializacion','error' => 0);
+				$arr = array('id_registrosRev' => $id,'estatus' => '¡Exito en la inicializacion','error' => 0);
 				return json_encode($arr);
 			}else{
-				$arr = array('id_formatoRegistroRev' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+				$arr = array('id_registrosRev' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
 				return json_encode($arr);
 			}
 		}

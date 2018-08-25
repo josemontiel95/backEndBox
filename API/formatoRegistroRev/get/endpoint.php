@@ -11,6 +11,7 @@
 	}
 
 	include_once("./../FormatoRegistroRev.php");
+	include_once("./../RegistrosRev.php");
 
 	switch ($function) {
 		
