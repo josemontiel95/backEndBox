@@ -68,7 +68,10 @@ class Herramienta_ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token,$rol_usuario_id),true);
-		if($arr['error'] == 0){
+		return json_encode($herramientasArray);
+		/*if($arr['error'] == 0){
+			return json_encode($herramientasArray);
+						/*
 			$dbS->transquery("
 						INSERT INTO
 						herramienta_ordenDeTrabajo(herramienta_id,ordenDeTrabajo_id,status)
@@ -84,8 +87,9 @@ class Herramienta_ordenDeTrabajo{
 					$id=$dbS->lastInsertedID;
 					$arr = array('Se detecto error en id:' => $id, 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
 				}
-		}
-		return json_encode($arr);
+
+		}*/
+		//return json_encode($arr);
 
 	}
 
