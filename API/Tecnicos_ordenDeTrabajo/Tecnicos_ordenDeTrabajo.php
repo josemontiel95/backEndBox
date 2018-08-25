@@ -35,6 +35,8 @@ class Tecnicos_ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token,$rol_usuario_id),true);
+		$tecnicosArray=json_decode($tecnicosArray);
+
 		if($arr['error'] == 0){
 			$dbS->transquery("
 						INSERT INTO
