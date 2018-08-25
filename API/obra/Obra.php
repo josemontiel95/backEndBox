@@ -86,6 +86,8 @@ class Obra{
 					descripcion,
 					localizacion,
 					nombre_residente,
+					telefono_residente,
+					correo_residente,
 					id_cliente,
 					nombre,
 					IF(obra.tipo = 2,'Unitario','Iguala') AS tipo,
