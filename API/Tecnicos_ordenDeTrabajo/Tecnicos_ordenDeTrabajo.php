@@ -6,6 +6,8 @@ class Tecnicos_ordenDeTrabajo{
 	private $ordenDeTrabajo_id;
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
+
+	/*
 	public function insertAdmin($token,$rol_usuario_id,$tecnico_id,$ordenDeTrabajo_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -27,6 +29,32 @@ class Tecnicos_ordenDeTrabajo{
 			}
 		}
 		return json_encode($arr);
+	}*/
+
+	public function insertAdmin($token,$rol_usuario_id,$ordenDeTrabajo_id,$tecnicosArray){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token,$rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->transquery("
+						INSERT INTO
+						tecnicos_ordenDeTrabajo(tecnico_id,ordenDeTrabajo_id)
+						VALUES
+						(1QQ,1QQ)"
+						,$tecnicosArray,$ordenDeTrabajo_id,
+						"INSERT_TS");
+
+				if(!$dbS->didQuerydied){
+					$arr = array('id_tecnicos_ordenDeTrabajo' => 'No disponible, esto NO es un error', 'estatus' => 'Exito en insercion', 'error' => 0);
+				}
+				else{
+					$id=$dbS->lastInsertedID;
+					$arr = array('Se detecto error en id:' => $id, 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+				}
+
+		}
+		return json_encode($arr);
+
 	}
 
 	public function upDateAdmin($token,$rol_usuario_id,$tecnico_id,$ordenDeTrabajo_id){
