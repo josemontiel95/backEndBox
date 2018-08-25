@@ -3,7 +3,7 @@
 	include_once("./../../FPDF/fpdf.php");
 
 	//Formato de campo de cilindros
-	class InformeCilindros extends fpdf{
+	class InformeCubos extends fpdf{
 		function Header()
 		{
 			//Espacio definido para los logotipos
@@ -26,7 +26,7 @@
 			//Titulo del informe
 			$tam_font_tituloInforme = 7.5;
 			$this->SetFont('Arial','B',$tam_font_tituloInforme);
-			$titulo_informe = '"INFORME DE PRUEBAS A COMPRESIÓN DE CILINDROS DE CONCRETO HIDRÁULICO"';
+			$titulo_informe = '"INFORME DE PRUEBAS A COMPRESIÓN DE CUBOS DE CONCRETO HIDRÁULICO"';
 			$tam_tituloInforme = $this->GetStringWidth($titulo_informe)+130;
 
 			$tam_font_info = 6.5;
@@ -223,15 +223,15 @@
 			$this->SetY($posicion_y + (1.5*($tam_font_head - 2.5)));	$this->SetX($posicion_x - $tam_area); $posicion_x = $this->GetX();
 			$this->multicell($tam_area,0.75*($tam_font_head - 2.5),utf8_decode($area."\n".'cm²'),1,'C');
 
-			$altura = 'ALTURA';
-			$tam_altura = $this->GetStringWidth($area) + 3;
-			$this->SetY($posicion_y + (1.5*($tam_font_head - 2.5)));	$this->SetX($posicion_x - $tam_altura); $posicion_x = $this->GetX();
-			$this->multicell($tam_altura,0.75*($tam_font_head - 2.5),utf8_decode($altura."\n".'EN cm'),1,'C');
+			$lado2 = 'LADO 2 EN';
+			$tam_lado2 = $this->GetStringWidth($lado2) + 3;
+			$this->SetY($posicion_y + (1.5*($tam_font_head - 2.5)));	$this->SetX($posicion_x - $tam_lado2); $posicion_x = $this->GetX();
+			$this->multicell($tam_lado2,0.75*($tam_font_head - 2.5),$lado2."\n".'cm',1,'C');
 
-			$diametro = 'DIAMETRO EN';
-			$tam_diametro = $this->GetStringWidth($diametro) + 3;
-			$this->SetY($posicion_y + (1.5*($tam_font_head - 2.5)));	$this->SetX($posicion_x - $tam_diametro); $posicion_x = $this->GetX();
-			$this->multicell($tam_diametro,0.75*($tam_font_head - 2.5),$diametro."\n".'cm',1,'C');
+			$lado1 = 'LADO 1 EN';
+			$tam_lado1 = $this->GetStringWidth($lado1) + 3;
+			$this->SetY($posicion_y + (1.5*($tam_font_head - 2.5)));	$this->SetX($posicion_x - $tam_lado1); $posicion_x = $this->GetX();
+			$this->multicell($tam_lado1,0.75*($tam_font_head - 2.5),$lado1."\n".'cm',1,'C');
 
 			$edad = 'EDAD EN';
 			$tam_edad = $this->GetStringWidth($edad) + 3;
@@ -240,10 +240,6 @@
 
 			$tam_font_head = 6;	$this->SetFont('Arial','',$tam_font_head);
 
-			$peso = 'PESO EN kg';
-			$tam_peso = $this->GetStringWidth($peso) + 3;
-			$this->SetY($posicion_y + (1.5*($tam_font_head - 3)));	$this->SetX($posicion_x - $tam_peso);	$posicion_x = $this->GetX();
-			$this->cell($tam_peso,1.5*($tam_font_head - 3),$peso,1,0,'C');
 
 			$rev = 'REV. cm';
 			$tam_rev = $this->GetStringWidth($rev) + 3;

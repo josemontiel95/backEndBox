@@ -142,6 +142,7 @@ VALUES("obra1","prefijo1","fechaDeCreacion1","descripcion1","localizacion1","nom
 CREATE TABLE ordenDeTrabajo(
 	id_ordenDeTrabajo INT(11) NOT NULL AUTO_INCREMENT,
 	cotizacion_id INT(11),
+	area VARCHAR(20) NOT NULL,
 	obra_id INT(11),
 	actividades TEXT,
 	condicionesTrabajo TEXT,
@@ -559,6 +560,16 @@ CREATE TABLE registrosRev(
 )ENGINE=INNODB;
 
 ALTER TABLE registrosRev AUTO_INCREMENT=1001;
+
+
+CREATE TABLE formatoEnsayo(
+	id_formatoEnsayo INT(11) NOT NULL AUTO_INCREMENT,
+	fecha DATE NOT NULL,
+	formatoCampo_id INT(11),
+
+
+
+)ENGINE=INNODB;
 
 
 ================
