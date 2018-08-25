@@ -21,9 +21,9 @@
 			$rol = new Rol();
 			echo $rol->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_rol_usuario'],$_GET['rol']);
 		break;
-		case 'getAll':
+		case 'getForDroptdownAdmin':
 			$rol = new Rol();
-			echo $rol->getAll($_GET['token'],$_GET['rol_usuario_id']);
+			echo $rol->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
 	}
 ?>
