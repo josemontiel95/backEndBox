@@ -17,6 +17,10 @@
 			$orden = new ordenDeTrabajo();
 			echo $orden->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		case 'getAllByJefeBrigada':
+			$orden = new ordenDeTrabajo();
+			echo $orden->getAllByJefeBrigada($_GET['token'],$_GET['rol_usuario_id']);
+		break;
 		case 'getByIDAdmin':
 			$orden = new ordenDeTrabajo();
 			echo $orden->getByIDAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
