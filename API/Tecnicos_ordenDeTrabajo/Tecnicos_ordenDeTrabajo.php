@@ -97,7 +97,8 @@ class Tecnicos_ordenDeTrabajo{
 				  FROM 
 			      	tecnicos_ordenDeTrabajo,usuario
 			      WHERE 
-			      		tecnico_id = id_usuario AND
+			      		tecnico_id = id_usuario AND 
+			      		usuario.active = 1 AND
 			      		ordenDeTrabajo_id = 1QQ 
 
 			      ",
