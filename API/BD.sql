@@ -413,6 +413,10 @@ CREATE TABLE formatoCampo(
 	observaciones TEXT,
 	tipo VARCHAR(20) NOT NULL,
 
+	prueba1 INT NOT NULL,
+	prueba2 INT NOT NULL,
+	prueba3 INT NOT NULL,
+
 	cono_id INT(11),
 	varilla_id INT(11),
 	flexometro_id INT(11),
@@ -596,6 +600,42 @@ DROP TABLE usuario;
 DROP TABLE laboratorio;
 DROP TABLE rol_usuario;
 DROP TABLE log;
+
+
+--INTENTO DE "SYSTEMSTATUS"
+
+CREATE TABLE systemstatus(
+	id_systemstatus INT(11) NOT NULL AUTO_INCREMENT,
+
+	cch_def_prueba1 INT NOT NULL,
+	cch_def_prueba2 INT NOT NULL,
+	cch_def_prueba3 INT NOT NULL,
+
+
+
+	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	active INT NOT NULL DEFAULT 1,
+
+	PRIMARY KEY(id_systemstatus)
+
+)ENGINE = INNODB;
+
+ALTER TABLE systemstatus AUTO_INCREMENT=1001;
+
+INSERT INTO 
+
+	systemstatus(
+			cch_def_prueba1,
+			cch_def_prueba2,
+			cch_def_prueba3
+		)
+
+VALUES(
+	7,
+	14,
+	28
+)
 
 
 

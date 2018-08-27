@@ -80,9 +80,9 @@ class ordenDeTrabajo{
 						WHERE
 							obra_id = id_obra AND
 							ordenDeTrabajo.laboratorio_id = id_laboratorio AND
-							id_usuario = jefe_brigada_id
+							id_usuario = 1QQ
 			      ",
-			      array(),
+			      array($arr['id_usuario']),
 			      "SELECT"
 			      );
 
@@ -94,6 +94,53 @@ class ordenDeTrabajo{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 6);
 		}
 		return json_encode($arr);	
+	}
+
+	public function getAllByJefeBrigada($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      		SELECT 
+							id_ordenDeTrabajo,
+							cotizacion_id,
+							obra_id,
+							obra.obra,
+
+							actividades,
+							condicionesTrabajo,
+							fechaInicio,
+							fechaFin,
+							horaInicio,
+							horaFin,
+							observaciones,
+							lugar,
+
+							ordenDeTrabajo.laboratorio_id,
+							laboratorio,
+							jefe_brigada_id,
+							IF(ordenDeTrabajo.active = 1,'Si','No') AS active
+						from
+							ordenDeTrabajo,obra,laboratorio
+						WHERE
+							obra_id = id_obra AND
+							ordenDeTrabajo.laboratorio_id = id_laboratorio AND
+							jefe_brigada_id = 1QQ
+			      ",
+			      array($arr['id_usuario']),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+						if($arr == "empty")
+							$arr = array('estatus' =>"No hay registros", 'error' => 5); 
+						
+			}else
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 6);
+		}
+		return json_encode($arr);	
+
 	}
 
 
