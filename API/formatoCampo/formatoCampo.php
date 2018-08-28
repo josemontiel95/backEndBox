@@ -257,7 +257,8 @@ class formatoCampo{
 			        obra,
 					localizacion,
 					razonSocial,
-					direccion
+					CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion
+
 			      FROM 
 			        ordenDeTrabajo,cliente,obra,formatoCampo
 			      WHERE 

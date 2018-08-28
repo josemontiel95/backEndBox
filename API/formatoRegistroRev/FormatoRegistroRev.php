@@ -127,7 +127,7 @@ class FormatoRegistroRev{
 					formatoRegistroRev.observaciones,
 					nombre,
 					razonSocial,
-					direccion,
+					CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion,
 					formatoRegistroRev.cono_id,
 					CONO,
 					formatoRegistroRev.varilla_id,
