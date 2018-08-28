@@ -27,7 +27,7 @@ class Cliente{
 
 						VALUES
 						('1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ')
-				",array($rfc,$razonSocial,$nombre,$email,$telefono,$nombreContacto,$telefonoDeContacto,$telefonoDeContacto,$calle,$noExt,$noInt,$col,$municipio,$estado),"INSERT");
+				",array($rfc,$razonSocial,$nombre,$email,$telefono,$nombreContacto,$telefonoDeContacto,$calle,$noExt,$noInt,$col,$municipio,$estado),"INSERT");
 			$arr = array('id_cliente' => 'No disponible, esto NO es un error', 'razonSocial' => $razonSocial, 'estatus' => 'Exito en insercion', 'error' => 0);
 			if($dbS->didQuerydied){
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
