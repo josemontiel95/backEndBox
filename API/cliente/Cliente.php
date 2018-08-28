@@ -16,18 +16,18 @@ class Cliente{
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
-	public function insertAdmin($token,$rol_usuario_id,$rfc,$razonSocial,$nombre,$direccion,$email,$telefono,$nombreContacto,$telefonoDeContacto){
+	public function insertAdmin($token,$rol_usuario_id,$rfc,$razonSocial,$nombre,$email,$telefono,$nombreContacto,$telefonoDeContacto,$calle,$noExt,$noInt,$col,$municipio,$estado){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						cliente(rfc,razonSocial,nombre,direccion,email,telefono,nombreContacto,telefonoDeContacto)
+						cliente(rfc,razonSocial,nombre,email,telefono,nombreContacto,telefonoDeContacto,calle,noExt,noInt,col,municipio,estado)
 
 						VALUES
-						('1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ')
-				",array($rfc,$razonSocial,$nombre,$direccion,$email,$telefono,$nombreContacto,$telefonoDeContacto),"INSERT");
+						('1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ')
+				",array($rfc,$razonSocial,$nombre,$email,$telefono,$nombreContacto,$telefonoDeContacto,$telefonoDeContacto,$calle,$noExt,$noInt,$col,$municipio,$estado),"INSERT");
 			$arr = array('id_cliente' => 'No disponible, esto NO es un error', 'razonSocial' => $razonSocial, 'estatus' => 'Exito en insercion', 'error' => 0);
 			if($dbS->didQuerydied){
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
@@ -36,7 +36,7 @@ class Cliente{
 		return json_encode($arr);
 	}
 
-	public function upDateAdmin($token,$rol_usuario_id,$id_cliente,$rfc,$razonSocial,$nombre,$direccion,$email,$telefono,$nombreContacto,$telefonoDeContacto){
+	public function upDateAdmin($token,$rol_usuario_id,$id_cliente,$rfc,$razonSocial,$nombre,$email,$telefono,$nombreContacto,$telefonoDeContacto,$calle,$noExt,$noInt,$col,$municipio,$estado){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -47,16 +47,21 @@ class Cliente{
 							rfc ='1QQ',
 							razonSocial = '1QQ',
 							nombre = '1QQ',
-							direccion = '1QQ',
 							email = '1QQ',
 							telefono ='1QQ',
 							nombreContacto = '1QQ', 
-							telefonoDeContacto = '1QQ'
+							telefonoDeContacto = '1QQ',
+							calle = '1QQ',
+							noExt = '1QQ',
+							noInt = '1QQ',
+							col = '1QQ',
+							municipio = '1QQ',
+							estado = '1QQ'
 						WHERE
 							active=1 AND
 							id_cliente = 1QQ
 					 "
-					,array($rfc,$razonSocial,$nombre,$direccion,$email,$telefono,$nombreContacto,$telefonoDeContacto,$id_cliente),"UPDATE"
+					,array($rfc,$razonSocial,$nombre,$email,$telefono,$nombreContacto,$telefonoDeContacto,$calle,$noExt,$noInt,$col,$municipio,$estado,$id_cliente),"UPDATE"
 			      	);
 			$arr = array('id_cliente' => $id_cliente, 'razonSocial' => $razonSocial,'estatus' => 'Exito de actualizacion','error' => 0);	
 			if($dbS->didQuerydied){
@@ -78,7 +83,6 @@ class Cliente{
 					rfc,
 					razonSocial,
 					nombre,
-					direccion,
 					email,
 					foto,
 					telefono,
@@ -86,7 +90,13 @@ class Cliente{
 					telefonoDeContacto,
 					createdON,
 					lastEditedON,
-					IF(active = 1,'Si','No') AS active
+					IF(active = 1,'Si','No') AS active,
+					calle,
+					noExt,
+					noInt,
+					col,
+					municipio,
+					estado
 			      FROM 
 			        cliente
 			      ",
@@ -197,13 +207,18 @@ class Cliente{
 			        rfc,
 					razonSocial,
 					nombre,
-					direccion,
 					email,
 					foto,
 					telefono,
 					nombreContacto,
 					telefonoDeContacto,
-					active
+					active,
+					calle,
+					noExt,
+					noInt,
+					col,
+					municipio,
+					estado
 			      FROM 
 			      	cliente
 			      WHERE 
