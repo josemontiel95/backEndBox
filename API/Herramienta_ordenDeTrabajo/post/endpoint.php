@@ -33,7 +33,7 @@
 		break;
 		case 'deleteHerra':
 			$herra = new Herramienta_ordenDeTrabajo();
-			echo $herra->deleteHerra($_POST['token'],$_POST['rol_usuario_id'],$_POST['herramienta_id']);
+			echo $herra->deleteHerra($_POST['token'],$_POST['rol_usuario_id'],$_POST['herramientasArray']);
 		break;
 	}
 
