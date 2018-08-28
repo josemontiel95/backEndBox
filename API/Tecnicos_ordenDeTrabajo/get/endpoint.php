@@ -17,9 +17,9 @@
 			$tecorden = new Tecnicos_ordenDeTrabajo();
 			echo $tecorden->getAllTecOrden($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
 		break;
-		case 'getTecHerraAvailable':
+		case 'getTecAvailable':
 			$tecorden = new Tecnicos_ordenDeTrabajo();
-			echo $tecorden->getTecHerraAvailable($_GET['token'],$_GET['rol_usuario_id']);
+			echo $tecorden->getTecAvailable($_GET['token'],$_GET['rol_usuario_id']);
 		break;
 
 	}
