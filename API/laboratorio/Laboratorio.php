@@ -50,7 +50,6 @@ class Laboratorio{
 							estado = '1QQ', 
 							municipio = '1QQ'
 						WHERE
-							active=1 AND
 							id_laboratorio = 1QQ
 					 "
 					,array($laboratorio,$estado,$municipio,$id_laboratorio),"UPDATE"
@@ -108,10 +107,10 @@ class Laboratorio{
 					,array(1,$id_laboratorio),"UPDATE"
 			      	);
 			if(!$dbS->didQuerydied){
-				$arr = array('id_laboratorio' => $id_laboratorio,'estatus' => 'Laboratorio se activo','error' => 0);
+				$arr = array('id_laboratorio' => $id_laboratorio, 'token' => $token, 'estatus' => 'Laboratorio se activo','error' => 0);
 			}
 			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la activacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+				$arr = array('id_laboratorio' => $id_laboratorio, 'token' => $token,	'estatus' => 'Error en la activacion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}
 		}
 		return json_encode($arr);
