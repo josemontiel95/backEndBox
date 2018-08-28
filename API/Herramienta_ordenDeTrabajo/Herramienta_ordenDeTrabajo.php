@@ -143,7 +143,7 @@ class Herramienta_ordenDeTrabajo{
 
 						"
 						,$herramientasArray,$ordenDeTrabajo_id,
-						"INSERT_TS");
+						"DELET-TS");
 
 
 				if(!$dbS->didQuerydied){
