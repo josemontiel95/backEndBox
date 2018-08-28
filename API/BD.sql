@@ -201,12 +201,16 @@ VALUES ("cotizacion_id1",1001,"actividades1","condicionesTrabajo1",1029,"fechaIn
 //MODIFICAR LOS CA
 
 CREATE TABLE tecnicos_ordenDeTrabajo(
+	id_tecnicos_ordenDeTrabajo INT(11) NOT NULL AUTO_INCREMENT,
 	tecnico_id INT(11),
 	ordenDeTrabajo_id INT(11),
+	asistencias INT NOT NULL DEFAULT 0,
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	active INT NOT NULL DEFAULT 1,
+
+	PRIMARY KEY(id_tecnicos_ordenDeTrabajo),
 
 	FOREIGN KEY(tecnico_id) 
 	REFERENCES usuario(id_usuario)
@@ -216,6 +220,7 @@ CREATE TABLE tecnicos_ordenDeTrabajo(
 	REFERENCES ordenDeTrabajo(id_ordenDeTrabajo)
 	ON DELETE SET NULL ON UPDATE CASCADE
 )ENGINE=INNODB;
+ALTER TABLE tecnicos_ordenDeTrabajo AUTO_INCREMENT=1001;
 
 CREATE TABLE herramienta_tipo(
 	id_herramienta_tipo INT(11) NOT NULL AUTO_INCREMENT,
@@ -427,9 +432,7 @@ CREATE TABLE formatoCampo(
 	observaciones TEXT,
 	tipo VARCHAR(20) NOT NULL,
 
-	prueba1 INT NOT NULL,
-	prueba2 INT NOT NULL,
-	prueba3 INT NOT NULL,
+	
 
 	cono_id INT(11),
 	varilla_id INT(11),
@@ -492,6 +495,12 @@ CREATE TABLE registrosCampo(
 	localizacion TEXT,
 
 	status INT NOT NULL DEFAULT 0,
+
+	prueba1 INT NOT NULL,
+	prueba2 INT NOT NULL,
+	prueba3 INT NOT NULL,
+
+
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -586,6 +595,25 @@ CREATE TABLE formatoEnsayo(
 	formatoCampo_id INT(11),
 
 )ENGINE=INNODB;
+
+
+CREATE TABLE listaAsistencia(
+	id_listaAsistencia INT(11) NOT NULL AUTO_INCREMENT,
+	tecnicos_ordenDeTrabajo_id INT(11),
+	fecha DATE NOT NULL,
+
+	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	active INT NOT NULL DEFAULT 1,
+
+	PRIMARY KEY(id_listaAsistencia),
+
+	FOREIGN KEY(tecnicos_ordenDeTrabajo_id)
+	REFERENCES tecnicos_ordenDeTrabajo(id_tecnicos_ordenDeTrabajo)
+	ON DELETE SET NULL ON UPDATE CASCADE
+
+)ENGINE=INNODB;
+ALTER TABLE listaAsistencia AUTO_INCREMENT=1001;
 
 
 
