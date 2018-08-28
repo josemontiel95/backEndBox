@@ -181,7 +181,10 @@ class registrosCampo{
 					tempMuestreo,
 					tempRecoleccion,
 					localizacion,
-					status
+					status,
+					prueba1,
+					prueba2,
+					prueba3
 			      FROM 
 			      	registrosCampo
 			      WHERE 
