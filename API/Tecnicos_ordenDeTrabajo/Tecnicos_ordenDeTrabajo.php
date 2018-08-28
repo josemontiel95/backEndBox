@@ -75,7 +75,7 @@ class Tecnicos_ordenDeTrabajo{
 
 					}*/
 					
-				} 
+				 
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
