@@ -31,7 +31,7 @@ class Tecnicos_ordenDeTrabajo{
 		return json_encode($arr);
 	}*/
 
-	public function getTecHerraAvailable($token,$rol_usuario_id){
+	public function getTecAvailable($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -67,19 +67,21 @@ class Tecnicos_ordenDeTrabajo{
 			if(!$dbS->didQuerydied){
 				if($arr == "empty")
 					$arr = array('estatus' =>"No hay registros", 'error' => 5);
-			/*	else{
+				else{
 					foreach ($arr as $tecnico) {
-						echo  $tecnico['nombre'].$tecnico['apellido'];
-						//echo $nombre;
 						unset($tecnico['apellido']);
+						echo json_encode($tecnico);
+						//unset($arr[$;	
+						//$arr[$tecnico] = $tecnico['nombre'].$tecnico['apellido'];
 
-					}*/
-					
-				 
+					}
+				}
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
 			}
+		
+				
 		}
 		return json_encode($arr);
 
