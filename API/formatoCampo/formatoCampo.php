@@ -159,7 +159,7 @@ class formatoCampo{
 					formatoCampo.observaciones,
 					nombre,
 					razonSocial,
-					direccion,
+					CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion,
 					formatoCampo.tipo,
 					formatoCampo.cono_id,
 					CONO,
@@ -257,7 +257,8 @@ class formatoCampo{
 			        obra,
 					localizacion,
 					razonSocial,
-					direccion
+					CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion
+
 			      FROM 
 			        ordenDeTrabajo,cliente,obra,formatoCampo
 			      WHERE 
