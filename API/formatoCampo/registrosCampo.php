@@ -93,6 +93,15 @@ class registrosCampo{
 				case '14':
 					$campo = 'status';
 					break;
+				case '15':
+					$campo = 'prueba1';
+					break;
+				case '16':
+				$campo = 'prueba2';
+					break;
+				case '17':
+				$campo = 'prueba3';
+					break;
 
 			}
 
