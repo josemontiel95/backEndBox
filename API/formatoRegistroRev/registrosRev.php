@@ -18,7 +18,7 @@ class RegistrosRev{
 
 	private $wc = '/1QQ/';
 
-
+	//DUMMY
 	public function initInsert($token,$rol_usuario_id,$id_formatoRegistroRev){
 		global $dbS;
 		$usuario = new Usuario();
