@@ -31,6 +31,61 @@ class Tecnicos_ordenDeTrabajo{
 		return json_encode($arr);
 	}*/
 
+	public function getTecHerraAvailable($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      	SELECT 
+					    id_usuario,
+						nombre,
+						apellido
+					FROM 
+						usuario LEFT JOIN
+						(
+							SELECT
+								tecnico_id,
+								IF(tecnicos_ordenDeTrabajo.active = 0 AND CURDATE()>ordenDeTrabajo.fechaInicio, 'SI','NO') AS estado
+							FROM
+								tecnicos_ordenDeTrabajo,
+								ordenDeTrabajo
+							WHERE
+								ordenDeTrabajo_id = id_ordenDeTrabajo 
+						) AS estado_tec
+						ON usuario.id_usuario = estado_tec.tecnico_id
+					WHERE
+					  	usuario.active = 1 AND
+					  	rol_usuario_id = 1004 AND
+					  	(estado_tec.estado='SI' OR estado_tec.estado IS NULL)
+
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if($arr == "empty")
+					$arr = array('estatus' =>"No hay registros", 'error' => 5);
+			/*	else{
+					foreach ($arr as $tecnico) {
+						echo  $tecnico['nombre'].$tecnico['apellido'];
+						//echo $nombre;
+						unset($tecnico['apellido']);
+
+					}*/
+					
+				} 
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+
+
+	}
+
 	public function insertAdmin($token,$rol_usuario_id,$ordenDeTrabajo_id,$tecnicosArray){
 		global $dbS;
 		$usuario = new Usuario();

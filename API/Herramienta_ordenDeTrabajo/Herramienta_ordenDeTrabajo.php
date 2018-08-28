@@ -126,7 +126,40 @@ class Herramienta_ordenDeTrabajo{
 	}
 
 	//FUNCION QUE ELIMINA UNA TUPLA MEDIANTE EL ID DE LA HERRAMIENTA
-	public function deleteHerra($token,$rol_usuario_id,$herramienta_id){
+	public function deleteHerra($token,$rol_usuario_id,$herramientasArray){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token,$rol_usuario_id),true);
+		$i=0;
+		$herramientasArray=json_decode($herramientasArray);
+	
+		if($arr['error'] == 0){
+			$dbS->transquery("
+						DELETE FROM
+							herramienta_ordenDeTrabajo
+							WHERE
+								active=1 AND
+								herramienta_id = 1QQ
+
+						"
+						,$herramientasArray,$ordenDeTrabajo_id,
+						"INSERT_TS");
+
+
+				if(!$dbS->didQuerydied){
+					$arr = array('id_herramienta_ordenDeTrabajo' => 'No disponible, esto NO es un error', 'estatus' => 'Exito en eliminación', 'error' => 0);
+				}
+				else{
+					$id=$dbS->lastInsertedID;
+					$arr = array('Se detecto error en id:' => $id, 'token' => $token,	'estatus' => 'Error en la eliminacion , verifica tus datos y vuelve a intentarlo','error' => 5);				
+				}
+
+		}
+		return json_encode($arr);
+
+
+
+
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
