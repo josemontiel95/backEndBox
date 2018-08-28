@@ -39,8 +39,7 @@ class Tecnicos_ordenDeTrabajo{
 			$arr= $dbS->qAll("
 			      	SELECT 
 					    id_usuario,
-						nombre,
-						apellido
+					    CONCAT(nombre,' ',apellido) AS nombre
 					FROM 
 						usuario LEFT JOIN
 						(
@@ -67,15 +66,6 @@ class Tecnicos_ordenDeTrabajo{
 			if(!$dbS->didQuerydied){
 				if($arr == "empty")
 					$arr = array('estatus' =>"No hay registros", 'error' => 5);
-				else{
-					foreach ($arr as $tecnico) {
-						unset($tecnico['apellido']);
-						echo json_encode($tecnico);
-						//unset($arr[$;	
-						//$arr[$tecnico] = $tecnico['nombre'].$tecnico['apellido'];
-
-					}
-				}
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
@@ -209,6 +199,33 @@ class Tecnicos_ordenDeTrabajo{
 		}
 		return json_encode($arr);
 	}
+
+	public function pasarLista($token,$rol_usuario_id,$id_tecnicos_ordenDeTrabajo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("
+						INSERT INTO
+						listaAsistencia(herramienta_tipo_id,fechaDeCompra,placas,condicion,observaciones)
+
+						VALUES
+						('1QQ','1QQ','1QQ','1QQ','1QQ')
+				",array($herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones),"INSERT");
+
+			if(!$dbS->didQuerydied){
+				$arr = array('id_tecnicos_ordenDeTrabajo' => 'No disponible, esto NO es un error', 'estatus' => 'Exito en insercion', 'error' => 0);
+			}
+			else{
+				$id=$dbS->lastInsertedID;
+				$arr = array('Se detecto error en id:' => $id, 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+
+		}
+		return json_encode($arr);
+	}
+
+
 
 
 	/*

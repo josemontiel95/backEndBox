@@ -144,7 +144,8 @@ class registrosCampo{
 						SET
 							1QQ = '1QQ'
 						WHERE
-							id_registrosCampo = 1QQ
+							id_registrosCampo = 1QQ AND
+							status = 0
 
 				",array($campo,$valor,$id_registrosCampo),"UPDATE");
 			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
@@ -290,6 +291,31 @@ class registrosCampo{
 		}
 		return json_encode($arr);
 	}
+
+	public function completeRegistro($token,$rol_usuario_id,$id_registrosCampo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+								registrosCampo
+							SET
+								status = 1
+							WHERE
+								active = 1 AND
+								id_registrosCampo = 1QQ
+					 "
+					,array($id_registrosCampo),"UPDATE"
+			      	);
+			$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => 'Exito Registro completado','error' => 0);	
+			if($dbS->didQuerydied){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar Registro , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}		
+		}
+		return json_encode($arr);
+	}
+
+	
 	
 
 	/*
