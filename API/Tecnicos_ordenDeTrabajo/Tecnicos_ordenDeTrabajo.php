@@ -114,6 +114,38 @@ class Tecnicos_ordenDeTrabajo{
 
 	}
 
+
+	public function deleteTec($token,$rol_usuario_id,$tecnicosArray){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token,$rol_usuario_id),true);
+		$tecnicosArray=json_decode($tecnicosArray);
+
+		if($arr['error'] == 0){
+			$dbS->transquery("
+						DELETE FROM
+							tecnicos_ordenDeTrabajo
+							WHERE
+								active=1 AND
+								tecnico_id = 1QQ
+						"
+						,$tecnicosArray,$ordenDeTrabajo_id,
+						"DELET-TS");
+
+				if(!$dbS->didQuerydied){
+					$arr = array('id_tecnicos_ordenDeTrabajo' => 'No disponible, esto NO es un error', 'estatus' => 'Exito en eliminacion', 'error' => 0);
+				}
+				else{
+					$id=$dbS->lastInsertedID;
+					$arr = array('Se detecto error en id:' => $id, 'token' => $token,	'estatus' => 'Error en la eliminacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+				}
+
+		}
+		return json_encode($arr);
+
+	}
+
+
 	public function upDateAdmin($token,$rol_usuario_id,$tecnico_id,$ordenDeTrabajo_id){
 		global $dbS;
 		$usuario = new Usuario();
