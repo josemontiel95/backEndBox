@@ -159,7 +159,7 @@ class formatoCampo{
 					formatoCampo.observaciones,
 					nombre,
 					razonSocial,
-					direccion,
+					CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion,
 					formatoCampo.tipo,
 					formatoCampo.cono_id,
 					CONO,
