@@ -13,6 +13,59 @@ class ordenDeTrabajo{
 
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
+
+	public function getAllFormatos($token,$rol_usuario_id,$id_ordenDeTrabajo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arrayCCH = $dbS->qAll(
+							"
+								SELECT
+									id_formatoCampo AS id_formato,
+									informeNo AS formatoNo,
+									IF(informeNo IS NOT NULL,'CONTROL DE CONCRETO HIDRAULICO','ERROR')AS tipo
+								FROM
+									formatoCampo
+								WHERE
+									ordenDeTrabajo_id = 1QQ
+							",
+							array($id_ordenDeTrabajo),
+							"SELECT"
+						);
+			if(!$dbS->didQuerydied){
+				$arrayRev = $dbS->qAll(
+							"
+								SELECT
+									id_formatoRegistroRev AS id_formato,
+									regNo AS formatoNo,
+									IF(regNo IS NOT NULL,'REVENIMIENTO','ERROR')AS tipo
+								FROM
+									formatoRegistroRev
+								WHERE
+									ordenDeTrabajo_id = 1QQ
+							",
+							array($id_ordenDeTrabajo),
+							"SELECT"
+						);
+				if(!$dbS->didQuerydied){
+					if($arrayRev == "empty" && $arrayCCH == "empty")
+						$arr = array('estatus' =>"No hay registros", 'error' => 5); 
+					else
+						$arr = array_merge($arrayCCH,$arrayRev);
+				}
+				else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query REV, verifica tus datos y vuelve a intentarlo','error' => 6);	
+				}
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query de CCH, verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}		
+		}
+		return json_encode($arr);
+
+
+	}
 	
 	
 	
