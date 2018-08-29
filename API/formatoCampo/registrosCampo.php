@@ -109,7 +109,7 @@ class registrosCampo{
 					$campo = 'tipoConcreto';
 					break;
 				case '9':
-					$campo = 'herramienta_id';
+					$campo = 'unidad';
 					break;
 				case '10':
 					$campo = 'horaMuestreo';

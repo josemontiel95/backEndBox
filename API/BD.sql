@@ -488,7 +488,7 @@ CREATE TABLE registrosCampo(
 	tamAgregado INT,
 	volumen FLOAT(5.2),
 	tipoConcreto VARCHAR(5),
-	herramienta_id VARCHAR(20),
+	unidad VARCHAR(20),
 	horaMuestreo TIME,
 	tempMuestreo INT,
 	tempRecoleccion INT,
@@ -563,7 +563,7 @@ CREATE TABLE registrosRev(
 	idenConcreto VARCHAR(20),
 	volumen FLOAT(5.2),
 	horaDeterminacion TIME,
-	herramienta_id INT,
+	unidad VARCHAR(20),
 	concretera_id INT,
 	remisionNo INT,
 	horaSalida TIME,
@@ -576,10 +576,6 @@ CREATE TABLE registrosRev(
 	active INT NOT NULL DEFAULT 1,
 
 	PRIMARY KEY(id_registrosRev),
-
-	FOREIGN KEY(herramienta_id)
-	REFERENCES herramientas(id_herramienta)
-	ON DELETE SET NULL ON UPDATE CASCADE,
 
 	FOREIGN KEY(concretera_id)
 	REFERENCES concretera(id_concretera)
