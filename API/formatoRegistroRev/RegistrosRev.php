@@ -72,7 +72,7 @@ class RegistrosRev{
 					$campo = 'horaDeterminacion';
 					break;
 				case '8':
-					$campo = 'herramienta_id';
+					$campo = 'unidad';
 					break;
 				case '9':
 					$campo = 'concretera_id';
