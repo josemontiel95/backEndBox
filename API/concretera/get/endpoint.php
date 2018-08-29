@@ -17,6 +17,10 @@
 			$concretera = new Concretera();
 			echo $concretera->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);		
 		break;
+		case 'getAllJefaLab':
+			$concretera = new Concretera();
+			echo $concretera->getAllJefaLab($_GET['token'],$_GET['rol_usuario_id']);		
+		break;
 		case 'getForDroptdownAdmin':
 			$concretera = new Concretera();
 			echo $concretera->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
