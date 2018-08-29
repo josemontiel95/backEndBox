@@ -147,6 +147,14 @@ class Usuario{
 
 	}
 
+	public function validatedContrasena($contrasenaSHA){
+		if($this->contrasena = $contrasenaSHA)
+			return true;
+		else 
+			return false;
+		
+	}
+
 
 
 	public function validateSesion($token, $rol_usuario_id){

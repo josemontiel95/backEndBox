@@ -200,26 +200,54 @@ class Tecnicos_ordenDeTrabajo{
 		return json_encode($arr);
 	}
 
-	public function pasarLista($token,$rol_usuario_id,$id_tecnicos_ordenDeTrabajo){
+	public function pasarLista($token,$rol_usuario_id,$id_tecnicos_ordenDeTrabajo,$email,$contrasena){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$dbS->squery("
+			//validamos el registro del tecnico
+			if($usuario->getByEmail($email)=="success"){
+				$contrasenaSHA= hash('sha512', $contrasena);
+				if($usuario->validatedContrasena($contrasenaSHA)){
+					$dbS->squery("
 						INSERT INTO
-						listaAsistencia(herramienta_tipo_id,fechaDeCompra,placas,condicion,observaciones)
+						listaAsistencia(tecnicos_ordenDeTrabajo_id)
 
 						VALUES
-						('1QQ','1QQ','1QQ','1QQ','1QQ')
-				",array($herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones),"INSERT");
+						(1QQ)
+						",array($id_tecnicos_ordenDeTrabajo),"INSERT");
+					if(!$dbS->didQuerydied){
+						 $dbS->squery(" 
+									UPDATE
+										tecnicos_ordenDeTrabajo
+									SET
+										asistencias = asistencias+1
+									WHERE
+										id_tecnicos_ordenDeTrabajo = 1QQ
 
-			if(!$dbS->didQuerydied){
-				$arr = array('id_tecnicos_ordenDeTrabajo' => 'No disponible, esto NO es un error', 'estatus' => 'Exito en insercion', 'error' => 0);
+									",
+									array($id_tecnicos_ordenDeTrabajo),"UPDATE");
+						 if (!$dbS->didQuerydied) {
+						 	$arr = array('id_tecnicos_ordenDeTrabajo' => $id_tecnicos_ordenDeTrabajo, 'estatus' => 'Exito en el inicio de sesión', 'error' => 0);
+						 }
+						 else{
+						$arr = array('Se detecto error en id:' => $id_tecnicos_ordenDeTrabajo, 'token' => $token,	'estatus' => 'Error en el inicio de sesión problema en suma de asistencias , verifica tus datos y vuelve a intentarlo','error' => 5);
+						 }
+						
+					}
+					else{
+						$arr = array('Se detecto error en id:' => $id_tecnicos_ordenDeTrabajo, 'token' => $token,	'estatus' => 'Error en el inicio de sesión problema en registro de asistencia, verifica tus datos y vuelve a intentarlo','error' => 6);
+					}
+				}
+				else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Pasword incorrecto','error' => 7);
+				}
 			}
 			else{
-				$id=$dbS->lastInsertedID;
-				$arr = array('Se detecto error en id:' => $id, 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'El usuario no existe','error' => 8);
 			}
+
+			
 
 		}
 		return json_encode($arr);

@@ -23,6 +23,10 @@
 			$tecorden = new Tecnicos_ordenDeTrabajo();
 			echo $tecorden->deleteTec($_POST['token'],$_POST['rol_usuario_id'],$_POST['tecnicosArray']);		
 		break;
+		case 'pasarLista':
+			$tecorden = new Tecnicos_ordenDeTrabajo();
+			echo $tecorden->pasarLista($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_tecnicos_ordenDeTrabajo'],$_POST['email'],$_POST['contrasena']);		
+		break;
 		/*	---No se usa--- De reserva por si se requiere despues.
 		case 'upDateAdmin':
 			$tecorden = new Tecnicos_ordenDeTrabajo();
