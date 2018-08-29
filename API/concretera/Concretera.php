@@ -46,6 +46,37 @@ class Concretera{
 		return json_encode($arr);	
 	}
 
+	public function getAllJefaLab($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      SELECT 
+			        id_concretera,
+					concretera,
+					createdON,
+					lastEditedON,
+					IF(concretera.active = 1,'Si','No') AS active
+			      FROM 
+			        concretera
+			      WHERE 
+			      	active=1;
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+						if(count($arr) == 0)
+							$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+						
+			}else
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 6);
+		}
+		return json_encode($arr);	
+	}
+
 
 
 	public function getForDroptdownAdmin($token,$rol_usuario_id){
