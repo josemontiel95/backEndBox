@@ -253,7 +253,7 @@ class Tecnicos_ordenDeTrabajo{
 		return json_encode($arr);
 	}
 
-	/*
+	
 	public function getTecAsistencia($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
@@ -261,28 +261,19 @@ class Tecnicos_ordenDeTrabajo{
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 					
-			      	SELECT 
-					    id_usuario,
-					    CONCAT(nombre,' ',apellido) AS nombre,
-					    estado
-					FROM 
-						tecnicos_ordenDeTrabajo,usuario LEFT JOIN
-						(
-							SELECT
-								tecnico_id,
-								IF(CURDATE()=DATE(listaAsistencia.createdON),'SI','NO') AS estado
-							FROM
-								tecnicos_ordenDeTrabajo,
-								listaAsistencia
-							WHERE
-								tecnicos_ordenDeTrabajo_id = id_tecnicos_ordenDeTrabajo 
-						) AS estado_tec
-						ON usuario.id_usuario = estado_tec.tecnico_id
+			      	SELECT
+						id_usuario,
+						CONCAT(nombre,' ',apellido) AS nombre,
+						IF(CURDATE()=DATE(T2.createdON),'SI','NO') AS estado
+					FROM
+						usuario,
+						tecnicos_ordenDeTrabajo
+						LEFT JOIN 
+						(SELECT * FROM listaAsistencia WHERE  CURDATE()=DATE(listaAsistencia.createdON)) AS T2 ON  id_tecnicos_ordenDeTrabajo=tecnicos_ordenDeTrabajo_id
 					WHERE
-					  	usuario.active = 1 AND
-					  	rol_usuario_id = 1004 AND
-					  	ordenDeTrabajo_id = 1QQ
-
+						tecnico_id = id_usuario AND
+						tecnicos_ordenDeTrabajo.ordenDeTrabajo_id = 1005;
+						
 			      ",
 			      array($id_ordenDeTrabajo),
 			      "SELECT"
@@ -299,7 +290,7 @@ class Tecnicos_ordenDeTrabajo{
 				
 		}
 		return json_encode($arr);
-	}*/
+	}
 	
 
 
