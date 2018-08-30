@@ -141,7 +141,6 @@ class formatoCampo{
 		);
 		if(!$dbS->didQuerydied){
 			$id=$dbS->lastInsertedID;
-			$arr = array('id_systemstatus' =>$id,'estatus' => 'Exito en insercion', 'error' => 0);
 		}
 		else{
 			$arr = array('id_systemstatus' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
