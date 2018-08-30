@@ -103,19 +103,17 @@ class formatoCampo{
 	}
 	
 
-	public function insertJefeBrigada($token,$rol_usuario_id,$informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud){
+	public function insertJefeBrigada($token,$rol_usuario_id,$informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud,$tipoConcreto,$prueba1,$prueba2,$prueba3){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			
-
 			$dbS->squery("
 						INSERT INTO
-						formatoCampo(informeNo,ordenDeTrabajo_id,tipo,cono_id,varilla_id,flexometro_id,termometro_id,posInicial,observaciones)
+						formatoCampo(informeNo,ordenDeTrabajo_id,tipo,cono_id,varilla_id,flexometro_id,termometro_id,posInicial,observaciones,tipoConcreto,prueba1,prueba2,prueba3)
 						VALUES
 						('1QQ',1QQ,'1QQ',1QQ,1QQ,1QQ,1QQ,PointFromText('POINT(1QQ 1QQ)'),'NO HAY OBSERVACIONES')
-				",array($informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud),"INSERT");
+				",array($informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud,$tipoConcreto,$prueba1,$prueba2,$prueba3),"INSERT");
 			if(!$dbS->didQuerydied){
 				$id=$dbS->lastInsertedID;
 				$arr = array('id_formatoCampo' =>$id,'estatus' => 'Exito en insercion', 'error' => 0);
@@ -128,6 +126,28 @@ class formatoCampo{
 
 	}
 
+	public function getformatoDefoults(){
+		global $dbS;
+		$arr = $dbS->qarrayA(
+			"	SELECT
+					id_systemstatus,
+					cch_def_prueba1,
+					cch_def_prueba2,
+					cch_def_prueba3
+				FROM
+					systemstatus
+				ORDER BY id_systemstatus DESC;
+			",array(),"SELECT"
+		);
+		if(!$dbS->didQuerydied){
+			$id=$dbS->lastInsertedID;
+			$arr = array('id_systemstatus' =>$id,'estatus' => 'Exito en insercion', 'error' => 0);
+		}
+		else{
+			$arr = array('id_systemstatus' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+		}
+		return json_encode($arr);
+	}
 
 
 
@@ -143,6 +163,10 @@ class formatoCampo{
 					localizacion,
 					formatoCampo.observaciones,
 					nombre,
+					tipoConcreto,
+					prueba1,
+					prueba2,
+					prueba3,
 					razonSocial,
 					CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion,
 					formatoCampo.tipo,
@@ -242,6 +266,10 @@ class formatoCampo{
 			        obra,
 					localizacion,
 					razonSocial,
+					tipoConcreto,
+					prueba1,
+					prueba2,
+					prueba3,
 					CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion
 
 			      FROM 

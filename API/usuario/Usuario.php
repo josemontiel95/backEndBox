@@ -4,24 +4,24 @@ include_once("./../../configSystem.php");
 class Usuario{
 	
 	/* Variables de BD*/
-	private $id_usuario;
-	private $nombre;
-	private $apellido;
-	private $laboratorio_id;
-	private $laboratorio;
-	private $nss;
-	private $email;
-	private $fechaDeNac;
-	private $foto;
-	private $rol_usuario_id;
-	private $rol;
-	private $createdON;
-	private $lastEditedON;
-	private $contrasena;
-	private $active;
-	private $isRolActive;
-	private $isLaboratorioActive;
-	private $root;
+	public $id_usuario;
+	public $nombre;
+	public $apellido;
+	public $laboratorio_id;
+	public $laboratorio;
+	public $nss;
+	public $email;
+	public $fechaDeNac;
+	public $foto;
+	public $rol_usuario_id;
+	public $rol;
+	public $createdON;
+	public $lastEditedON;
+	public $contrasena;
+	public $active;
+	public $isRolActive;
+	public $isLaboratorioActive;
+	public $root;
 	
 	/* Variables de utilería */
 	private $wc = '/1QQ/';

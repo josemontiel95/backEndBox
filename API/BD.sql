@@ -432,7 +432,10 @@ CREATE TABLE formatoCampo(
 	observaciones TEXT,
 	tipo VARCHAR(20) NOT NULL,
 
-	
+	tipoConcreto VARCHAR(5),
+	prueba1 INT NOT NULL,
+	prueba2 INT NOT NULL,
+	prueba3 INT NOT NULL,
 
 	cono_id INT(11),
 	varilla_id INT(11),
@@ -487,7 +490,6 @@ CREATE TABLE registrosCampo(
 	revObra INT,
 	tamAgregado INT,
 	volumen FLOAT(5.2),
-	tipoConcreto VARCHAR(5),
 	unidad VARCHAR(20),
 	horaMuestreo TIME,
 	tempMuestreo INT,
@@ -496,9 +498,6 @@ CREATE TABLE registrosCampo(
 
 	status INT NOT NULL DEFAULT 0,
 
-	prueba1 INT NOT NULL,
-	prueba2 INT NOT NULL,
-	prueba3 INT NOT NULL,
 
 
 

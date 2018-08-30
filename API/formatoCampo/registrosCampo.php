@@ -315,6 +315,56 @@ class registrosCampo{
 		return json_encode($arr);
 	}
 
+
+	public function getRegistrosForToday($token,$rol_usuario_id,$id_formatoCampo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorioUser=$usuario->laboratorio_id;
+		if($arr['error'] == 0){
+			$s= $dbS->qAll("
+			      SELECT
+			      	id_registrosCampo,
+					formatoCampo_id,
+			        claveEspecimen,
+					fecha,
+					fprima,
+					revProyecto,
+					revObra,
+					tamagregado,
+					volumen,
+					tipoConcreto,
+					unidad,
+					horaMuestreo,
+					tempMuestreo,
+					tempRecoleccion,
+					localizacion,
+					status
+			      FROM 
+			      	registrosCampo
+			      WHERE 
+			      	registrosCampo.active = 1 AND
+			      	formatoCampo_id = 1QQ
+			      ",
+			      array($id_formatoCampo),
+			      "SELECT"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('No existen registro relacionados con el id_formatoCampo'=>$id_formatoCampo,'error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		return json_encode($arr);
+
+	}
 	
 	
 
