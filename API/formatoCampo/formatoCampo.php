@@ -301,7 +301,7 @@ class formatoCampo{
 		return json_encode($arr);
 	}
 
-	public function updateFooter($token,$rol_usuario_id,$id_formatoCampo,$observaciones,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$tipo){
+	public function updateFooter($token,$rol_usuario_id,$id_formatoCampo,$observaciones,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$tipo,$tipoConcreto,$prueba1,$prueba2,$prueba3,$prueba4){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -314,12 +314,17 @@ class formatoCampo{
 								varilla_id = 1QQ,
 								flexometro_id = 1QQ,
 								termometro_id = 1QQ,
-								tipo ='1QQ'
+								tipo ='1QQ',
+								tipoConcreto ='1QQ',
+								prueba1 ='1QQ',
+								prueba2 ='1QQ',
+								prueba3 ='1QQ',
+								prueba4 ='1QQ'
 							WHERE
 								active=1 AND
 								id_formatoCampo = 1QQ
 					 "
-					,array($observaciones,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$tipo,$id_formatoCampo),"UPDATE"
+					,array($observaciones,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$tipo,$tipoConcreto,$prueba1,$prueba2,$prueba3,$prueba4,$id_formatoCampo),"UPDATE"
 			      	);
 			$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito de actualizacion de footer','error' => 0);	
 			if($dbS->didQuerydied){
