@@ -287,13 +287,55 @@ class registrosCampo{
 						DATE_ADD(fecha,INTERVAL diasEnsaye DAY) AS FechaAgendadaDeEnsaye,
 						IF(DATE_ADD(fecha, INTERVAL diasEnsaye DAY) < CURDATE(),'ATRASADO','AGENDADO PARA HOY') AS estado
 					FROM
+						registrosCampo,formatoCampo,ordenDeTrabajo
+					WHERE
+						id_formatoCampo = formatoCampo_id AND
+						id_ordenDeTrabajo = ordenDeTrabajo_id AND
+						registrosCampo.status = 3 AND
+						DATE_ADD(fecha, INTERVAL diasEnsaye DAY) <= CURDATE() AND
+						laboratorio_id = 1QQ 
+			      ",
+			      array($usuario->laboratorio_id),
+			      "SELECT"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('No hay especimenes por ensayar'=>'NULL','error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		return json_encode($arr);
+
+	}
+
+	public function getRegistrosForTodayByID($token,$rol_usuario_id,$id_registrosCampo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorioUser=$usuario->laboratorio_id;
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA("
+			      	SELECT 
+						id_registrosCampo,
+						fecha,
+						informeNo,
+						claveEspecimen,
+						diasEnsaye,
+						tipo
+					FROM
 						registrosCampo,formatoCampo
 					WHERE
 						id_formatoCampo = formatoCampo_id AND
-						registrosCampo.status = 3 AND
-						DATE_ADD(fecha, INTERVAL diasEnsaye DAY) <= CURDATE()
+						id_registrosCampo = 1QQ
 			      ",
-			      array(),
+			      array($id_registrosCampo),
 			      "SELECT"
 			      );
 			
