@@ -33,6 +33,7 @@ class ordenDeTrabajo{
 							array($id_ordenDeTrabajo),
 							"SELECT"
 						);
+			
 			if(!$dbS->didQuerydied){
 				$arrayRev = $dbS->qAll(
 							"
@@ -49,10 +50,22 @@ class ordenDeTrabajo{
 							"SELECT"
 						);
 				if(!$dbS->didQuerydied){
-					if($arrayRev == "empty" && $arrayCCH == "empty")
-						$arr = array('estatus' =>"No hay registros", 'error' => 5); 
-					else
+					if($arrayRev != "empty" && $arrayCCH != "empty"){
 						$arr = array_merge($arrayCCH,$arrayRev);
+					}
+					else{
+						if($arrayRev == "empty" && $arrayCCH == "empty"){
+							$arr = array('estatus' =>"No hay registros", 'error' => 5); 
+						}
+						else{
+							if($arrayRev == "empty"){
+								return json_encode($arrayCCH);
+							}
+							else{
+								return json_encode($arrayRev);
+							}
+						}
+					}						
 				}
 				else{
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query REV, verifica tus datos y vuelve a intentarlo','error' => 6);	
