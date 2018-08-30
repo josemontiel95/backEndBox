@@ -146,9 +146,9 @@ class ordenDeTrabajo{
 						WHERE
 							obra_id = id_obra AND
 							ordenDeTrabajo.laboratorio_id = id_laboratorio AND
-							jefe_brigada_id = 1QQ
+							jefe_brigada_id = id_usuario
 			      ",
-			      array($arr['id_usuario']),
+			      array(),
 			      "SELECT"
 			      );
 
