@@ -18,7 +18,7 @@
 	switch ($function){
 		case 'insertJefeBrigada':
 			$formatocampo = new formatoCampo();
-			echo $formatocampo->insertJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['informeNo'],$_POST['ordenDeTrabajo_id'],$_POST['tipo'],$_POST['cono_id'],$_POST['varilla_id'],$_POST['flexometro_id'],$_POST['termometro_id'],$_POST['longitud'],$_POST['latitud'],$_POST['status']);		
+			echo $formatocampo->insertJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['informeNo'],$_POST['ordenDeTrabajo_id'],$_POST['tipo'],$_POST['cono_id'],$_POST['varilla_id'],$_POST['flexometro_id'],$_POST['termometro_id'],$_POST['longitud'],$_POST['latitud'],$_POST['tipoConcreto'],$_POST['prueba1'],$_POST['prueba2'],$_POST['prueba3'],$_POST['prueba4']);		
 		break;
 		case 'initInsert':
 			$registrocampo = new registrosCampo();

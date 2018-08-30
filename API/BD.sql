@@ -436,6 +436,7 @@ CREATE TABLE formatoCampo(
 	prueba1 INT NOT NULL,
 	prueba2 INT NOT NULL,
 	prueba3 INT NOT NULL,
+	prueba4 INT NOT NULL,
 
 	cono_id INT(11),
 	varilla_id INT(11),

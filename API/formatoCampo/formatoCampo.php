@@ -103,17 +103,17 @@ class formatoCampo{
 	}
 	
 
-	public function insertJefeBrigada($token,$rol_usuario_id,$informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud,$tipoConcreto,$prueba1,$prueba2,$prueba3){
+	public function insertJefeBrigada($token,$rol_usuario_id,$informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud,$tipoConcreto,$prueba1,$prueba2,$prueba3,$prueba4){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						formatoCampo(informeNo,ordenDeTrabajo_id,tipo,cono_id,varilla_id,flexometro_id,termometro_id,posInicial,observaciones,tipoConcreto,prueba1,prueba2,prueba3)
+						formatoCampo(informeNo,ordenDeTrabajo_id,tipo,cono_id,varilla_id,flexometro_id,termometro_id,posInicial,observaciones,tipoConcreto,prueba1,prueba2,prueba3,prueba4)
 						VALUES
-						('1QQ',1QQ,'1QQ',1QQ,1QQ,1QQ,1QQ,PointFromText('POINT(1QQ 1QQ)'),'NO HAY OBSERVACIONES')
-				",array($informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud,$tipoConcreto,$prueba1,$prueba2,$prueba3),"INSERT");
+						('1QQ',1QQ,'1QQ',1QQ,1QQ,1QQ,1QQ,PointFromText('POINT(1QQ 1QQ)'),'NO HAY OBSERVACIONES','1QQ',1QQ,1QQ,1QQ,1QQ)
+				",array($informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud,$tipoConcreto,$prueba1,$prueba2,$prueba3,$prueba4),"INSERT");
 			if(!$dbS->didQuerydied){
 				$id=$dbS->lastInsertedID;
 				$arr = array('id_formatoCampo' =>$id,'estatus' => 'Exito en insercion', 'error' => 0);
@@ -133,7 +133,8 @@ class formatoCampo{
 					id_systemstatus,
 					cch_def_prueba1,
 					cch_def_prueba2,
-					cch_def_prueba3
+					cch_def_prueba3,
+					cch_def_prueba4
 				FROM
 					systemstatus
 				ORDER BY id_systemstatus DESC;
@@ -166,6 +167,7 @@ class formatoCampo{
 					prueba1,
 					prueba2,
 					prueba3,
+					prueba4,
 					razonSocial,
 					CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion,
 					formatoCampo.tipo,
@@ -269,6 +271,7 @@ class formatoCampo{
 					prueba1,
 					prueba2,
 					prueba3,
+					prueba4,
 					CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion
 
 			      FROM 
