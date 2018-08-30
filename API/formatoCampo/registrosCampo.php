@@ -25,17 +25,6 @@ class registrosCampo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			//Cargamos las variables del sistema
-			$var_system = $dbS->qarrayA(
-				"
-					SELECT
-						*
-					FROM
-						systemstatus
-
-				",array(),"SELECT"
-
-			);
 			$dbS->squery("
 						INSERT INTO
 							registrosCampo(formatoCampo_id)
@@ -45,30 +34,8 @@ class registrosCampo{
 				",array($formatoCampo_id),"INSERT");
 			if(!$dbS->didQuerydied){
 				$id=$dbS->lastInsertedID;
-				//Insertamos los valores
-				$dbS->squery(
-					"
-						UPDATE
-							registrosCampo
-						SET
-							
-								prueba1 = 1QQ,
-								prueba2 = 1QQ,
-								prueba3 = 1QQ
-							
-						WHERE
-							id_registrosCampo = 1QQ
-					"
-
-				,array($var_system['cch_def_prueba1'],$var_system['cch_def_prueba2'],$var_system['cch_def_prueba3'],$id),"UPDATE");
-				if(!$dbS->didQuerydied){
-					$arr = array('id_registrosCampo' => $id,'estatus' => '¡Exito en la inicializacion','error' => 0);
+				$arr = array('id_registrosCampo' => $id,'estatus' => '¡Exito en la inicializacion','error' => 0);
 					return json_encode($arr);
-				}
-				else{
-					$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
-					return json_encode($arr);
-				}
 			}else{
 				$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
 				return json_encode($arr);
@@ -126,16 +93,6 @@ class registrosCampo{
 				case '14':
 					$campo = 'status';
 					break;
-				case '15':
-					$campo = 'prueba1';
-					break;
-				case '16':
-				$campo = 'prueba2';
-					break;
-				case '17':
-				$campo = 'prueba3';
-					break;
-
 			}
 
 			$dbS->squery("
@@ -182,10 +139,7 @@ class registrosCampo{
 					tempMuestreo,
 					tempRecoleccion,
 					localizacion,
-					status,
-					prueba1,
-					prueba2,
-					prueba3
+					status
 			      FROM 
 			      	registrosCampo
 			      WHERE 
@@ -316,43 +270,36 @@ class registrosCampo{
 	}
 
 
-	public function getRegistrosForToday($token,$rol_usuario_id,$id_formatoCampo){
+	public function getRegistrosForToday($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$laboratorioUser=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$s= $dbS->qAll("
-			      SELECT
-			      	id_registrosCampo,
-					formatoCampo_id,
-			        claveEspecimen,
-					fecha,
-					fprima,
-					revProyecto,
-					revObra,
-					tamagregado,
-					volumen,
-					tipoConcreto,
-					unidad,
-					horaMuestreo,
-					tempMuestreo,
-					tempRecoleccion,
-					localizacion,
-					status
-			      FROM 
-			      	registrosCampo
-			      WHERE 
-			      	registrosCampo.active = 1 AND
-			      	formatoCampo_id = 1QQ
+			      	SELECT 
+						id_registrosCampo,
+						fecha,
+						informeNo,
+						claveEspecimen,
+						diasEnsaye,
+						tipo,
+						DATE_ADD(fecha,INTERVAL diasEnsaye DAY) AS FechaAgendadaDeEnsaye,
+						IF(DATE_ADD(fecha, INTERVAL diasEnsaye DAY) < CURDATE(),'ATRASADO','AGENDADO PARA HOY') AS estado
+					FROM
+						registrosCampo,formatoCampo
+					WHERE
+						id_formatoCampo = formatoCampo_id AND
+						registrosCampo.status = 3 AND
+						DATE_ADD(fecha, INTERVAL diasEnsaye DAY) <= CURDATE()
 			      ",
-			      array($id_formatoCampo),
+			      array(),
 			      "SELECT"
 			      );
 			
 			if(!$dbS->didQuerydied){
 				if($s=="empty"){
-					$arr = array('No existen registro relacionados con el id_formatoCampo'=>$id_formatoCampo,'error' => 5);
+					$arr = array('No hay especimenes por ensayar'=>'NULL','error' => 5);
 				}
 				else{
 					return json_encode($s);
