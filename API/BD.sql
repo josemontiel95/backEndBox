@@ -610,6 +610,60 @@ CREATE TABLE listaAsistencia(
 ALTER TABLE listaAsistencia AUTO_INCREMENT=1001;
 
 
+CREATE TABLE ensayoCilindro(
+	id_ensayoCilindro INT(11) NOT NULL AUTO_INCREMENT,
+	registrosCampo_id INT(11),
+	formatoCampo_id INT(11),
+	footerEnsayo_id INT(11),
+
+	peso FLOAT(5.3) NOT NULL,
+	d1 FLOAT(5.3) NOT NULL,
+	d2 FLOAT(5.3) NOT NULL,
+	h1 FLOAT(5.3) NOT NULL,
+	h2 FLOAT(5.3) NOT NULL,
+	carga FLOAT(7.3) NOT NULL,
+
+	PRIMARY KEY(id_ensayoCilindro),
+
+	FOREIGN KEY(registrosCampo_id)
+	REFERENCES registrosCampo(id_registrosCampo)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(formatoCampo_id)
+	REFERENCES formatoCampo(id_formatoCampo)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(footerEnsayo_id)
+	REFERENCES footerEnsayo(id_footerEnsayo)
+	ON DELETE SET NULL ON UPDATE CASCADE
+
+)ENGINE=INNODB;
+
+ALTER TABLE ensayoCilindro AUTO_INCREMENT=1001;
+
+CREATE TABLE footerEnsayo(
+	id_footerEnsayo INT(11) NOT NULL AUTO_INCREMENT,
+	buscula_id INT(11),
+	regVerFle INT(11),
+	prensa_id INT(11),
+
+	PRIMARY KEY(id_footerEnsayo),
+
+	FOREIGN KEY(buscula_id)
+	REFERENCES herramientas(id_herramienta)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(regVerFle)
+	REFERENCES herramientas(id_herramienta)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(prensa_id)
+	REFERENCES herramientas(id_herramienta)
+	ON DELETE SET NULL ON UPDATE CASCADE
+
+)ENGINE=INNODB;
+
+ALTER TABLE footerEnsayo AUTO_INCREMENT=1001;
 
 
 ================
@@ -646,8 +700,9 @@ CREATE TABLE systemstatus(
 	cch_def_prueba1 INT NOT NULL,
 	cch_def_prueba2 INT NOT NULL,
 	cch_def_prueba3 INT NOT NULL,
-
-
+	ensayo_def_buscula_id INT NOT NULL,
+	ensayo_def_regVerFle_id INT NOT NULL,
+	ensayo_def_prensa_id INT NOT NULL,
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -658,6 +713,10 @@ CREATE TABLE systemstatus(
 )ENGINE = INNODB;
 
 ALTER TABLE systemstatus AUTO_INCREMENT=1001;
+
+ALTER TABLE systemstatus ADD ensayo_def_buscula_id INT NOT NULL;
+ALTER TABLE systemstatus ADD ensayo_def_regVerFle_id INT NOT NULL;
+ALTER TABLE systemstatus ADD ensayo_def_prensa_id INT NOT NULL;
 
 INSERT INTO 
 
@@ -673,6 +732,19 @@ VALUES(
 	28
 )
 
+INSERT INTO 
+
+	systemstatus(
+			ensayo_def_buscula_id,
+			ensayo_def_regVerFle,
+			ensayo_def_prensa_id
+		)
+
+VALUES(
+	7,
+	14,
+	28
+)
 
 
 ================
