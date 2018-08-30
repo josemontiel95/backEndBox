@@ -475,7 +475,6 @@ CREATE TABLE formatoCampo(
 	ON DELETE SET NULL ON UPDATE CASCADE
 
 
-
 )ENGINE=INNODB;
 ALTER TABLE formatoCampo AUTO_INCREMENT=1001;
 
@@ -496,6 +495,7 @@ CREATE TABLE registrosCampo(
 	tempMuestreo INT,
 	tempRecoleccion INT,
 	localizacion TEXT,
+	diasEnsaye INT,
 
 	status INT NOT NULL DEFAULT 0,
 
@@ -511,6 +511,7 @@ CREATE TABLE registrosCampo(
 
 ALTER TABLE registrosCampo AUTO_INCREMENT=1001;
 
+ALTER TABLE registrosCampo ADD diasEnsaye INT;
 
 CREATE TABLE formatoRegistroRev(
 	id_formatoRegistroRev INT(11) NOT NULL AUTO_INCREMENT,
@@ -700,6 +701,7 @@ CREATE TABLE systemstatus(
 	cch_def_prueba1 INT NOT NULL,
 	cch_def_prueba2 INT NOT NULL,
 	cch_def_prueba3 INT NOT NULL,
+	cch_def_prueba4 INT NOT NULL,
 	ensayo_def_buscula_id INT NOT NULL,
 	ensayo_def_regVerFle_id INT NOT NULL,
 	ensayo_def_prensa_id INT NOT NULL,
@@ -723,12 +725,15 @@ INSERT INTO
 	systemstatus(
 			cch_def_prueba1,
 			cch_def_prueba2,
-			cch_def_prueba3
+			cch_def_prueba3,
+			cch_def_prueba4
+
 		)
 
 VALUES(
 	7,
 	14,
+	28,
 	28
 )
 

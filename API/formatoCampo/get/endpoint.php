@@ -41,6 +41,10 @@
 			$registro = new registrosCampo();
 			echo $registro->getAllRegistrosByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
 		break;
+		case 'getRegistrosForToday':
+			$registro = new registrosCampo();
+			echo $registro->getRegistrosForToday($_GET['token'],$_GET['rol_usuario_id']);
+		break;
 		/*
 		case 'getByIDAdmin':
 			$herra = new formatoCampo();
