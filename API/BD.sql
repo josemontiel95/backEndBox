@@ -649,7 +649,7 @@ ALTER TABLE ensayoCilindro AUTO_INCREMENT=1001;
 CREATE TABLE footerEnsayo(
 	id_footerEnsayo INT(11) NOT NULL AUTO_INCREMENT,
 	buscula_id INT(11),
-	regVerFle INT(11),
+	regVerFle_id INT(11),
 	prensa_id INT(11),
 	tipo VARCHAR(20) NOT NULL,
 
@@ -663,7 +663,7 @@ CREATE TABLE footerEnsayo(
 	REFERENCES herramientas(id_herramienta)
 	ON DELETE SET NULL ON UPDATE CASCADE,
 
-	FOREIGN KEY(regVerFle)
+	FOREIGN KEY(regVerFle_id)
 	REFERENCES herramientas(id_herramienta)
 	ON DELETE SET NULL ON UPDATE CASCADE,
 
