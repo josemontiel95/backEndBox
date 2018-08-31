@@ -22,14 +22,14 @@ class footerEnsayo{
 											SELECT
 												id_footerEnsayo,
 												buscula_id,
-												regVerFle,
+												regVerFle_id,
 												prensa_id,
 												tipo
 											FROM
 												footerEnsayo
 											WHERE
 												CURDATE() = DATE(createdON) AND
-												tipo = 1QQ
+												tipo = '1QQ'
 
 										",
 										array($tipo),
@@ -44,13 +44,13 @@ class footerEnsayo{
 						ensayo_def_prensa_id
 					FROM
 						systemstatus
-
+					ORDER BY id_systemstatus DESC;
 				",array(),"SELECT"
 
 				);
 				$dbS->squery("
 						INSERT INTO
-							footerEnsayo(buscula_id,regVerFle,prensa_id,tipo)
+							footerEnsayo(buscula_id,regVerFle_id,prensa_id,tipo)
 
 						VALUES
 							(1QQ,1QQ,1QQ,'1QQ')
@@ -68,13 +68,109 @@ class footerEnsayo{
 
 			}
 			else{
-				$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo:'.$tipo,'error'=>6,'existe' => 1);
+				$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'],'estatus' => 'Ya se creo un footer el dia de hoy para el tipo:'.$tipo,'error'=>6,'existe' => 1);
 			}
 			
 			
 		}
 		return json_encode($arr);
 
+	}
+
+
+	public function getFooterByID($token,$rol_usuario_id,$id_footerEnsayo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA("
+			      SELECT
+			      	id_footerEnsayo,
+					buscula_id,
+					placas_bascula,
+			        regVerFle_id,
+			        placas_regla,
+			        placas_verniers,
+			        placas_flexometro,
+					prensa_id,
+					placas_prensa,
+					tipo
+			      FROM 
+			      	footerEnsayo,
+			      	(
+			      		SELECT
+			      			id_herramienta,
+			      			placas AS placas_bascula
+			      		FROM
+			      			herramientas
+			      		WHERE
+			      			herramienta_tipo_id = 1005
+
+			      	)AS basculas,
+			      	(
+			      		SELECT
+			      			id_herramienta,
+			      			placas AS placas_regla
+			      		FROM
+			      			herramientas
+			      		WHERE
+			      			herramienta_tipo_id = 1006
+
+			      	)AS reglas,
+			      	(
+			      		SELECT
+			      			id_herramienta,
+			      			placas AS placas_verniers
+			      		FROM
+			      			herramientas
+			      		WHERE
+			      			herramienta_tipo_id = 1003
+
+			      	)AS verniers,
+			      	(
+			      		SELECT
+			      			id_herramienta,
+			      			placas AS placas_prensa
+			      		FROM
+			      			herramientas
+			      		WHERE
+			      			herramienta_tipo_id = 1008
+
+			      	)AS prensas,
+			      	(
+			      		SELECT
+			      			id_herramienta,
+			      			placas AS placas_flexometro
+			      		FROM
+			      			herramientas
+			      		WHERE
+			      			herramienta_tipo_id = 1003
+
+			      	)AS flexometros
+			      WHERE 
+			      	footerEnsayo.active = 1 AND
+			      	buscula_id = basculas.id_herramienta AND
+			      	(regVerFle_id = reglas.id_herramienta OR regVerFle_id OR regVerFle_id = verniers.id_herramienta OR regVerFle_id = flexometros.id_herramienta) AND
+			      	prensa_id = prensas.id_herramienta AND
+			      	id_footerEnsayo = 1QQ
+			      ",
+			      array($id_footerEnsayo),
+			      "SELECT"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('No existen footer relacionados con el id_footerEnsayo'=>$id_footerEnsayo,'error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		return json_encode($arr);
 	}
 	
 	public function insertRegistroTecMuestra($token,$rol_usuario_id,$campo,$valor,$id_footerEnsayo){
@@ -87,7 +183,7 @@ class footerEnsayo{
 					$campo = 'buscula_id';
 					break;
 				case '2':
-					$campo = 'regVerFle';
+					$campo = 'regVerFle_id';
 					break;
 				case '3':
 					$campo = 'prensa_id';
@@ -100,9 +196,7 @@ class footerEnsayo{
 						SET
 							1QQ = '1QQ'
 						WHERE
-							id_footerEnsayo = 1QQ AND
-							status = 0
-
+							id_footerEnsayo = 1QQ
 				",array($campo,$valor,$id_footerEnsayo),"UPDATE");
 			if(!$dbS->didQuerydied){
 				$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => '¡Exito en el cambio del footer!','error' => 0);

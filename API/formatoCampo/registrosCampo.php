@@ -285,13 +285,24 @@ class registrosCampo{
 						diasEnsaye,
 						tipo,
 						DATE_ADD(fecha,INTERVAL diasEnsaye DAY) AS FechaAgendadaDeEnsaye,
-						IF(DATE_ADD(fecha, INTERVAL diasEnsaye DAY) < CURDATE(),'ATRASADO','AGENDADO PARA HOY') AS estado
+						IF(DATE_ADD(fecha, INTERVAL diasEnsaye DAY) < CURDATE(),'ATRASADO','AGENDADO PARA HOY') AS estado,
+						CASE
+							WHEN diasEnsaye = 1 AND DATE_ADD(fecha, INTERVAL prueba1 DAY) < CURDATE() THEN 'ATRASADO'
+							WHEN diasEnsaye = 1 AND DATE_ADD(fecha, INTERVAL prueba1 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
+							WHEN diasEnsaye = 2 AND DATE_ADD(fecha, INTERVAL prueba2 DAY) < CURDATE() THEN 'ATRASADO'
+							WHEN diasEnsaye = 2 AND DATE_ADD(fecha, INTERVAL prueba2 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
+							WHEN diasEnsaye = 3 AND DATE_ADD(fecha, INTERVAL prueba3 DAY) < CURDATE() THEN 'ATRASADO'
+							WHEN diasEnsaye = 3 AND DATE_ADD(fecha, INTERVAL prueba3 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
+							WHEN diasEnsaye = 4 AND DATE_ADD(fecha, INTERVAL prueba4 DAY) < CURDATE() THEN 'ATRASADO'
+							WHEN diasEnsaye = 4 AND DATE_ADD(fecha, INTERVAL prueba4 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
+							ELSE 'Error, Contacta a soporte'
+						END AS estado 
 					FROM
 						registrosCampo,formatoCampo,ordenDeTrabajo
 					WHERE
 						id_formatoCampo = formatoCampo_id AND
 						id_ordenDeTrabajo = ordenDeTrabajo_id AND
-						registrosCampo.status = 3 AND
+						registrosCampo.status = 2 AND
 						DATE_ADD(fecha, INTERVAL diasEnsaye DAY) <= CURDATE() AND
 						laboratorio_id = 1QQ 
 			      ",
