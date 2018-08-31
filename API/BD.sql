@@ -624,6 +624,10 @@ CREATE TABLE ensayoCilindro(
 	h2 FLOAT(5.3) NOT NULL,
 	carga FLOAT(7.3) NOT NULL,
 
+	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	active INT NOT NULL DEFAULT 1,
+
 	PRIMARY KEY(id_ensayoCilindro),
 
 	FOREIGN KEY(registrosCampo_id)
@@ -647,6 +651,11 @@ CREATE TABLE footerEnsayo(
 	buscula_id INT(11),
 	regVerFle INT(11),
 	prensa_id INT(11),
+	tipo VARCHAR(20) NOT NULL,
+
+	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	active INT NOT NULL DEFAULT 1,
 
 	PRIMARY KEY(id_footerEnsayo),
 
@@ -740,15 +749,23 @@ VALUES(
 INSERT INTO 
 
 	systemstatus(
+			cch_def_prueba1,
+			cch_def_prueba2,
+			cch_def_prueba3,
+			cch_def_prueba4,
 			ensayo_def_buscula_id,
-			ensayo_def_regVerFle,
+			ensayo_def_regVerFle_id,
 			ensayo_def_prensa_id
 		)
 
 VALUES(
 	7,
 	14,
-	28
+	28,
+	28,
+	1005,
+	1006,
+	1008
 )
 
 
