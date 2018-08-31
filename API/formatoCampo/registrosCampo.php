@@ -319,7 +319,7 @@ class registrosCampo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		//$dbS->beginTransaction();
+		$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			$a= $dbS->qarrayA("
 		      	SELECT 
@@ -376,18 +376,20 @@ class registrosCampo{
 							}
 						}
 					}
+					$dbS->commitTransaction();
 					return json_encode($opciones);
 				}else{
+					$dbS->commitTransaction();
 					return json_encode(array("Pendiente"=> "Pendiente","0"=>$a['prueba1'],"1"=>$a['prueba2'],"2"=>$a['prueba3'],"3"=>$a['prueba4']));
 				}
 			}
 			else{
-				//$dbS->rollbackTransaction();
+				$dbS->rollbackTransaction();
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' =>null,	'estatus' => 'Error inesperado en la funcion getDaysPruebasForDropDown , verifica tus datos y vuelve a intentarlo','error' => 7);
 				return json_encode($arr);
 			}
 		}
-		//$dbS->rollbackTransaction();
+		$dbS->rollbackTransaction();
 		$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => null,	'estatus' => 'Error inesperado en la funcion getDaysPruebasForDropDown , verifica tus datos y vuelve a intentarlo','error' => 6);
 		return json_encode($arr);
 	}
