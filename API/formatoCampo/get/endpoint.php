@@ -36,6 +36,10 @@
 			$formato = new formatoCampo();
 			echo $formato->getformatoDefoults();
 		break;
+		case 'getDaysPruebasForDropDown':
+			$registro = new registrosCampo();
+			echo $registro->getDaysPruebasForDropDown($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formato']);
+		break;
 		//								FUNCIONES DE LA CLASE REGISTROS
 		case 'getAllRegistrosByID':
 			$registro = new registrosCampo();

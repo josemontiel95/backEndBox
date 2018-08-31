@@ -314,6 +314,83 @@ class registrosCampo{
 		return json_encode($arr);
 
 	}
+	//$token,$rol_usuario_id,
+	public function getDaysPruebasForDropDown($token,$rol_usuario_id,$id_formato){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
+		if($arr['error'] == 0){
+			$a= $dbS->qarrayA("
+		      	SELECT 
+					tipoConcreto,
+					prueba1,
+					prueba2,
+					prueba3,
+					prueba4
+				FROM
+					formatoCampo
+				WHERE
+					id_formatoCampo = 1QQ
+				",
+				array($id_formato),
+				"SELECT"
+			);
+			if(!$dbS->didQuerydied && !($a=="empty")){
+				$b= $dbS->qAll("
+			      	SELECT 
+						diasEnsaye,
+						formatoCampo_id
+					FROM
+						registrosCampo
+					WHERE
+						formatoCampo_id = 1QQ
+					",
+					array($id_formato),
+					"SELECT"
+				);
+				if(!$dbS->didQuerydied && !($b=="empty")){
+					$aux=0;
+					foreach ($b as $row) {
+						$row['diasEnsaye'];
+						$aux++;
+					}
+					$pruebas=array($a['prueba1'],$a['prueba2'],$a['prueba3'],$a['prueba4']);
+					$groupsOf4=(floor($aux/4)+1);
+					$opciones=array("Pendiente"=> "Pendiente");
+					for($i=0;$i<$groupsOf4;$i++){
+						foreach ($pruebas as $key => $value) {
+							$flag=true;
+							$keyAux;
+							foreach ($b as $key2 => $value2) {
+								if($value2['diasEnsaye'] == $key){
+									$flag=false;
+									$keyAux=$key2;
+									break;
+								} 
+							}
+							if($flag){
+								$opciones[ (string)($key+(4*$i)) ] = $value;
+							}else{
+								unset($b[$keyAux]);
+							}
+						}
+					}
+					return json_encode($opciones);
+				}else{
+					return json_encode(array("Pendiente"=> "Pendiente","0"=>$a['prueba1'],"1"=>$a['prueba2'],"2"=>$a['prueba3'],"3"=>$a['prueba4']));
+				}
+			}
+			else{
+				//$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' =>null,	'estatus' => 'Error inesperado en la funcion getDaysPruebasForDropDown , verifica tus datos y vuelve a intentarlo','error' => 7);
+				return json_encode($arr);
+			}
+		}
+		//$dbS->rollbackTransaction();
+		$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => null,	'estatus' => 'Error inesperado en la funcion getDaysPruebasForDropDown , verifica tus datos y vuelve a intentarlo','error' => 6);
+		return json_encode($arr);
+	}
 
 	public function getRegistrosForTodayByID($token,$rol_usuario_id,$id_registrosCampo){
 		global $dbS;
