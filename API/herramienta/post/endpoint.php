@@ -23,6 +23,10 @@
 			$herra = new Herramienta();
 			echo $herra->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_herramienta'],$_POST['herramienta_tipo_id'],$_POST['fechaDeCompra'],$_POST['placas'],$_POST['condicion'],$_POST['observaciones']);
 		break;
+		case 'evaluateHerra':
+			$herra = new Herramienta();
+			echo $herra->evaluateHerra($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_herramienta'],$_POST['condicion'],$_POST['observaciones']);
+		break;
 		case 'deactivate':
 			$herra_tipo = new Herramienta();
 			echo $herra_tipo->deactivate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_herramienta']);
