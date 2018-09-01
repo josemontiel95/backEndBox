@@ -99,7 +99,7 @@ class registrosCampo{
 						}
 						$diasEnsaye;
 						foreach ($opciones as $key => $value) {
-							$diasEnsaye=$key
+							$diasEnsaye=$key;
 							break;
 						}
 						$dbS->squery("
