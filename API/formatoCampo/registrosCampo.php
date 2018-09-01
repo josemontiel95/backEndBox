@@ -25,17 +25,36 @@ class registrosCampo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$dbS->squery("
-						INSERT INTO
-							registrosCampo(formatoCampo_id)
+			$a= $dbS->qarrayA("
+		      	SELECT 
+		      		id_obra,
+					revenimiento
+				FROM
+					formatoCampo, ordenDeTrabajo, obra
+				WHERE
+					ordenDeTrabajo_id=id_ordenDeTrabajo AND
+					obra_id = id_obra AND 
+					id_formatoCampo = 1QQ
+				",
+				array($formatoCampo_id),
+				"SELECT"
+			);
+			if(!$dbS->didQuerydied && !$a=="empty"){
+				$dbS->squery("
+							INSERT INTO
+								registrosCampo(formatoCampo_id, fecha)
 
-						VALUES
-							(1QQ)
-				",array($formatoCampo_id),"INSERT");
-			if(!$dbS->didQuerydied){
-				$id=$dbS->lastInsertedID;
-				$arr = array('id_registrosCampo' => $id,'estatus' => '¡Exito en la inicializacion','error' => 0);
+							VALUES
+								(1QQ, CURDATE(), )
+					",array($formatoCampo_id),"INSERT");
+				if(!$dbS->didQuerydied){
+					$id=$dbS->lastInsertedID;
+					$arr = array('id_registrosCampo' => $id,'estatus' => '¡Exito en la inicializacion','error' => 0);
+						return json_encode($arr);
+				}else{
+					$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
 					return json_encode($arr);
+				}
 			}else{
 				$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
 				return json_encode($arr);
