@@ -209,27 +209,7 @@ class Herramienta_ordenDeTrabajo{
 
 
 
-		global $dbS;
-		$usuario = new Usuario();
-		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		if($arr['error'] == 0){
-			$dbS->squery("	DELETE FROM
-							herramienta_ordenDeTrabajo
-							WHERE
-								active=1 AND
-								herramienta_id = 1QQ
-					 "
-					,array($herramienta_id),"DELETE"
-			      	);
-			if(!$dbS->didQuerydied){
-				$arr = array('herramienta_id' => $herramienta_id,'estatus' => 'Herramienta se elimino','error' => 0);
-			}
-			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 5);
-			}
-
-		}
-		return json_encode($arr);
+		
 	}
 
 
