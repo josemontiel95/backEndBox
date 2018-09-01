@@ -19,17 +19,32 @@ class registrosCampo{
 
 	private $wc = '/1QQ/';
 
+	public function numberToRomanRepresentation($number) {
+	    $map = array('M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400, 'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40, 'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1);
+	    $returnValue = '';
+	    while ($number > 0) {
+	        foreach ($map as $roman => $int) {
+	            if($number >= $int) {
+	                $number -= $int;
+	                $returnValue .= $roman;
+	                break;
+	            }
+	        }
+	    }
+	    return $returnValue;
+	}
 
 	public function initInsert($token,$rol_usuario_id,$formatoCampo_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		$dbS->beginTransaction();
+		//$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			$a= $dbS->qarrayA("
 		      	SELECT 
 		      		id_obra,
-					revenimiento
+					revenimiento,
+					prefijo
 				FROM
 					formatoCampo, ordenDeTrabajo, obra
 				WHERE
@@ -40,7 +55,7 @@ class registrosCampo{
 				array($formatoCampo_id),
 				"SELECT"
 			);
-			if(!$dbS->didQuerydied && !$a=="empty"){
+			if(!$dbS->didQuerydied && !($a=="empty")){
 				$b= $dbS->qarrayA("
 			      	SELECT 
 						tipoConcreto,
@@ -56,7 +71,7 @@ class registrosCampo{
 					array($formatoCampo_id),
 					"SELECT"
 				);
-				if(!$dbS->didQuerydied && !$b=="empty"){
+				if(!$dbS->didQuerydied && !($b=="empty")){
 					$c= $dbS->qAll("
 				      	SELECT 
 							diasEnsaye,
@@ -70,7 +85,7 @@ class registrosCampo{
 						array($id_formato),
 						"SELECT"
 					);
-					if(!$dbS->didQuerydied && !$c=="empty"){
+					if(!$dbS->didQuerydied && !($c=="empty")){
 
 						$aux=0;
 						foreach ($b as $row) {
@@ -85,7 +100,7 @@ class registrosCampo{
 								$flag=true;
 								$keyAux;
 								foreach ($c as $key2 => $value2) {
-									if((string)$value2['diasEnsaye'] === (string)$key){
+									if((string)$value2['diasEnsaye'] === (string)($key+1)){
 										//echo "value2[diasEnsaye]: ".$value2['diasEnsaye']." key: ".$key;
 										$flag=false;
 										$keyAux=$key2;
@@ -93,7 +108,7 @@ class registrosCampo{
 									} 
 								}
 								if($flag){
-									$opciones[ (string)($key+(4*$i)) ] = $value;
+									$opciones[ (string)(($key+1)+(4*$i)) ] = $value;
 								}else{
 									unset($b[$keyAux]);
 								}
@@ -112,11 +127,11 @@ class registrosCampo{
 								(1QQ, CURDATE(),'1QQ','1QQ')
 						",array($formatoCampo_id, $a['revenimiento'], $diasEnsaye),"INSERT");
 						if(!$dbS->didQuerydied){
-							$dbS->commitTransaction();
+							//$dbS->commitTransaction();
 							$arr = array('id_registrosCampo' => $dbS->lastInsertedID,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);
 							return json_encode($arr);
 						}else{
-							$dbS->rollbackTransaction();
+							//$dbS->rollbackTransaction();
 							$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 9);
 							return json_encode($arr);
 						}
@@ -127,36 +142,36 @@ class registrosCampo{
 									registrosCampo(formatoCampo_id, fecha, revProyecto,diasEnsaye)
 
 								VALUES
-									(1QQ, CURDATE(),'1QQ',0)
+									(1QQ, CURDATE(),'1QQ',1)
 							",array($formatoCampo_id, $a['revenimiento']),"INSERT");
 							if(!$dbS->didQuerydied){
-								$dbS->commitTransaction();
+								//$dbS->commitTransaction();
 								$arr = array('id_registrosCampo' => $dbS->lastInsertedID,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);
 								return json_encode($arr);
 							}else{
-								$dbS->rollbackTransaction();
+								//$dbS->rollbackTransaction();
 								$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 8);
 								return json_encode($arr);
 							}
 						}else{
-							$dbS->rollbackTransaction();
+							//$dbS->rollbackTransaction();
 							$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 7);
 							return json_encode($arr);
 						}	
 					}	
 				}else{
-					$dbS->rollbackTransaction();
+					//$dbS->rollbackTransaction();
 					$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 6);
 					return json_encode($arr);
 				}
 			}else{
-				$dbS->rollbackTransaction();
+				//$dbS->rollbackTransaction();
 				$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
 				return json_encode($arr);
 
 			}
 		}
-		$dbS->rollbackTransaction();
+		//$dbS->rollbackTransaction();
 		return json_encode($arr);
 
 	}
@@ -218,7 +233,7 @@ class registrosCampo{
 							1QQ = '1QQ'
 						WHERE
 							id_registrosCampo = 1QQ AND
-							status = 0
+							status < 2
 
 				",array($campo,$valor,$id_registrosCampo),"UPDATE");
 			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
@@ -397,19 +412,21 @@ class registrosCampo{
 						fecha,
 						informeNo,
 						claveEspecimen,
-						diasEnsaye,
+						MOD(diasEnsaye,4),
+						id_ordenDeTrabajo,
 						tipo,
+						registrosCampo.active,
 						DATE_ADD(fecha,INTERVAL diasEnsaye DAY) AS FechaAgendadaDeEnsaye,
 						IF(DATE_ADD(fecha, INTERVAL diasEnsaye DAY) < CURDATE(),'ATRASADO','AGENDADO PARA HOY') AS estado,
 						CASE
-							WHEN diasEnsaye = 1 AND DATE_ADD(fecha, INTERVAL prueba1 DAY) < CURDATE() THEN 'ATRASADO'
-							WHEN diasEnsaye = 1 AND DATE_ADD(fecha, INTERVAL prueba1 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
-							WHEN diasEnsaye = 2 AND DATE_ADD(fecha, INTERVAL prueba2 DAY) < CURDATE() THEN 'ATRASADO'
-							WHEN diasEnsaye = 2 AND DATE_ADD(fecha, INTERVAL prueba2 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
-							WHEN diasEnsaye = 3 AND DATE_ADD(fecha, INTERVAL prueba3 DAY) < CURDATE() THEN 'ATRASADO'
-							WHEN diasEnsaye = 3 AND DATE_ADD(fecha, INTERVAL prueba3 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
-							WHEN diasEnsaye = 4 AND DATE_ADD(fecha, INTERVAL prueba4 DAY) < CURDATE() THEN 'ATRASADO'
-							WHEN diasEnsaye = 4 AND DATE_ADD(fecha, INTERVAL prueba4 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
+							WHEN MOD(diasEnsaye,4) = 1 AND DATE_ADD(fecha, INTERVAL prueba1 DAY) < CURDATE() THEN 'ATRASADO'
+							WHEN MOD(diasEnsaye,4) = 1 AND DATE_ADD(fecha, INTERVAL prueba1 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
+							WHEN MOD(diasEnsaye,4) = 2 AND DATE_ADD(fecha, INTERVAL prueba2 DAY) < CURDATE() THEN 'ATRASADO'
+							WHEN MOD(diasEnsaye,4) = 2 AND DATE_ADD(fecha, INTERVAL prueba2 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
+							WHEN MOD(diasEnsaye,4) = 3 AND DATE_ADD(fecha, INTERVAL prueba3 DAY) < CURDATE() THEN 'ATRASADO'
+							WHEN MOD(diasEnsaye,4) = 3 AND DATE_ADD(fecha, INTERVAL prueba3 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
+							WHEN MOD(diasEnsaye,4) = 0 AND DATE_ADD(fecha, INTERVAL prueba4 DAY) < CURDATE() THEN 'ATRASADO'
+							WHEN MOD(diasEnsaye,4) = 0 AND DATE_ADD(fecha, INTERVAL prueba4 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
 							ELSE 'Error, Contacta a soporte'
 						END AS estado 
 					FROM
@@ -463,7 +480,7 @@ class registrosCampo{
 				"SELECT"
 			);
 			if(!$dbS->didQuerydied && !($a=="empty")){
-				return json_encode(array("Pendiente"=> "Pendiente","0"=>$a['prueba1'],"1"=>$a['prueba2'],"2"=>$a['prueba3'],"3"=>$a['prueba4']));
+				return json_encode(array("Pendiente"=> "Pendiente","1"=>$a['prueba1'],"2"=>$a['prueba2'],"3"=>$a['prueba3'],"4"=>$a['prueba4']));
 			}else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => null,	'estatus' => 'Error inesperado en la funcion getDaysPruebasForCompletition , verifica tus datos y vuelve a intentarlo','error' => 6);
 				return json_encode($arr);
@@ -523,7 +540,7 @@ class registrosCampo{
 							$flag=true;
 							$keyAux;
 							foreach ($b as $key2 => $value2) {
-								if((string)$value2['diasEnsaye'] === (string)$key){
+								if((string)$value2['diasEnsaye'] === (string)($key+1)){
 									//echo "value2[diasEnsaye]: ".$value2['diasEnsaye']." key: ".$key;
 									$flag=false;
 									$keyAux=$key2;
@@ -531,7 +548,7 @@ class registrosCampo{
 								} 
 							}
 							if($flag){
-								$opciones[ (string)($key+(4*$i)) ] = $value;
+								$opciones[ (string)(($key+1)+(4*$i)) ] = $value;
 							}else{
 								unset($b[$keyAux]);
 							}
@@ -541,7 +558,7 @@ class registrosCampo{
 					return json_encode($opciones);
 				}else{
 					$dbS->commitTransaction();
-					return json_encode(array("Pendiente"=> "Pendiente","0"=>$a['prueba1'],"1"=>$a['prueba2'],"2"=>$a['prueba3'],"3"=>$a['prueba4']));
+					return json_encode(array("Pendiente"=> "Pendiente","1"=>$a['prueba1'],"2"=>$a['prueba2'],"3"=>$a['prueba3'],"4"=>$a['prueba4']));
 				}
 			}
 			else{
@@ -551,7 +568,6 @@ class registrosCampo{
 			}
 		}
 		$dbS->rollbackTransaction();
-		$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => null,	'estatus' => 'Error inesperado en la funcion getDaysPruebasForDropDown , verifica tus datos y vuelve a intentarlo','error' => 6);
 		return json_encode($arr);
 	}
 

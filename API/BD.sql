@@ -124,6 +124,10 @@ CREATE TABLE obra(
 	tipo INT(11) NOT NULL,
 	revenimiento DOUBLE,
 	incertidumbre DOUBLE,
+	cotizacion VARCHAR(15) NOT NULL,
+	consecutivoProbeta INT NOT NULL DEFAULT 1,
+
+
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -145,6 +149,8 @@ CREATE TABLE obra(
 )ENGINE=INNODB;
 
 ALTER TABLE obra AUTO_INCREMENT=1001;
+
+ALTER TABLE obra ADD COLUMN consecutivoDocumentos INT NOT NULL DEFAULT 1;
 
 
 INSERT INTO obra(obra,prefijo,fechaDeCreacion,descripcion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento,incertidumbre) 

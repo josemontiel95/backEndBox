@@ -93,6 +93,7 @@ class footerEnsayo{
 					regVerFle_id,
 					IF(regVerFle.placas IS NULL,'NO USA',regVerFle.placas) AS regVerFle_id_placas,
 					prensa_id,
+					observaciones,
 					prensas.placas AS prensa_placas
 				FROM
 					footerEnsayo,
