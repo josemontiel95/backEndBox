@@ -160,6 +160,14 @@ class Herramienta{
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
+					 SELECT
+					 		id_herramienta AS id_herramienta,
+					 		placas AS placas 
+					 	FROM
+					 		herramientas
+					 	WHERE
+					 		id_herramienta = 10
+					 UNION				
 			      	 SELECT
 					 	H.id_herramienta AS id_herramienta,
 					    H.placas AS placas 
@@ -193,6 +201,14 @@ class Herramienta{
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
+					SELECT
+					 		id_herramienta AS id_herramienta,
+					 		placas AS placas 
+					 	FROM
+					 		herramientas
+					 	WHERE
+					 		id_herramienta = 20
+					UNION
 			     	SELECT
 					 	H.id_herramienta AS id_herramienta,
 					    H.placas AS placas 
@@ -230,6 +246,14 @@ class Herramienta{
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
+					 SELECT
+					 		id_herramienta AS id_herramienta,
+					 		placas AS placas 
+					 	FROM
+					 		herramientas
+					 	WHERE
+					 		id_herramienta = 30
+					 UNION
 			       	 SELECT
 					 	H.id_herramienta AS id_herramienta,
 					    H.placas AS placas 
@@ -241,6 +265,8 @@ class Herramienta{
 					   	HO.active = 1 AND
 					   	H.herramienta_tipo_id = 1003 AND
 					   	HO.ordenDeTrabajo_id = 1QQ
+					 
+					 	
 			      ",
 			      array($id_ordenDeTrabajo),
 			      "SELECT"
@@ -264,6 +290,14 @@ class Herramienta{
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
+					 SELECT
+					 		id_herramienta AS id_herramienta,
+					 		placas AS placas 
+					 	FROM
+					 		herramientas
+					 	WHERE
+					 		id_herramienta = 40
+					 UNION
 			      	 SELECT
 					 	H.id_herramienta AS id_herramienta,
 					    H.placas AS placas 
