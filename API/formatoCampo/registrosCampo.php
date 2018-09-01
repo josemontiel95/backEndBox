@@ -40,19 +40,92 @@ class registrosCampo{
 				"SELECT"
 			);
 			if(!$dbS->didQuerydied && !$a=="empty"){
-				$dbS->squery("
+				$b= $dbS->qarrayA("
+			      	SELECT 
+						tipoConcreto,
+						prueba1,
+						prueba2,
+						prueba3,
+						prueba4
+					FROM
+						formatoCampo
+					WHERE
+						id_formatoCampo = 1QQ
+					",
+					array($formatoCampo_id),
+					"SELECT"
+				);
+				if(!$dbS->didQuerydied && !$b=="empty"){
+					$c= $dbS->qAll("
+				      	SELECT 
+							diasEnsaye,
+							formatoCampo_id
+						FROM
+							registrosCampo
+						WHERE
+							formatoCampo_id = 1QQ
+						",
+						array($id_formato),
+						"SELECT"
+					);
+					if(!$dbS->didQuerydied && !$c=="empty"){
+
+						$aux=0;
+						foreach ($b as $row) {
+							$row['diasEnsaye'];
+							$aux++;
+						}
+						$pruebas=array($b['prueba1'],$b['prueba2'],$b['prueba3'],$b['prueba4']);
+						$groupsOf4=(floor($aux/4)+1);
+						$opciones=array("Pendiente"=> "Pendiente");
+						for($i=0;$i<$groupsOf4;$i++){
+							foreach ($pruebas as $key => $value) {
+								$flag=true;
+								$keyAux;
+								foreach ($c as $key2 => $value2) {
+									if((string)$value2['diasEnsaye'] === (string)$key){
+										//echo "value2[diasEnsaye]: ".$value2['diasEnsaye']." key: ".$key;
+										$flag=false;
+										$keyAux=$key2;
+										break;
+									} 
+								}
+								if($flag){
+									$opciones[ (string)($key+(4*$i)) ] = $value;
+								}else{
+									unset($b[$keyAux]);
+								}
+							}
+						}
+						$diasEnsaye;
+						foreach ($opciones as $key => $value) {
+							$diasEnsaye=$key
+							break;
+						}
+						$dbS->squery("
 							INSERT INTO
-								registrosCampo(formatoCampo_id, fecha)
+								registrosCampo(formatoCampo_id, fecha, revProyecto,diasEnsaye)
 
 							VALUES
-								(1QQ, CURDATE(), )
-					",array($formatoCampo_id),"INSERT");
-				if(!$dbS->didQuerydied){
-					$id=$dbS->lastInsertedID;
-					$arr = array('id_registrosCampo' => $id,'estatus' => '¡Exito en la inicializacion','error' => 0);
-						return json_encode($arr);
+								(1QQ, CURDATE(),'1QQ','1QQ')
+						",array($formatoCampo_id, $a['revenimiento'], $diasEnsaye),"INSERT");
+						
+					}else{
+						if($c=="empty"){
+							$dbS->squery("
+								INSERT INTO
+									registrosCampo(formatoCampo_id, fecha, revProyecto,diasEnsaye)
+
+								VALUES
+									(1QQ, CURDATE(),'1QQ',0)
+							",array($formatoCampo_id, $a['revenimiento']),"INSERT");
+						}else{
+							$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 7);
+							return json_encode($arr);
+						}	
+					}	
 				}else{
-					$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+					$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 6);
 					return json_encode($arr);
 				}
 			}else{
