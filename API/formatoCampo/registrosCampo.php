@@ -24,6 +24,7 @@ class registrosCampo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			$a= $dbS->qarrayA("
 		      	SELECT 
@@ -110,7 +111,15 @@ class registrosCampo{
 							VALUES
 								(1QQ, CURDATE(),'1QQ','1QQ')
 						",array($formatoCampo_id, $a['revenimiento'], $diasEnsaye),"INSERT");
-						
+						if(!$dbS->didQuerydied){
+							$dbS->commitTransaction();
+							$arr = array('id_registrosCampo' => $dbS->lastInsertedID,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);
+							return json_encode($arr);
+						}else{
+							$dbS->rollbackTransaction();
+							$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 9);
+							return json_encode($arr);
+						}
 					}else{
 						if($c=="empty"){
 							$dbS->squery("
@@ -120,20 +129,34 @@ class registrosCampo{
 								VALUES
 									(1QQ, CURDATE(),'1QQ',0)
 							",array($formatoCampo_id, $a['revenimiento']),"INSERT");
+							if(!$dbS->didQuerydied){
+								$dbS->commitTransaction();
+								$arr = array('id_registrosCampo' => $dbS->lastInsertedID,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);
+								return json_encode($arr);
+							}else{
+								$dbS->rollbackTransaction();
+								$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 8);
+								return json_encode($arr);
+							}
 						}else{
+							$dbS->rollbackTransaction();
 							$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 7);
 							return json_encode($arr);
 						}	
 					}	
 				}else{
+					$dbS->rollbackTransaction();
 					$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 6);
 					return json_encode($arr);
 				}
 			}else{
+				$dbS->rollbackTransaction();
 				$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
 				return json_encode($arr);
+
 			}
 		}
+		$dbS->rollbackTransaction();
 		return json_encode($arr);
 
 	}
