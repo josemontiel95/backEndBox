@@ -39,7 +39,7 @@
 		
 		case 'getDaysPruebasForCompletition':
 			$registro = new registrosCampo();
-			echo $registro->getDaysPruebasForDropDown($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formato']);
+			echo $registro->getDaysPruebasForCompletition($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formato']);
 		break;
 		case 'getDaysPruebasForDropDown':
 			$registro = new registrosCampo();
