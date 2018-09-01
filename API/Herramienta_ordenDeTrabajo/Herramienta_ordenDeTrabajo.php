@@ -279,6 +279,7 @@ class Herramienta_ordenDeTrabajo{
 			      WHERE 
 			      		herramienta_id = id_herramienta AND
 			      		herramienta_tipo_id = id_herramienta_tipo AND
+			      		herramienta_ordenDeTrabajo.active = 1 AND
 			      		ordenDeTrabajo_id = 1QQ 
 
 			      ",
