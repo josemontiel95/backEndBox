@@ -174,7 +174,7 @@ class footerEnsayo{
 						SET
 							1QQ = '1QQ'
 						WHERE
-							id_footerEnsayo = 1QQ
+							footerEnsayo_id = 1QQ
 				",array($campo,$valor,$id_footerEnsayo),"UPDATE");
 			if(!$dbS->didQuerydied){
 				$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => '¡Exito en el cambio del footer!','error' => 0);
