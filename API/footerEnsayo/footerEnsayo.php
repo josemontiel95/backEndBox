@@ -170,7 +170,7 @@ class footerEnsayo{
 
 			$dbS->squery("
 						UPDATE
-							ensayoCilindro;
+							ensayoCilindro
 						SET
 							1QQ = '1QQ'
 						WHERE
