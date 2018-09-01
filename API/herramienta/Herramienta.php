@@ -39,7 +39,7 @@ class Herramienta{
 							SET 
 								status = 0
 							WHERE
-								id_herramienta = 1QQ
+								herramienta_id = 1QQ
 					 "
 					,array($id_herramienta),"UPDATE"
 			      	);

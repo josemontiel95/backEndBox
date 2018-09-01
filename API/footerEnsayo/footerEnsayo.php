@@ -170,11 +170,11 @@ class footerEnsayo{
 
 			$dbS->squery("
 						UPDATE
-							ensayoCilindro
+							footerEnsayo
 						SET
-							1QQ = '1QQ'
+							'1QQ' = '1QQ'
 						WHERE
-							footerEnsayo_id = 1QQ
+							id_footerEnsayo = 1QQ
 				",array($campo,$valor,$id_footerEnsayo),"UPDATE");
 			if(!$dbS->didQuerydied){
 				$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => '¡Exito en el cambio del footer!','error' => 0);
