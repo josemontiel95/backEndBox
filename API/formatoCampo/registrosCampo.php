@@ -446,7 +446,6 @@ class registrosCampo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			$a= $dbS->qarrayA("
 		      	SELECT 
