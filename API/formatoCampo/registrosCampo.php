@@ -373,7 +373,8 @@ class registrosCampo{
 							$flag=true;
 							$keyAux;
 							foreach ($b as $key2 => $value2) {
-								if($value2['diasEnsaye'] == $key){
+								if((string)$value2['diasEnsaye'] === (string)$key){
+									//echo "value2[diasEnsaye]: ".$value2['diasEnsaye']." key: ".$key;
 									$flag=false;
 									$keyAux=$key2;
 									break;
