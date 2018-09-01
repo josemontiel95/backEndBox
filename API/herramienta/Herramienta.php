@@ -37,7 +37,7 @@ class Herramienta{
 				$dbS->squery("	UPDATE
 							herramienta_ordenDeTrabajo
 							SET 
-								status = 0
+								active = 0
 							WHERE
 								herramienta_id = 1QQ
 					 "
