@@ -63,6 +63,7 @@ class registrosCampo{
 						FROM
 							registrosCampo
 						WHERE
+							active=1 AND	
 							formatoCampo_id = 1QQ
 						",
 						array($id_formato),
@@ -446,6 +447,7 @@ class registrosCampo{
 					FROM
 						registrosCampo
 					WHERE
+						active=1 AND
 						formatoCampo_id = 1QQ
 					",
 					array($id_formato),
