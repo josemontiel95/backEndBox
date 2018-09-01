@@ -762,7 +762,7 @@ INSERT INTO
 			cch_def_prueba4,
 			ensayo_def_buscula_id,
 			ensayo_def_regVerFle_id,
-			ensayo_def_prensa_id.
+			ensayo_def_prensa_id,
 			ensayo_def_observaciones
 		)
 
@@ -774,7 +774,7 @@ VALUES(
 	1005,
 	1006,
 	1008,
-	""
+	"NO HAY OBSERVACIONES"
 )
 
 
