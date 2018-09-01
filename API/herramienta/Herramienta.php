@@ -17,6 +17,100 @@ class Herramienta{
 		Completar las funciones
 
 	*/
+		/*
+	public function getForDroptdownBasculas(){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->beginTransaction();
+			$arr= $dbS->qAll("
+			      SELECT 
+			      	id_herramienta,
+			        placas
+			      FROM 
+			        herramienta_tipo,herramientas,herramienta_ordenDeTrabajo
+			       WHERE
+			       	id_herramienta_tipo=herramienta_tipo_id AND
+			       	herramientas.active = 1 AND 
+			       	id_herramienta_tipo = 1005
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if($arr == "empty")
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function getForDroptdownPrensas(){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      SELECT 
+			      	id_herramienta,
+			        placas
+			      FROM 
+			        herramienta_tipo,herramientas
+			       WHERE
+			       	id_herramienta_tipo=herramienta_tipo_id AND
+			       	herramientas.active = 1 AND 
+			       	id_herramienta_tipo = 1008
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if($arr == "empty")
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function getForDroptdownPrensas(){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      SELECT 
+			      	id_herramienta,
+			        placas
+			      FROM 
+			        herramienta_tipo,herramientas
+			       WHERE
+			       	id_herramienta_tipo=herramienta_tipo_id AND
+			       	herramientas.active = 1 AND 
+			       	id_herramienta_tipo = 1006
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if($arr == "empty")
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}*/
 
 	public function getForDroptdownJefeBrigadaCono($token,$rol_usuario_id){
 		global $dbS;

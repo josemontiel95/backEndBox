@@ -84,75 +84,48 @@ class footerEnsayo{
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$s= $dbS->qarrayA("
-			      SELECT
-			      	id_footerEnsayo,
+		      	SELECT
+					id_footerEnsayo,
 					buscula_id,
-					placas_bascula,
-			        regVerFle_id,
-			        placas_regla,
-			        placas_verniers,
-			        placas_flexometro,
+					basculas.placas AS buscula_placas,
+					regVerFle_id,
+					IF(regVerFle.placas IS NULL,'NO USA',regVerFle.placas) AS regVerFle_id_placas,
 					prensa_id,
-					placas_prensa,
-					tipo
-			      FROM 
-			      	footerEnsayo,
-			      	(
-			      		SELECT
-			      			id_herramienta,
-			      			placas AS placas_bascula
-			      		FROM
-			      			herramientas
-			      		WHERE
-			      			herramienta_tipo_id = 1005
-
-			      	)AS basculas,
-			      	(
-			      		SELECT
-			      			id_herramienta,
-			      			placas AS placas_regla
-			      		FROM
-			      			herramientas
-			      		WHERE
-			      			herramienta_tipo_id = 1006
-
-			      	)AS reglas,
-			      	(
-			      		SELECT
-			      			id_herramienta,
-			      			placas AS placas_verniers
-			      		FROM
-			      			herramientas
-			      		WHERE
-			      			herramienta_tipo_id = 1003
-
-			      	)AS verniers,
-			      	(
-			      		SELECT
-			      			id_herramienta,
-			      			placas AS placas_prensa
-			      		FROM
-			      			herramientas
-			      		WHERE
-			      			herramienta_tipo_id = 1008
-
-			      	)AS prensas,
-			      	(
-			      		SELECT
-			      			id_herramienta,
-			      			placas AS placas_flexometro
-			      		FROM
-			      			herramientas
-			      		WHERE
-			      			herramienta_tipo_id = 1003
-
-			      	)AS flexometros
-			      WHERE 
-			      	footerEnsayo.active = 1 AND
-			      	buscula_id = basculas.id_herramienta AND
-			      	(regVerFle_id = reglas.id_herramienta OR regVerFle_id OR regVerFle_id = verniers.id_herramienta OR regVerFle_id = flexometros.id_herramienta) AND
-			      	prensa_id = prensas.id_herramienta AND
-			      	id_footerEnsayo = 1QQ
+					prensas.placas AS prensa_placas
+				FROM
+					footerEnsayo,
+					(
+						SELECT
+				  			id_herramienta,
+				  			placas 
+				  		FROM
+				  			herramientas,footerEnsayo
+				  		WHERE
+				  			buscula_id = id_herramienta 
+					)AS basculas,
+					(
+				  		SELECT
+				  			id_herramienta,
+				  			placas
+				  		FROM
+				  			herramientas,footerEnsayo
+				  		WHERE
+				  			prensa_id = id_herramienta
+				  	)AS prensas,
+				  	(
+				  		SELECT
+				  			id_herramienta,
+				  			placas
+				  		FROM
+				  			herramientas,footerEnsayo
+				  		WHERE
+				  			regVerFle_id = id_herramienta
+				  	)AS regVerFle
+				WHERE
+					footerEnsayo.active = 1 AND
+					buscula_id = basculas.id_herramienta AND
+					prensa_id = prensas.id_herramienta AND
+					id_footerEnsayo = 1QQ
 			      ",
 			      array($id_footerEnsayo),
 			      "SELECT"
