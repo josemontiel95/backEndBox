@@ -440,7 +440,41 @@ class registrosCampo{
 		return json_encode($arr);
 
 	}
-	//$token,$rol_usuario_id,
+	//$token,$rol_usuario_id,++
+
+	public function getDaysPruebasForCompletition($token,$rol_usuario_id,$id_formato){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
+		if($arr['error'] == 0){
+			$a= $dbS->qarrayA("
+		      	SELECT 
+					tipoConcreto,
+					prueba1,
+					prueba2,
+					prueba3,
+					prueba4
+				FROM
+					formatoCampo
+				WHERE
+					id_formatoCampo = 1QQ
+				",
+				array($id_formato),
+				"SELECT"
+			);
+			if(!$dbS->didQuerydied && !($a=="empty")){
+				return json_encode(array("Pendiente"=> "Pendiente","0"=>$a['prueba1'],"1"=>$a['prueba2'],"2"=>$a['prueba3'],"3"=>$a['prueba4']));
+			}else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => null,	'estatus' => 'Error inesperado en la funcion getDaysPruebasForCompletition , verifica tus datos y vuelve a intentarlo','error' => 6);
+				return json_encode($arr);
+			}
+		}
+		$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => null,	'estatus' => 'Error inesperado en la funcion getDaysPruebasForCompletition , verifica tus datos y vuelve a intentarlo','error' => 6);
+		return json_encode($arr);
+
+	}
+
 	public function getDaysPruebasForDropDown($token,$rol_usuario_id,$id_formato){
 		global $dbS;
 		$usuario = new Usuario();
