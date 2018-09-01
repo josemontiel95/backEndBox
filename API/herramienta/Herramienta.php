@@ -173,6 +173,153 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+	public function getForDroptdownReglas($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      	SELECT 
+						*
+					FROM
+						(SELECT 
+						    id_herramienta,
+							placas,
+							estado_herramienta.estado AS estado
+						FROM 
+							herramienta_tipo,herramientas LEFT JOIN
+							(
+								SELECT
+									herramienta_id,
+									IF(herramienta_ordenDeTrabajo.active = 0 AND CURDATE()>ordenDeTrabajo.fechaInicio, 'SI','NO') AS estado
+								FROM
+									herramienta_ordenDeTrabajo,
+									ordenDeTrabajo
+								WHERE
+									ordenDeTrabajo_id = id_ordenDeTrabajo 
+							) AS estado_herramienta
+							ON herramientas.id_herramienta = estado_herramienta.herramienta_id
+						WHERE
+							herramientas.herramienta_tipo_id = herramienta_tipo.id_herramienta_tipo AND
+						  	herramientas.active = 1 AND
+						  	(herramientas.id_herramienta > 1000) AND
+						  	(herramientas.herramienta_tipo_id = 1006)) AS T1
+					WHERE 
+						(T1.estado='SI' OR T1.estado IS NULL)
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if($arr == "empty")
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function getForDroptdownVernier($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      	SELECT 
+						*
+					FROM
+						(SELECT 
+						    id_herramienta,
+							placas,
+							estado_herramienta.estado AS estado
+						FROM 
+							herramienta_tipo,herramientas LEFT JOIN
+							(
+								SELECT
+									herramienta_id,
+									IF(herramienta_ordenDeTrabajo.active = 0 AND CURDATE()>ordenDeTrabajo.fechaInicio, 'SI','NO') AS estado
+								FROM
+									herramienta_ordenDeTrabajo,
+									ordenDeTrabajo
+								WHERE
+									ordenDeTrabajo_id = id_ordenDeTrabajo 
+							) AS estado_herramienta
+							ON herramientas.id_herramienta = estado_herramienta.herramienta_id
+						WHERE
+							herramientas.herramienta_tipo_id = herramienta_tipo.id_herramienta_tipo AND
+						  	herramientas.active = 1 AND
+						  	(herramientas.id_herramienta > 1000) AND
+						  	(herramientas.herramienta_tipo_id = 1007)) AS T1
+					WHERE 
+						(T1.estado='SI' OR T1.estado IS NULL)
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if($arr == "empty")
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function getForDroptdownFlexo($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      	SELECT 
+						*
+					FROM
+						(SELECT 
+						    id_herramienta,
+							placas,
+							estado_herramienta.estado AS estado
+						FROM 
+							herramienta_tipo,herramientas LEFT JOIN
+							(
+								SELECT
+									herramienta_id,
+									IF(herramienta_ordenDeTrabajo.active = 0 AND CURDATE()>ordenDeTrabajo.fechaInicio, 'SI','NO') AS estado
+								FROM
+									herramienta_ordenDeTrabajo,
+									ordenDeTrabajo
+								WHERE
+									ordenDeTrabajo_id = id_ordenDeTrabajo 
+							) AS estado_herramienta
+							ON herramientas.id_herramienta = estado_herramienta.herramienta_id
+						WHERE
+							herramientas.herramienta_tipo_id = herramienta_tipo.id_herramienta_tipo AND
+						  	herramientas.active = 1 AND
+						  	(herramientas.id_herramienta > 1000) AND
+						  	(herramientas.herramienta_tipo_id = 1003)) AS T1
+					WHERE 
+						(T1.estado='SI' OR T1.estado IS NULL)
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if($arr == "empty")
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
+
 	public function getForDroptdownJefeBrigadaCono($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
