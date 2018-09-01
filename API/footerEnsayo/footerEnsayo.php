@@ -170,9 +170,9 @@ class footerEnsayo{
 
 			$dbS->squery("
 						UPDATE
-							ensayoCilindro
+							footerEnsayo
 						SET
-							1QQ = '1QQ'
+							'1QQ' = '1QQ'
 						WHERE
 							id_footerEnsayo = 1QQ
 				",array($campo,$valor,$id_footerEnsayo),"UPDATE");

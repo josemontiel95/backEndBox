@@ -22,6 +22,7 @@ class Herramienta{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
+			$dbS->beginTransaction();
 			$dbS->squery("	UPDATE
 							herramientas
 							SET 
@@ -33,10 +34,28 @@ class Herramienta{
 					,array($condicion,$observaciones,$id_herramienta),"UPDATE"
 			      	);
 			if(!$dbS->didQuerydied){
-				$arr = array('id_herramienta' => $id_herramienta, 'herramienta_tipo_id' => $herramienta_tipo_id, 'estatus' => 'Exito en actualizacion', 'error' => 0);
+				$dbS->squery("	UPDATE
+							herramienta_ordenDeTrabajo
+							SET 
+								status = 0
+							WHERE
+								herramienta_id = 1QQ
+					 "
+					,array($id_herramienta),"UPDATE"
+			      	);
+				if(!$dbS->didQuerydied){
+					$arr = array('id_herramienta' => $id_herramienta, 'herramienta_tipo_id' => $herramienta_tipo_id, 'estatus' => 'Exito en actualizacion', 'error' => 0);
+					$dbS->commitTransaction();
+				}
+				else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+					$dbS->rollbackTransaction();
+				}
+
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+				$dbS->rollbackTransaction();
 			}
 		}
 		return json_encode($arr);
