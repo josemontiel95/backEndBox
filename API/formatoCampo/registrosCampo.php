@@ -73,7 +73,7 @@ class registrosCampo{
 					$campo = 'volumen';
 					break;
 				case '8':
-					$campo = 'tipoConcreto';
+					$campo = 'diasEnsaye';
 					break;
 				case '9':
 					$campo = 'unidad';
