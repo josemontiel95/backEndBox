@@ -186,7 +186,6 @@ class registrosCampo{
 					revObra,
 					tamagregado,
 					volumen,
-					tipoConcreto,
 					unidad,
 					horaMuestreo,
 					tempMuestreo,
