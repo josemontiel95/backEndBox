@@ -24,6 +24,7 @@ class footerEnsayo{
 												buscula_id,
 												regVerFle_id,
 												prensa_id,
+												observaciones,
 												tipo
 											FROM
 												footerEnsayo
@@ -41,7 +42,8 @@ class footerEnsayo{
 					SELECT
 						ensayo_def_buscula_id,
 						ensayo_def_regVerFle_id,
-						ensayo_def_prensa_id
+						ensayo_def_prensa_id,
+						ensayo_def_observaciones
 					FROM
 						systemstatus
 					ORDER BY id_systemstatus DESC;
@@ -50,11 +52,11 @@ class footerEnsayo{
 				);
 				$dbS->squery("
 						INSERT INTO
-							footerEnsayo(buscula_id,regVerFle_id,prensa_id,tipo)
+							footerEnsayo(buscula_id,regVerFle_id,prensa_id,tipo,observaciones)
 
 						VALUES
-							(1QQ,1QQ,1QQ,'1QQ')
-				",array($var_system['ensayo_def_buscula_id'],$var_system['ensayo_def_regVerFle_id'],$var_system['ensayo_def_prensa_id'],$tipo),"INSERT");
+							(1QQ,1QQ,1QQ,'1QQ','1QQ')
+				",array($var_system['ensayo_def_buscula_id'],$var_system['ensayo_def_regVerFle_id'],$var_system['ensayo_def_prensa_id'],$tipo,$var_system['observaciones']),"INSERT");
 				if(!$dbS->didQuerydied){
 					$id=$dbS->lastInsertedID;
 					$arr = array('id_footerEnsayo' => $id,'estatus' => '¡Exito en la inicializacion','error' => 0,'existe' => 0);
@@ -161,11 +163,14 @@ class footerEnsayo{
 				case '3':
 					$campo = 'prensa_id';
 					break;
+				case '4':
+					$campo = 'observaciones';
+					break;
 			}
 
 			$dbS->squery("
 						UPDATE
-							ensayoCilindro;
+							ensayoCilindro
 						SET
 							1QQ = '1QQ'
 						WHERE
