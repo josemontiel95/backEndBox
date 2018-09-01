@@ -104,7 +104,7 @@ class Herramienta{
 		Validar las reglas y los vernier disponibles, porque pueden estar asignados a una orden de trabajo
 	*/
 
-	public function getForDroptdownVernier($token,$rol_usuario_id){
+	public function getForDroptdownReglasVerFlex($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -116,9 +116,10 @@ class Herramienta{
 						(SELECT 
 						    id_herramienta,
 							placas,
+							tipo,
 							estado_herramienta.estado AS estado
 						FROM 
-							herramientas LEFT JOIN
+							herramienta_tipo,herramientas LEFT JOIN
 							(
 								SELECT
 									herramienta_id,
@@ -131,54 +132,10 @@ class Herramienta{
 							) AS estado_herramienta
 							ON herramientas.id_herramienta = estado_herramienta.herramienta_id
 						WHERE
+							herramientas.herramienta_tipo_id = herramienta_tipo.id_herramienta_tipo AND
 						  	herramientas.active = 1 AND
-						  	herramientas.herramienta_tipo_id = 1007 ) AS T1
-					WHERE 
-						(T1.estado='SI' OR T1.estado IS NULL)
-			      ",
-			      array(),
-			      "SELECT"
-			      );
-			if(!$dbS->didQuerydied){
-				if($arr == "empty")
-					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
-			}
-			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
-			}
-		}
-		return json_encode($arr);
-	}
-
-	public function getForDroptdownReglas($token,$rol_usuario_id){
-		global $dbS;
-		$usuario = new Usuario();
-		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		if($arr['error'] == 0){
-			$arr= $dbS->qAll("
-			      	SELECT 
-						*
-					FROM
-						(SELECT 
-						    id_herramienta,
-							placas,
-							estado_herramienta.estado AS estado
-						FROM 
-							herramientas LEFT JOIN
-							(
-								SELECT
-									herramienta_id,
-									IF(herramienta_ordenDeTrabajo.active = 0 AND CURDATE()>ordenDeTrabajo.fechaInicio, 'SI','NO') AS estado
-								FROM
-									herramienta_ordenDeTrabajo,
-									ordenDeTrabajo
-								WHERE
-									ordenDeTrabajo_id = id_ordenDeTrabajo 
-							) AS estado_herramienta
-							ON herramientas.id_herramienta = estado_herramienta.herramienta_id
-						WHERE
-						  	herramientas.active = 1 AND
-						  	herramientas.herramienta_tipo_id = 1006 ) AS T1
+						  	(herramientas.id_herramienta > 1000) AND
+						  	(herramientas.herramienta_tipo_id = 1006 OR herramientas.herramienta_tipo_id = 1003 OR herramientas.herramienta_tipo_id = 1007)) AS T1
 					WHERE 
 						(T1.estado='SI' OR T1.estado IS NULL)
 			      ",
@@ -197,54 +154,6 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
-	public function getForDroptdownFlexometro($token,$rol_usuario_id){
-		global $dbS;
-		$usuario = new Usuario();
-		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		if($arr['error'] == 0){
-			$arr= $dbS->qAll("
-			      	SELECT 
-						*
-					FROM
-						(SELECT 
-						    id_herramienta,
-							placas,
-							estado_herramienta.estado AS estado
-						FROM 
-							herramientas LEFT JOIN
-							(
-								SELECT
-									herramienta_id,
-									IF(herramienta_ordenDeTrabajo.active = 0 AND CURDATE()>ordenDeTrabajo.fechaInicio, 'SI','NO') AS estado
-								FROM
-									herramienta_ordenDeTrabajo,
-									ordenDeTrabajo
-								WHERE
-									ordenDeTrabajo_id = id_ordenDeTrabajo 
-							) AS estado_herramienta
-							ON herramientas.id_herramienta = estado_herramienta.herramienta_id
-						WHERE
-						  	herramientas.active = 1 AND
-						  	herramientas.herramienta_tipo_id = 1003 ) AS T1
-					WHERE 
-						(T1.estado='SI' OR T1.estado IS NULL)
-			      ",
-			      array(),
-			      "SELECT"
-			      );
-
-			if(!$dbS->didQuerydied){
-				if($arr == "empty")
-					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
-			}
-			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
-			}
-		}
-		return json_encode($arr);
-	}
-
-	//Se deve validar que aun no este en algun uso de otro formato??? ---PENDIENTE---
 	public function getForDroptdownJefeBrigadaCono($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();

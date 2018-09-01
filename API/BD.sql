@@ -646,12 +646,15 @@ CREATE TABLE ensayoCilindro(
 
 ALTER TABLE ensayoCilindro AUTO_INCREMENT=1001;
 
+ALTER TABLE footerEnsayo ADD carga VARCHAR(30);
+
 CREATE TABLE footerEnsayo(
 	id_footerEnsayo INT(11) NOT NULL AUTO_INCREMENT,
 	buscula_id INT(11),
 	regVerFle_id INT(11),
 	prensa_id INT(11),
 	tipo VARCHAR(20) NOT NULL,
+	observaciones VARCHAR(30),
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -674,6 +677,7 @@ CREATE TABLE footerEnsayo(
 )ENGINE=INNODB;
 
 ALTER TABLE footerEnsayo AUTO_INCREMENT=1001;
+ALTER TABLE footerEnsayo ADD observaciones VARCHAR(30);
 
 
 ================
@@ -714,6 +718,7 @@ CREATE TABLE systemstatus(
 	ensayo_def_buscula_id INT NOT NULL,
 	ensayo_def_regVerFle_id INT NOT NULL,
 	ensayo_def_prensa_id INT NOT NULL,
+	ensayo_def_observaciones VARCHAR(30),
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -728,6 +733,8 @@ ALTER TABLE systemstatus AUTO_INCREMENT=1001;
 ALTER TABLE systemstatus ADD ensayo_def_buscula_id INT NOT NULL;
 ALTER TABLE systemstatus ADD ensayo_def_regVerFle_id INT NOT NULL;
 ALTER TABLE systemstatus ADD ensayo_def_prensa_id INT NOT NULL;
+ALTER TABLE systemstatus ADD ensayo_def_observaciones VARCHAR(30);
+
 
 INSERT INTO 
 
@@ -755,7 +762,8 @@ INSERT INTO
 			cch_def_prueba4,
 			ensayo_def_buscula_id,
 			ensayo_def_regVerFle_id,
-			ensayo_def_prensa_id
+			ensayo_def_prensa_id.
+			ensayo_def_observaciones
 		)
 
 VALUES(
@@ -765,7 +773,8 @@ VALUES(
 	28,
 	1005,
 	1006,
-	1008
+	1008,
+	""
 )
 
 

@@ -65,19 +65,10 @@
 			$herra = new Herramienta();
 			echo $herra->getForDroptdownPrensas($_GET['token'],$_GET['rol_usuario_id']);
 		break;
-		case 'getForDroptdownVernier':
+		case 'getForDroptdownReglasVerFlex':
 			$herra = new Herramienta();
-			echo $herra->getForDroptdownVernier($_GET['token'],$_GET['rol_usuario_id']);
+			echo $herra->getForDroptdownReglasVerFlex($_GET['token'],$_GET['rol_usuario_id']);
 		break;
-		case 'getForDroptdownReglas':
-			$herra = new Herramienta();
-			echo $herra->getForDroptdownReglas($_GET['token'],$_GET['rol_usuario_id']);
-		break;
-		case 'getForDroptdownFlexometro':
-			$herra = new Herramienta();
-			echo $herra->getForDroptdownFlexometro($_GET['token'],$_GET['rol_usuario_id']);
-		break;
-
 
 	}
 ?>
