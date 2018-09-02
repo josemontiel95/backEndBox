@@ -62,6 +62,10 @@ class Herramienta_ordenDeTrabajo{
 	}
 	*/
 	//
+	/*
+		SOLO REGRESA EL QUE NO VAN A OCUPAR, CREO ES PROBLEMA EN EL WHERE
+	*/
+
 	public function getHerramientaForDropdownRegistro($token,$rol_usuario_id,$id_formatoCampo){
 		global $dbS;
 		$usuario = new Usuario();

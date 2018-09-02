@@ -9,6 +9,8 @@ class footerEnsayo{
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
+
+	//REVISAR COMO SE INICIA EL CASO CUANDO YA EXISTE UN FOOTER EN EL REGISTROSGABS
 	public function initInsert($token,$rol_usuario_id,$tipo,$id_RegistroCCH){
 		global $dbS;
 		$usuario = new Usuario();
@@ -59,6 +61,7 @@ class footerEnsayo{
 				if(!$dbS->didQuerydied){
 					$id=$dbS->lastInsertedID;
 					switch($tipo){
+					
 						case"CILINDRO":
 							$idRegGabsCil=$this->checkifRegCCHRegCILINDRO($id_RegistroCCH);
 							if($idRegGabsCil==-1){

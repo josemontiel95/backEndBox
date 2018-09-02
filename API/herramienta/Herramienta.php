@@ -11,11 +11,9 @@ class Herramienta{
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
-
-
 	/*
-		Completar las funciones
-
+		FUNCION: "evaluateHerra"
+		REALIZA: Primero modifica los campos de "condicion" y "observaciones" de una herramienta en especifico. Posteriormente desactiva(da por finalizada la vida)  de la releacion que esa herramienta tiene en la tabla herramienta_ordenDeTrabajo.
 	*/
 	public function evaluateHerra($token,$rol_usuario_id,$id_herramienta,$condicion,$observaciones){
 		global $dbS;
@@ -23,6 +21,7 @@ class Herramienta{
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->beginTransaction();
+			//Se realiza la evaluacion de la herramienta, haciendo los cambios de sus campso correspodientes
 			$dbS->squery("	UPDATE
 							herramientas
 							SET 
@@ -34,6 +33,7 @@ class Herramienta{
 					,array($condicion,$observaciones,$id_herramienta),"UPDATE"
 			      	);
 			if(!$dbS->didQuerydied){
+				//Desactivo la relacion que existe de esa herramienta en la tabla "herramienta_ordenDeTrabajo"
 				$dbS->squery("	UPDATE
 							herramienta_ordenDeTrabajo
 							SET 
@@ -60,6 +60,12 @@ class Herramienta{
 		}
 		return json_encode($arr);
 	}
+
+	/*
+		FUNCION: "getForDroptdownBasculas"
+		REALIZA: Obtiene todas las basculas en el inventario, no revisa si esa bascula esta ocupada por alguien mas porque es meramente informativo
+	
+	*/
 
 	public function getForDroptdownBasculas($token,$rol_usuario_id){
 		global $dbS;
@@ -90,6 +96,12 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+	/*
+		FUNCION: "getForDroptdownPrensas"
+		REALIZA: Obtiene todas las prensas en el inventario, no revisa si esa prensa esta ocupada por alguien mas porque es meramente informativo
+	
+	*/
+
 	public function getForDroptdownPrensas($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -119,8 +131,12 @@ class Herramienta{
 		}
 		return json_encode($arr);
 	}
+
 	/*
-		Validar las reglas y los vernier disponibles, porque pueden estar asignados a una orden de trabajo
+		FUNCION: "getForDroptdownReglasVerFlex"
+		REALIZA: Obtiene todas las reglas,flexometros y verniers en el inventario, revisa si esa herramientas estan ocupada por alguien mas.
+		OBSERVACIONES:	-Me base en la estructura de validar las herramientas disponibles y aplique los filtros necesarios para solo mostrar las herramientas que pide.
+						-No se incluyen los "NO USUARE ..."
 	*/
 
 	public function getForDroptdownReglasVerFlex($token,$rol_usuario_id){
@@ -164,7 +180,7 @@ class Herramienta{
 
 			if(!$dbS->didQuerydied){
 				if($arr == "empty")
-					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+					$arr = array('estatus' =>"No hay registros", 'error' => 5);
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
@@ -173,6 +189,12 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+	/*
+		FUNCION: "getForDroptdownReglas"
+		REALIZA: Obtiene todas las reglas en el inventario, revisa si esa herramientas estan ocupada por alguien mas.
+		OBSERVACIONES:	-Me base en la estructura de validar las herramientas disponibles y aplique los filtros necesarios para solo mostrar las herramientas que pide.
+
+	*/
 	public function getForDroptdownReglas($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -222,6 +244,12 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+	/*
+		FUNCION: "getForDroptdownVernier"
+		REALIZA: Obtiene todas los verniers en el inventario, revisa si esa herramientas estan ocupada por alguien mas.
+		OBSERVACIONES:	-Me base en la estructura de validar las herramientas disponibles y aplique los filtros necesarios para solo mostrar las herramientas que pide.
+
+	*/
 	public function getForDroptdownVernier($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -271,6 +299,13 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+	/*
+		FUNCION: "getForDroptdownFlexo"
+		REALIZA: Obtiene todas los flexometros en el inventario, revisa si esa herramientas estan ocupada por alguien mas.
+		OBSERVACIONES:	-Me base en la estructura de validar las herramientas disponibles y aplique los filtros necesarios para solo mostrar las herramientas que pide.
+						-Incluye el "NO USARE FLEXOMETRO"
+
+	*/
 	public function getForDroptdownFlexo($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -329,6 +364,13 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+	/*
+		FUNCION: "getForDroptdownJefeBrigadaCono"
+		REALIZA: Obtiene todas los conos en el inventario, revisa si esa herramientas estan ocupada por alguien mas.
+		OBSERVACIONES:	-Incluye el "NO USARE CONO"
+						-Solo muestra herramientas de este tipo, que esten asociadas a una orden de trabajo, teniendo en cuenta que las ocupara el jefe de brigada en su orden de trabajo asignada
+
+	*/
 	public function getForDroptdownJefeBrigadaCono($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
@@ -370,6 +412,13 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+	/*
+		FUNCION: "getForDroptdownJefeBrigadaVarilla"
+		REALIZA: Obtiene todas las varillas en el inventario, revisa si esa herramientas estan ocupada por alguien mas.
+		OBSERVACIONES:	-Incluye el "NO USARE VARILLA"
+						-Solo muestra herramientas de este tipo, que esten asociadas a una orden de trabajo, teniendo en cuenta que las ocupara el jefe de brigada en su orden de trabajo asignada
+
+	*/
 	public function getForDroptdownJefeBrigadaVarilla($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
@@ -411,10 +460,13 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+	/*
+		FUNCION: "getForDroptdownJefeBrigadaFlexometro"
+		REALIZA: Obtiene todas lss flexometros en el inventario, revisa si esa herramientas estan ocupada por alguien mas.
+		OBSERVACIONES:	-Incluye el "NO USARE FLEXOMETRO"
+						-Solo muestra herramientas de este tipo, que esten asociadas a una orden de trabajo, teniendo en cuenta que las ocupara el jefe de brigada en su orden de trabajo asignada
 
-
-	
-
+	*/
 	public function getForDroptdownJefeBrigadaFlexometro($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
@@ -458,6 +510,13 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+	/*
+		FUNCION: "getForDroptdownJefeBrigadaTermometro"
+		REALIZA: Obtiene todas lss termometros en el inventario, revisa si esa herramientas estan ocupada por alguien mas.
+		OBSERVACIONES:	-Incluye el "NO USARE TERMOMETRO"
+						-Solo muestra herramientas de este tipo, que esten asociadas a una orden de trabajo, teniendo en cuenta que las ocupara el jefe de brigada en su orden de trabajo asignada
+
+	*/
 
 	public function getForDroptdownJefeBrigadaTermometro($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
@@ -482,7 +541,7 @@ class Herramienta{
 					 	HO.herramienta_id = H.id_herramienta AND
 					 	HT.id_herramienta_tipo=H.herramienta_tipo_id AND
 					   	HO.active = 1 AND
-					   	H.herramienta_tipo_id = 1003 AND
+					   	H.herramienta_tipo_id = 1004 AND
 					   	HO.ordenDeTrabajo_id = 1QQ
 			      ",
 			      array($id_ordenDeTrabajo),
@@ -500,6 +559,11 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+	/*
+		FUNCION: "getAllAdmin"
+		REALIZA: Devuelve todas las herramientas en el inventario, exceptuando los "NO USARE ..."
+		OBSERVACIONES:	-Esta vista es del admin, entonces no distingue entre herramientas que esten con active = 1 o active = 0
+	*/
 	public function getAllAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -539,6 +603,11 @@ class Herramienta{
 		return json_encode($arr);	
 	}
 
+	/*
+		FUNCION: "getAllJefaLab"
+		REALIZA: Devuelve todas las herramientas en el inventario, exceptuando los "NO USARE ..."
+		OBSERVACIONES:	-Esta vista es del jefa lab, entonces solo muestra las que esten con active = 1
+	*/
 	public function getAllJefaLab($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -578,6 +647,10 @@ class Herramienta{
 	}
 
 
+	/*
+		FUNCION: "insertAdmin"
+		REALIZA: Inserta herramientas nuevas a el inventario
+	*/
 	public function insertAdmin($token,$rol_usuario_id,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones){
 		global $dbS;
 		$usuario = new Usuario();
@@ -601,6 +674,10 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+	/*
+		FUNCION: "upDateAdmin"
+		REALIZA: Modifica las herramientas que existan en el inventario, mediante su id
+	*/
 	public function upDateAdmin($token,$rol_usuario_id,$id_herramienta,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones){
 		global $dbS;
 		$usuario = new Usuario();
@@ -629,6 +706,10 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+	/*
+		FUNCION: "getByIDAdmin"
+		REALIZA: Devuelve toda la informacion de una herramienta mediante su id
+	*/
 	public function getByIDAdmin($token,$rol_usuario_id,$id_herramienta){
 		global $dbS;
 		$usuario = new Usuario();
@@ -673,6 +754,10 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+	/*
+		FUNCION: "deactivate"
+		REALIZA: Desactiva una herramienta mediante su id
+	*/
 	public function deactivate($token,$rol_usuario_id,$id_herramienta){
 		global $dbS;
 		$usuario = new Usuario();
@@ -688,7 +773,6 @@ class Herramienta{
 					 "
 					,array(0,$id_herramienta),"UPDATE"
 			      	);
-		//PENDIENTE por la herramienta_tipo_id para poderla imprimir tengo que cargar las variables de la base de datos?
 			if(!$dbS->didQuerydied){
 				$arr = array('id_herramienta' => $id_herramienta,'estatus' => 'Herramienta se desactivo','error' => 0);
 			}
@@ -700,6 +784,10 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
+	/*
+		FUNCION: "activate"
+		REALIZA: Activa una herramienta mediante su id
+	*/
 	public function activate($token,$rol_usuario_id,$id_herramienta){
 		global $dbS;
 		$usuario = new Usuario();
@@ -724,9 +812,11 @@ class Herramienta{
 		}
 		return json_encode($arr);
 	}
-
-				
-
+		
+	/*
+		FUNCION: "getForDroptdownTipo"
+		REALIZA: Muestra todos los tipos de herramienta que existen
+	*/
 	public function getForDroptdownTipo($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -758,7 +848,11 @@ class Herramienta{
 
 	}
 
-
+	/*
+		FUNCION: "getForDroptdownTipo"
+		REALIZA: Muestra todas las herramientas disponibles segun un tipo especificado.
+		OBSERVACIONES -Funcionabilidad aun dudosa (Reportado: 02/09/2018)
+	*/
 	public function getAllFromTipo($token,$rol_usuario_id,$herramienta_tipo_id){
 		global $dbS;
 		$usuario = new Usuario();
