@@ -17,11 +17,11 @@
 	switch ($function){
 		case 'insertAdmin':
 			$obra = new Obra();
-			echo $obra->insertAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['obra'],$_POST['prefijo'],$_POST['fechaDeCreacion'],$_POST['descripcion'],$_POST['localizacion'],$_POST['nombre_residente'],$_POST['telefono_residente'],$_POST['correo_residente'],$_POST['cliente_id'],$_POST['concretera'],$_POST['tipo'],$_POST['revenimiento'],$_POST['incertidumbre'],$_POST['cotizacion'],$_POST['consecutivoProbeta']);		
+			echo $obra->insertAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['obra'],$_POST['prefijo'],$_POST['fechaDeCreacion'],$_POST['descripcion'],$_POST['localizacion'],$_POST['nombre_residente'],$_POST['telefono_residente'],$_POST['correo_residente'],$_POST['cliente_id'],$_POST['concretera'],$_POST['tipo'],$_POST['revenimiento'],$_POST['incertidumbre'],$_POST['cotizacion'],$_POST['consecutivoProbeta'],$_POST['consecutivoDocumentos']);		
 		break;
 		case 'upDateAdmin':
 			$obra = new Obra();
-			echo $obra->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_obra'],$_POST['obra'],$_POST['prefijo'],$_POST['fechaDeCreacion'],$_POST['descripcion'],$_POST['localizacion'],$_POST['nombre_residente'],$_POST['telefono_residente'],$_POST['correo_residente'],$_POST['cliente_id'],$_POST['concretera'],$_POST['tipo'],$_POST['revenimiento'],$_POST['incertidumbre'],$_POST['cotizacion'],$_POST['consecutivoProbeta']);
+			echo $obra->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_obra'],$_POST['obra'],$_POST['prefijo'],$_POST['fechaDeCreacion'],$_POST['descripcion'],$_POST['localizacion'],$_POST['nombre_residente'],$_POST['telefono_residente'],$_POST['correo_residente'],$_POST['cliente_id'],$_POST['concretera'],$_POST['tipo'],$_POST['revenimiento'],$_POST['incertidumbre'],$_POST['cotizacion'],$_POST['consecutivoProbeta'],$_POST['consecutivoDocumentos']);
 		break;
 		case 'deactivate':
 			$obra = new Obra();

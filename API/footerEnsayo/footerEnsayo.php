@@ -9,7 +9,7 @@ class footerEnsayo{
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
-	public function initInsert($token,$rol_usuario_id,$tipo){
+	public function initInsert($token,$rol_usuario_id,$tipo,$id_RegistroCCH){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode
@@ -18,24 +18,23 @@ class footerEnsayo{
 			//Cargamos las variables del sistema
 			$dbS->beginTransaction();	//Iniciamos la transacción
 			$arr = 	$dbS->qarrayA(
-										"
-											SELECT
-												id_footerEnsayo,
-												buscula_id,
-												regVerFle_id,
-												prensa_id,
-												observaciones,
-												tipo
-											FROM
-												footerEnsayo
-											WHERE
-												CURDATE() = DATE(createdON) AND
-												tipo = '1QQ'
-
-										",
-										array($tipo),
-										"SELECT"
-								);
+				"SELECT
+						id_footerEnsayo,
+						buscula_id,
+						regVerFle_id,
+						prensa_id,
+						observaciones,
+						tipo,
+						createdON
+					FROM
+						footerEnsayo
+					WHERE
+						CURDATE() = DATE(createdON) AND
+						tipo = '1QQ'
+				",
+				array($tipo),
+				"SELECT"
+			);
 			if($arr == "empty"){
 				$var_system = $dbS->qarrayA(
 				"
@@ -48,8 +47,8 @@ class footerEnsayo{
 						systemstatus
 					ORDER BY id_systemstatus DESC;
 				",array(),"SELECT"
-
 				);
+
 				$dbS->squery("
 						INSERT INTO
 							footerEnsayo(buscula_id,regVerFle_id,prensa_id,tipo,observaciones)
@@ -59,7 +58,29 @@ class footerEnsayo{
 				",array($var_system['ensayo_def_buscula_id'],$var_system['ensayo_def_regVerFle_id'],$var_system['ensayo_def_prensa_id'],$tipo,$var_system['observaciones']),"INSERT");
 				if(!$dbS->didQuerydied){
 					$id=$dbS->lastInsertedID;
-					$arr = array('id_footerEnsayo' => $id,'estatus' => '¡Exito en la inicializacion','error' => 0,'existe' => 0);
+					switch($tipo){
+						case"CILINDRO":
+							$idRegGabsCil=$this->checkifRegCCHRegCILINDRO($id_RegistroCCH);
+							if($idRegGabsCil==-1){
+								$idRegGabsCil=$this->initEnsayoCilindro($id_RegistroCCH,$id);
+								$arr = array('id_footerEnsayo' => $id, 'id_RegistroGabs' => $idRegGabsCil,'estatus' => '¡Exito en la inicializacion','error' => 0,'existe' => 0);
+							}else if($idRegGabsCil==-2){
+								$dbS->rollbackTransaction();
+								$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+							}else{
+								$arr = array('id_footerEnsayo' => $id, 'id_RegistroGabs' => $idRegGabsCil,'estatus' => '¡Exito en la inicializacion','error' => 0,'existe' => 0);
+							}
+
+						break;
+						case"CUBO":
+							$herra_tipo=1009;
+							$id_herramienta=50;
+						break;
+						case"VIGA":
+							$herra_tipo=1010;
+							$id_herramienta=60;
+						break;
+					}
 					$dbS->commitTransaction();
 					return json_encode($arr);
 				}else{
@@ -78,12 +99,69 @@ class footerEnsayo{
 		return json_encode($arr);
 
 	}
+	public function checkifRegCCHRegCILINDRO($id_RegistroCCH){
+		global $dbS;
+		$a = $dbS->qAll(
+			"SELECT
+					*
+			FROM
+				ensayoCilindro
+			WHERE 
+				registrosCampo_id=1QQ;
+			",array($id_RegistroCCH),"SELECT"
+		);
+		if(!$dbS->didQuerydied){
+			if(($a == "empty")){
+				return -1;
+			}else{
+				return $a['id_ensayoCilindro'];
+			}
+		}else{
+			return -2;
+		}
+	}
 
+	public function initEnsayoCilindro($id_RegistroCCH,$id){
+		global $dbS;
+		$a= $dbS->qarrayA("
+	      	SELECT
+				formatoCampo_id
+			FROM
+				registrosCampo
+			WHERE
+				id_registrosCampo=1QQ
+		      ",
+		      array($id_RegistroCCH),
+		      "SELECT"
+		);
+		if(!$dbS->didQuerydied && !($a=="empty")){
+			$dbS->squery("
+				INSERT INTO
+					ensayoCilindro(registrosCampo_id,formatoCampo_id,footerEnsayo_id,peso,d1,d2,h1,h2,carga,falla)
+				VALUES
+					(1QQ,1QQ,1QQ,0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0)
+				",array($id_RegistroCCH, $a['formatoCampo_id'],$id ),
+				"INSERT"
+			);
+			if(!$dbS->didQuerydied){
+				$idRegGabsCil=$dbS->lastInsertedID;
+				return $idRegGabsCil;
+			}
+			else{
+				return-2;
+			}
 
+		}
+		return-2;
+	}
+
+	//
 	public function getFooterByID($token,$rol_usuario_id,$id_footerEnsayo){
 		global $dbS;
 		$usuario = new Usuario();
+		$id_footerEnsayo=1001;
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		//
 		if($arr['error'] == 0){
 			$s= $dbS->qarrayA("
 		      	SELECT

@@ -766,18 +766,37 @@ class Herramienta{
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      	SELECT 
-				      	id_herramienta,
-				      	placas,
+						id_herramienta,
+						placas,
 						id_herramienta_tipo,
 						tipo,
-						condicion
-				    FROM 
-				        herramienta_tipo,herramientas
-				    WHERE
-				       	herramientas.active = 1 AND
-				        herramienta_tipo_id = id_herramienta_tipo AND
-				        herramienta_tipo_id = 1QQ AND 
-				        id_herramienta > 1000
+						condicion,
+						T2.active
+					FROM 
+						(SELECT 
+						  	id_herramienta,
+						  	placas,
+							id_herramienta_tipo,
+							tipo,
+							condicion
+						FROM 
+						    herramienta_tipo,herramientas
+						WHERE
+						   	herramientas.active = 1 AND
+						    herramienta_tipo_id = id_herramienta_tipo AND
+						    herramienta_tipo_id = 1QQ AND 
+						    id_herramienta > 1000) AS T1 
+					    LEFT JOIN 
+					    	(SELECT
+							*
+							FROM 
+							herramienta_ordenDeTrabajo
+							WHERE 
+							herramienta_ordenDeTrabajo.active=1) AS T2 
+					    ON
+					    	herramienta_id=id_herramienta
+					WHERE 
+						T2.active IS NULL
 			      ",
 			      array($herramienta_tipo_id),
 			      "SELECT"

@@ -61,6 +61,78 @@ class Herramienta_ordenDeTrabajo{
 
 	}
 	*/
+	//
+	public function getHerramientaForDropdownRegistro($token,$rol_usuario_id,$id_formatoCampo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$a= $dbS->qarrayA("
+		      	SELECT 
+				    tipo
+				FROM 
+					formatoCampo
+				WHERE
+				  	id_formatoCampo='1QQ'
+				",
+				array($id_formatoCampo),
+				"SELECT"
+			);
+			if(!$dbS->didQuerydied && !($a=="empty")){
+				$herra_tipo=0;
+				$id_herramienta=0;
+				switch($a['tipo']){
+					case"CILINDRO":
+						$herra_tipo=1011;
+						$id_herramienta=70;
+					break;
+					case"CUBO":
+						$herra_tipo=1009;
+						$id_herramienta=50;
+					break;
+					case"VIGA":
+						$herra_tipo=1010;
+						$id_herramienta=60;
+					break;
+				}
+				$arr= $dbS->qAll("
+					SELECT
+					 	id_herramienta AS id_herramienta,
+					 	placas AS placas 
+					FROM
+					 	herramientas
+					WHERE
+					 	id_herramienta = '1QQ'
+					UNION
+			      	SELECT 
+			      		id_herramienta,
+					    placas
+					FROM 
+						herramienta_ordenDeTrabajo,
+						formatoCampo,
+						herramientas
+					WHERE
+						herramienta_id=id_herramienta AND
+						herramienta_ordenDeTrabajo.active=1 AND 
+						herramienta_tipo_id='1QQ' AND
+					  	id_formatoCampo='1QQ'
+					",
+					array($id_herramienta,$herra_tipo,$id_formatoCampo),
+					"SELECT"
+				);
+				if(!$dbS->didQuerydied && !($arr=="empty")){
+
+				}else if($arr=="empty"){
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); 
+				}else{
+					$arr = array('estatus' =>"No hay registros", 'error' => 6); 
+				}
+			}else{
+				$arr = array('estatus' =>"No hay registros", 'error' => 7); 
+			}
+		}
+		return json_encode($arr);
+	}	
 
 	//Añadimos a que obra esta agendada???? PENDIENTE
 	public function getAllHerraAvailable($token,$rol_usuario_id){

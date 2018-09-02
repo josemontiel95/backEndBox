@@ -25,7 +25,10 @@
 			$herra = new Herramienta_ordenDeTrabajo();
 			echo $herra->getAllHerraAvailable($_GET['token'],$_GET['rol_usuario_id']);
 		break;
-
+		case 'getHerramientaForDropdownRegistro':
+			$herra = new Herramienta_ordenDeTrabajo();
+			echo $herra->getHerramientaForDropdownRegistro($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
+		break;
 
 		/*
 		case 'getByIDAdmin':

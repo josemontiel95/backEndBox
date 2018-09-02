@@ -16,7 +16,7 @@
 	switch ($function){
 		case 'initInsert':
 			$footer = new footerEnsayo();
-			echo $footer->initInsert($_POST['token'],$_POST['rol_usuario_id'],$_POST['tipo']);
+			echo $footer->initInsert($_POST['token'],$_POST['rol_usuario_id'],$_POST['tipo'],$_POST['id_RegistroCCH']);
 		break;
 		case 'insertRegistroTecMuestra':
 			$footer = new footerEnsayo();
