@@ -727,7 +727,7 @@ CREATE TABLE systemstatus(
 	ensayo_def_regVerFle_id INT NOT NULL,
 	ensayo_def_prensa_id INT NOT NULL,
 	ensayo_def_observaciones VARCHAR(30),
-
+	ensayo_def_pi INT NOT NULL,
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	active INT NOT NULL DEFAULT 1,
