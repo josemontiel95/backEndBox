@@ -60,6 +60,10 @@ class EnsayoCilindro{
 				case '6':
 					$campo = 'carga';
 					break;
+				case '7':
+					$campo = 'falla';
+					break;
+
 			}
 
 			$dbS->squery("
@@ -68,9 +72,7 @@ class EnsayoCilindro{
 						SET
 							1QQ = '1QQ'
 						WHERE
-							id_ensayoCilindro = 1QQ AND
-							status = 0
-
+							id_ensayoCilindro = 1QQ
 				",array($campo,$valor,$id_ensayoCilindro),"UPDATE");
 			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
 			if(!$dbS->didQuerydied){
