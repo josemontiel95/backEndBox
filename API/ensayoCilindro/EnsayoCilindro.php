@@ -68,7 +68,7 @@ class EnsayoCilindro{
 
 			$dbS->squery("
 						UPDATE
-							ensayoCilindro;
+							ensayoCilindro
 						SET
 							1QQ = '1QQ'
 						WHERE
@@ -85,7 +85,63 @@ class EnsayoCilindro{
 		}
 		return json_encode($arr);
 	}
-	
+
+	/*
+	public function getRegistrosCilByID($token,$rol_usuario_id,$id_ensayoCilindro){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA("
+			      SELECT
+			      	id_registrosCampo,
+					formatoCampo_id,
+			        claveEspecimen,
+					fecha,
+					fprima,
+					revProyecto,
+					revObra,
+					tamagregado,
+					volumen,
+					diasEnsaye,
+					unidad,
+					horaMuestreo,
+					tempMuestreo,
+					tempRecoleccion,
+					localizacion,
+					status
+			      FROM 
+			      	registrosCampo
+			      WHERE 
+			      	registrosCampo.active = 1 AND
+			      	id_registrosCampo = 1QQ
+			      ",
+			      array($id_registrosCampo),
+			      "SELECT"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('No existen registro relacionados con el id_registrosCampo'=>$id_registrosCampo,'error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		return json_encode($arr);
+	}
+
+
+	public function Area($d1,$d2,$id_ensayoCilindro){
+		$promedio = ($d1+$d2)/2;
+		$
+
+	}
+	*/
 
 
 }
