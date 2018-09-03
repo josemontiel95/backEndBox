@@ -136,9 +136,13 @@ class Herramienta_ordenDeTrabajo{
 			}
 		}
 		return json_encode($arr);
-	}	
+	}
+	/*
+		FUNCION: "getAllHerraAvailable"
+		REALIZA: Devuelve todas las herramientas disponibles para asignar
+		OBSERVACIONES: -La herramienta con el id: 1001. La devuelve 2 veces
+	*/	
 
-	//Añadimos a que obra esta agendada???? PENDIENTE
 	public function getAllHerraAvailable($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -187,8 +191,11 @@ class Herramienta_ordenDeTrabajo{
 		return json_encode($arr);
 	}
 
-
-
+	/*
+		FUNCION: "insertAdmin"
+		REALIZA: Inserta una relacion entre una herramienta y una orden de trabajo
+		OBSERVACIONES: -Se asiganan varias herramientas(contenidas en un array) a una orden de trabajo, esto mediante un "foreach"
+	*/
 	public function insertAdmin($token,$rol_usuario_id,$ordenDeTrabajo_id,$herramientasArray){
 		global $dbS;
 		$usuario = new Usuario();
@@ -221,7 +228,11 @@ class Herramienta_ordenDeTrabajo{
 
 	
 
-	//FUNCION QUE DESACTIVA UNA HERRAMIENTA RELACIONADA CON LA ORDEN DE TRABAJO
+	/*
+		FUNCION: "deactivateHerra"
+		REALIZA: Desactiva una relacion entre una herramienta y una orden de trabajo
+		OBSERVACIONES: -Se desactiva varias herramientas(contenidas en un array) a una orden de trabajo, esto mediante un "foreach"
+	*/
 	public function deactivateHerra($token,$rol_usuario_id,$herramientasArray){
 		global $dbS;
 		$usuario = new Usuario();
@@ -250,7 +261,11 @@ class Herramienta_ordenDeTrabajo{
 		return json_encode($arr);
 	}
 
-	//FUNCION QUE ELIMINA UNA TUPLA MEDIANTE EL ID DE LA HERRAMIENTA
+	/*
+		FUNCION: "deleteHerra"
+		REALIZA: Elimina una relacion entre una herramienta y una orden de trabajo
+		OBSERVACIONES: -Se eliminan varias herramientas(contenidas en un array) a una orden de trabajo, esto mediante un "foreach"
+	*/
 	public function deleteHerra($token,$rol_usuario_id,$herramientasArray){
 		global $dbS;
 		$usuario = new Usuario();
@@ -280,15 +295,13 @@ class Herramienta_ordenDeTrabajo{
 				}
 
 		}
-		return json_encode($arr);
-
-
-
-
-		
+		return json_encode($arr);		
 	}
 
-
+	/*
+		FUNCION: "getByIDAdminHerra"
+		REALIZA: Obtiene la informacion de una herramienta con su relación a una orden de Trabajo.
+	*/
 	public function getByIDAdminHerra($token,$rol_usuario_id,$id_herramienta){
 		global $dbS;
 		$usuario = new Usuario();
@@ -336,8 +349,10 @@ class Herramienta_ordenDeTrabajo{
 		}
 		return json_encode($arr);
 	}
-
-
+	/*
+		FUNCION: "getAllHerraOrden"
+		REALIZA: Obtiene todas las herramientas asignadas a una orden de Trabajo
+	*/
 	public function getAllHerraOrden($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
