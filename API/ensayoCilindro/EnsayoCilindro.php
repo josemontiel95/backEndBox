@@ -86,13 +86,13 @@ class EnsayoCilindro{
 		return json_encode($arr);
 	}
 
-	/*
+	
 	public function getRegistrosCilByID($token,$rol_usuario_id,$id_ensayoCilindro){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$s= $dbS->qarrayA("
+			$s = $dbS->qarrayA("
 			      SELECT
 			      	id_registrosCampo,
 					formatoCampo_id,
@@ -135,14 +135,60 @@ class EnsayoCilindro{
 		return json_encode($arr);
 	}
 
-
-	public function Area($d1,$d2,$id_ensayoCilindro){
-		$promedio = ($d1+$d2)/2;
-		$
-
+	public function calcularAreaResis($token,$rol_usuario_id,$id_ensayoCilindro){
+		global $dbS;
+		if($arr['error'] == 0){
+			$dbS->beginTransaction();
+			$var_system = $dbS->qarrayA(
+					"
+						SELECT
+							ensayo_def_pi
+						FROM
+							systemstatus
+						ORDER BY id_systemstatus DESC;
+					",array(),"SELECT"
+					);
+			if(!$dbS->didQuerydied){
+				$variables = $dbS->qarrayA(
+					"
+						SELECT
+							d1,
+							d2,
+							carga
+						FROM
+							ensayoCilindro
+						WHERE 
+							id_ensayoCilindro  = 1QQ
+					",array($id_ensayoCilindro),"SELECT"
+					);
+				if(!$dbS->didQuerydied){
+					$dbS->commitTransaction();
+					$promedio = ($variables['d1'] + $variables['d2'])/2;
+					$area = ((($promedio * $promedio) * $var_system['ensayo_def_pi'])/4);
+					if($area == 0){
+						$area = 'Eror: Verifique sus datos, el area debe ser distinta de 0';
+						$resistencia = 'Error: No se puede realizar una division entre 0';
+						$error = 5;
+					} 	
+					else{
+						$resistencia = $carga/$area;
+						$error = 0;
+					}
+					$arr = array('area' => $area,'resistencia' => $resistencia, 'error'=> $error);
+					return $arr;
+				}
+				else{
+					$dbS->rollbackTransaction();
+					$arr = array('estatus' => 'No se pudieron cargar las variables del registro.','error' => 6);
+					return $arr;
+				}	
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('estatus' => 'No se pudieron cargar las constantes del sistema.','error' => 7);
+				return $arr;
+			}
+		}
+		return json_encode($arr);
 	}
-	*/
 
-
-}
 ?>
