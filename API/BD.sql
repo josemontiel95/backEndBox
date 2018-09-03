@@ -742,6 +742,7 @@ ALTER TABLE systemstatus ADD ensayo_def_buscula_id INT NOT NULL;
 ALTER TABLE systemstatus ADD ensayo_def_regVerFle_id INT NOT NULL;
 ALTER TABLE systemstatus ADD ensayo_def_prensa_id INT NOT NULL;
 ALTER TABLE systemstatus ADD ensayo_def_observaciones VARCHAR(30);
+ALTER TABLE systemstatus ADD ensayo_def_pi INT NOT NULL;
 
 
 INSERT INTO 
@@ -771,7 +772,8 @@ INSERT INTO
 			ensayo_def_buscula_id,
 			ensayo_def_regVerFle_id,
 			ensayo_def_prensa_id,
-			ensayo_def_observaciones
+			ensayo_def_observaciones,
+			ensayo_def_pi
 		)
 
 VALUES(
@@ -782,7 +784,8 @@ VALUES(
 	1005,
 	1006,
 	1008,
-	"NO HAY OBSERVACIONES"
+	"NO HAY OBSERVACIONES",
+	3.1416
 )
 
 
