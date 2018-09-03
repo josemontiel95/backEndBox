@@ -95,15 +95,16 @@ class footerEnsayo{
 						case"CILINDRO":
 							$idRegGabsCil=$this->checkifRegCCHRegCILINDRO($id_RegistroCCH);
 							if($idRegGabsCil==-1){
-								$idRegGabsCil=$this->initEnsayoCilindro($id_RegistroCCH,$id);
+								$idRegGabsCil=$this->initEnsayoCilindro($id_RegistroCCH,$arr['id_footerEnsayo']);
 								$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsCil,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, se inicializo un nuevo registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
-							}else 
+							}else{ 
 								if($idRegGabsCil==-2){
-									$dbS->rollbackTransaction();
+									//$dbS->rollbackTransaction();
 									$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
 								}else{
 									$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsCil,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, ya existia un registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
 								}
+							}
 						break;
 						case"CUBO":
 							$herra_tipo=1009;
