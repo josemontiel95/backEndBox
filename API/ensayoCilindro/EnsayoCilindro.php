@@ -137,6 +137,8 @@ class EnsayoCilindro{
 
 	public function calcularAreaResis($token,$rol_usuario_id,$id_ensayoCilindro){
 		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->beginTransaction();
 			$var_system = $dbS->qarrayA(
@@ -171,24 +173,24 @@ class EnsayoCilindro{
 						$error = 5;
 					} 	
 					else{
-						$resistencia = $carga/$area;
+						$resistencia = $variables['carga']/$area;
 						$error = 0;
 					}
 					$arr = array('area' => $area,'resistencia' => $resistencia, 'error'=> $error);
-					return $arr;
+					return json_encode($arr);
 				}
 				else{
 					$dbS->rollbackTransaction();
 					$arr = array('estatus' => 'No se pudieron cargar las variables del registro.','error' => 6);
-					return $arr;
+					return json_encode($arr);
 				}	
 			}else{
 				$dbS->rollbackTransaction();
 				$arr = array('estatus' => 'No se pudieron cargar las constantes del sistema.','error' => 7);
-				return $arr;
+				return json_encode($arr);
 			}
 		}
 		return json_encode($arr);
 	}
-
+}
 ?>
