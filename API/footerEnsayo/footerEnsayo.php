@@ -183,9 +183,8 @@ class footerEnsayo{
 	public function getFooterByID($token,$rol_usuario_id,$id_footerEnsayo){
 		global $dbS;
 		$usuario = new Usuario();
-		$id_footerEnsayo=1001;
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		//
+		echo ($id_footerEnsayo);
 		if($arr['error'] == 0){
 			$s= $dbS->qarrayA("
 		      	SELECT
@@ -193,7 +192,7 @@ class footerEnsayo{
 					buscula_id,
 					basculas.placas AS buscula_placas,
 					regVerFle_id,
-					IF(regVerFle.placas IS NULL,'NO USA',regVerFle.placas) AS regVerFle_id_placas,
+					regVerFle.placas AS regVerFle_id_placas,		
 					prensa_id,
 					observaciones,
 					prensas.placas AS prensa_placas
@@ -206,7 +205,8 @@ class footerEnsayo{
 				  		FROM
 				  			herramientas,footerEnsayo
 				  		WHERE
-				  			buscula_id = id_herramienta 
+				  			buscula_id = id_herramienta AND
+				  			id_footerEnsayo = 1QQ 
 					)AS basculas,
 					(
 				  		SELECT
@@ -215,7 +215,8 @@ class footerEnsayo{
 				  		FROM
 				  			herramientas,footerEnsayo
 				  		WHERE
-				  			prensa_id = id_herramienta
+				  			prensa_id = id_herramienta AND
+				  			id_footerEnsayo = 1QQ
 				  	)AS prensas,
 				  	(
 				  		SELECT
@@ -224,15 +225,17 @@ class footerEnsayo{
 				  		FROM
 				  			herramientas,footerEnsayo
 				  		WHERE
-				  			regVerFle_id = id_herramienta
+				  			regVerFle_id = id_herramienta AND
+				  			id_footerEnsayo = 1QQ
 				  	)AS regVerFle
 				WHERE
 					footerEnsayo.active = 1 AND
 					buscula_id = basculas.id_herramienta AND
 					prensa_id = prensas.id_herramienta AND
+					regVerFle_id = regVerFle.id_herramienta AND
 					id_footerEnsayo = 1QQ
 			      ",
-			      array($id_footerEnsayo),
+			      array($id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo),
 			      "SELECT"
 			      );
 			

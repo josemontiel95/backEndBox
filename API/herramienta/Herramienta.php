@@ -129,6 +129,14 @@ class Herramienta{
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
+					SELECT
+					 	id_herramienta AS id_herramienta,
+					 	placas AS placas 
+					FROM
+					 	herramientas
+					WHERE
+					 	id_herramienta = 80
+					UNION
 			      	SELECT 
 						*
 					FROM
