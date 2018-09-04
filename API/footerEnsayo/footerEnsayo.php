@@ -99,7 +99,7 @@ class footerEnsayo{
 								$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsCil,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, se inicializo un nuevo registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
 							}else{ 
 								if($idRegGabsCil==-2){
-									//$dbS->rollbackTransaction();
+									$dbS->rollbackTransaction();
 									$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
 								}else{
 									$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsCil,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, ya existia un registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
@@ -115,7 +115,7 @@ class footerEnsayo{
 							$id_herramienta=60;
 						break;
 				}
-				
+				$dbS->commitTransaction();
 			}
 			
 			
@@ -168,6 +168,7 @@ class footerEnsayo{
 				"INSERT"
 			);
 			if(!$dbS->didQuerydied){
+				echo "Se llego a devolver al idGabs";
 				$idRegGabsCil=$dbS->lastInsertedID;
 				return $idRegGabsCil;
 			}
