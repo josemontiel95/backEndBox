@@ -17,6 +17,10 @@
 			$ensayo = new EnsayoCilindro();
 			echo $ensayo->calcularAreaResis($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ensayoCilindro']);
 			break;
+		case 'getRegistrosByID':
+			$ensayo = new EnsayoCilindro();
+			echo $ensayo->getRegistrosByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ensayoCilindro']);
+			break;
 		
 	}
 ?>
