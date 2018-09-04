@@ -250,5 +250,51 @@ class EnsayoCilindro{
 		}
 		return json_encode($arr);
 	}
+
+	public function completeEnsayo($token,$rol_usuario_id,$id_ensayoCilindro){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->beginTransaction();
+				$a = $dbS->qarrayA(
+										"
+											SELECT
+												registrosCampo_id
+											FROM
+												ensayoCilindro
+											WHERE
+												id_ensayoCilindro = 1QQ
+										",
+										array($id_ensayoCilindro),
+										"SELECT"
+									 );
+				if(!$dbS->didQuerydied){
+					$dbS->squery("
+						UPDATE
+							registrosCampo
+						SET
+							status = 1QQ
+						WHERE
+							id_registrosCampo = 1QQ
+					",array(3,$a['registrosCampo_id']),"UPDATE");
+					if(!$dbS->didQuerydied){
+						$dbS->commitTransaction();
+						$arr = array('id_ensayoCilindro' => $id_ensayoCilindro,'estatus' => '¡Ensayo completado!','error' => 0);
+						return json_encode($arr);
+					}else{
+						$dbS->rollbackTransaction();
+						$arr = array('id_ensayoCilindro' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion, verifica tus datos y vuelve a intentarlo','error' => 5);
+						return json_encode($arr);
+					}	
+				}
+				else{
+					$dbS->rollbackTransaction();
+					$arr = array('id_ensayoCilindro' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
+					return json_encode($arr);
+				}		
+		}
+		return json_encode($arr);
+	}
 }
 ?>
