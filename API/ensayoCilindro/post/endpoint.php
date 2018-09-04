@@ -22,6 +22,10 @@
 			$footer = new EnsayoCilindro();
 			echo $footer->insertRegistroTecMuestra($_POST['token'],$_POST['rol_usuario_id'],$_POST['campo'],$_POST['valor'],$_POST['id_ensayoCilindro']);		
 		break;
+		case 'completeEnsayo':
+			$footer = new EnsayoCilindro();
+			echo $footer->completeEnsayo($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ensayoCilindro']);		
+		break;
 		
 	}
 	
