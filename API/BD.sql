@@ -656,6 +656,63 @@ CREATE TABLE ensayoCilindro(
 ALTER TABLE ensayoCilindro AUTO_INCREMENT=1001;
 ALTER TABLE ensayoCilindro ADD status INT NOT NULL DEFAULT 0;
 
+
+CREATE TABLE ensayoCubo(
+	id_ensayoCubo INT(11) NOT NULL AUTO_INCREMENT,
+	registrosCampo_id INT(11),
+	formatoCampo_id INT(11),
+	footerEnsayo_id INT(11),
+
+	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	active INT NOT NULL DEFAULT 1,
+
+	PRIMARY KEY(id_ensayoCubo),
+
+	FOREIGN KEY(registrosCampo_id)
+	REFERENCES registrosCampo(id_registrosCampo)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(formatoCampo_id)
+	REFERENCES formatoCampo(id_formatoCampo)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(footerEnsayo_id)
+	REFERENCES footerEnsayo(id_footerEnsayo)
+	ON DELETE SET NULL ON UPDATE CASCADE
+)ENGINE=INNODB;
+
+ALTER TABLE ensayoCubo AUTO_INCREMENT=1001;
+
+CREATE TABLE ensayoViga(
+	id_ensayoViga INT(11) NOT NULL AUTO_INCREMENT,
+	registrosCampo_id INT(11),
+	formatoCampo_id INT(11),
+	footerEnsayo_id INT(11),
+
+	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	active INT NOT NULL DEFAULT 1,
+
+	PRIMARY KEY(id_ensayoViga),
+
+	FOREIGN KEY(registrosCampo_id)
+	REFERENCES registrosCampo(id_registrosCampo)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(formatoCampo_id)
+	REFERENCES formatoCampo(id_formatoCampo)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(footerEnsayo_id)
+	REFERENCES footerEnsayo(id_footerEnsayo)
+	ON DELETE SET NULL ON UPDATE CASCADE
+
+)ENGINE=INNODB;
+
+ALTER TABLE ensayoViga AUTO_INCREMENT=1001;
+
+
 CREATE TABLE footerEnsayo(
 	id_footerEnsayo INT(11) NOT NULL AUTO_INCREMENT,
 	buscula_id INT(11),
