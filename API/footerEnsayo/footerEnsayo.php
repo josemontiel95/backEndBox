@@ -123,6 +123,7 @@ class footerEnsayo{
 		return json_encode($arr);
 
 	}
+
 	public function checkifRegCCHRegCILINDRO($id_RegistroCCH){
 		global $dbS;
 		$a = $dbS->qarrayA(
@@ -139,6 +140,50 @@ class footerEnsayo{
 				return -1;
 			}else{
 				return $a['id_ensayoCilindro'];
+			}
+		}else{
+			return -2;
+		}
+	}
+
+	public function checkifRegCCHRegCUBO($id_RegistroCCH){
+		global $dbS;
+		$a = $dbS->qarrayA(
+			"SELECT
+					*
+			FROM
+				ensayoCubo
+			WHERE 
+				registrosCampo_id=1QQ;
+			",array($id_RegistroCCH),"SELECT"
+		);
+		if(!$dbS->didQuerydied){
+			if(($a == "empty")){
+				return -1;
+			}else{
+				return $a['id_ensayoCubo'];
+			}
+		}else{
+			return -2;
+		}
+	}
+
+	public function checkifRegCCHRegVIGA($id_RegistroCCH){
+		global $dbS;
+		$a = $dbS->qarrayA(
+			"SELECT
+					*
+			FROM
+				ensayoViga
+			WHERE 
+				registrosCampo_id=1QQ;
+			",array($id_RegistroCCH),"SELECT"
+		);
+		if(!$dbS->didQuerydied){
+			if(($a == "empty")){
+				return -1;
+			}else{
+				return $a['id_ensayoViga'];
 			}
 		}else{
 			return -2;

@@ -863,6 +863,61 @@ class Usuario{
 
 	}
 
+	public function getTecnicosAvailableForLab($token,$rol_usuario_id){
+		global $dbS;
+		if($this->getIDByTokenAndValidate($token) == 'success'){
+			if($rol_usuario_id==$this->rol_usuario_id){
+				$arr= $dbS->qAll("
+							      	SELECT 
+									    id_usuario,
+									    CONCAT(nombre,' ',apellido) AS nombre
+									FROM 
+										usuario LEFT JOIN
+										(
+											SELECT
+												tecnico_id,
+												IF(tecnicos_ordenDeTrabajo.active = 0 AND CURDATE()>ordenDeTrabajo.fechaInicio, 'SI','NO') AS estado
+											FROM
+												tecnicos_ordenDeTrabajo,
+												ordenDeTrabajo
+											WHERE
+												ordenDeTrabajo_id = id_ordenDeTrabajo 
+										) AS estado_tec
+										ON usuario.id_usuario = estado_tec.tecnico_id
+									WHERE
+									  	usuario.active = 1 AND
+									  	rol_usuario_id = 1004 AND
+									  	(estado_tec.estado='SI' OR estado_tec.estado IS NULL) AND
+									  	laboratorio_id = 1001
+							      ",
+							      array(),
+							      "SELECT"
+			     			 );
+
+				if(!$dbS->didQuerydied){
+					if($arr == "empty"){
+						$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+						
+					}
+					return json_encode($arr);
+				}
+				else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query, verifica tus datos y vuelve a intentarlo','error' => 6);	
+					return json_encode($arr);
+				}
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
+				return json_encode($arr);
+			}
+		}
+		else{
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
+			return json_encode($arr);
+		}
+
+	}
+
 
 
 

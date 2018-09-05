@@ -58,6 +58,10 @@
 			$usuario = new Usuario();
 			echo $usuario->getTecnicosForDroptdown($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		case 'getTecnicosAvailableForLab':
+			$usuario = new Usuario();
+			echo $usuario->getTecnicosAvailableForLab($_GET['token'],$_GET['rol_usuario_id']);
+		break;
 
 	/*	case 'upDateAdmin':
 			$usuario = new Usuario();

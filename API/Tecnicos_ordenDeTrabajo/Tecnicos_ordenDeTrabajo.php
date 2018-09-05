@@ -187,7 +187,7 @@ class Tecnicos_ordenDeTrabajo{
 			
 			if(!$dbS->didQuerydied){
 				if($s=="empty"){
-					$arr = array("No hay herramientas asociadas a la orden:" => $id_ordenDeTrabajo, "error" =>5);
+					$arr = array("No hay Tecnicos asociados a la orden:" => $id_ordenDeTrabajo, "error" =>5);
 				}
 				else{
 					return json_encode($s);
