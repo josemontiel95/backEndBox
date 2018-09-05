@@ -664,6 +664,11 @@ CREATE TABLE ensayoCubo(
 	formatoCampo_id INT(11),
 	footerEnsayo_id INT(11),
 
+	l1 FLOAT(5.3),
+	l2 FLOAT(5.3),
+	carga FLOAT(5.3),
+	falla INT(11) NOT NULL,
+
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	active INT NOT NULL DEFAULT 1,
@@ -684,6 +689,7 @@ CREATE TABLE ensayoCubo(
 )ENGINE=INNODB;
 
 ALTER TABLE ensayoCubo AUTO_INCREMENT=1001;
+ALTER TABLE ensayoCubo ADD falla INT(11) NOT NULL;
 
 CREATE TABLE ensayoViga(
 	id_ensayoViga INT(11) NOT NULL AUTO_INCREMENT,
@@ -691,6 +697,20 @@ CREATE TABLE ensayoViga(
 	formatoCampo_id INT(11),
 	footerEnsayo_id INT(11),
 
+	condiciones VARCHAR(30) NOT NULL,
+	lijado VARCHAR(30) NOT NULL,
+	cuero VARCHAR(30) NOT NULL,
+	ancho1 FLOAT(5.3),
+	ancho2 FLOAT(5.3),
+ 	per1 FLOAT(5.3),
+ 	per2 FLOAT(5.3),
+ 	l1 FLOAT(5.3),
+ 	l2 FLOAT(5.3),
+ 	l3 FLOAT(5.3),
+ 	disApoyo FLOAT(5.3),
+ 	disCarga FLOAT(5.3),
+ 	carga FLOAT(5.3),
+	
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	active INT NOT NULL DEFAULT 1,

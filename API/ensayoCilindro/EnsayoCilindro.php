@@ -168,7 +168,7 @@ class EnsayoCilindro{
 					$promedio = ($variables['d1'] + $variables['d2'])/2;
 					$area = ((($promedio * $promedio) * $var_system['ensayo_def_pi'])/4);
 					if($area == 0){
-						$area = 'Eror: Verifique sus datos, el area debe ser distinta de 0';
+						$area = 'Error: Verifique sus datos, el area debe ser distinta de 0';
 						$resistencia = 'Error: No se puede realizar una division entre 0';
 						$error = 5;
 					} 	
