@@ -863,11 +863,26 @@ class Usuario{
 
 	}
 
-	public function getTecnicosAvailableForLab($token,$rol_usuario_id){
+	public function getTecnicosAvailableForLab($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){
-				$arr= $dbS->qAll("
+			
+				$arr = $dbS->qarrayA(
+							"
+								SELECT
+									laboratorio_id
+								FROM
+									ordenDeTrabajo
+								WHERE
+									id_ordenDeTrabajo = 1QQ
+							"
+							,
+							array($id_ordenDeTrabajo),
+							"SELECT"
+						);
+				if(!$dbS->didQuerydied && !($arr=="empty")){
+					$arr= $dbS->qAll("
 							      	SELECT 
 									    id_usuario,
 									    CONCAT(nombre,' ',apellido) AS nombre
@@ -888,22 +903,29 @@ class Usuario{
 									  	usuario.active = 1 AND
 									  	rol_usuario_id = 1004 AND
 									  	(estado_tec.estado='SI' OR estado_tec.estado IS NULL) AND
-									  	laboratorio_id = 1001
+									  	laboratorio_id = 1QQ
 							      ",
-							      array(),
+							      array($arr['laboratorio_id']),
 							      "SELECT"
 			     			 );
-
-				if(!$dbS->didQuerydied){
-					if($arr == "empty"){
-						$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
-						
+					if(!$dbS->didQuerydied){
+						if($arr == "empty"){
+						$arr = array('estatus' =>"No hay registros de Tecnicos disponibles", 'error' => 5);
+						}
+						return json_encode($arr);
 					}
-					return json_encode($arr);
+					else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query de tecnicos disponibles, verifica tus datos y vuelve a intentarlo','error' => 6);	
+						return json_encode($arr);
+					}
 				}
 				else{
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query, verifica tus datos y vuelve a intentarlo','error' => 6);	
-					return json_encode($arr);
+					if(!$dbS->didQuerydied){
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query de buscar orden de Trabajo, verifica tus datos y vuelve a intentarlo','error' => 6);
+					}
+					else{
+						$arr = array('estatus' =>"No existe una orden de trabajo con el id:".$id_ordenDeTrabajo, 'error' => 5);	
+					}
 				}
 			}
 			else{

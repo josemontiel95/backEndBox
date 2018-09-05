@@ -60,7 +60,7 @@
 		break;
 		case 'getTecnicosAvailableForLab':
 			$usuario = new Usuario();
-			echo $usuario->getTecnicosAvailableForLab($_GET['token'],$_GET['rol_usuario_id']);
+			echo $usuario->getTecnicosAvailableForLab($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
 		break;
 
 	/*	case 'upDateAdmin':
