@@ -168,7 +168,6 @@ class footerEnsayo{
 				"INSERT"
 			);
 			if(!$dbS->didQuerydied){
-				echo "Se llego a devolver al idGabs";
 				$idRegGabsCil=$dbS->lastInsertedID;
 				return $idRegGabsCil;
 			}
@@ -185,7 +184,6 @@ class footerEnsayo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		echo ($id_footerEnsayo);
 		if($arr['error'] == 0){
 			$s= $dbS->qarrayA("
 		      	SELECT
