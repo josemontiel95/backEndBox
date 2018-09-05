@@ -131,14 +131,15 @@ class Herramienta{
 			$arr= $dbS->qAll("
 					SELECT
 					 	id_herramienta AS id_herramienta,
-					 	placas AS placas 
+					 	placas
 					FROM
 					 	herramientas
 					WHERE
 					 	id_herramienta = 80
 					UNION
-			      	SELECT 
-						*
+						SELECT 
+						T1.id_herramienta,
+						CONCAT(placas,'(',T1.tipo,')') AS placas
 					FROM
 						(SELECT 
 						    id_herramienta,
