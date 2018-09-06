@@ -51,11 +51,11 @@ class footerEnsayo{
 
 				$dbS->squery("
 						INSERT INTO
-							footerEnsayo(buscula_id,regVerFle_id,prensa_id,tipo,observaciones)
+							footerEnsayo(buscula_id,regVerFle_id,prensa_id,tipo,observaciones,encargado_id)
 
 						VALUES
-							(1QQ,1QQ,1QQ,'1QQ','1QQ')
-				",array($var_system['ensayo_def_buscula_id'],$var_system['ensayo_def_regVerFle_id'],$var_system['ensayo_def_prensa_id'],$tipo,$var_system['observaciones']),"INSERT");
+							(1QQ,1QQ,1QQ,'1QQ','1QQ',1QQ)
+				",array($var_system['ensayo_def_buscula_id'],$var_system['ensayo_def_regVerFle_id'],$var_system['ensayo_def_prensa_id'],$tipo,$var_system['observaciones'],$usuario->id_usuario),"INSERT");
 				if(!$dbS->didQuerydied){
 					$id=$dbS->lastInsertedID;
 					switch($tipo){
@@ -342,9 +342,12 @@ class footerEnsayo{
 					regVerFle.placas AS regVerFle_id_placas,		
 					prensa_id,
 					observaciones,
-					prensas.placas AS prensa_placas
+					prensas.placas AS prensa_placas,
+					encargado_id,
+					CONCAT(nombre,' ',apellido) AS nombre
 				FROM
 					footerEnsayo,
+					usuario,
 					(
 						SELECT
 				  			id_herramienta,
@@ -376,6 +379,7 @@ class footerEnsayo{
 				  			id_footerEnsayo = 1QQ
 				  	)AS regVerFle
 				WHERE
+					encargado_id = id_usuario AND
 					footerEnsayo.active = 1 AND
 					buscula_id = basculas.id_herramienta AND
 					prensa_id = prensas.id_herramienta AND

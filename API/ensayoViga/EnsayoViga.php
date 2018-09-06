@@ -54,7 +54,9 @@ class EnsayoViga{
 				case '13':
 					$campo = 'carga';
 					break;
-
+				case '14':
+					$campo = 'defectos';
+					break;
 			}
 
 			$dbS->squery("
@@ -72,55 +74,6 @@ class EnsayoViga{
 			}else{
 				$arr = array('id_ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
 				return json_encode($arr);
-			}
-		}
-		return json_encode($arr);
-	}
-
-	
-	public function getRegistrosCilByID($token,$rol_usuario_id,$id_ensayoViga){
-		global $dbS;
-		$usuario = new Usuario();
-		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		if($arr['error'] == 0){
-			$s = $dbS->qarrayA("
-			      SELECT
-			      	id_registrosCampo,
-					formatoCampo_id,
-			        claveEspecimen,
-					fecha,
-					fprima,
-					revProyecto,
-					revObra,
-					tamagregado,
-					volumen,
-					diasEnsaye,
-					unidad,
-					horaMuestreo,
-					tempMuestreo,
-					tempRecoleccion,
-					localizacion,
-					status
-			      FROM 
-			      	registrosCampo
-			      WHERE 
-			      	registrosCampo.active = 1 AND
-			      	id_registrosCampo = 1QQ
-			      ",
-			      array($id_registrosCampo),
-			      "SELECT"
-			      );
-			
-			if(!$dbS->didQuerydied){
-				if($s=="empty"){
-					$arr = array('No existen registro relacionados con el id_registrosCampo'=>$id_registrosCampo,'error' => 5);
-				}
-				else{
-					return json_encode($s);
-				}
-			}
-			else{
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 			}
 		}
 		return json_encode($arr);
@@ -206,6 +159,7 @@ class EnsayoViga{
 						disApoyo,
 						disCarga,
 						carga,
+						defectos,
 						registrosCampo_id,
 						claveEspecimen,
 						fecha,
