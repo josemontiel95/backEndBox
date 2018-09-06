@@ -710,6 +710,7 @@ CREATE TABLE ensayoViga(
  	disApoyo FLOAT(5.3),
  	disCarga FLOAT(5.3),
  	carga FLOAT(5.3),
+ 	defectos VARCHAR(20),
 	
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -732,10 +733,14 @@ CREATE TABLE ensayoViga(
 )ENGINE=INNODB;
 
 ALTER TABLE ensayoViga AUTO_INCREMENT=1001;
+ALTER TABLE ensayoViga ADD defectos VARCHAR(20);
 
 
 CREATE TABLE footerEnsayo(
 	id_footerEnsayo INT(11) NOT NULL AUTO_INCREMENT,
+	encargado_id INT(11),
+
+
 	buscula_id INT(11),
 	regVerFle_id INT(11),
 	prensa_id INT(11),
@@ -758,13 +763,16 @@ CREATE TABLE footerEnsayo(
 
 	FOREIGN KEY(prensa_id)
 	REFERENCES herramientas(id_herramienta)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(encargado_id)
+	REFERENCES usuario(id_usuario)
 	ON DELETE SET NULL ON UPDATE CASCADE
 
 )ENGINE=INNODB;
 
 ALTER TABLE footerEnsayo AUTO_INCREMENT=1001;
 ALTER TABLE footerEnsayo ADD observaciones VARCHAR(30);
-
 
 ================
 DROP TABLE dato;
