@@ -417,7 +417,6 @@ class registrosCampo{
 						laboratorio_id,
 						tipo,
 						registrosCampo.active,
-						DATE_ADD(fecha,INTERVAL diasEnsaye DAY) AS FechaAgendadaDeEnsaye,
 						IF(registrosCampo.status = 3,'SI','NO') AS completado,
 						IF(DATE_ADD(fecha, INTERVAL diasEnsaye DAY) < CURDATE(),'ATRASADO','AGENDADO PARA HOY') AS estado,
 						CASE
@@ -441,7 +440,18 @@ class registrosCampo{
 							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
 							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
 							ELSE 'Error, Contacta a soporte'
-						END AS diasEnsaye  
+						END AS diasEnsaye,
+						CASE
+							WHEN MOD(diasEnsaye,4) = 1 THEN DATE_ADD(fecha, INTERVAL prueba1 DAY)
+							WHEN MOD(diasEnsaye,4) = 1 THEN DATE_ADD(fecha, INTERVAL prueba1 DAY)
+							WHEN MOD(diasEnsaye,4) = 2 THEN DATE_ADD(fecha, INTERVAL prueba2 DAY)  
+							WHEN MOD(diasEnsaye,4) = 2 THEN DATE_ADD(fecha, INTERVAL prueba2 DAY)
+							WHEN MOD(diasEnsaye,4) = 3 THEN DATE_ADD(fecha, INTERVAL prueba3 DAY)  
+							WHEN MOD(diasEnsaye,4) = 3 THEN DATE_ADD(fecha, INTERVAL prueba3 DAY)
+							WHEN MOD(diasEnsaye,4) = 0 THEN DATE_ADD(fecha, INTERVAL prueba4 DAY)  
+							WHEN MOD(diasEnsaye,4) = 0 THEN DATE_ADD(fecha, INTERVAL prueba4 DAY)
+							ELSE 'Error, Contacta a soporte'
+						END AS fechaEnsayeAsignado  
 					FROM
 						registrosCampo,formatoCampo,ordenDeTrabajo
 					WHERE

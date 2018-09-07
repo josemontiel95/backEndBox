@@ -63,6 +63,7 @@ class EnsayoViga{
 						UPDATE
 							ensayoViga
 						SET
+							fecha = CURDATE(),
 							1QQ = '1QQ'
 						WHERE
 							id_ensayoViga = 1QQ
@@ -90,6 +91,7 @@ class EnsayoViga{
 						footerEnsayo_id,
 						encargado_id,
 						CONCAT(nombre,' ',apellido) AS nombre,
+						ensayoViga.fecha AS fechaEnsayo,
 						condiciones,
 						lijado,
 						cuero,
@@ -106,7 +108,7 @@ class EnsayoViga{
 						defectos,
 						registrosCampo_id,
 						claveEspecimen,
-						fecha,
+						registrosCampo.fecha AS fechaColado,
 						diasEnsaye,
 						ensayoViga.formatoCampo_id,
 						informeNo,
