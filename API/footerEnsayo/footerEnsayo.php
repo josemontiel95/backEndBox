@@ -309,9 +309,9 @@ class footerEnsayo{
 		if(!$dbS->didQuerydied && !($a=="empty")){
 			$dbS->squery("
 				INSERT INTO
-					ensayoViga(registrosCampo_id,formatoCampo_id,footerEnsayo_id)
+					ensayoViga(registrosCampo_id,formatoCampo_id,footerEnsayo_id,fecha)
 				VALUES
-					(1QQ,1QQ,1QQ)
+					(1QQ,1QQ,1QQ,CURDATE())
 				",array($id_RegistroCCH, $a['formatoCampo_id'],$id ),
 				"INSERT"
 			);
