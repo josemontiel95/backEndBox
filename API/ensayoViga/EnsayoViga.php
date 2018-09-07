@@ -79,64 +79,6 @@ class EnsayoViga{
 		return json_encode($arr);
 	}
 
-	//Aun no se realizan los calculos por falta de informacion por parte de gabino
-	public function calcularModulo($token,$rol_usuario_id,$id_ensayoViga){
-		global $dbS;
-		$usuario = new Usuario();
-		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		if($arr['error'] == 0){
-			$dbS->beginTransaction();
-			$var_system = $dbS->qarrayA(
-					"
-						SELECT
-							ensayo_def_pi
-						FROM
-							systemstatus
-						ORDER BY id_systemstatus DESC;
-					",array(),"SELECT"
-					);
-			if(!$dbS->didQuerydied){
-				$variables = $dbS->qarrayA(
-					"
-						SELECT
-							d1,
-							d2,
-							carga
-						FROM
-							ensayoViga
-						WHERE 
-							id_ensayoViga  = 1QQ
-					",array($id_ensayoViga),"SELECT"
-					);
-				if(!$dbS->didQuerydied){
-					$dbS->commitTransaction();
-					$promedio = ($variables['d1'] + $variables['d2'])/2;
-					$area = ((($promedio * $promedio) * $var_system['ensayo_def_pi'])/4);
-					if($area == 0){
-						$area = 'Error: Verifique sus datos, el area debe ser distinta de 0';
-						$resistencia = 'Error: No se puede realizar una division entre 0';
-						$error = 5;
-					} 	
-					else{
-						$resistencia = $variables['carga']/$area;
-						$error = 0;
-					}
-					$arr = array('area' => $area,'resistencia' => $resistencia, 'error'=> $error);
-					return json_encode($arr);
-				}
-				else{
-					$dbS->rollbackTransaction();
-					$arr = array('estatus' => 'No se pudieron cargar las variables del registro.','error' => 6);
-					return json_encode($arr);
-				}	
-			}else{
-				$dbS->rollbackTransaction();
-				$arr = array('estatus' => 'No se pudieron cargar las constantes del sistema.','error' => 7);
-				return json_encode($arr);
-			}
-		}
-		return json_encode($arr);
-	}
 	public function getRegistrosByID($token,$rol_usuario_id,$id_ensayoViga){
 		global $dbS;
 		$usuario = new Usuario();
@@ -249,6 +191,64 @@ class EnsayoViga{
 					$arr = array('id_ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
 					return json_encode($arr);
 				}		
+		}
+		return json_encode($arr);
+	}
+
+	public function calcularModulo($token,$rol_usuario_id,$id_ensayoViga){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->beginTransaction();
+			$var_system = $dbS->qarrayA(
+					"
+						SELECT
+							ensayo_def_distanciaApoyos
+						FROM
+							systemstatus
+						ORDER BY id_systemstatus DESC;
+					",array(),"SELECT"
+					);
+			if(!$dbS->didQuerydied){
+				$variables = $dbS->qarrayA(
+					"
+						SELECT
+							carga,
+							ancho1,
+							ancho2,
+							per1,
+							per2
+						FROM
+							ensayoViga
+						WHERE 
+							id_ensayoViga  = 1QQ
+					",array($id_ensayoViga),"SELECT"
+					);
+				if(!$dbS->didQuerydied){
+					$dbS->commitTransaction();
+					$promedioAncho = ($variables['ancho1'] + $variables['ancho2'])/2;
+					$promedioPer = ($variables['per1'] + $variables['per2'])/2;
+					$area = ($promedioAncho * ($promedioPer * $promedioPer));
+					if($area == 0){
+						$area = 'Error: Verifique sus datos, el area debe ser distinta de 0';
+						$modulo = 'Error: No se puede realizar una division entre 0';
+						$error = 5;
+					} 	
+					else{
+						$modulo = (3*$variables['carga']*$var_system['ensayo_def_distanciaApoyos'])/$area;
+						$error = 0;
+					}
+					$arr = array('area' => $area,'modulo' => $modulo, 'error'=> $error);
+				}
+				else{
+					$dbS->rollbackTransaction();
+					$arr = array('estatus' => 'No se pudieron cargar las variables del registro.','error' => 6);
+				}	
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('estatus' => 'No se pudieron cargar las constantes del sistema.','error' => 7);
+			}
 		}
 		return json_encode($arr);
 	}
