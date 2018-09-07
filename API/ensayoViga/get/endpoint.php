@@ -13,9 +13,9 @@
 	include_once("./../EnsayoViga.php");
 
 	switch ($function) {
-		case 'calcularAreaResis':
+		case 'calcularPromedio':
 			$ensayo = new EnsayoViga();
-			echo $ensayo->calcularAreaResis($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ensayoViga']);
+			echo $ensayo->calcularPromedio($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ensayoViga']);
 			break;
 		case 'getRegistrosByID':
 			$ensayo = new EnsayoViga();

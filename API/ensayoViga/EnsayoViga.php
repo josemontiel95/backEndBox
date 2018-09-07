@@ -80,7 +80,7 @@ class EnsayoViga{
 	}
 
 	//Aun no se realizan los calculos por falta de informacion por parte de gabino
-	public function calcularAreaResis($token,$rol_usuario_id,$id_ensayoViga){
+	public function calcularModulo($token,$rol_usuario_id,$id_ensayoViga){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -146,6 +146,8 @@ class EnsayoViga{
 			    	SELECT
 						id_ensayoViga,
 						footerEnsayo_id,
+						encargado_id,
+						CONCAT(nombre,' ',apellido) AS nombre,
 						condiciones,
 						lijado,
 						cuero,
@@ -178,8 +180,10 @@ class EnsayoViga{
 							ELSE 'Error, Contacta a soporte'
 						END AS diasEnsayeFinal
 					FROM 
-						ensayoViga,registrosCampo,formatoCampo
+						ensayoViga,registrosCampo,formatoCampo,footerEnsayo,usuario
 					WHERE
+						footerEnsayo_id = id_footerEnsayo AND
+						encargado_id = id_usuario AND
 						id_formatoCampo = ensayoViga.formatoCampo_id AND
 						id_registrosCampo = ensayoViga.registrosCampo_id AND
 						id_ensayoViga = 1QQ
@@ -248,5 +252,37 @@ class EnsayoViga{
 		}
 		return json_encode($arr);
 	}
+
+	public function calcularPromedio($token,$rol_usuario_id,$id_ensayoViga){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->beginTransaction();
+			$variables = $dbS->qarrayA(
+					"
+						SELECT
+							l1,
+							l2,
+							l3
+						FROM
+							ensayoViga
+						WHERE 
+							id_ensayoViga  = 1QQ
+					",array($id_ensayoViga),"SELECT"
+					);
+			if(!$dbS->didQuerydied){
+				$dbS->commitTransaction();
+				$promedio = ($variables['l1'] + $variables['l2'] + $variables['l3'])/3;
+				$arr = array('promedio' => $promedio,'error' => 0);
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('estatus' => 'No se pudieron cargar las variables del registro.','error' => 6);
+			}
+		}
+		return json_encode($arr);
+	}
+
+
 }
 ?>
