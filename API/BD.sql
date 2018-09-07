@@ -814,6 +814,7 @@ CREATE TABLE systemstatus(
 	ensayo_def_prensa_id INT NOT NULL,
 	ensayo_def_observaciones VARCHAR(30),
 	ensayo_def_pi INT NOT NULL,
+	ensayo_def_distanciaApoyos INT NOT NULL,
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	active INT NOT NULL DEFAULT 1,
@@ -829,7 +830,7 @@ ALTER TABLE systemstatus ADD ensayo_def_regVerFle_id INT NOT NULL;
 ALTER TABLE systemstatus ADD ensayo_def_prensa_id INT NOT NULL;
 ALTER TABLE systemstatus ADD ensayo_def_observaciones VARCHAR(30);
 ALTER TABLE systemstatus ADD ensayo_def_pi INT NOT NULL;
-
+ALTER TABLE systemstatus ADD ensayo_def_distanciaApoyos INT NOT NULL;
 
 INSERT INTO 
 
@@ -859,7 +860,8 @@ INSERT INTO
 			ensayo_def_regVerFle_id,
 			ensayo_def_prensa_id,
 			ensayo_def_observaciones,
-			ensayo_def_pi
+			ensayo_def_pi,
+			ensayo_def_distanciaApoyos
 		)
 
 VALUES(
@@ -871,7 +873,8 @@ VALUES(
 	1006,
 	1008,
 	"NO HAY OBSERVACIONES",
-	3.1416
+	3.1416,
+	'45'
 )
 
 
