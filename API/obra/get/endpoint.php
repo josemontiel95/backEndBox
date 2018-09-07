@@ -13,21 +13,19 @@
 	include_once("./../Obra.php");
 
 	switch ($function) {
-		case 'insert':
+		case 'getForDroptdownAdmin':
 			$obra = new Obra();
-			echo $obra->insert($_GET['token'],$_GET['rol_usuario_id'],$_GET['obra'],$_GET['prefijo'],$_GET['fechaDeCreacion'],$_GET['descripcion'],$_GET['cliente_id'],$_GET['concretera'],$_GET['tipo']);		
-		break;
-		case 'upDate':
-			$obra = new Obra();
-			echo $obra->upDate($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_obra'],$_GET['obra'],$_GET['prefijo'],$_GET['fechaDeCreacion'],$_GET['descripcion'],$_GET['cliente_id'],$_GET['concretera'],$_GET['tipo']);
-		break;
-		case 'getAllUser':
-			$obra = new Obra();
-			echo $obra->getAllUser($_GET['token'],$_GET['rol_usuario_id']);
+			echo $obra->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
 		case 'getAllAdmin':
 			$obra = new Obra();
 			echo $obra->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		case 'getByIDAdmin':
+			$obra = new Obra();
+			echo $obra->getByIDAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_obra']);
+		break;
+
+
 	}
 ?>
