@@ -250,7 +250,7 @@
 
 			//Especimenes
 			$especimenes = 'ESPECIMENES';
-			$tam_especimenes = ($tam_area + $tam_altura + $tam_lado1 + $tam_lado2 + $tam_edad + $tam_peso + $tam_rev);
+			$tam_especimenes = ($tam_area + $tam_lado1 + $tam_lado2 + $tam_edad + $tam_rev);
 			$this->SetY($posicion_y); $this->SetX($posicion_x); 
 			$this->cell($tam_especimenes,1.5*($tam_font_head - 3),$especimenes,1,2,'C');
 
@@ -289,10 +289,9 @@
 									$tam_kg,
 									$tam_kN,
 									$tam_area,
-									$tam_altura,
-									$tam_diametro,
+									$tam_lado2,
+									$tam_lado1,
 									$tam_edad,
-									$tam_peso,
 									$tam_rev,
 									$tam_clave,
 									$tam_fecha
@@ -311,7 +310,7 @@
 			for ($i=0; $i < 8; $i++){
 				//Definimos la posicion de X para tomarlo como referencia
 				$this->SetX(-10); $posicion_x = $this->GetX();	
-				for ($j=0; $j < 15; $j++){ 
+				for ($j=0; $j < 14; $j++){ 
 					//Definimos la posicion apartir de la cual vamos a insertar la celda
 					$this->SetX($posicion_x - $array_campo[$j]); $posicion_x = $this->GetX();
 					$this->cell($array_campo[$j],$tam_font_head - 2.5,'',1,0,'C');
@@ -343,10 +342,14 @@
 			//Guardamos la posicion de Y para insertar la cellda de "Elemento muestreado"
 			$ele_posicion_y = $this->GetY();
 			
+			/*
+				PENDIENTE:
+						-MODIFICAR LOS FOR OBTENER LA CANTIDAD DE ELEMENTOS DEL ARRAY DE MANERA DINAMICA 
+			*/
 			for ($i=0; $i < 8; $i++){
 				//Definimos la posicion de X para tomarlo como referencia
 				$this->SetX(-10); $posicion_x = $this->GetX();	
-				for ($j=0; $j < 15; $j++){ 
+				for ($j=0; $j < 14; $j++){ 
 					//Definimos la posicion apartir de la cual vamos a insertar la celda
 					$this->SetX($posicion_x - $array_campo[$j]); $posicion_x = $this->GetX();
 					$this->cell($array_campo[$j],$tam_font_head - 2.5,'',1,0,'C');
@@ -434,7 +437,7 @@
 			$pdf  = new InformeCubos('L','mm','Letter');
 			$pdf->AddPage();
 			$pdf->putInfo($infoFormato);
-			$pdf->putTables();
+			$pdf->putTables($regisFormato);
 			$pdf->Output();
 		}
 
