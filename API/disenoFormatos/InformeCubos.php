@@ -140,7 +140,7 @@
 
 		}
 
-		function putTables(){
+		function putTables($regisFormato){
 			//Guardamos la posicion de la Y para alinear todas las celdas a la misma altura
 			$posicion_y = $this->GetY();
 
@@ -327,12 +327,15 @@
 				}
 			}
 
-			*/	
+			*/
+
 			foreach ($regisFormato as $registro) {
 				$this->SetX(-10); $posicion_x = $this->GetX();
+				$j=0;
 				foreach ($registro as $campo) {
 					$this->SetX($posicion_x - $array_campo[$j]); $posicion_x = $this->GetX();
 					$this->cell($array_campo[$j],$tam_font_head - 2.5,$campo,1,0,'C');
+					$j++;
 				}
 				$this->Ln();
 			}

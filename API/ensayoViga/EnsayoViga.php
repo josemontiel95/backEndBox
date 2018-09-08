@@ -167,17 +167,17 @@ class EnsayoViga{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$dbS->beginTransaction();
+				$dbS->beginTransaction();
 				$a = $dbS->qarrayA(
 										"
 											SELECT
 												registrosCampo_id
 											FROM
-												ensayoViga
+												ensayoCilindro
 											WHERE
-												id_ensayoViga = 1QQ
+												id_ensayoCilindro = 1QQ
 										",
-										array($id_ensayoViga),
+										array($id_ensayoCilindro),
 										"SELECT"
 									 );
 				if(!$dbS->didQuerydied){
@@ -185,24 +185,38 @@ class EnsayoViga{
 						UPDATE
 							registrosCampo
 						SET
-							fecha = CURDATE(),
 							status = 1QQ
 						WHERE
 							id_registrosCampo = 1QQ
 					",array(3,$a['registrosCampo_id']),"UPDATE");
 					if(!$dbS->didQuerydied){
-						$dbS->commitTransaction();
-						$arr = array('id_ensayoViga' => $id_ensayoViga,'estatus' => '¡Ensayo completado!','error' => 0);
-						return json_encode($arr);
-					}else{
+						$dbS->squery("
+						UPDATE
+							ensayoCilindro
+						SET
+							fecha = CURDATE()
+						WHERE
+							id_ensayoCilindro = 1QQ
+						",array($id_ensayoCilindro),"UPDATE");
+						if(!$dbS->didQuerydied){
+							$dbS->commitTransaction();
+							$arr = array('id_ensayoCilindro' => $id_ensayoCilindro,'estatus' => '¡Ensayo completado!','error' => 0);
+							return json_encode($arr);
+						}
+						else{
+							$dbS->rollbackTransaction();
+							$arr = array('id_ensayoCilindro' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCilindro, verifica tus datos y vuelve a intentarlo','error' => 5);
+							return json_encode($arr);	
+						}
+					}
+					else{
 						$dbS->rollbackTransaction();
-						$arr = array('id_ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion, verifica tus datos y vuelve a intentarlo','error' => 5);
+						$arr = array('id_ensayoCilindro' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCCH, verifica tus datos y vuelve a intentarlo','error' => 5);
 						return json_encode($arr);
-					}	
-				}
-				else{
+					}
+				}else{
 					$dbS->rollbackTransaction();
-					$arr = array('id_ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
+					$arr = array('id_ensayoCilindro' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
 					return json_encode($arr);
 				}		
 		}
