@@ -140,7 +140,8 @@ class ordenDeTrabajo{
 							laboratorio,
 							usuario.nombre AS nombre_jefe_brigada_id,
 							jefe_brigada_id,
-							IF(ordenDeTrabajo.active = 1,'Si','No') AS active
+							IF(ordenDeTrabajo.active = 1,'Si','No') AS active,
+							ordenDeTrabajo.active AS activeColor
 						from
 							usuario,ordenDeTrabajo,obra,laboratorio
 						WHERE
@@ -277,7 +278,6 @@ class ordenDeTrabajo{
 			$s= $dbS->qarrayA("
 			        SELECT 
 							id_ordenDeTrabajo,
-							cotizacion_id,
 							actividades,
 							condicionesTrabajo,
 							fechaInicio,
