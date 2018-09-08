@@ -101,6 +101,7 @@ class EnsayoViga{
 			    	SELECT
 						id_ensayoViga,
 						footerEnsayo_id,
+						IF(registrosCampo.status = 3,'SI','NO') AS completado,
 						encargado_id,
 						CONCAT(nombre,' ',apellido) AS nombre,
 						ensayoViga.fecha AS fechaEnsayo,
