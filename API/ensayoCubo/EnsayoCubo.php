@@ -42,7 +42,7 @@ class EnsayoCubo{
 				",array($campo,$valor,$id_ensayoCubo),"UPDATE");
 			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
 			if(!$dbS->didQuerydied){
-				$fechaEnsayo = qarrayA(
+				$fechaEnsayo = $dbS->qarrayA(
 					"
 						SELECT 
 							fecha
@@ -124,8 +124,7 @@ class EnsayoCubo{
 						claveEspecimen,
 						fecha,
 						diasEnsaye,
-						ensayoCubo.formatoCampo_id,
-						informeNo,
+						ensayoCubo.formatoCampo_id
 						CASE
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1

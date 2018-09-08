@@ -631,8 +631,7 @@ CREATE TABLE ensayoCilindro(
 	h2 FLOAT(5.3) NOT NULL,
 	carga FLOAT(7.3) NOT NULL,
 	falla INT(11) NOT NULL,
-
-	status INT NOT NULL DEFAULT 0,
+	fecha DATE,
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -818,6 +817,9 @@ CREATE TABLE systemstatus(
 	ensayo_def_pi INT NOT NULL,
 	ensayo_def_distanciaApoyos INT NOT NULL,
 	ensayo_def_kN INT NOT NULL,
+	ensayo_def_divisorKn INT NOT NULL,
+
+	ensayo_def_MPa INT NOT NULL,
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	active INT NOT NULL DEFAULT 1,
@@ -835,23 +837,8 @@ ALTER TABLE systemstatus ADD ensayo_def_observaciones VARCHAR(30);
 ALTER TABLE systemstatus ADD ensayo_def_pi INT NOT NULL;
 ALTER TABLE systemstatus ADD ensayo_def_distanciaApoyos INT NOT NULL;
 ALTER TABLE systemstatus ADD ensayo_def_kN INT NOT NULL;
-
-INSERT INTO 
-
-	systemstatus(
-			cch_def_prueba1,
-			cch_def_prueba2,
-			cch_def_prueba3,
-			cch_def_prueba4
-
-		)
-
-VALUES(
-	7,
-	14,
-	28,
-	28
-)
+ALTER TABLE systemstatus ADD ensayo_def_MPa INT NOT NULL;
+ALTER TABLE systemstatus ADD ensayo_def_divisorKn INT NOT NULL;
 
 INSERT INTO 
 
@@ -866,7 +853,9 @@ INSERT INTO
 			ensayo_def_observaciones,
 			ensayo_def_pi,
 			ensayo_def_distanciaApoyos,
-			ensayo_def_kN
+			ensayo_def_kN,
+			ensayo_def_MPa,
+			ensayo_def_divisorKn
 		)
 
 VALUES(
@@ -880,8 +869,9 @@ VALUES(
 	"NO HAY OBSERVACIONES",
 	3.1416,
 	'45',
-	101.971
-
+	101.971,
+	10.2,
+	1000
 )
 
 

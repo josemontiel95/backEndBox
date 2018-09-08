@@ -70,13 +70,14 @@ class EnsayoCilindro{
 						UPDATE
 							ensayoCilindro
 						SET
+							fecha = CURDATE(),
 							1QQ = '1QQ'
 						WHERE
 							id_ensayoCilindro = 1QQ
 				",array($campo,$valor,$id_ensayoCilindro),"UPDATE");
 			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
 			if(!$dbS->didQuerydied){
-				$fechaEnsayo = qarrayA(
+				$fechaEnsayo = $dbS->qarrayA(
 					"
 						SELECT 
 							fecha
@@ -177,8 +178,7 @@ class EnsayoCilindro{
 						claveEspecimen,
 						fecha,
 						diasEnsaye,
-						ensayoCilindro.formatoCampo_id,
-						informeNo,
+						ensayoCilindro.formatoCampo_id
 						CASE
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
