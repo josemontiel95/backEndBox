@@ -173,11 +173,11 @@ class EnsayoViga{
 											SELECT
 												registrosCampo_id
 											FROM
-												ensayoCilindro
+												ensayoViga
 											WHERE
-												id_ensayoCilindro = 1QQ
+												id_ensayoViga = 1QQ
 										",
-										array($id_ensayoCilindro),
+										array($id_ensayoViga),
 										"SELECT"
 									 );
 				if(!$dbS->didQuerydied){
@@ -192,31 +192,31 @@ class EnsayoViga{
 					if(!$dbS->didQuerydied){
 						$dbS->squery("
 						UPDATE
-							ensayoCilindro
+							ensayoViga
 						SET
 							fecha = CURDATE()
 						WHERE
-							id_ensayoCilindro = 1QQ
-						",array($id_ensayoCilindro),"UPDATE");
+							id_ensayoViga = 1QQ
+						",array($id_ensayoViga),"UPDATE");
 						if(!$dbS->didQuerydied){
 							$dbS->commitTransaction();
-							$arr = array('id_ensayoCilindro' => $id_ensayoCilindro,'estatus' => '¡Ensayo completado!','error' => 0);
+							$arr = array('id_ensayoViga' => $id_ensayoViga,'estatus' => '¡Ensayo completado!','error' => 0);
 							return json_encode($arr);
 						}
 						else{
 							$dbS->rollbackTransaction();
-							$arr = array('id_ensayoCilindro' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCilindro, verifica tus datos y vuelve a intentarlo','error' => 5);
+							$arr = array('id_ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroViga, verifica tus datos y vuelve a intentarlo','error' => 5);
 							return json_encode($arr);	
 						}
 					}
 					else{
 						$dbS->rollbackTransaction();
-						$arr = array('id_ensayoCilindro' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCCH, verifica tus datos y vuelve a intentarlo','error' => 5);
+						$arr = array('id_ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCCH, verifica tus datos y vuelve a intentarlo','error' => 5);
 						return json_encode($arr);
 					}
 				}else{
 					$dbS->rollbackTransaction();
-					$arr = array('id_ensayoCilindro' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
+					$arr = array('id_ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
 					return json_encode($arr);
 				}		
 		}
