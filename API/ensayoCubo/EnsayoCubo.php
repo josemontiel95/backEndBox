@@ -122,7 +122,7 @@ class EnsayoCubo{
 						falla,
 						registrosCampo_id,
 						claveEspecimen,
-						fecha,
+						ensayoCubo.fecha AS fechaEnsayo,
 						diasEnsaye,
 						ensayoCubo.formatoCampo_id,
 						CASE

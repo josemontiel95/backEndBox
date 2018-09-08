@@ -298,14 +298,11 @@
 							);
 
 
-			/*
-			$tam_resistencia,
-									*/
-
-
 			//Guardamos la posicion de Y para insertar la cellda de "Elemento muestreado"
 			$ele_posicion_y = $this->GetY();
 			
+			/*
+					---------FUNCIONN QUE PINTA TODA LA PARTE DE ARRIBA SIGUIENDO EL FORMATO----
 			for ($i=0; $i < 8; $i++){
 				//Definimos la posicion de X para tomarlo como referencia
 				$this->SetX(-10); $posicion_x = $this->GetX();	
@@ -330,7 +327,28 @@
 				}
 			}
 
-
+			*/	
+			foreach ($regisFormato as $registro) {
+				$this->SetX(-10); $posicion_x = $this->GetX();
+				foreach ($registro as $campo) {
+					$this->SetX($posicion_x - $array_campo[$j]); $posicion_x = $this->GetX();
+					$this->cell($array_campo[$j],$tam_font_head - 2.5,$campo,1,0,'C');
+				}
+				$this->Ln();
+			}
+			//Guardamos la posicion en donde se quedo la Y para comparar con el tamaño de la celda del "Elemento"
+			$endDown_table = $this->GetY();
+			
+			//Modificamos el valor de Y para empezar en el inicio de la tabla
+			$this->SetY($ele_posicion_y);
+			//Insertamos las celdas de "Elemento muestreado"
+			$this->multicell($tam_ele,$tam_font_head - 2.5,'','L,T');
+			if($this->GetY() < $endDown_table){
+				$num_iteraciones = (($endDown_table - $this->GetY()) / ($tam_font_head - 2.5));
+				for ($i=0; $i < $num_iteraciones; $i++) { 
+					$this->cell($tam_ele,$tam_font_head - 2.5,'','L',2);
+				}
+			}
 
 				
 
