@@ -146,18 +146,19 @@
 
 			$tam_font_head = 6;	$this->SetFont('Arial','',$tam_font_head);
 
+			/*
 			$falla = 'FALLA';
 			$tam_falla = $this->GetStringWidth($falla)+3;
 
 			$this->SetX(-($tam_falla + 10));
 			$posicion_x = $this->GetX();
 			$this->multicell($tam_falla,(1.5*($tam_font_head - 3)),utf8_decode($falla.'N°'),1,'C');
-
+			*/
 			$resistencia = 'RESISTENCIA';	
 			$tam_resistencia = $this->GetStringWidth($resistencia)+3;
 			$this->SetY($posicion_y);
 			// $this->SetX($this->GetX() - $tam_resistencia);  (Se modifica el valor de la posicion de X cuando se imprime, por eso no se calcula bien)
-			$this->SetX($posicion_x - $tam_resistencia);
+			$this->SetX(-($tam_resistencia + 10));
 			$posicion_x = $this->GetX();
 			$this->multicell($tam_resistencia,(1.5*($tam_font_head - 3)),utf8_decode('% DE'."\n".$resistencia),1,'C');
 
@@ -251,37 +252,35 @@
 			//Especimenes
 			$especimenes = 'ESPECIMENES';
 			$tam_especimenes = ($tam_area + $tam_lado1 + $tam_lado2 + $tam_edad + $tam_rev);
-			$this->SetY($posicion_y); $this->SetX($posicion_x); 
+			$this->SetY($posicion_y);	$this->SetX($posicion_x); 
 			$this->cell($tam_especimenes,1.5*($tam_font_head - 3),$especimenes,1,2,'C');
 
 			//$this->SetY($posicion_y + 3*($tam_font_head - 3)); pone al final de la celda para el salto
-			$posicion_y = $this->GetY();
-
+			//$posicion_y = $this->GetY(); Esta era la posicion a la que brincaba cuando pasaban los especimenes
 
 			//Clave
 			$clave = 'CLAVE';
 			$tam_clave = $this->GetStringWidth($clave) + 25;
-			$this->SetX($posicion_x - $tam_clave);	$posicion_x = $this->GetX();
-			$this->cell($tam_clave,1.5*($tam_font_head - 3),$clave,1,0,'C');
+			$this->SetY($posicion_y);	$this->SetX($posicion_x - $tam_clave);	$posicion_x = $this->GetX();
+			$this->cell($tam_clave,1.5*(2*($tam_font_head) - 6),$clave,1,0,'C');
 
 			//Fecha de ensaye
 			$fecha = 'FECHA DE ENSAYE';
 			$tam_fecha = $this->GetStringWidth($fecha) + 3;
 			$this->SetX($posicion_x - $tam_fecha); $posicion_x = $this->GetX();
-			$this->cell($tam_fecha,1.5*($tam_font_head - 3),$fecha,1,0,'C');
+			$this->cell($tam_fecha,1.5*(2*($tam_font_head) - 6),$fecha,1,0,'C');
 
 			//Elemento
 			$elemento = 'ELEMENTO MUESTREADO';
 			$tam_ele = $posicion_x - 10;
 			$this->SetX(10);
-			$this->cell($tam_ele,1.5*($tam_font_head - 3),$elemento,1,2,'C');
+			$this->cell($tam_ele,1.5*(2*($tam_font_head) - 6),$elemento,1,2,'C');
 
 			$this->ln(1);
 
 			//Definimos el array con los tamaños de cada celda para crear las duplas
 
 			$array_campo = 	array(
-									$tam_falla,
 									$tam_resistencia,
 									$tam_proyecto,
 									$tam_kgcm,
@@ -310,7 +309,7 @@
 			for ($i=0; $i < 8; $i++){
 				//Definimos la posicion de X para tomarlo como referencia
 				$this->SetX(-10); $posicion_x = $this->GetX();	
-				for ($j=0; $j < 14; $j++){ 
+				for ($j=0; $j < sizeof($array_campo); $j++){ 
 					//Definimos la posicion apartir de la cual vamos a insertar la celda
 					$this->SetX($posicion_x - $array_campo[$j]); $posicion_x = $this->GetX();
 					$this->cell($array_campo[$j],$tam_font_head - 2.5,'',1,0,'C');
@@ -341,15 +340,11 @@
 
 			//Guardamos la posicion de Y para insertar la cellda de "Elemento muestreado"
 			$ele_posicion_y = $this->GetY();
-			
-			/*
-				PENDIENTE:
-						-MODIFICAR LOS FOR OBTENER LA CANTIDAD DE ELEMENTOS DEL ARRAY DE MANERA DINAMICA 
-			*/
+		
 			for ($i=0; $i < 8; $i++){
 				//Definimos la posicion de X para tomarlo como referencia
 				$this->SetX(-10); $posicion_x = $this->GetX();	
-				for ($j=0; $j < 14; $j++){ 
+				for ($j=0; $j < sizeof($array_campo); $j++){ 
 					//Definimos la posicion apartir de la cual vamos a insertar la celda
 					$this->SetX($posicion_x - $array_campo[$j]); $posicion_x = $this->GetX();
 					$this->cell($array_campo[$j],$tam_font_head - 2.5,'',1,0,'C');

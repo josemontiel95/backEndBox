@@ -35,13 +35,26 @@ class EnsayoCubo{
 						UPDATE
 							ensayoCubo
 						SET
+							fecha = CURDATE(),
 							1QQ = '1QQ'
 						WHERE
 							id_ensayoCubo = 1QQ
 				",array($campo,$valor,$id_ensayoCubo),"UPDATE");
 			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
 			if(!$dbS->didQuerydied){
-				$arr = array('id_ensayoCubo' => $id_ensayoCubo,'estatus' => '¡Exito en la inserccion de un registro!','error' => 0);
+				$fechaEnsayo = qarrayA(
+					"
+						SELECT 
+							fecha
+						FROM
+							ensayoCubo
+						WHERE
+							id_ensayoCubo = 1QQ
+					",
+					array($id_ensayoCubo),
+					"SELECT"
+				);
+				$arr = array('id_ensayoCubo' => $id_ensayoCubo,'estatus' => '¡Exito en la inserccion de un registro!','fechaEnsayo' => $fechaEnsayo['fecha'],'error' => 0);
 				return json_encode($arr);
 			}else{
 				$arr = array('id_ensayoCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
@@ -173,6 +186,7 @@ class EnsayoCubo{
 						UPDATE
 							registrosCampo
 						SET
+							fecha = CURDATE(),
 							status = 1QQ
 						WHERE
 							id_registrosCampo = 1QQ

@@ -668,6 +668,7 @@ CREATE TABLE ensayoCubo(
 	l2 FLOAT(5.3),
 	carga FLOAT(5.3),
 	falla INT(11) NOT NULL,
+	fecha DATE,
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -816,6 +817,7 @@ CREATE TABLE systemstatus(
 	ensayo_def_observaciones VARCHAR(30),
 	ensayo_def_pi INT NOT NULL,
 	ensayo_def_distanciaApoyos INT NOT NULL,
+	ensayo_def_kN INT NOT NULL,
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	active INT NOT NULL DEFAULT 1,
@@ -832,6 +834,7 @@ ALTER TABLE systemstatus ADD ensayo_def_prensa_id INT NOT NULL;
 ALTER TABLE systemstatus ADD ensayo_def_observaciones VARCHAR(30);
 ALTER TABLE systemstatus ADD ensayo_def_pi INT NOT NULL;
 ALTER TABLE systemstatus ADD ensayo_def_distanciaApoyos INT NOT NULL;
+ALTER TABLE systemstatus ADD ensayo_def_kN INT NOT NULL;
 
 INSERT INTO 
 
@@ -862,7 +865,8 @@ INSERT INTO
 			ensayo_def_prensa_id,
 			ensayo_def_observaciones,
 			ensayo_def_pi,
-			ensayo_def_distanciaApoyos
+			ensayo_def_distanciaApoyos,
+			ensayo_def_kN
 		)
 
 VALUES(
@@ -875,7 +879,9 @@ VALUES(
 	1008,
 	"NO HAY OBSERVACIONES",
 	3.1416,
-	'45'
+	'45',
+	101.971
+
 )
 
 

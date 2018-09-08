@@ -70,7 +70,19 @@ class EnsayoViga{
 				",array($campo,$valor,$id_ensayoViga),"UPDATE");
 			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
 			if(!$dbS->didQuerydied){
-				$arr = array('id_ensayoViga' => $id_ensayoViga,'estatus' => '¡Exito en la inserccion de un registro!','error' => 0);
+				$fechaEnsayo = qarrayA(
+					"
+						SELECT 
+							fecha
+						FROM
+							ensayoViga
+						WHERE
+							id_ensayoViga = 1QQ
+					",
+					array($id_ensayoViga),
+					"SELECT"
+				);
+				$arr = array('id_ensayoViga' => $id_ensayoViga,'estatus' => '¡Exito en la inserccion de un registro!','fechaEnsayo' => $fechaEnsayo['fecha'],'error' => 0);
 				return json_encode($arr);
 			}else{
 				$arr = array('id_ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
@@ -174,6 +186,7 @@ class EnsayoViga{
 						UPDATE
 							registrosCampo
 						SET
+							fecha = CURDATE(),
 							status = 1QQ
 						WHERE
 							id_registrosCampo = 1QQ
