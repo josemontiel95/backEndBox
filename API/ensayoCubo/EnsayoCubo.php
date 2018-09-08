@@ -124,7 +124,7 @@ class EnsayoCubo{
 						claveEspecimen,
 						fecha,
 						diasEnsaye,
-						ensayoCubo.formatoCampo_id
+						ensayoCubo.formatoCampo_id,
 						CASE
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1

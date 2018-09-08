@@ -178,7 +178,7 @@ class EnsayoCilindro{
 						claveEspecimen,
 						fecha,
 						diasEnsaye,
-						ensayoCilindro.formatoCampo_id
+						ensayoCilindro.formatoCampo_id,
 						CASE
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
