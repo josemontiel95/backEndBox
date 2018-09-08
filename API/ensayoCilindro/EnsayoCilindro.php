@@ -176,7 +176,7 @@ class EnsayoCilindro{
 						falla,
 						registrosCampo_id,
 						claveEspecimen,
-						fecha,
+						ensayoCilindro.fecha AS fechaEnsayo,
 						diasEnsaye,
 						ensayoCilindro.formatoCampo_id,
 						CASE
