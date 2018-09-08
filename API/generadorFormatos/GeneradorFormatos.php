@@ -33,7 +33,7 @@
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
 				$formato = new FormatoCampo();	$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
-				$regisFormato = $this->getRegCuboByFCCH
+				$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
 				//echo $infoFormato['tipo'];
 
 				switch ($infoFormato['tipo']) {

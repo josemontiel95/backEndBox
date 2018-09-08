@@ -122,7 +122,7 @@ class EnsayoViga{
 						claveEspecimen,
 						registrosCampo.fecha AS fechaColado,
 						diasEnsaye,
-						ensayoViga.formatoCampo_id
+						ensayoViga.formatoCampo_id,
 						CASE
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
