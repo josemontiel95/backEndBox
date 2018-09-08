@@ -179,6 +179,8 @@ class EnsayoCilindro{
 						ensayoCilindro.fecha AS fechaEnsayo,
 						diasEnsaye,
 						ensayoCilindro.formatoCampo_id,
+						registrosCampo.fecha AS fechaColado,
+						informeNo, 
 						CASE
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
