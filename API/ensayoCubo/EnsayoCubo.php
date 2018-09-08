@@ -116,6 +116,7 @@ class EnsayoCubo{
 			    	SELECT
 						id_ensayoCubo,
 						footerEnsayo_id,
+						IF(registrosCampo.status = 3,'SI','NO') AS completado,
 						l1,
 						l2,
 						carga,
