@@ -17,5 +17,9 @@
 			$generador = new GeneradorFormatos();
 			echo $generador->generateInformeCampo($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
 			break;
+		case 'getRegCuboByFCCH':
+			$generador = new GeneradorFormatos();
+			echo $generador->getRegCuboByFCCH($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
+			break;
 	}
 ?>

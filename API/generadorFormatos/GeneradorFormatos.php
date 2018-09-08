@@ -33,7 +33,7 @@
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
 				$formato = new FormatoCampo();	$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
-				$registros = new registrosCampo(); $regisFormato = json_decode($registros->getAllRegistrosByID($token,$rol_usuario_id,$id_formatoCampo),true);
+				$regisFormato = $this->getRegCuboByFCCH
 				//echo $infoFormato['tipo'];
 
 				switch ($infoFormato['tipo']) {
@@ -49,45 +49,18 @@
 			}
 			//return json_encode($arr);
 		}
-		/*
-		function getOperationsCubo($token,$rol_usuario_id,$id_formatoCampo){
+	
+		function getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo){
 			global $dbS;
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$dbS->beginTransaction();
-				$var_system = $dbS->qarrayA(
-						"
-							SELECT
-								ensayo_def_pi
-							FROM
-								systemstatus
-							ORDER BY id_systemstatus DESC;
-						",array(),"SELECT"
-						);
-
-
-
-
-				$s= $dbS->qarrayA("
+				$s= $dbS->qAll("
 				    	SELECT
 							id_ensayoCubo,
-							
-							carga,
-							falla,
 							ensayoCubo.fecha AS fechaEnsaye,
 							claveEspecimen,
 							revObra,
-							l1,
-							l2,
-							l1*l2 AS area,
-
-
-							registrosCampo_id,
-							fecha,
-							diasEnsaye,
-							ensayoCubo.formatoCampo_id,
-							informeNo,
 							CASE
 								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
@@ -98,94 +71,53 @@
 								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
 								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
 								ELSE 'Error, Contacta a soporte'
-							END AS diasEnsayeFinal
-						FROM 
-							ensayoCubo,registrosCampo,formatoCampo
+							END AS diasEnsaye,
+							l1,
+							l2,
+							l1*l2 AS area,
+							(carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn AS kn,
+							carga,
+							(carga/(l1*l2))/var_system.ensayo_def_MPa AS mpa,
+							carga/(l1*l2) AS kg,
+							fprima,
+							((carga/(l1*l2))/fprima)*100 AS porcentResis
+						FROM
+							ensayoCubo,
+							registrosCampo,
+							formatoCampo,
+							(
+								SELECT
+									ensayo_def_kN,
+									ensayo_def_MPa,
+									ensayo_def_divisorKn
+								FROM
+									systemstatus
+								ORDER BY id_systemstatus DESC LIMIT 1
+							)AS var_system
 						WHERE
-							id_formatoCampo = ensayoCubo.formatoCampo_id AND
 							id_registrosCampo = ensayoCubo.registrosCampo_id AND
-							id_ensayoCubo = 1QQ
+							id_formatoCampo = ensayoCubo.formatoCampo_id AND 
+							ensayoCubo.formatoCampo_id = 1QQ
 				      ",
-				      array($id_ensayoCubo),
+				      array($id_formatoCampo),
 				      "SELECT"
 				      );
 				
 				if(!$dbS->didQuerydied){
 					if($s=="empty"){
-						$arr = array('No existen registro relacionados con el id_ensayoCubo'=>$id_ensayoCubo,'error' => 5);
+						$arr = array('No existen registro relacionados con el id_formatoCampo'=>$id_formatoCampo,'error' => 5);
 					}
 					else{
-						return json_encode($s);
+						return $s;
 					}
 				}
 				else{
 						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 				}
 			}
-			return json_encode($arr);
+			return $arr;
+
 		}
-
-		function getinfoCubo($token,$rol_usuario_id,$id_formatoCampo){
-			global $dbS;
-			$usuario = new Usuario();
-			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-			if($arr['error'] == 0){
-				$s= $dbS->qarrayA("
-				    	SELECT
-							id_ensayoCubo,
-							
-							carga,
-							falla,
-							ensayoCubo.fecha AS fechaEnsaye,
-							claveEspecimen,
-							revObra,
-							l1,
-							l2,
-							l1*l2 AS area,
-
-
-							registrosCampo_id,
-							fecha,
-							diasEnsaye,
-							ensayoCubo.formatoCampo_id,
-							informeNo,
-							CASE
-								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
-								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
-								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
-								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
-								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
-								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
-								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
-								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
-								ELSE 'Error, Contacta a soporte'
-							END AS diasEnsayeFinal
-						FROM 
-							ensayoCubo,registrosCampo,formatoCampo
-						WHERE
-							id_formatoCampo = ensayoCubo.formatoCampo_id AND
-							id_registrosCampo = ensayoCubo.registrosCampo_id AND
-							id_ensayoCubo = 1QQ
-				      ",
-				      array($id_ensayoCubo),
-				      "SELECT"
-				      );
-				
-				if(!$dbS->didQuerydied){
-					if($s=="empty"){
-						$arr = array('No existen registro relacionados con el id_ensayoCubo'=>$id_ensayoCubo,'error' => 5);
-					}
-					else{
-						return json_encode($s);
-					}
-				}
-				else{
-						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
-				}
-			}
-			return json_encode($arr);
-
-		}*/
 	}
 	
 
