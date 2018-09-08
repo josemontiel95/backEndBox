@@ -161,7 +161,6 @@ VALUES("obra1","prefijo1","fechaDeCreacion1","descripcion1","localizacion1","nom
 //El lugar no deberia estar porque ya lo contempla la obra PENDIENTE
 CREATE TABLE ordenDeTrabajo(
 	id_ordenDeTrabajo INT(11) NOT NULL AUTO_INCREMENT,
-	cotizacion_id INT(11),
 	area VARCHAR(20) NOT NULL,
 	obra_id INT(11),
 	actividades TEXT,
@@ -175,6 +174,7 @@ CREATE TABLE ordenDeTrabajo(
 
 	lugar VARCHAR(150) NOT NULL,
 	laboratorio_id INT(11),
+	jefa_lab_id INT(11),
 	
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -200,6 +200,7 @@ CREATE TABLE ordenDeTrabajo(
 	ON DELETE SET NULL ON UPDATE CASCADE
 )ENGINE=INNODB;
 ALTER TABLE ordenDeTrabajo AUTO_INCREMENT=1001;
+
 
 INSERT INTO ordenDeTrabajo(cotizacion_id,obra_id,actividades,condicionesTrabajo,jefe_brigada_id,fechaInicio,fechaFin,horaInicio,horaFin,observaciones,lugar,jefa_lab_id,laboratorio_id)
 VALUES ("cotizacion_id1",1001,"actividades1","condicionesTrabajo1",1029,"fechaInicio1","fechaFin1","horaInicio1","horaFin1","observaciones1","lugar1",1028,1001);
