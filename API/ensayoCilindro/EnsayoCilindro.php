@@ -167,6 +167,7 @@ class EnsayoCilindro{
 			    	SELECT
 						id_ensayoCilindro,
 						footerEnsayo_id,
+						IF(registrosCampo.status = 3,'SI','NO') AS completado,
 						peso,
 						d1,
 						d2,
