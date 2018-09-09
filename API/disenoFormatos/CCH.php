@@ -115,7 +115,7 @@
 			//Guardamos la posicion de la Y para alinear todas las celdas a la misma altura
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 
-			$tam_font_head = 7;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
+			$tam_font_head = 8;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
 
 			//Clave
 			$clave = 'CLAVE DEL ESPECIMEN';
@@ -148,17 +148,73 @@
 
 			//Revenimiento
 			$rev = 'REVENIMENTO (cm)';
-			$this->SetY($posicion_y); $this->SetX($posicion_x); 
+			$this->SetY($posicion_y); $this->SetX($posicion_x); $posicion_x = $this->GetX();
 			$this->cell($tam_pro + $tam_obra,0.5*(1.5*(2*($tam_font_head) - 6)),$rev,1,0,'C');
 
+			$tam_font_head = $tam_font_head-2;	$this->SetFont('Arial','',$tam_font_head);
+
+			//Guardamos la posicion de la x
+			$posicion_x = $this->GetX();
+
 			//Agregado
-			$agregado = 'TAMAÑO'."\n".'NOMINAL'."\n".'DEL'."\n".'AGREGADO'."\n".'(mm)';
-			/*
+			$agregado = 'AGREGADO';
+			$tam_agregado = $this->GetStringWidth($agregado) + 4;
+			$this->multicell($tam_agregado,(1.5*(2*($tam_font_head + 2) - 6))/5,utf8_decode('TAMAÑO'."\n".'NOMINAL'."\n".'DEL'."\n".'AGREGADO'."\n".'(mm)'),1,'C');
+
+			$posicion_x = ($posicion_x + $tam_agregado);
+			//VOLUMEN
+			$volumen = 'VOLUMEN';
+			$tam_volumen = $this->GetStringWidth($volumen) + 3;
+			$this->SetY($posicion_y); $this->SetX($posicion_x);
+			$this->multicell($tam_volumen,(1.5*(2*($tam_font_head + 2) - 6))/2,utf8_decode($volumen."\n".'(mm)'),1,'C');
+
+			$posicion_x = $posicion_x + $tam_volumen;
+
+			$concreto = 'CONCRE';
+			$tam_concreto = $this->GetStringWidth($concreto) + 3;
+			$this->SetY($posicion_y); $this->SetX($posicion_x);
+			$this->multicell($tam_concreto,(1.5*(2*($tam_font_head + 2) - 6))/3,utf8_decode('TIPO DE'."\n".$concreto."\n".'TO'),1,'C');
+
+			$posicion_x = $posicion_x + $tam_concreto;
+
+			$unidad = 'UNIDAD';
+			$tam_unidad = $this->GetStringWidth($unidad) + 3;
+			$this->SetY($posicion_y); $this->SetX($posicion_x);
+			$this->cell($tam_unidad,(1.5*(2*($tam_font_head + 2) - 6)),utf8_decode($unidad),1,0,'C');
+
+			$posicion_x = $posicion_x + $tam_unidad;
+
+			$hora = 'HORA DE';
+			$tam_hora = $this->GetStringWidth($hora) + 5;
+			$this->multicell($tam_hora,(1.5*(2*($tam_font_head + 2) - 6))/4,utf8_decode($hora."\n".'MUESTREO'."\n".'EN'."\n".'OBRA'),1,'C');
+
+			$posicion_x = $posicion_x + $tam_hora;
+
+			$muestreo = 'MUESTREO';
+			$tam_muestreo = $this->GetStringWidth($muestreo) + 3;
+			$this->SetY($posicion_y); $this->SetX($posicion_x);
+			$this->multicell($tam_muestreo,(1.5*(2*($tam_font_head + 2) - 6))/5,utf8_decode('TEMP.'."\n".'AMBIENTE'."\n".'DE'."\n".$muestreo."\n".'(°C)'),1,'C');
+
+			$posicion_x = $posicion_x + $tam_muestreo;
+
+			$recoleccion = 'RECOLECCIÓN';
+			$tam_recoleccion = $this->GetStringWidth($recoleccion) + 3;
+			$this->SetY($posicion_y); $this->SetX($posicion_x);
+			$this->multicell($tam_recoleccion,(1.5*(2*($tam_font_head + 2) - 6))/5,utf8_decode('TEMP.'."\n".'AMBIENTE'."\n".'DE'."\n".$recoleccion."\n".'(°C)'),1,'C');
+
+			$posicion_x = $posicion_x + $tam_recoleccion;
+
+			$localizacion = 'LOCALIZACIÓN';
+			$tam_localizacion = $posicion_x - 10;
 			
+			/*
+				
 
 			
 			
 			/*
+
+			
 
 			/* PUNTO DE REFERENCIA
 			$falla = 'FALLA';

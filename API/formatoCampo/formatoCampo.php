@@ -338,7 +338,7 @@ class formatoCampo{
 					prueba4,
 					razonSocial,
 					CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion,
-					formatoCampo.tipo,
+					formatoCampo.tipo AS tipo_especimen,
 					formatoCampo.cono_id,
 					CONO,
 					formatoCampo.varilla_id,
