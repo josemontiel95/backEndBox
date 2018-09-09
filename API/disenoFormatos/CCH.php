@@ -1,95 +1,49 @@
 <?php 
-	//include_once("./../../FPDF/fpdf.php");
 	include_once("./../../FPDF/fpdf.php");
 
 	//Formato de campo de cilindros
-	class InformeCubos extends fpdf{
-		function Header()
-		{
+	class CCH extends fpdf{
+		function Header(){
 			//Espacio definido para los logotipos
-			//Definimos las dimensiones del logotipo de ema
-			$ancho_ema = 50;	$alto_ema = 20;
-			//$this->SetX(-($ancho_ema + 10));
-			//$this->Image('ema.jpeg',null,null,$ancho_ema,$alto_ema);
-			$this->cell(0,20,'',1,2);
+			//Definimos las dimensiones del logotipo de Lacocs
+			$ancho_lacocs = 40;	$alto_lacocs = 20;
+			$this->cell($ancho_lacocs,$alto_lacocs,'',1);
 
-			//Información de la empresa
-			$tam_font_titulo = 8.5;
+			$posicion_x = $this->GetX();
+
+			//Definimos el las propiedades de la primera linea del titulo
+			$tam_font_titulo = 9;
 			$this->SetFont('Arial','B',$tam_font_titulo); 
-			$titulo = 'LABORATORIO DE CONTROL DE CALIDAD Y SUPERVISIÓN S.A DE C.V';
-			$tam_cell = $this->GetStringWidth($titulo);
+			$titulo_linea1 = 'LABORATORIO DE CONTROL DE CALIDAD Y SUPERVISIÓN S.A DE C.V';
+			$tam_cell = $this->GetStringWidth($titulo_linea1);
 			$this->SetX((279-$tam_cell)/2);
-			$this->Cell($tam_cell,$tam_font_titulo - 3,utf8_decode($titulo),1,'C');
+			$this->Cell($tam_cell,$tam_font_titulo - 3,utf8_decode($titulo_linea1),0,2,'C');
 
-			$this->Ln(7);
-
-			//Titulo del informe
-			$tam_font_tituloInforme = 7.5;
-			$this->SetFont('Arial','B',$tam_font_tituloInforme);
-			$titulo_informe = '"INFORME DE PRUEBAS A COMPRESIÓN DE CUBOS DE CONCRETO HIDRÁULICO"';
-			$tam_tituloInforme = $this->GetStringWidth($titulo_informe)+130;
-
-			$tam_font_info = 6.5;
-			//Fecha
-			$this->SetFont('Arial','B',$tam_font_info);
-			$direccion_lacocs = '35 NORTE No.3023, UNIDAD HABITACIONAL AQUILES SERDAN, PUEBLA, PUE.';
-			$tam_direccion = $this->GetStringWidth($direccion_lacocs)+6;
-			$this->SetX(-$tam_tituloInforme-10);
-			$this->Cell($tam_direccion,$tam_font_info - 3,$direccion_lacocs,0,'C');
-
-			//Telefono
-			$this->SetX($this->GetX()+20);
-			$telefono = 'TELS. 8686-973/ 8686-974';
-			$this->Cell($this->GetStringWidth($telefono)+6,$tam_font_info - 3,$telefono,0,'C');
-
-			//FAX
-			$this->SetX($this->GetX()+15);
-			$FAX = 'FAX. 2315-836';
-			$this->Cell($this->GetStringWidth($FAX)+6,$tam_font_info - 3,$FAX,0,'C');
-
+			//Definimos las propiedades de la segunda linea del titulo
+			$tam_font_titulo = 16; //Definimos el tamaño de la fuente
+			$this->SetFont('Arial','B',$tam_font_titulo);
+			$titulo_linea2 = 'LACOCS S.A DE S.V';
+			$tam_cell = $this->GetStringWidth($titulo_linea2);
+			$this->SetX((279-$tam_cell)/2);
+			$this->Cell($tam_cell,$tam_font_titulo - 3,utf8_decode($titulo_linea2),0,2,'C');
 			$this->Ln();
 
-			$this->SetFont('Arial','B',$tam_font_tituloInforme); 
-			$this->SetX(-($tam_tituloInforme+10))	;
-			$this->Cell($tam_tituloInforme,$tam_font_tituloInforme - 3,utf8_decode($titulo_informe),1,0,'C');
-
-			//---Divide espacios entre el titulo del formato y la información del formato
-			$this->Ln($tam_font_tituloInforme - 2);
+			//Definimos la altura a la que estara la informacion del documento
+			$this->SetY(34); $posicion_y = $this->GetY();
+			
 		}
 
 		//Funcion que coloca la informacion del informe, como: el No. de informe, Obra, etc.
+		
 
 		function putInfo($infoFormato){
 
-			/*
-			Lado derecho:
-							-Informe No.
-							-Este informe sustituye a:
-			*/
+		
 			$tam_font_right = 7.5;	$this->SetFont('Arial','B',$tam_font_right);
+			$tam_line = 160;
+			
 
-			//Numero del informe
-			$informeNo = 'INFORME No.';
-			$tam_informeNo = $this->GetStringWidth($informeNo)+6;
-			$this->SetX(-($tam_informeNo+50));
-			$this->Cell($tam_informeNo,$tam_font_right - 3,$informeNo,0,0,'C');
-
-			//Caja de texto
-			$this->Cell(0,$tam_font_right - 3,'DUMMY','B',0,'C');
-
-			$this->Ln($tam_font_right - 2);
-
-			//-Informe al cual sustituye
-			$sustituyeInforme = 'ESTE INFORME SUSTITUYE A:';
-			$tam_sustituyeInforme = $this->GetStringWidth($sustituyeInforme)+6;
-			$this->SetX(-$tam_sustituyeInforme-50);
-			$this->Cell($tam_sustituyeInforme,$tam_font_right - 3,$sustituyeInforme,0,0,'C');
-
-			//Caja de texto
-			$this->Cell(0,$tam_font_right - 3,'DUMMY','B',0,'C');
-
-			//--Divide la informacion de la derecha y la izquierda
-			$this->Ln($tam_font_right - 1);
+			
 
 			/*
 				Lado izquierdo:
@@ -106,7 +60,7 @@
 			$this->Cell($this->GetStringWidth($obra)+2,$tam_font_left - 3,$obra,0);
 			//Caja de texto
 			$this->SetX(50);
-			$this->Cell(0,$tam_font_left - 3,$infoFormato['obra'],'B',0);
+			$this->Cell($tam_line,$tam_font_left - 3,$infoFormato['obra'],'B',0);
 
 			$this->Ln($tam_font_left - 2);
 
@@ -115,7 +69,15 @@
 
 			//Caja de texto
 			$this->SetX(50);
-			$this->Cell(0,$tam_font_left - 3,$infoFormato['localizacion'],'B',0);
+			$this->Cell($tam_line,$tam_font_left - 3,$infoFormato['localizacion'],'B',0);
+
+			$informeNo = 'INFORME No.';
+			$tam_informeNo = $this->GetStringWidth($informeNo)+6;
+			$this->SetX(-($tam_informeNo+40));
+			$this->Cell($tam_informeNo,$tam_font_right - 3,$informeNo,0,0,'C');
+
+			//Caja de texto
+			$this->Cell(0,$tam_font_right - 3,'DUMMY','B',0,'C');
 
 			$this->Ln($tam_font_left - 2);
 
@@ -124,7 +86,7 @@
 
 			//Caja de texto
 			$this->SetX(50);
-			$this->Cell(0,$tam_font_left - 3,$infoFormato['razonSocial'],'B',0);
+			$this->Cell($tam_line,$tam_font_left - 3,$infoFormato['razonSocial'],'B',0);
 
 			$this->Ln($tam_font_left - 2);
 
@@ -133,27 +95,79 @@
 			$this->Cell($this->GetStringWidth($nomCli)+2,$tam_font_left - 3,utf8_decode($dirCliente),0);
 			//Caja de texto
 			$this->SetX(50);
-			$this->Cell(0,$tam_font_left - 3,$infoFormato['direccion'],'B',0);
+			$this->Cell($tam_line,$tam_font_left - 3,$infoFormato['direccion'],'B',0);
 
 			//Divide la informacion del formato de la Tabla (Esta en funcion del tamaño de fuente de la informacion de la derecha)
-			$this->Ln($tam_font_left);
+			$this->Ln($tam_font_left-2);
+
+			//Titulo del CCH
+			$tam_font_tituloCCH = 12; //Definimos el tamaño de la fuente
+			$this->SetFont('Arial','B',$tam_font_tituloCCH);
+			$titulo_CHH = 'CONTROL DE CONCRETO HIDRÁULICO';
+			$tam_cell = $this->GetStringWidth($titulo_CHH);
+			$this->SetX((279-$tam_cell)/2);
+			$this->Cell($tam_cell,$tam_font_tituloCCH - 3,utf8_decode($titulo_CHH),0,2,'C');
+			$this->Ln(2);
 
 		}
 
-		function putTables($regisFormato){
+		function putTables(){
 			//Guardamos la posicion de la Y para alinear todas las celdas a la misma altura
-			$posicion_y = $this->GetY();
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 
-			$tam_font_head = 6;	$this->SetFont('Arial','',$tam_font_head);
+			$tam_font_head = 7;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
+
+			//Clave
+			$clave = 'CLAVE DEL ESPECIMEN';
+			$tam_clave = $this->GetStringWidth($clave) + 10; 
+			$this->cell($tam_clave,1.5*(2*($tam_font_head) - 6),$clave,1,0,'C');
+
+			//Fecha
+			$fecha = 'FECHA';
+			$tam_fecha = $this->GetStringWidth($fecha) + 15;
+			$this->cell($tam_fecha,1.5*(2*($tam_font_head) - 6),$fecha,1,0,'C');
+			//F´c
+			$fprima = 'F ` C ';
+			$tam_fprima = $this->GetStringWidth($fecha) + 5; $posicion_x = $this->GetX();
+			$this->multicell($tam_fprima,0.5*(1.5*(2*($tam_font_head) - 6)),utf8_decode($fprima."\n".'kg/cm²'),1,'C');
+
+			
+
+			//Proyecto
+			$proyecto = 'PROYECTO';
+			$tam_pro = $this->GetStringWidth($proyecto) + 3;
+			$this->SetY($posicion_y + 0.5*(1.5*(2*($tam_font_head) - 6))); $this->SetX($posicion_x + $tam_fprima);	$posicion_x = $this->GetX();
+			$this->cell($tam_pro,0.5*(1.5*(2*($tam_font_head) - 6)),$proyecto,1,0,'C');
+
+			//Obra
+			$obra = 'OBRA';
+			$tam_obra = $this->GetStringWidth($obra) + 4;
+			$this->SetY($posicion_y + 0.5*(1.5*(2*($tam_font_head) - 6)));	$this->SetX($posicion_x + $tam_pro);
+			$this->cell($tam_obra,0.5*(1.5*(2*($tam_font_head) - 6)),$obra,1,2,'C');
+
+
+			//Revenimiento
+			$rev = 'REVENIMENTO (cm)';
+			$this->SetY($posicion_y); $this->SetX($posicion_x); 
+			$this->cell($tam_pro + $tam_obra,0.5*(1.5*(2*($tam_font_head) - 6)),$rev,1,0,'C');
+
+			//Agregado
+			$agregado = 'TAMAÑO'."\n".'NOMINAL'."\n".'DEL'."\n".'AGREGADO'."\n".'(mm)';
+			/*
+			
+
+			
 			
 			/*
+
+			/* PUNTO DE REFERENCIA
 			$falla = 'FALLA';
 			$tam_falla = $this->GetStringWidth($falla)+3;
 
 			$this->SetX(-($tam_falla + 10));
 			$posicion_x = $this->GetX();
 			$this->multicell($tam_falla,(1.5*($tam_font_head - 3)),utf8_decode($falla.'N°'),1,'C');
-			*/
+			
 			$resistencia = 'RESISTENCIA';	
 			$tam_resistencia = $this->GetStringWidth($resistencia)+3;
 			$this->SetY($posicion_y);
@@ -258,11 +272,7 @@
 			//$this->SetY($posicion_y + 3*($tam_font_head - 3)); pone al final de la celda para el salto
 			//$posicion_y = $this->GetY(); Esta era la posicion a la que brincaba cuando pasaban los especimenes
 
-			//Clave
-			$clave = 'CLAVE';
-			$tam_clave = $this->GetStringWidth($clave) + 25;
-			$this->SetY($posicion_y);	$this->SetX($posicion_x - $tam_clave);	$posicion_x = $this->GetX();
-			$this->cell($tam_clave,1.5*(2*($tam_font_head) - 6),$clave,1,0,'C');
+			
 
 			//Fecha de ensaye
 			$fecha = 'FECHA DE ENSAYE';
@@ -379,14 +389,14 @@
 				$this->cell(0,$tam_font_head - 2.5,'DUMMY',1,2,'C');
 			*/
 
-			$this->ln(2);
+			//$this->ln(2); BORRAR DESPUES DE QUE TODO ESTE BIEN
 
 			
 
 
 			
 		}
-
+		/*
 		function Footer(){
 			$tam_footer = 28;
 			
@@ -419,13 +429,13 @@
 			$this->cell(0,$tam_footer,'',1,'C');
 
 		}
-
+		*/
 		//Funcion que crea un nuevo formato
-		function CreateNew($infoFormato,$regisFormato){
-			$pdf  = new InformeCubos('L','mm','Letter');
+		function CreateNew($infoFormato){
+			$pdf  = new CCH('L','mm','Letter');
 			$pdf->AddPage();
 			$pdf->putInfo($infoFormato);
-			$pdf->putTables($regisFormato);
+			$pdf->putTables();
 			$pdf->Output();
 		}
 
@@ -506,12 +516,10 @@
 
 	}
 	/*
-	$pdf  = new informeCilindros('L','mm','Letter');
-			$pdf->AddPage();
-
-			$pdf->putTables();
-			$pdf->Output();*/
-
+	$pdf  = new CCH('L','mm','Letter');
+	$pdf->AddPage();
+	$pdf->Output();
+	*/
 	
 
 
