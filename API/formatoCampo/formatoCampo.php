@@ -17,7 +17,7 @@ class formatoCampo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		//$dbS->beginTransaction();
+		$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			//Informacion para crear el "Informe No."
 			$a= $dbS->qarrayA("
@@ -84,20 +84,20 @@ class formatoCampo{
 								"SELECT"
 							);
 					if(!$dbS->didQuerydied){
-						//$dbS->commitTransaction();
+						$dbS->commitTransaction();
 						$arr = array('id_formatoCampo' => $id,'informeNo'=>$infoNo,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);									
 					}
 					else{
-						//$dbS->rollbackTransaction();
+						$dbS->rollbackTransaction();
 						$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la modificacion de consecutivoDocumentos, verifica tus datos y vuelve a intentarlo','error' => 6);
 					}
 				}else{
-					//$dbS->rollbackTransaction();
+					$dbS->rollbackTransaction();
 					$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 6);
 				}
 			}
 			else{
-				//$dbS->rollbackTransaction();
+				$dbS->rollbackTransaction();
 				$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 6);
 			}	
 		}
