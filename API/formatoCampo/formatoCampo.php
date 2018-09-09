@@ -13,6 +13,100 @@ class formatoCampo{
 
 	private $wc = '/1QQ/';
 
+	public function initInsertCCH($token,$rol_usuario_id,$id_ordenDeTrabajo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
+		if($arr['error'] == 0){
+			//Informacion para crear el "Informe No."
+			$a= $dbS->qarrayA("
+		      	SELECT 
+		      		id_obra,
+					cotizacion,
+					consecutivoDocumentos,
+					prefijo,
+					YEAR(NOW()) AS anio
+				FROM
+					obra,
+					(
+						SELECT
+							obra_id
+						FROM
+							ordenDeTrabajo
+						WHERE
+							id_ordenDeTrabajo = 1QQ
+
+					)AS ordenDeTrabajo
+				WHERE
+					id_obra = ordenDeTrabajo.obra_id
+				",
+				array($id_ordenDeTrabajo),
+				"SELECT"
+			);
+			if(!$dbS->didQuerydied && !($a=="empty")){
+				//Creamos el informe No.
+				$año = $a['anio'] - 2000;
+				$infoNo = $a['prefijo']."/".$a['cotizacion']."/".$año."/".$a['consecutivoDocumentos'];
+				$dbS->squery(
+								"
+									INSERT INTO
+										formatoCampo
+										(
+											informeNo
+										)
+									VALUES
+										(
+											'1QQ'
+										)
+
+								"
+								,
+								array($infoNo)
+								,
+								"INSERT"
+							);
+				if(!$dbS->didQuerydied){
+					$id = $dbS->lastInsertedID;
+					$dbS->squery(
+								"
+									UPDATE
+										obra
+									SET
+										consecutivoDocumentos = consecutivoDocumentos+1
+									WHERE
+										id_obra = 1QQ
+
+								"
+								,
+								array($a['consecutivoDocumentos'])
+								,
+								"SELECT"
+							);
+					if(!$dbS->didQuerydied){
+						$dbS->commitTransaction();
+						$arr = array('id_formatoCampo' => $id,'informeNo'=>$infoNo,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);									
+					}
+					else{
+						$dbS->rollbackTransaction();
+						$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la modificacion de consecutivoDocumentos, verifica tus datos y vuelve a intentarlo','error' => 6);
+					}
+				}else{
+					$dbS->rollbackTransaction();
+					$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			else{
+				$dbS->rollbackTransaction();
+				$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 6);
+			}	
+		}
+		return json_encode($arr);
+
+	}
+
+
+
 	public function getAllAdmin($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();

@@ -24,6 +24,10 @@
 			$registrocampo = new registrosCampo();
 			echo $registrocampo->initInsert($_POST['token'],$_POST['rol_usuario_id'],$_POST['formatoCampo_id']);
 		break;
+		case 'initInsertCCH':
+			$formatocampo = new formatoCampo();
+			echo $formatocampo->initInsertCCH($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ordenDeTrabajo']);
+		break;
 		case 'insertRegistroJefeBrigada':
 			$registrocampo = new registrosCampo();
 			echo $registrocampo->insertRegistroJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['campo'],$_POST['valor'],$_POST['id_registrosCampo']);
