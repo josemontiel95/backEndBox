@@ -126,7 +126,8 @@ CREATE TABLE obra(
 	incertidumbre DOUBLE,
 	cotizacion VARCHAR(15) NOT NULL,
 	consecutivoProbeta INT NOT NULL DEFAULT 1,
-
+	consecutivoDocumentos INT NOT NULL DEFAULT 1,
+	laboratorio_id INT(11),
 
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -140,9 +141,13 @@ CREATE TABLE obra(
 	ON DELETE SET NULL 
 	ON UPDATE CASCADE,
 
+	FOREIGN KEY(laboratorio_id) 
+	REFERENCES laboratorio(id_laboratorio)
+	ON DELETE SET NULL 
+	ON UPDATE CASCADE,
+
 	FOREIGN KEY(concretera_id)
 	REFERENCES concretera(id_concretera)
-
 	ON DELETE SET NULL 
 	ON UPDATE CASCADE
 	
@@ -150,7 +155,6 @@ CREATE TABLE obra(
 
 ALTER TABLE obra AUTO_INCREMENT=1001;
 
-ALTER TABLE obra ADD COLUMN consecutivoDocumentos INT NOT NULL DEFAULT 1;
 
 
 INSERT INTO obra(obra,prefijo,fechaDeCreacion,descripcion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento,incertidumbre) 
@@ -252,8 +256,13 @@ CREATE TABLE herramientas(
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	active INT NOT NULL DEFAULT 1,
+	laboratorio_id INT(11),
 
 	PRIMARY KEY(id_herramienta),
+
+	FOREIGN KEY(laboratorio_id) 
+	REFERENCES laboratorio(id_laboratorio)
+	ON DELETE SET NULL ON UPDATE CASCADE,
 
 	FOREIGN KEY(herramienta_tipo_id)
 	REFERENCES herramienta_tipo(id_herramienta_tipo)
@@ -261,6 +270,7 @@ CREATE TABLE herramientas(
 
 )ENGINE=INNODB;
 ALTER TABLE herramientas AUTO_INCREMENT=1001;
+
 
 
 CREATE TABLE herramienta_ordenDeTrabajo(

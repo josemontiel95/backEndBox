@@ -65,6 +65,7 @@ class Herramienta{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			     	 SELECT
@@ -74,9 +75,10 @@ class Herramienta{
 					 	herramienta_tipo AS HT,herramientas AS H 
 					 WHERE
 					 	HT.id_herramienta_tipo=H.herramienta_tipo_id AND
+					 	H.laboratorio_id= 1QQ AND
 					   	H.herramienta_tipo_id = 1005
 			      ",
-			      array(),
+			      array($laboratorio_id),
 			      "SELECT"
 			      );
 			if(!$dbS->didQuerydied){
@@ -94,6 +96,7 @@ class Herramienta{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      	 SELECT
@@ -103,9 +106,10 @@ class Herramienta{
 					 	herramienta_tipo AS HT,herramientas AS H 
 					 WHERE
 					 	HT.id_herramienta_tipo=H.herramienta_tipo_id AND
+					 	H.laboratorio_id= 1QQ AND
 					   	H.herramienta_tipo_id = 1008
 			      ",
-			      array(),
+			      array($laboratorio_id),
 			      "SELECT"
 			      );
 
@@ -127,6 +131,7 @@ class Herramienta{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 					SELECT
@@ -162,12 +167,13 @@ class Herramienta{
 						WHERE
 							herramientas.herramienta_tipo_id = herramienta_tipo.id_herramienta_tipo AND
 						  	herramientas.active = 1 AND
+					 		herramientas.laboratorio_id= 1QQ AND
 						  	(herramientas.id_herramienta > 1000) AND
 						  	(herramientas.herramienta_tipo_id = 1006 OR herramientas.herramienta_tipo_id = 1003 OR herramientas.herramienta_tipo_id = 1007)) AS T1
 					WHERE 
 						(T1.estado='SI' OR T1.estado IS NULL)
 			      ",
-			      array(),
+			      array($laboratorio_id),
 			      "SELECT"
 			      );
 
@@ -186,6 +192,7 @@ class Herramienta{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      	SELECT 
@@ -211,12 +218,13 @@ class Herramienta{
 						WHERE
 							herramientas.herramienta_tipo_id = herramienta_tipo.id_herramienta_tipo AND
 						  	herramientas.active = 1 AND
+					 		herramientas.laboratorio_id= 1QQ AND
 						  	(herramientas.id_herramienta > 1000) AND
 						  	(herramientas.herramienta_tipo_id = 1006)) AS T1
 					WHERE 
 						(T1.estado='SI' OR T1.estado IS NULL)
 			      ",
-			      array(),
+			      array($laboratorio_id),
 			      "SELECT"
 			      );
 
@@ -235,6 +243,7 @@ class Herramienta{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      	SELECT 
@@ -260,12 +269,13 @@ class Herramienta{
 						WHERE
 							herramientas.herramienta_tipo_id = herramienta_tipo.id_herramienta_tipo AND
 						  	herramientas.active = 1 AND
+					 		herramientas.laboratorio_id= 1QQ AND
 						  	(herramientas.id_herramienta > 1000) AND
 						  	(herramientas.herramienta_tipo_id = 1007)) AS T1
 					WHERE 
 						(T1.estado='SI' OR T1.estado IS NULL)
 			      ",
-			      array(),
+			      array($laboratorio_id),
 			      "SELECT"
 			      );
 
@@ -284,6 +294,7 @@ class Herramienta{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 					SELECT
@@ -318,12 +329,13 @@ class Herramienta{
 						WHERE
 							herramientas.herramienta_tipo_id = herramienta_tipo.id_herramienta_tipo AND
 						  	herramientas.active = 1 AND
+					 		herramientas.laboratorio_id= 1QQ AND
 						  	(herramientas.id_herramienta > 1000) AND
 						  	(herramientas.herramienta_tipo_id = 1003)) AS T1
 					WHERE 
 						(T1.estado='SI' OR T1.estado IS NULL)
 			      ",
-			      array(),
+			      array($laboratorio_id),
 			      "SELECT"
 			      );
 
@@ -342,6 +354,7 @@ class Herramienta{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 					 SELECT
@@ -361,10 +374,11 @@ class Herramienta{
 					 	HO.herramienta_id = H.id_herramienta AND
 					 	HT.id_herramienta_tipo=H.herramienta_tipo_id AND
 					   	HO.active = 1 AND
+					 	H.laboratorio_id= 1QQ AND
 					   	H.herramienta_tipo_id = 1001 AND
 					   	HO.ordenDeTrabajo_id = 1QQ
 			      ",
-			      array($id_ordenDeTrabajo),
+			      array($laboratorio_id,$id_ordenDeTrabajo),
 			      "SELECT"
 			      );
 
@@ -378,6 +392,12 @@ class Herramienta{
 		}
 		return json_encode($arr);
 	}
+
+	/**
+		==========================
+				Seguir actualizando el uso de labo
+		==========================
+	*/
 
 	public function getForDroptdownJefeBrigadaVarilla($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
