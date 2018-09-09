@@ -114,19 +114,25 @@ class ordenDeTrabajo{
 		return json_encode($arr);
 	}
 
-	
+	/*
+	Esta funcion es llamada desde las siguientes rutas en el Front:
+		-jefelab/orden-trabajo/orden-trabajo.component.ts
+		-
+	*/
+
 	public function getAllAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id= $usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      		SELECT 
 							id_ordenDeTrabajo,
-							cotizacion_id,
+							jefa_lab_id,
 							obra_id,
 							obra.obra,
-
+							creadores.nombre AS CreadoPorJefaLab,
 							actividades,
 							condicionesTrabajo,
 							fechaInicio,
@@ -135,20 +141,23 @@ class ordenDeTrabajo{
 							horaFin,
 							observaciones,
 							lugar,
-
 							ordenDeTrabajo.laboratorio_id,
 							laboratorio,
 							usuario.nombre AS nombre_jefe_brigada_id,
 							jefe_brigada_id,
-							IF(ordenDeTrabajo.active = 1,'Si','No') AS active
+							IF(ordenDeTrabajo.active = 1,'Si','No') AS active,
+							ordenDeTrabajo.active AS activeColor
 						from
-							usuario,ordenDeTrabajo,obra,laboratorio
+							usuario,ordenDeTrabajo,obra,laboratorio,
+							(SELECT id_usuario, nombre FROM usuario) AS creadores
 						WHERE
 							obra_id = id_obra AND
 							ordenDeTrabajo.laboratorio_id = id_laboratorio AND
-							jefe_brigada_id = id_usuario
+							jefe_brigada_id = usuario.id_usuario AND
+							jefa_lab_id = creadores.id_usuario AND 
+							ordenDeTrabajo.laboratorio_id = 1QQ
 			      ",
-			      array(),
+			      array($laboratorio_id),
 			      "SELECT"
 			      );
 
@@ -170,7 +179,7 @@ class ordenDeTrabajo{
 			$arr= $dbS->qAll("
 			      		SELECT 
 							id_ordenDeTrabajo,
-							cotizacion_id,
+							jefa_lab_id,
 							obra_id,
 							obra.obra,
 
@@ -210,18 +219,19 @@ class ordenDeTrabajo{
 	}
 
 
-	public function insertAdmin($token,$rol_usuario_id,$cotizacion_id,$area,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefe_brigada_id,$laboratorio_id){
+	public function insertAdmin($token,$rol_usuario_id,$area,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefe_brigada_id,$laboratorio_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$id_JefaLab=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						ordenDeTrabajo(cotizacion_id,area,obra_id,actividades,condicionesTrabajo,fechaInicio,fechaFin,horaInicio,horaFin,observaciones,lugar,jefe_brigada_id,laboratorio_id)
+						ordenDeTrabajo(jefa_lab_id,area,obra_id,actividades,condicionesTrabajo,fechaInicio,fechaFin,horaInicio,horaFin,observaciones,lugar,jefe_brigada_id,laboratorio_id)
 
 						VALUES
-						(1QQ,'1QQ',1QQ,'1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ',1QQ,1QQ)
-				",array($cotizacion_id,$area,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefe_brigada_id,$laboratorio_id),"INSERT");
+						('1QQ','1QQ',1QQ,'1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ',1QQ,1QQ)
+				",array($id_JefaLab,$area,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefe_brigada_id,$laboratorio_id),"INSERT");
 			if(!$dbS->didQuerydied){
 				$arr = array('id_ordenDeTrabajo' => 'No disponible, esto NO es un error','estatus' => 'Exito en insercion', 'error' => 0);
 			}
@@ -231,8 +241,43 @@ class ordenDeTrabajo{
 		}
 		return json_encode($arr);
 	}
+	public function insertJefeLabo($token,$rol_usuario_id,$area,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefe_brigada_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$id_JefaLab=$usuario->id_usuario;
 
-	public function upDateAdmin($token,$rol_usuario_id,$id_ordenDeTrabajo,$cotizacion_id,$area,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefe_brigada_id,$laboratorio_id){
+		$a=$dbS->qarrayA("
+			SELECT 
+				laboratorio_id
+			FROM 
+				obra
+			WHERE 
+				id_obra=1QQ
+		",array($obra_id),"SELECT");
+
+		if(!$dbS->didQuerydied && !($a=="empty")){
+			if($arr['error'] == 0){
+				$dbS->squery("
+							INSERT INTO
+								ordenDeTrabajo(jefa_lab_id,area,obra_id,actividades,condicionesTrabajo,fechaInicio,fechaFin,horaInicio,horaFin,observaciones,lugar,jefe_brigada_id,laboratorio_id)
+							VALUES
+							('1QQ','1QQ',1QQ,'1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ',1QQ,1QQ)
+					",array($id_JefaLab,$area,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefe_brigada_id,$a['laboratorio_id']),"INSERT");
+				if(!$dbS->didQuerydied){
+					$arr = array('id_ordenDeTrabajo' => $dbS->lastInsertedID,'estatus' => 'Exito en insercion', 'error' => 0);
+				}
+				else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+				}
+			}
+		}else{
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el sistema, contacta a soporte','error' => 6);
+		}
+		return json_encode($arr);
+	}
+
+	public function upDateAdmin($token,$rol_usuario_id,$id_ordenDeTrabajo,$area,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefe_brigada_id,$laboratorio_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -240,7 +285,6 @@ class ordenDeTrabajo{
 			$dbS->squery("	UPDATE
 							ordenDeTrabajo
 						SET
-							cotizacion_id = 1QQ,
 							area = '1QQ',
 							obra_id = 1QQ,
 							actividades = '1QQ', 
@@ -256,7 +300,41 @@ class ordenDeTrabajo{
 						WHERE
 							id_ordenDeTrabajo = 1QQ
 					 "
-					,array($cotizacion_id,$area,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefe_brigada_id,$laboratorio_id,$id_ordenDeTrabajo),"UPDATE"
+					,array($area,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefe_brigada_id,$laboratorio_id,$id_ordenDeTrabajo),"UPDATE"
+			      	);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_ordenDeTrabajo' => 'No disponible, esto NO es un error','estatus' => 'Exito en actualizacion', 'error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function updateJefeLabo($token,$rol_usuario_id,$area,$id_ordenDeTrabajo,$obra_id,$lugar,$actividades,$condicionesTrabajo,$jefe_brigada_id,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+							ordenDeTrabajo
+						SET
+							area = '1QQ',
+							obra_id = '1QQ', 
+							lugar = '1QQ',
+							actividades = '1QQ',
+							condicionesTrabajo = '1QQ',
+							jefe_brigada_id = '1QQ',
+							fechaInicio = '1QQ',
+							fechaFin = '1QQ',
+							horaInicio = '1QQ',
+							horaFin = '1QQ',
+							observaciones = '1QQ'
+						WHERE
+							id_ordenDeTrabajo = 1QQ
+					 "
+					,array($area,$obra_id,$lugar,$actividades,$condicionesTrabajo,$jefe_brigada_id,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$id_ordenDeTrabajo),"UPDATE"
 			      	);
 			if(!$dbS->didQuerydied){
 				$arr = array('id_ordenDeTrabajo' => 'No disponible, esto NO es un error','estatus' => 'Exito en actualizacion', 'error' => 0);
@@ -277,7 +355,6 @@ class ordenDeTrabajo{
 			$s= $dbS->qarrayA("
 			        SELECT 
 							id_ordenDeTrabajo,
-							cotizacion_id,
 							actividades,
 							condicionesTrabajo,
 							fechaInicio,
@@ -290,10 +367,10 @@ class ordenDeTrabajo{
 							cliente.nombre,
 							nombreContacto,
 							telefonoDeContacto,
-
 							obra_id,
 							obra.obra,
 							lugar,
+							area,
 							ordenDeTrabajo.laboratorio_id,
 							laboratorio,
 							usuario.nombre AS nombre_jefe_brigada_id,
