@@ -17,7 +17,7 @@
 	switch ($function){
 		case 'insertAdmin':
 			$herra = new Herramienta();
-			echo $herra->insertAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['herramienta_tipo_id'],$_POST['fechaDeCompra'],$_POST['placas'],$_POST['condicion'],$_POST['observaciones']);		
+			echo $herra->insertAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['herramienta_tipo_id'],$_POST['fechaDeCompra'],$_POST['placas'],$_POST['condicion'],$_POST['observaciones'],$_POST['laboratorio_id']);		
 		break;
 		case 'upDateAdmin':
 			$herra = new Herramienta();

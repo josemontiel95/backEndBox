@@ -551,6 +551,7 @@ class Herramienta{
 					id_herramienta_tipo,
 					tipo,
 					observaciones,
+					laboratorio_id,
 					herramientas.createdON,
 					herramientas.lastEditedON,
 					IF(herramientas.active = 1,'Si','No') AS active
@@ -765,7 +766,13 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
-				
+	/*
+		Esta funcion se utiliza para generar un 
+		drop dropdown en el dashboard de la orden
+		de trabajo para escoger el tipo de herramienta a agregar
+		Esto pasa en la direccion:
+		-jefelab/dashboard/dashboard.component.ts
+	*/
 
 	public function getForDroptdownTipo($token,$rol_usuario_id){
 		global $dbS;
@@ -779,6 +786,7 @@ class Herramienta{
    				    FROM
    				        herramienta_tipo
    				    WHERE
+   				    	asignableenOrdenDeTrabajo = 1 AND
             			herramienta_tipo.active = 1 ;
 			      ",
 			      array(),
