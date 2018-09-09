@@ -21,7 +21,7 @@
 		break;
 		case 'upDateAdmin':
 			$herra = new Herramienta();
-			echo $herra->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_herramienta'],$_POST['herramienta_tipo_id'],$_POST['fechaDeCompra'],$_POST['placas'],$_POST['condicion'],$_POST['observaciones']);
+			echo $herra->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_herramienta'],$_POST['herramienta_tipo_id'],$_POST['fechaDeCompra'],$_POST['placas'],$_POST['condicion'],$_POST['observaciones'],$_POST['laboratorio_id']);
 		break;
 		case 'evaluateHerra':
 			$herra = new Herramienta();
