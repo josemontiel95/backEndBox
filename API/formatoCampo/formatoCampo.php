@@ -53,16 +53,20 @@ class formatoCampo{
 									INSERT INTO
 										formatoCampo
 										(
-											informeNo
+											informeNo,
+											observaciones,
+											ordenDeTrabajo_id
 										)
 									VALUES
 										(
-											'1QQ'
+											'1QQ',
+											'NO HAY OBSERVACIONES',
+											1QQ
 										)
 
 								"
 								,
-								array($infoNo)
+								array($infoNo,$id_ordenDeTrabajo)
 								,
 								"INSERT"
 							);
@@ -79,7 +83,7 @@ class formatoCampo{
 
 								"
 								,
-								array($a['consecutivoDocumentos'])
+								array($a['id_obra'])
 								,
 								"SELECT"
 							);
@@ -89,7 +93,7 @@ class formatoCampo{
 					}
 					else{
 						$dbS->rollbackTransaction();
-						$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la modificacion de consecutivoDocumentos, verifica tus datos y vuelve a intentarlo','error' => 6);
+						$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la modificacion de consecutivoDocumentos, verifica tus datos y vuelve a intentarlo','error' => 5);
 					}
 				}else{
 					$dbS->rollbackTransaction();
@@ -98,7 +102,7 @@ class formatoCampo{
 			}
 			else{
 				$dbS->rollbackTransaction();
-				$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 6);
+				$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 7);
 			}	
 		}
 		return json_encode($arr);
@@ -196,7 +200,7 @@ class formatoCampo{
 		return json_encode($arr);	
 	}
 	
-
+	/*
 	public function insertJefeBrigada($token,$rol_usuario_id,$informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud,$tipoConcreto,$prueba1,$prueba2,$prueba3,$prueba4){
 		global $dbS;
 		$usuario = new Usuario();
@@ -218,7 +222,77 @@ class formatoCampo{
 		}
 		return json_encode($arr);
 
+	}*/
+
+	public function insertJefeBrigada($token,$rol_usuario_id,$campo,$valor,$id_formatoCampo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			switch ($campo) {
+				case '1':
+					$campo = 'observaciones';
+					break;
+				case '2':
+					$campo = 'tipo';
+					break;
+				case '3':
+					$campo = 'tipoConcreto';
+					break;
+				case '4':
+					$campo = 'prueba1';
+					break;
+				case '5':
+					$campo = 'prueba2';
+					break;
+				case '6':
+					$campo = 'prueba3';
+					break;
+				case '7':
+					$campo = 'prueba4';
+					break;
+				case '8':
+					$campo = 'cono_id';
+					break;
+				case '9':
+					$campo = 'varilla_id';
+					break;
+				case '10':
+					$campo = 'flexometro_id';
+					break;
+				case '11':
+					$campo = 'termometro_id';
+					break;
+				case '12':
+					$campo = 'posInicial';
+					break;
+				case '13':
+					$campo = 'posFinal';
+					break;
+			}
+
+			$dbS->squery("
+						UPDATE
+							formatoCampo
+						SET
+							1QQ = '1QQ'
+						WHERE
+							id_formatoCampo = 1QQ
+
+				",array($campo,$valor,$id_formatoCampo),"UPDATE");
+			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => '¡Exito en la inserccion de informacion!','error' => 0);
+				return json_encode($arr);
+			}else{
+				$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+				return json_encode($arr);
+			}
+		}
+		return json_encode($arr);
+
 	}
+
 
 	public function getformatoDefoults(){
 		global $dbS;
