@@ -303,7 +303,7 @@ class registrosCampo{
 								"SELECT"
 							);
 					if(!$dbS->didQuerydied){
-						$new_clave = str_replace('@UnitIO@', $herramienta['placas'], $clave['claveEspecimen'])
+						$new_clave = str_replace('@UnitIO@', $herramienta['placas'], $clave['claveEspecimen']);
 						$dbS->squery("
 							UPDATE
 								registrosCampo
@@ -318,7 +318,7 @@ class registrosCampo{
 						return json_encode($arr);
 					}
 					else{
-						$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 7;
+						$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 7);
 						return json_encode($arr);
 					}
 				}

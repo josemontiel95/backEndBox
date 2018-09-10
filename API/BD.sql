@@ -812,6 +812,33 @@ CREATE TABLE laboratorio_cliente(
 )ENGINE=INNODB;
 ALTER TABLE laboratorio_cliente AUTO_INCREMENT=1001;
 
+CREATE TABLE ticket(
+	id_ticket INT(11) NOT NULL AUTO_INCREMENT,
+	creador_id INT(11),
+	prioridad INT(11),
+	status INT(11),
+	tipo INT(11),
+	grupo_id INT(11),
+	user_id INT(11),
+	threadsNo INT(11),
+
+	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	active INT NOT NULL DEFAULT 1,
+
+	PRIMARY KEY(id_laboratorio_cliente),
+
+	FOREIGN KEY(laboratorio_id) 
+	REFERENCES laboratorio(id_laboratorio)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(cliente_id) 
+	REFERENCES cliente(id_cliente)
+	ON DELETE SET NULL ON UPDATE CASCADE
+
+)ENGINE=INNODB;
+ALTER TABLE ticket AUTO_INCREMENT=1001;
+
 
 DROP TABLE laboratorio_cliente;
 ================
@@ -866,7 +893,6 @@ CREATE TABLE systemstatus(
 	PRIMARY KEY(id_systemstatus)
 
 )ENGINE = INNODB;
-
 ALTER TABLE systemstatus AUTO_INCREMENT=1001;
 
 ALTER TABLE systemstatus ADD ensayo_def_buscula_id INT NOT NULL;
