@@ -63,9 +63,9 @@ class registrosCampo{
 			);
 			if(!$dbS->didQuerydied && !($a=="empty")){
 				//Hacemos la clave
-				$año = $this->numberToRomanRepresentation($a['mes']);
+				$mes = $this->numberToRomanRepresentation($a['mes']);
 				$remplazable = '@UnitIO@';
-				$clave = $a['prefijo']."-".$año."-".$a['dia']."-".$remplazable."-".$a['consecutivoProbeta'];
+				$clave = $a['prefijo']."-".$mes."-".$a['dia']."-".$remplazable."-".$a['consecutivoProbeta'];
 				$b= $dbS->qarrayA("
 			      	SELECT 
 						tipoConcreto,
@@ -132,11 +132,11 @@ class registrosCampo{
 						
 						$dbS->squery("
 							INSERT INTO
-								registrosCampo(claveEspecimen,formatoCampo_id, fecha, revProyecto,diasEnsaye)
+								registrosCampo(claveEspecimen,formatoCampo_id, fecha, revProyecto,diasEnsaye,consecutivoProbeta)
 
 							VALUES
-								('1QQ',1QQ, CURDATE(),'1QQ','1QQ')
-						",array($clave,$formatoCampo_id, $a['revenimiento'], $diasEnsaye),"INSERT");
+								('1QQ',1QQ, CURDATE(),'1QQ','1QQ','1QQ')
+						",array($clave,$formatoCampo_id, $a['revenimiento'], $diasEnsaye,$a['consecutivoProbeta']),"INSERT");
 						if(!$dbS->didQuerydied){
 							$id = $dbS->lastInsertedID;
 							$dbS->squery(
@@ -173,11 +173,11 @@ class registrosCampo{
 						if($c=="empty"){
 							$dbS->squery("
 								INSERT INTO
-									registrosCampo(claveEspecimen,formatoCampo_id, fecha, revProyecto,diasEnsaye)
+									registrosCampo(claveEspecimen,formatoCampo_id, fecha, revProyecto,diasEnsaye,consecutivoProbeta)
 
 								VALUES
 									('1QQ',1QQ, CURDATE(),'1QQ',1)
-							",array($clave,$formatoCampo_id, $a['revenimiento']),"INSERT");
+							",array($clave,$formatoCampo_id, $a['revenimiento'],$a['consecutivoProbeta']),"INSERT");
 							if(!$dbS->didQuerydied){
 								$id = $dbS->lastInsertedID;
 								$dbS->squery(
@@ -272,8 +272,8 @@ class registrosCampo{
 					$campo = 'horaMuestreo';
 					break;
 			}
-			if($campo == 1){
-				$herramienta = $dbS->squery(
+			if($campo == 'herramienta_id'){
+				$herramienta = $dbS->qarrayA(
 									"
 										SELECT
 											id_herramienta,
@@ -287,34 +287,46 @@ class registrosCampo{
 									array($valor),
 									"SELECT"
 								);
-				if(!$dbS->didQuerydied){
-					$clave = $dbS->qarrayA(
+				if(!$dbS->didQuerydied && $herramienta != "empty"){
+					$a = $dbS->qarrayA(
 								"
 									SELECT
-										claveEspecimen
+									id_obra,
+									revenimiento, 
+									prefijo,
+									registrosCampo.consecutivoProbeta,
+									MONTH(NOW()) AS mes,
+									DAY(NOW()) AS dia
 									FROM
+										ordenDeTrabajo,
+										obra,
+										formatoCampo,
 										registrosCampo
 									WHERE
+										id_obra = obra_id AND
+										id_ordenDeTrabajo =  formatoCampo.ordenDeTrabajo_id AND
+										id_formatoCampo = formatoCampo_id AND
 										id_registrosCampo = 1QQ
-
 								"
 								,
 								array($id_registrosCampo),
 								"SELECT"
 							);
 					if(!$dbS->didQuerydied){
-						$new_clave = str_replace('@UnitIO@', $herramienta['placas'], $clave['claveEspecimen']);
+						$mes = $this->numberToRomanRepresentation($a['mes']);
+						$new_clave = $a['prefijo']."-".$mes."-".$a['dia']."-".$herramienta['placas']."-".$a['consecutivoProbeta'];
 						$dbS->squery("
 							UPDATE
 								registrosCampo
 							SET
-								claveEspecimen = 1QQ,
+								claveEspecimen = '1QQ',
 								1QQ = '1QQ'
 							WHERE
 								id_registrosCampo = 1QQ AND
 								status < 2
 
 						",array($new_clave,$campo,$valor,$id_registrosCampo),"UPDATE");
+						$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => '¡Exito en la inserccion de un registro!','Clave:'=>$new_clave,'error' => 0);
 						return json_encode($arr);
 					}
 					else{
