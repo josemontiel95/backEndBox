@@ -271,6 +271,9 @@ class registrosCampo{
 				case '11':
 					$campo = 'horaMuestreo';
 					break;
+				case '12':
+					$campo = 'status';
+					break;
 			}
 			if($campo == 'herramienta_id'){
 				$herramienta = $dbS->qarrayA(
@@ -312,7 +315,7 @@ class registrosCampo{
 								array($id_registrosCampo),
 								"SELECT"
 							);
-					if(!$dbS->didQuerydied){
+					if(!$dbS->didQuerydied && $herramienta != "empty"){
 						$mes = $this->numberToRomanRepresentation($a['mes']);
 						$new_clave = $a['prefijo']."-".$mes."-".$a['dia']."-".$herramienta['placas']."-".$a['consecutivoProbeta'];
 						$dbS->squery("
@@ -326,8 +329,15 @@ class registrosCampo{
 								status < 2
 
 						",array($new_clave,$campo,$valor,$id_registrosCampo),"UPDATE");
-						$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => '¡Exito en la inserccion de un registro!','Clave:'=>$new_clave,'error' => 0);
-						return json_encode($arr);
+						if(!$dbS->didQuerydied){
+							$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => '¡Exito en la inserccion de un registro!','Clave:'=>$new_clave,'error' => 0);
+							return json_encode($arr);
+						}
+						else{
+							$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 8);
+							return json_encode($arr);
+						}
+						
 					}
 					else{
 						$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 7);
