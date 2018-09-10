@@ -47,7 +47,7 @@ class registrosCampo{
 									revenimiento, 
 									prefijo,
 									consecutivoProbeta,
-									YEAR(NOW()) AS anio,
+									MONTH(NOW()) AS mes,
 									DAY(NOW()) AS dia
 								FROM
 									ordenDeTrabajo,
@@ -63,7 +63,7 @@ class registrosCampo{
 			);
 			if(!$dbS->didQuerydied && !($a=="empty")){
 				//Hacemos la clave
-				$año = $this->numberToRomanRepresentation($a['anio']);
+				$año = $this->numberToRomanRepresentation($a['mes']);
 				$remplazable = '@UnitIO@';
 				$clave = $a['prefijo']."-".$año."-".$a['dia']."-".$remplazable."-".$a['consecutivoProbeta'];
 				$b= $dbS->qarrayA("
@@ -239,49 +239,94 @@ class registrosCampo{
 		if($arr['error'] == 0){
 			switch ($campo) {
 				case '1':
-					$campo = 'claveEspecimen';
+					$campo = 'herramienta_id';
 					break;
 				case '2':
-					$campo = 'fecha';
-					break;
-				case '3':
 					$campo = 'fprima';
 					break;
-				case '4':
-					$campo = 'revProyecto';
-					break;
-				case '5':
+				case '3':
 					$campo = 'revObra';
 					break;
-				case '6':
+				case '4':
 					$campo = 'tamAgregado';
 					break;
-				case '7':
+				case '5':
 					$campo = 'volumen';
 					break;
-				case '8':
+				case '6':
 					$campo = 'diasEnsaye';
 					break;
-				case '9':
+				case '7':
 					$campo = 'unidad';
 					break;
-				case '10':
-					$campo = 'horaMuestreo';
-					break;
-				case '11':
+				case '8':
 					$campo = 'tempMuestreo';
 					break;
-				case '12':
+				case '9':
 					$campo = 'tempRecoleccion';
 					break;
-				case '13':
+				case '10':
 					$campo = 'localizacion';
 					break;
-				case '14':
-					$campo = 'status';
+				case '11':
+					$campo = 'horaMuestreo';
 					break;
 			}
+			if($campo == 1){
+				$herramienta = $dbS->squery(
+									"
+										SELECT
+											id_herramienta,
+											placas
+										FROM
+											herramientas
+										WHERE
+											id_herramienta = 1QQ
+									"
+									,
+									array($valor),
+									"SELECT"
+								);
+				if(!$dbS->didQuerydied){
+					$clave = $dbS->qarrayA(
+								"
+									SELECT
+										claveEspecimen
+									FROM
+										registrosCampo
+									WHERE
+										id_registrosCampo = 1QQ
 
+								"
+								,
+								array($id_registrosCampo),
+								"SELECT"
+							);
+					if(!$dbS->didQuerydied){
+						$new_clave = str_replace('@UnitIO@', $herramienta['placas'], $clave['claveEspecimen'])
+						$dbS->squery("
+							UPDATE
+								registrosCampo
+							SET
+								claveEspecimen = 1QQ,
+								1QQ = '1QQ'
+							WHERE
+								id_registrosCampo = 1QQ AND
+								status < 2
+
+						",array($new_clave,$campo,$valor,$id_registrosCampo),"UPDATE");
+						return json_encode($arr);
+					}
+					else{
+						$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 7;
+						return json_encode($arr);
+					}
+				}
+				else{
+					$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 6);
+					return json_encode($arr);
+				}	
+			}
 			$dbS->squery("
 						UPDATE
 							registrosCampo
