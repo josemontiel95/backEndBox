@@ -19,29 +19,18 @@ class Obra{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
-			$a=$dbS->qarrayA("
-				SELECT 
-					laboratorio_id
-				FROM 
-					cliente
-				WHERE 
-					id_cliente=1QQ
-				",array($cliente_id),"SELECT");
-			if(!$dbS->didQuerydied && !($a=="empty")){
-				$dbS->squery("
-							INSERT INTO
-							obra(laboratorio_id,obra,prefijo,fechaDeCreacion,descripcion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento, incertidumbre, cotizacion,consecutivoProbeta,consecutivoDocumentos)
+			$dbS->squery("
+						INSERT INTO
+						obra(laboratorio_id,obra,prefijo,fechaDeCreacion,descripcion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento, incertidumbre, cotizacion,consecutivoProbeta,consecutivoDocumentos)
 
-							VALUES
-							('1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ',1QQ,1QQ,1QQ,1QQ,1QQ,'1QQ','1QQ','1QQ')
-					",array($a['laboratorio_id'],$obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,$cotizacion,$consecutivoProbeta,$consecutivoDocumentos),"INSERT");
-					$arr = array('id_obra' => 'No disponible, esto NO es un error', 'obra' => $obra, 'estatus' => 'Exito en insercion', 'error' => 0);
-				if($dbS->didQuerydied){
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
-				}
-			}else{
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el sistem, contacta a soporte','error' => 6);
+						VALUES
+						('1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ',1QQ,1QQ,1QQ,1QQ,1QQ,'1QQ','1QQ','1QQ')
+				",array($laboratorio_id,$obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,$cotizacion,$consecutivoProbeta,$consecutivoDocumentos),"INSERT");
+				$arr = array('id_obra' => 'No disponible, esto NO es un error', 'obra' => $obra, 'estatus' => 'Exito en insercion', 'error' => 0);
+			if($dbS->didQuerydied){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}
 		}
 		return json_encode($arr);

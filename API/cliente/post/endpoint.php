@@ -17,11 +17,11 @@
 	switch ($function){
 		case 'upDateAdmin':
 			$cliente = new Cliente();
-			echo $cliente->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_cliente'],$_POST['rfc'],$_POST['razonSocial'],$_POST['nombre'],$_POST['email'],$_POST['telefono'],$_POST['nombreContacto'],$_POST['telefonoDeContacto'],$_POST['calle'],$_POST['noExt'],$_POST['noInt'],$_POST['col'],$_POST['municipio'],$_POST['estado'],$_POST['laboratorio_id']);
+			echo $cliente->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_cliente'],$_POST['rfc'],$_POST['razonSocial'],$_POST['nombre'],$_POST['email'],$_POST['telefono'],$_POST['nombreContacto'],$_POST['telefonoDeContacto'],$_POST['calle'],$_POST['noExt'],$_POST['noInt'],$_POST['col'],$_POST['municipio'],$_POST['estado']);
 		break;
 		case 'insertAdmin':
 			$cliente = new Cliente();
-			echo $cliente->insertAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['rfc'],$_POST['razonSocial'],$_POST['nombre'],$_POST['email'],$_POST['telefono'],$_POST['nombreContacto'],$_POST['telefonoDeContacto'],$_POST['calle'],$_POST['noExt'],$_POST['noInt'],$_POST['col'],$_POST['municipio'],$_POST['estado'],$_POST['laboratorio_id']);		
+			echo $cliente->insertAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['rfc'],$_POST['razonSocial'],$_POST['nombre'],$_POST['email'],$_POST['telefono'],$_POST['nombreContacto'],$_POST['telefonoDeContacto'],$_POST['calle'],$_POST['noExt'],$_POST['noInt'],$_POST['col'],$_POST['municipio'],$_POST['estado']);		
 		break;
 		case 'deactivate':
 			$cliente = new Cliente();
@@ -69,24 +69,5 @@
 			echo $cliente->upDateContrasena($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_cliente'],$_POST['constrasena']);
 		break;
 	}
-
-	
-
-	/*
-	if(!empty($_GET)){
-		$function= $_GET['function'];
-	}else{
-		return -2;
-	}
-	include_once("./../Usuario.php");
-
-	switch ($function){
-		case 'upLoadFoto':
-			$usuario = new Usuario();
-			echo $usuario->upLoadFoto($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario']);
-		break;
-
-	}
-	*/
 ?>
 

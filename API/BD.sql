@@ -92,8 +92,6 @@ CREATE TABLE cliente(
 )ENGINE=INNODB;
 ALTER TABLE cliente AUTO_INCREMENT=1001;
 
-
-
 CREATE TABLE concretera(
 	id_concretera INT(11) NOT NULL AUTO_INCREMENT,
 	concretera VARCHAR(40) NOT NULL,
@@ -784,10 +782,32 @@ CREATE TABLE footerEnsayo(
 	ON DELETE SET NULL ON UPDATE CASCADE
 
 )ENGINE=INNODB;
-
 ALTER TABLE footerEnsayo AUTO_INCREMENT=1001;
-ALTER TABLE footerEnsayo ADD observaciones VARCHAR(30);
 
+CREATE TABLE laboratorio_cliente(
+	id_laboratorio_cliente INT(11) NOT NULL AUTO_INCREMENT,
+	laboratorio_id INT(11),
+	cliente_id INT(11),
+
+	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	active INT NOT NULL DEFAULT 1,
+
+	PRIMARY KEY(id_laboratorio_cliente),
+
+	FOREIGN KEY(laboratorio_id) 
+	REFERENCES laboratorio(id_laboratorio)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(cliente_id) 
+	REFERENCES cliente(id_cliente)
+	ON DELETE SET NULL ON UPDATE CASCADE
+
+)ENGINE=INNODB;
+ALTER TABLE laboratorio_cliente AUTO_INCREMENT=1001;
+
+
+DROP TABLE laboratorio_cliente;
 ================
 DROP TABLE dato;
 DROP TABLE campos;
