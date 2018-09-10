@@ -69,24 +69,5 @@
 			echo $cliente->upDateContrasena($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_cliente'],$_POST['constrasena']);
 		break;
 	}
-
-	
-
-	/*
-	if(!empty($_GET)){
-		$function= $_GET['function'];
-	}else{
-		return -2;
-	}
-	include_once("./../Usuario.php");
-
-	switch ($function){
-		case 'upLoadFoto':
-			$usuario = new Usuario();
-			echo $usuario->upLoadFoto($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario']);
-		break;
-
-	}
-	*/
 ?>
 

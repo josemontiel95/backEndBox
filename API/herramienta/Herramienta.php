@@ -403,6 +403,7 @@ class Herramienta{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 					SELECT
@@ -422,10 +423,11 @@ class Herramienta{
 					 	HO.herramienta_id = H.id_herramienta AND
 					 	HT.id_herramienta_tipo=H.herramienta_tipo_id AND
 					   	HO.active = 1 AND
+					 	H.laboratorio_id= 1QQ AND
 					   	H.herramienta_tipo_id = 1002 AND
 					   	HO.ordenDeTrabajo_id = 1QQ
 			      ",
-			      array($id_ordenDeTrabajo),
+			      array($laboratorio_id,$id_ordenDeTrabajo),
 			      "SELECT"
 			      );
 
@@ -448,6 +450,7 @@ class Herramienta{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 					 SELECT
@@ -467,12 +470,13 @@ class Herramienta{
 					 	HO.herramienta_id = H.id_herramienta AND
 					 	HT.id_herramienta_tipo=H.herramienta_tipo_id AND
 					   	HO.active = 1 AND
+					 	H.laboratorio_id= 1QQ AND
 					   	H.herramienta_tipo_id = 1003 AND
 					   	HO.ordenDeTrabajo_id = 1QQ
 					 
 					 	
 			      ",
-			      array($id_ordenDeTrabajo),
+			      array($laboratorio_id,$id_ordenDeTrabajo),
 			      "SELECT"
 			      );
 
@@ -492,6 +496,7 @@ class Herramienta{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 					 SELECT
@@ -511,10 +516,11 @@ class Herramienta{
 					 	HO.herramienta_id = H.id_herramienta AND
 					 	HT.id_herramienta_tipo=H.herramienta_tipo_id AND
 					   	HO.active = 1 AND
+					 	H.laboratorio_id= 1QQ AND
 					   	H.herramienta_tipo_id = 1003 AND
 					   	HO.ordenDeTrabajo_id = 1QQ
 			      ",
-			      array($id_ordenDeTrabajo),
+			      array($laboratorio_id,$id_ordenDeTrabajo),
 			      "SELECT"
 			      );
 
@@ -533,6 +539,7 @@ class Herramienta{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      SELECT 
@@ -544,6 +551,7 @@ class Herramienta{
 					id_herramienta_tipo,
 					tipo,
 					observaciones,
+					laboratorio_id,
 					herramientas.createdON,
 					herramientas.lastEditedON,
 					IF(herramientas.active = 1,'Si','No') AS active
@@ -572,6 +580,7 @@ class Herramienta{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      SELECT 
@@ -590,9 +599,10 @@ class Herramienta{
 			      WHERE
 			      	 id_herramienta_tipo =  herramienta_tipo_id AND
 			      	 herramientas.active = 1 AND
+					 herramientas.laboratorio_id= 1QQ AND
 			      	 id_herramienta > 1000
 			      ",
-			      array(),
+			      array($laboratorio_id),
 			      "SELECT"
 			      );
 
@@ -607,18 +617,18 @@ class Herramienta{
 	}
 
 
-	public function insertAdmin($token,$rol_usuario_id,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones){
+	public function insertAdmin($token,$rol_usuario_id,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones,$laboratorio_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						herramientas(herramienta_tipo_id,fechaDeCompra,placas,condicion,observaciones)
+						herramientas(herramienta_tipo_id,fechaDeCompra,placas,condicion,observaciones,laboratorio_id)
 
 						VALUES
-						('1QQ','1QQ','1QQ','1QQ','1QQ')
-				",array($herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones),"INSERT");
+						('1QQ','1QQ','1QQ','1QQ','1QQ','1QQ')
+				",array($herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones,$laboratorio_id),"INSERT");
 
 			if(!$dbS->didQuerydied){
 				$arr = array('id_herramienta' => 'No disponible, esto NO es un error', 'herramienta_tipo_id' => $herramienta_tipo_id, 'estatus' => 'Exito en insercion', 'error' => 0);
@@ -630,7 +640,7 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
-	public function upDateAdmin($token,$rol_usuario_id,$id_herramienta,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones){
+	public function upDateAdmin($token,$rol_usuario_id,$id_herramienta,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones,$laboratorio_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -642,11 +652,12 @@ class Herramienta{
 							fechaDeCompra = '1QQ',
 							placas = '1QQ', 
 							condicion = '1QQ',
-							observaciones = '1QQ'
+							observaciones = '1QQ',
+							laboratorio_id ='1QQ'
 						WHERE
 							id_herramienta = 1QQ
 					 "
-					,array($herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones,$id_herramienta),"UPDATE"
+					,array($herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones,$laboratorio_id,$id_herramienta),"UPDATE"
 			      	);
 			if(!$dbS->didQuerydied){
 				$arr = array('id_herramienta' => 'No disponible, esto NO es un error', 'herramienta_tipo_id' => $herramienta_tipo_id, 'estatus' => 'Exito en actualizacion', 'error' => 0);
@@ -672,6 +683,7 @@ class Herramienta{
 			        condicion,
 					tipo,
 					observaciones,
+					laboratorio_id,
 					herramientas.createdON,
 					herramientas.lastEditedON,
 					herramientas.active,
@@ -754,7 +766,13 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
-				
+	/*
+		Esta funcion se utiliza para generar un 
+		drop dropdown en el dashboard de la orden
+		de trabajo para escoger el tipo de herramienta a agregar
+		Esto pasa en la direccion:
+		-jefelab/dashboard/dashboard.component.ts
+	*/
 
 	public function getForDroptdownTipo($token,$rol_usuario_id){
 		global $dbS;
@@ -768,6 +786,7 @@ class Herramienta{
    				    FROM
    				        herramienta_tipo
    				    WHERE
+   				    	asignableenOrdenDeTrabajo = 1 AND
             			herramienta_tipo.active = 1 ;
 			      ",
 			      array(),

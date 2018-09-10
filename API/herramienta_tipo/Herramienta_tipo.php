@@ -89,7 +89,8 @@ class Herramienta_tipo{
 			$arr= $dbS->qAll("
 			      SELECT 
 			        id_herramienta_tipo,
-					tipo
+					tipo,
+					asignableenOrdenDeTrabajo
 			      FROM 
 			        herramienta_tipo
 			      WHERE
