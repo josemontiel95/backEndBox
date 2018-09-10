@@ -10,22 +10,24 @@ class Cliente{
 	private $telefono;
 	private $nombreContacto;
 	private $telefonoDeContacto;
+	private $contrasena;
+	private $foto;
 
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
-	public function insert($token,$rol_usuario_id,$rfc,$razonSocial,$nombre,$direccion,$email,$telefono,$nombreContacto,$telefonoDeContacto){
+	public function insertAdmin($token,$rol_usuario_id,$rfc,$razonSocial,$nombre,$email,$telefono,$nombreContacto,$telefonoDeContacto,$calle,$noExt,$noInt,$col,$municipio,$estado){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						cliente(rfc,razonSocial,nombre,direccion,email,telefono,nombreContacto,telefonoDeContacto)
+						cliente(rfc,razonSocial,nombre,email,telefono,nombreContacto,telefonoDeContacto,calle,noExt,noInt,col,municipio,estado)
 
 						VALUES
-						('1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ')
-				",array($rfc,$razonSocial,$nombre,$direccion,$email,$telefono,$nombreContacto,$telefonoDeContacto),"INSERT");
+						(1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ')
+				",array($laboratorio_id,$rfc,$razonSocial,$nombre,$email,$telefono,$nombreContacto,$telefonoDeContacto,$calle,$noExt,$noInt,$col,$municipio,$estado),"INSERT");
 			$arr = array('id_cliente' => 'No disponible, esto NO es un error', 'razonSocial' => $razonSocial, 'estatus' => 'Exito en insercion', 'error' => 0);
 			if($dbS->didQuerydied){
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
@@ -34,7 +36,7 @@ class Cliente{
 		return json_encode($arr);
 	}
 
-	public function upDate($token,$rol_usuario_id,$id_cliente,$rfc,$razonSocial,$nombre,$direccion,$email,$telefono,$nombreContacto,$telefonoDeContacto){
+	public function upDateAdmin($token,$rol_usuario_id,$id_cliente,$rfc,$razonSocial,$nombre,$email,$telefono,$nombreContacto,$telefonoDeContacto,$calle,$noExt,$noInt,$col,$municipio,$estado){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -45,16 +47,21 @@ class Cliente{
 							rfc ='1QQ',
 							razonSocial = '1QQ',
 							nombre = '1QQ',
-							direccion = '1QQ',
 							email = '1QQ',
 							telefono ='1QQ',
 							nombreContacto = '1QQ', 
-							telefonoDeContacto = '1QQ'
+							telefonoDeContacto = '1QQ',
+							calle = '1QQ',
+							noExt = '1QQ',
+							noInt = '1QQ',
+							col = '1QQ',
+							municipio = '1QQ',
+							estado = '1QQ'
 						WHERE
 							active=1 AND
 							id_cliente = 1QQ
 					 "
-					,array($rfc,$razonSocial,$nombre,$direccion,$email,$telefono,$nombreContacto,$telefonoDeContacto,$id_cliente),"UPDATE"
+					,array($rfc,$razonSocial,$nombre,$email,$telefono,$nombreContacto,$telefonoDeContacto,$calle,$noExt,$noInt,$col,$municipio,$estado,$id_cliente),"UPDATE"
 			      	);
 			$arr = array('id_cliente' => $id_cliente, 'razonSocial' => $razonSocial,'estatus' => 'Exito de actualizacion','error' => 0);	
 			if($dbS->didQuerydied){
@@ -65,7 +72,7 @@ class Cliente{
 
 	}
 
-	public function getAll($token,$rol_usuario_id){
+	public function getAllAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -77,12 +84,19 @@ class Cliente{
 					razonSocial,
 					nombre,
 					email,
+					foto,
 					telefono,
 					nombreContacto,
 					telefonoDeContacto,
 					createdON,
 					lastEditedON,
-					active
+					IF(active = 1,'Si','No') AS active,
+					calle,
+					noExt,
+					noInt,
+					col,
+					municipio,
+					estado
 			      FROM 
 			        cliente
 			      ",
@@ -100,7 +114,189 @@ class Cliente{
 		return json_encode($arr);	
 	}
 
+	public function getForDroptdownAdmin($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token,$rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      SELECT 
+			        id_cliente,
+					nombre
+			      FROM 
+			        cliente, laboratorio_cliente
+			      WHERE
+			      	id_cliente = cliente_id AND
+			      	cliente.active=1 AND 
+			      	laboratorio_cliente.active =1 AND
+			      	laboratorio_id= 1QQ 
+			      ORDER BY
+			      	nombre
+			      ",
+			      array($laboratorio_id),
+			      "SELECT"
+			      );
 
+			if(!$dbS->didQuerydied){
+						if(count($arr) == 0)
+							$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+						
+			}else
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 6);
+		}
+		return json_encode($arr);	
+	}
+
+	public function deactivate($token,$rol_usuario_id,$id_cliente){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+							cliente
+						SET
+							active = '1QQ'
+						WHERE
+							active=1 AND
+							id_cliente = 1QQ
+					 "
+					,array(0,$id_cliente),"UPDATE"
+			      	);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_cliente' => $id_cliente,'estatus' => 'Cliente se desactivo','error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function activate($token,$rol_usuario_id,$id_cliente){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+							cliente
+						SET
+							active = '1QQ'
+						WHERE
+							active=0 AND
+							id_cliente = 1QQ
+					 "
+					,array(1,$id_cliente),"UPDATE"
+			      	);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_cliente' => $id_cliente,'estatus' => 'Cliente se activo','error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la activacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
+
+
+
+	public function getByIDAdmin($token,$rol_usuario_id,$id_cliente){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA("
+			      SELECT
+			      	id_cliente, 
+			        rfc,
+					razonSocial,
+					nombre,
+					email,
+					foto,
+					telefono,
+					nombreContacto,
+					telefonoDeContacto,
+					active,
+					calle,
+					noExt,
+					noInt,
+					col,
+					municipio,
+					estado
+			      FROM 
+			      	cliente
+			      WHERE 
+			      	id_cliente = 1QQ
+			      ",
+			      array($id_cliente),
+			      "SELECT"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('id_cliente' => $id_cliente,'estatus' => 'Error no se encontro ese id','error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getClienteByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function upDateContrasena($token,$rol_usuario_id,$id_cliente,$constrasena){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$contrasenaValida = hash('sha512', $constrasena);
+			$dbS->squery("	UPDATE
+							cliente
+						SET
+							contrasena = '1QQ'
+						WHERE
+							id_cliente = 1QQ
+					 "
+					,array($contrasenaValida,$id_cliente),"UPDATE"
+			      	);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_cliente' => $id_cliente,'estatus' => 'Se actualizo la contraseña correctamente','error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion de la conttraseña , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function upLoadFoto($token,$rol_usuario_id,$id_cliente,$foto){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("
+						UPDATE
+							cliente
+						SET
+							foto = '1QQ'
+						WHERE
+							id_cliente = 1QQ
+						",
+						array($foto,$id_cliente),"UPDATE"
+
+					);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_cliente' => $id_cliente,'estatus' => '¡Exito!, redireccionando...','error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en subir la foto, verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
 
 
 	

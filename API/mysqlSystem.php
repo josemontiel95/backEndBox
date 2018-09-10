@@ -168,5 +168,68 @@ class MySQLSystem{
 		else
 			$this->query($this->secure_string($q,$arr));
 	}
+
+	public function beginTransaction(){
+		$qt=$this->queryType;
+		$this->queryType="beginTransaction";
+		$this->query('BEGIN');
+		$this->queryType=$qt;
+	}
+	public function commitTransaction(){
+		$qt=$this->queryType;
+		$this->queryType="commitTransaction";
+		$this->query('COMMIT');
+		$this->queryType=$qt;
+	}
+	public function rollbackTransaction(){
+		$qt=$this->queryType;
+		$this->queryType="rollbackTransaction";
+		$this->query('ROLLBACK');
+		$this->queryType=$qt;
+	}
+	/*
+
+						-----------------APORTACIONES BRYAN---------------
+
+	*/
+
+	//MEJORAR SI HAY TIEMPO
+	public function transquery($q = "eempty",$arrThings = array(),$destino,$queryType="NS"){
+		$this->beginTransaction();	//SE INSERTA COMO SI SE TRATARA DE LA TERMINAL, EL INICIO DE LA TRANSACCION
+		foreach ($arrThings as $a){
+				$array_aux = array($a,$destino); //ARRAY AUXILIAR PARA PODER EJECUTAR LA "squery"
+				$this->squery($q,$array_aux,$queryType);
+				if($this->didQuerydied)//POR CADA ITERACION SE REVISA SI NO HA MUERTO LA QUERY
+					break;
+		}
+		if (!$this->didQuerydied) {
+			$this->commitTransaction();
+			return (0);
+		}
+		else{
+			$this->rollbackTransaction(); //EJECUTAMOS EL ROLL BACK PARA VOLVER AL ESTADO DE LA TABLA ANTES DE REALIZAR CAMBIOS
+			$this->squery($q,$array_aux,$queryType);	
+			$this->queryType="rollbackFLAG";
+			$this->logQuery("ROLLBACK");
+			$this->didQuerydied = true;
+			return ($a);
+		}
+	}
+
+	/*	MEJORA EN DESARROLLO
+	
+	public function transaction($arrQuery){
+		$this->beginTransaction();
+		foreach ($arrQuery as $q) {
+			foreach ($arrThings as $a) {
+				$id = $this->squery($q,)
+			}
+		}
+	}
+	*/
+
+	/*
+									¿SEPARAR EL INICIO DE LA TRANSACCION?
+	*/
 }
 ?>

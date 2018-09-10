@@ -1,0 +1,557 @@
+<?php 
+
+
+include_once("./../../usuario/Usuario.php");
+class formatoCampo{
+	private $id_formatoCampo;
+	private $informeNo;
+	private $ordenDeServicio_id;
+	private $observaciones;
+	private $mr;
+	private $tipo;
+
+
+	private $wc = '/1QQ/';
+
+	public function initInsertCCH($token,$rol_usuario_id,$id_ordenDeTrabajo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
+		if($arr['error'] == 0){
+			//Informacion para crear el "Informe No."
+			$a= $dbS->qarrayA("
+		      	SELECT 
+		      		id_obra,
+					cotizacion,
+					consecutivoDocumentos,
+					prefijo,
+					YEAR(NOW()) AS anio
+				FROM
+					obra,
+					(
+						SELECT
+							obra_id
+						FROM
+							ordenDeTrabajo
+						WHERE
+							id_ordenDeTrabajo = 1QQ
+
+					)AS ordenDeTrabajo
+				WHERE
+					id_obra = ordenDeTrabajo.obra_id
+				",
+				array($id_ordenDeTrabajo),
+				"SELECT"
+			);
+			if(!$dbS->didQuerydied && !($a=="empty")){
+				//Creamos el informe No.
+				$año = $a['anio'] - 2000;
+				$infoNo = $a['prefijo']."/".$a['cotizacion']."/".$año."/".$a['consecutivoDocumentos'];
+				$dbS->squery(
+								"
+									INSERT INTO
+										formatoCampo
+										(
+											informeNo,
+											observaciones,
+											ordenDeTrabajo_id
+										)
+									VALUES
+										(
+											'1QQ',
+											'NO HAY OBSERVACIONES',
+											1QQ
+										)
+
+								"
+								,
+								array($infoNo,$id_ordenDeTrabajo)
+								,
+								"INSERT"
+							);
+				if(!$dbS->didQuerydied){
+					$id = $dbS->lastInsertedID;
+					$dbS->squery(
+								"
+									UPDATE
+										obra
+									SET
+										consecutivoDocumentos = consecutivoDocumentos+1
+									WHERE
+										id_obra = 1QQ
+
+								"
+								,
+								array($a['id_obra'])
+								,
+								"SELECT"
+							);
+					if(!$dbS->didQuerydied){
+						$dbS->commitTransaction();
+						$arr = array('id_formatoCampo' => $id,'informeNo'=>$infoNo,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);									
+					}
+					else{
+						$dbS->rollbackTransaction();
+						$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la modificacion de consecutivoDocumentos, verifica tus datos y vuelve a intentarlo','error' => 5);
+					}
+				}else{
+					$dbS->rollbackTransaction();
+					$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			else{
+				$dbS->rollbackTransaction();
+				$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 7);
+			}	
+		}
+		return json_encode($arr);
+
+	}
+
+
+
+	public function getAllAdmin($token,$rol_usuario_id,$id_ordenDeTrabajo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			     	SELECT
+						formatoCampo.id_formatoCampo,
+						informeNo,
+						observaciones,
+						tipo,
+						formatoCampo.cono_id,
+						CONO,
+						formatoCampo.varilla_id,
+						VARILLA,
+						formatoCampo.flexometro_id,
+						FLEXOMETRO,
+						formatoCampo.termometro_id,
+						TERMOMETRO
+					FROM
+						formatoCampo,
+						(
+							SELECT
+								id_formatoCampo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS CONO
+							FROM
+								formatoCampo
+							LEFT JOIN
+								herramientas
+							ON
+								formatoCampo.cono_id = herramientas.id_herramienta
+						)AS cono,
+						(
+							SELECT
+								id_formatoCampo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS VARILLA
+							FROM
+								formatoCampo
+							LEFT JOIN
+								herramientas
+							ON
+								formatoCampo.varilla_id = herramientas.id_herramienta
+						)AS varilla,
+						(
+							SELECT
+								id_formatoCampo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS FLEXOMETRO
+							FROM
+								formatoCampo
+							LEFT JOIN
+								herramientas
+							ON
+								formatoCampo.flexometro_id = herramientas.id_herramienta
+						)AS flexometro,
+						(
+							SELECT
+								id_formatoCampo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS TERMOMETRO
+							FROM
+								formatoCampo
+							LEFT JOIN
+								herramientas
+							ON
+								formatoCampo.termometro_id = herramientas.id_herramienta
+						)AS termometro
+					WHERE
+						cono.id_formatoCampo = formatoCampo.id_formatoCampo AND
+						varilla.id_formatoCampo = formatoCampo.id_formatoCampo AND
+						flexometro.id_formatoCampo = formatoCampo.id_formatoCampo AND
+						termometro.id_formatoCampo = formatoCampo.id_formatoCampo AND
+						formatoCampo.ordenDeTrabajo_id = 1QQ
+					ORDER BY 
+						formatoCampo.id_formatoCampo	        
+
+			      ",
+			      array($id_ordenDeTrabajo),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+						if($arr == "empty")
+							$arr = array('estatus' =>"No hay registros", 'error' => 5); 
+						
+			}else
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 6);
+		}
+		return json_encode($arr);	
+	}
+	
+	/*
+	public function insertJefeBrigada($token,$rol_usuario_id,$informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud,$tipoConcreto,$prueba1,$prueba2,$prueba3,$prueba4){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("
+						INSERT INTO
+						formatoCampo(informeNo,ordenDeTrabajo_id,tipo,cono_id,varilla_id,flexometro_id,termometro_id,posInicial,observaciones,tipoConcreto,prueba1,prueba2,prueba3,prueba4)
+						VALUES
+						('1QQ',1QQ,'1QQ',1QQ,1QQ,1QQ,1QQ,PointFromText('POINT(1QQ 1QQ)'),'NO HAY OBSERVACIONES','1QQ',1QQ,1QQ,1QQ,1QQ)
+				",array($informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud,$tipoConcreto,$prueba1,$prueba2,$prueba3,$prueba4),"INSERT");
+			if(!$dbS->didQuerydied){
+				$id=$dbS->lastInsertedID;
+				$arr = array('id_formatoCampo' =>$id,'estatus' => 'Exito en insercion', 'error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+
+	}*/
+
+	public function insertJefeBrigada($token,$rol_usuario_id,$campo,$valor,$id_formatoCampo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			switch ($campo) {
+				case '1':
+					$campo = 'observaciones';
+					break;
+				case '2':
+					$campo = 'tipo';
+					break;
+				case '3':
+					$campo = 'tipoConcreto';
+					break;
+				case '4':
+					$campo = 'prueba1';
+					break;
+				case '5':
+					$campo = 'prueba2';
+					break;
+				case '6':
+					$campo = 'prueba3';
+					break;
+				case '7':
+					$campo = 'prueba4';
+					break;
+				case '8':
+					$campo = 'cono_id';
+					break;
+				case '9':
+					$campo = 'varilla_id';
+					break;
+				case '10':
+					$campo = 'flexometro_id';
+					break;
+				case '11':
+					$campo = 'termometro_id';
+					break;
+				case '12':
+					$campo = 'posInicial';
+					break;
+				case '13':
+					$campo = 'posFinal';
+					break;
+			}
+
+			$dbS->squery("
+						UPDATE
+							formatoCampo
+						SET
+							1QQ = '1QQ'
+						WHERE
+							id_formatoCampo = 1QQ
+
+				",array($campo,$valor,$id_formatoCampo),"UPDATE");
+			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => '¡Exito en la inserccion de informacion!','error' => 0);
+				return json_encode($arr);
+			}else{
+				$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+				return json_encode($arr);
+			}
+		}
+		return json_encode($arr);
+
+	}
+
+
+	public function getformatoDefoults(){
+		global $dbS;
+		$arr = $dbS->qarrayA(
+			"	SELECT
+					id_systemstatus,
+					cch_def_prueba1,
+					cch_def_prueba2,
+					cch_def_prueba3,
+					cch_def_prueba4
+				FROM
+					systemstatus
+				ORDER BY id_systemstatus DESC;
+			",array(),"SELECT"
+		);
+		if(!$dbS->didQuerydied){
+			$id=$dbS->lastInsertedID;
+		}
+		else{
+			$arr = array('id_systemstatus' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+		}
+		return json_encode($arr);
+	}
+
+
+
+	public function getInfoByID($token,$rol_usuario_id,$id_formatoCampo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA("
+			      SELECT
+			      	informeNo,
+			        obra,
+					localizacion,
+					formatoCampo.observaciones,
+					nombre,
+					tipoConcreto,
+					prueba1,
+					prueba2,
+					prueba3,
+					prueba4,
+					razonSocial,
+					CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion,
+					formatoCampo.tipo AS tipo_especimen,
+					formatoCampo.cono_id,
+					CONO,
+					formatoCampo.varilla_id,
+					VARILLA,
+					formatoCampo.flexometro_id,
+					FLEXOMETRO,
+					formatoCampo.termometro_id,	
+					TERMOMETRO
+			      FROM 
+			        ordenDeTrabajo,cliente,obra,formatoCampo,
+			        (
+							SELECT
+								id_formatoCampo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS CONO
+							FROM
+								formatoCampo
+							LEFT JOIN
+								herramientas
+							ON
+								formatoCampo.cono_id = herramientas.id_herramienta
+						)AS cono,
+						(
+							SELECT
+								id_formatoCampo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS VARILLA
+							FROM
+								formatoCampo
+							LEFT JOIN
+								herramientas
+							ON
+								formatoCampo.varilla_id = herramientas.id_herramienta
+						)AS varilla,
+						(
+							SELECT
+								id_formatoCampo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS FLEXOMETRO
+							FROM
+								formatoCampo
+							LEFT JOIN
+								herramientas
+							ON
+								formatoCampo.flexometro_id = herramientas.id_herramienta
+						)AS flexometro,
+						(
+							SELECT
+								id_formatoCampo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS TERMOMETRO
+							FROM
+								formatoCampo
+							LEFT JOIN
+								herramientas
+							ON
+								formatoCampo.termometro_id = herramientas.id_herramienta
+						)AS termometro
+			      WHERE 
+			      	obra_id = id_obra AND
+			      	cliente_id = id_cliente AND
+			      	cono.id_formatoCampo = formatoCampo.id_formatoCampo AND
+					varilla.id_formatoCampo = formatoCampo.id_formatoCampo AND
+					flexometro.id_formatoCampo = formatoCampo.id_formatoCampo AND
+					termometro.id_formatoCampo = formatoCampo.id_formatoCampo AND
+					ordenDeTrabajo.id_ordenDeTrabajo = formatoCampo.ordenDeTrabajo_id AND
+			      	formatoCampo.id_formatoCampo = 1QQ
+			      ",
+			      array($id_formatoCampo),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro ese id','error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		return json_encode($arr);
+	}
+
+
+
+	public function getHeader($token,$rol_usuario_id,$id_ordenDeTrabajo,$id_formatoCampo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA("
+			      SELECT
+			      	informeNo,
+			        obra,
+					localizacion,
+					razonSocial,
+					tipoConcreto,
+					prueba1,
+					prueba2,
+					prueba3,
+					prueba4,
+					CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion
+
+			      FROM 
+			        ordenDeTrabajo,cliente,obra,formatoCampo
+			      WHERE 
+			      	obra_id = id_obra AND
+			      	cliente_id = id_cliente AND
+			      	id_formatoCampo = 1QQ AND
+			      	id_ordenDeTrabajo = 1QQ  
+			      ",
+			      array($id_ordenDeTrabajo),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro ese id','error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getClienteByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function updateFooter($token,$rol_usuario_id,$id_formatoCampo,$observaciones,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$tipo,$tipoConcreto,$prueba1,$prueba2,$prueba3,$prueba4){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+								formatoCampo
+							SET
+								observaciones ='1QQ',
+								cono_id = 1QQ,
+								varilla_id = 1QQ,
+								flexometro_id = 1QQ,
+								termometro_id = 1QQ,
+								tipo ='1QQ',
+								tipoConcreto ='1QQ',
+								prueba1 ='1QQ',
+								prueba2 ='1QQ',
+								prueba3 ='1QQ',
+								prueba4 ='1QQ'
+							WHERE
+								active=1 AND
+								id_formatoCampo = 1QQ
+					 "
+					,array($observaciones,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$tipo,$tipoConcreto,$prueba1,$prueba2,$prueba3,$prueba4,$id_formatoCampo),"UPDATE"
+			      	);
+			$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito de actualizacion de footer','error' => 0);	
+			if($dbS->didQuerydied){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}		
+		}
+		return json_encode($arr);
+	}
+
+	public function updateHeader($token,$rol_usuario_id,$id_formatoCampo,$informeNo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+								formatoCampo
+							SET
+								informeNo ='1QQ'
+							WHERE
+								active=1 AND
+								id_formatoCampo = 1QQ
+					 "
+					,array($informeNo,$id_formatoCampo),"UPDATE"
+			      	);
+			$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito de actualizacion de header','error' => 0);	
+			if($dbS->didQuerydied){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}		
+		}
+		return json_encode($arr);
+	}
+
+	public function completeFormato($token,$rol_usuario_id,$id_formatoCampo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+								formatoCampo
+							SET
+								status = 1
+							WHERE
+								active = 1 AND
+								id_formatoCampo = 1QQ
+					 "
+					,array($id_formatoCampo),"UPDATE"
+			      	);
+			$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
+			if($dbS->didQuerydied){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}		
+		}
+		return json_encode($arr);
+	}
+
+	
+
+
+
+
+}
+?>
