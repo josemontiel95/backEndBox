@@ -124,7 +124,8 @@ class Herramienta_tipo{
 			        tipo,
 					createdON,
 					lastEditedON,
-					active
+					active,
+					asignableenOrdenDeTrabajo
 			      FROM 
 			      	herramienta_tipo
 			      WHERE 
@@ -149,18 +150,18 @@ class Herramienta_tipo{
 		return json_encode($arr);
 	}
 
-	public function insertAdmin($token,$rol_usuario_id,$tipo){
+	public function insertAdmin($token,$rol_usuario_id,$tipo,$asignableenOrdenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);		
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						herramienta_tipo(tipo)
+						herramienta_tipo(tipo,asignableenOrdenDeTrabajo)
 
 						VALUES
-						('1QQ')
-				",array($tipo),"INSERT");
+						('1QQ','1QQ')
+				",array($tipo,$asignableenOrdenDeTrabajo),"INSERT");
 			if(!$dbS->didQuerydied){
 				$arr = array('id_herramienta_tipo' => 'No disponible, esto NO es un error', 'tipo' => $tipo, 'estatus' => 'Exito en insercion', 'error' => 0);
 			}
@@ -172,20 +173,22 @@ class Herramienta_tipo{
 	}
 
 
-	public function upDateAdmin($token,$rol_usuario_id,$id_herramienta_tipo,$tipo){
+	public function upDateAdmin($token,$rol_usuario_id,$id_herramienta_tipo,$tipo,$asignableenOrdenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$dbS->squery("	UPDATE
+			$dbS->squery("	
+						UPDATE
 							herramienta_tipo
 						SET
-							tipo = '1QQ'
+							tipo = '1QQ',
+							asignableenOrdenDeTrabajo = '1QQ'
 						WHERE
 							active=1 AND
 							id_herramienta_tipo = 1QQ
 					 "
-					,array($tipo,$id_herramienta_tipo),"UPDATE"
+					,array($tipo,$asignableenOrdenDeTrabajo,$id_herramienta_tipo),"UPDATE"
 			      	);
 			if(!$dbS->didQuerydied){
 				$arr = array('id_herramienta_tipo' => $id_herramienta_tipo, 'tipo' => $tipo, 'estatus' => 'Exito en actualizacion', 'error' => 0);

@@ -394,7 +394,7 @@ class Laboratorio_cliente{
 	      	}
 			
 			if(!$dbS->didQuerydied){
-				$arr = array('herramienta_id' => $herramienta_id,'estatus' => 'Herramienta se desactivo','error' => 0);
+				$arr = array('herramienta_id' => $herramienta_id,'estatus' => 'Se cambio la visibilidad correctamente','error' => 0);
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 5);
