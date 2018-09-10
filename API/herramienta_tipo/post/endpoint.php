@@ -17,11 +17,11 @@
 	switch ($function){
 		case 'insertAdmin':
 			$herra_tipo = new Herramienta_tipo();
-			echo $herra_tipo->insertAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['tipo']);		
+			echo $herra_tipo->insertAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['tipo'],$_POST['asignableenOrdenDeTrabajo']);		
 		break;
 		case 'upDateAdmin':
 			$herra_tipo = new Herramienta_tipo();
-			echo $herra_tipo->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_herramienta_tipo'],$_POST['tipo']);
+			echo $herra_tipo->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_herramienta_tipo'],$_POST['tipo'],$_POST['asignableenOrdenDeTrabajo']);
 		break;
 		case 'deactivate':
 			$herra_tipo = new Herramienta_tipo();
