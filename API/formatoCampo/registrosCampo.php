@@ -34,6 +34,7 @@ class registrosCampo{
 	    return $returnValue;
 	}
 
+
 	public function initInsert($token,$rol_usuario_id,$formatoCampo_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -41,21 +42,30 @@ class registrosCampo{
 		//$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			$a= $dbS->qarrayA("
-		      	SELECT 
-		      		id_obra,
-					revenimiento,
-					prefijo
-				FROM
-					formatoCampo, ordenDeTrabajo, obra
-				WHERE
-					ordenDeTrabajo_id=id_ordenDeTrabajo AND
-					obra_id = id_obra AND 
-					id_formatoCampo = 1QQ
+								SELECT
+									id_obra,
+									revenimiento, 
+									prefijo,
+									consecutivoProbeta,
+									YEAR(NOW()) AS anio,
+									DAY(NOW()) AS dia
+								FROM
+									ordenDeTrabajo,
+									obra,
+									formatoCampo
+								WHERE
+									id_obra = obra_id AND
+									id_ordenDeTrabajo =  formatoCampo.ordenDeTrabajo_id AND
+									id_formatoCampo = 1QQ
 				",
 				array($formatoCampo_id),
 				"SELECT"
 			);
 			if(!$dbS->didQuerydied && !($a=="empty")){
+				//Hacemos la clave
+				$año = $this->numberToRomanRepresentation($a['anio']);
+				$remplazable = '@UnitIOG';
+				$clave = $a['prefijo']."-".$año."-".$a['dia']."-".$remplazable."-".$a['consecutivoProbeta'];
 				$b= $dbS->qarrayA("
 			      	SELECT 
 						tipoConcreto,
@@ -82,13 +92,13 @@ class registrosCampo{
 							active=1 AND	
 							formatoCampo_id = 1QQ
 						",
-						array($id_formato),
+						array($formatoCampo_id),
 						"SELECT"
 					);
 					if(!$dbS->didQuerydied && !($c=="empty")){
 
 						$aux=0;
-						foreach ($b as $row) {
+						foreach ($c as $row) {
 							$row['diasEnsaye'];
 							$aux++;
 						}
@@ -119,13 +129,14 @@ class registrosCampo{
 							$diasEnsaye=$key;
 							break;
 						}
+						
 						$dbS->squery("
 							INSERT INTO
-								registrosCampo(formatoCampo_id, fecha, revProyecto,diasEnsaye)
+								registrosCampo(claveEspecimen,formatoCampo_id, fecha, revProyecto,diasEnsaye)
 
 							VALUES
-								(1QQ, CURDATE(),'1QQ','1QQ')
-						",array($formatoCampo_id, $a['revenimiento'], $diasEnsaye),"INSERT");
+								('1QQ',1QQ, CURDATE(),'1QQ','1QQ')
+						",array($clave,$formatoCampo_id, $a['revenimiento'], $diasEnsaye),"INSERT");
 						if(!$dbS->didQuerydied){
 							//$dbS->commitTransaction();
 							$arr = array('id_registrosCampo' => $dbS->lastInsertedID,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);
@@ -139,11 +150,11 @@ class registrosCampo{
 						if($c=="empty"){
 							$dbS->squery("
 								INSERT INTO
-									registrosCampo(formatoCampo_id, fecha, revProyecto,diasEnsaye)
+									registrosCampo(claveEspecimen,formatoCampo_id, fecha, revProyecto,diasEnsaye)
 
 								VALUES
-									(1QQ, CURDATE(),'1QQ',1)
-							",array($formatoCampo_id, $a['revenimiento']),"INSERT");
+									('1QQ',1QQ, CURDATE(),'1QQ',1)
+							",array($clave,$formatoCampo_id, $a['revenimiento']),"INSERT");
 							if(!$dbS->didQuerydied){
 								//$dbS->commitTransaction();
 								$arr = array('id_registrosCampo' => $dbS->lastInsertedID,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);
