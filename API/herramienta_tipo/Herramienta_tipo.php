@@ -29,7 +29,8 @@ class Herramienta_tipo{
 					tipo,
 					createdON,
 					lastEditedON,
-					IF(active = 1,'Si','No') AS active
+					IF(active = 1,'Si','No') AS active,
+					IF(asignableenOrdenDeTrabajo = 1,'Si','No') AS asignableenOrdenDeTrabajo
 			      FROM 
 			        herramienta_tipo
 			      ",
