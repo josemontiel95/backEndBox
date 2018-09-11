@@ -34,10 +34,10 @@
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
 				$formato = new FormatoCampo();	$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
-				switch ($infoFormato['tipo']) {
+				switch ($infoFormato['tipo_especimen']) {
 					case 'CUBO':
-						//$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-						$pdf = new CCH();	$pdf->CreateNew($infoFormato);
+						$regisFormato = $this->getRegCCH($token,$rol_usuario_id,$id_formatoCampo);
+						$pdf = new CCH();	$pdf->CreateNew($infoFormato,$regisFormato);
 						break;
 					case 'CILINDRO':
 						//$pdf = new InformeCilindros();	$pdf->CreateNew($infoFormato,$regisFormato);
@@ -47,6 +47,53 @@
 				}
 			}
 		}
+
+		function getRegCCH($token,$rol_usuario_id,$id_formatoCampo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				$s= $dbS->qAll("
+				    	SELECT
+				    		claveEspecimen,
+				    		fecha,
+				    		fprima,
+							revProyecto,
+							revObra,
+							tamAgregado,
+							volumen,
+							tipoConcreto,
+							unidad,
+							horaMuestreo,
+							tempMuestreo,
+							tempRecoleccion
+						FROM
+							registrosCampo,
+							formatoCampo
+						WHERE
+							id_formatoCampo = formatoCampo_id AND 
+							formatoCampo_id = 1QQ
+				      ",
+				      array($id_formatoCampo),
+				      "SELECT"
+				      );
+				
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('No existen registro relacionados con el id_formatoCampo'=>$id_formatoCampo,'error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getRegCCH, verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+
+		}
+
 	
 		function getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo){
 			global $dbS;
