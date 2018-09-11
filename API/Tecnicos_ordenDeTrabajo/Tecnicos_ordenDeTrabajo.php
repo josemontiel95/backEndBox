@@ -272,7 +272,7 @@ class Tecnicos_ordenDeTrabajo{
 						(SELECT * FROM listaAsistencia WHERE  CURDATE()=DATE(listaAsistencia.createdON)) AS T2 ON  id_tecnicos_ordenDeTrabajo=tecnicos_ordenDeTrabajo_id
 					WHERE
 						tecnico_id = id_usuario AND
-						tecnicos_ordenDeTrabajo.ordenDeTrabajo_id = 1005;
+						tecnicos_ordenDeTrabajo.ordenDeTrabajo_id = 1QQ;
 						
 			      ",
 			      array($id_ordenDeTrabajo),
