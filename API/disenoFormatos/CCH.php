@@ -111,7 +111,7 @@
 
 		}
 
-		function putTables(){
+		function putTables($regisFormato){
 			//Guardamos la posicion de la Y para alinear todas las celdas a la misma altura
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 
@@ -204,253 +204,44 @@
 
 			$posicion_x = $posicion_x + $tam_recoleccion;
 
+			$tam_font_head = 8;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
+
 			$localizacion = 'LOCALIZACIÓN';
-			$tam_localizacion = $posicion_x - 10;
+			$tam_localizacion = (279 - 10) - $posicion_x;
+			$this->SetY($posicion_y); $this->SetX($posicion_x);
+			$this->cell($tam_localizacion,1.5*(2*($tam_font_head) - 6),utf8_decode($localizacion),1,2,'C');
 			
-			/*
-				
-
-			
-			
-			/*
-
-			
-
-			/* PUNTO DE REFERENCIA
-			$falla = 'FALLA';
-			$tam_falla = $this->GetStringWidth($falla)+3;
-
-			$this->SetX(-($tam_falla + 10));
-			$posicion_x = $this->GetX();
-			$this->multicell($tam_falla,(1.5*($tam_font_head - 3)),utf8_decode($falla.'N°'),1,'C');
-			
-			$resistencia = 'RESISTENCIA';	
-			$tam_resistencia = $this->GetStringWidth($resistencia)+3;
-			$this->SetY($posicion_y);
-			// $this->SetX($this->GetX() - $tam_resistencia);  (Se modifica el valor de la posicion de X cuando se imprime, por eso no se calcula bien)
-			$this->SetX(-($tam_resistencia + 10));
-			$posicion_x = $this->GetX();
-			$this->multicell($tam_resistencia,(1.5*($tam_font_head - 3)),utf8_decode('% DE'."\n".$resistencia),1,'C');
-
-			$proyecto = 'PROYECTO';
-			$tam_proyecto = $this->GetStringWidth($proyecto)+3;
-			$this->SetY($posicion_y);
-			$this->SetX($posicion_x - $tam_proyecto);
-			$posicion_x = $this->GetX();
-			$this->multicell($tam_proyecto,$tam_font_head - 3,utf8_decode("F'c"."\n".'PROYECTO'."\n".'(kg/cm²)'),1,'C');
-
-
-			//----------------------SE MUEVEN FUENTES---------------------
-
-			//Resistencia a compresion
-			$tam_font_head = 5.5;	$this->SetFont('Arial','',$tam_font_head);
-			$resis_compresion  = 'RESISTENCIA A';
-			$tam_resis = $this->GetStringWidth($resis_compresion)+10;
-			$this->SetY($posicion_y);
-			$this->SetX($posicion_x - $tam_resis);
-			$posicion_x = $this->GetX();
-			$this->multicell($tam_resis,0.75*($tam_font_head - 2.5),utf8_decode($resis_compresion."\n".'COMPRESIÓN'),1,'C');
-
-			$tam_font_head = 6;	$this->SetFont('Arial','',$tam_font_head);
-			//Abajo de resistencia a compresion
-			$kgcm = 'kg/cm²';
-			$tam_kgcm = $tam_resis/2;
-			//$aux_posy = $posicion_y;
-			$this->SetY($posicion_y + (1.5*($tam_font_head - 3)));	
-
-			$this->SetX($posicion_x + ($tam_resis/2));
-			$this->multicell($tam_resis/2,1.5*($tam_font_head - 3),utf8_decode($kgcm),1,'C');
-
-			$mp = 'MPa';
-			$tam_mp = $tam_resis/2;
-			$this->SetY($posicion_y + (1.5*($tam_font_head - 3)));
-			$this->SetX($posicion_x);
-			$this->multicell($tam_resis/2,1.5*($tam_font_head - 3),utf8_decode($mp),1,'C');
-
-			//Carga
-			$carga = 'CARGA';
-			$tam_carga = $this->GetStringWidth($carga) + 12;
-			$this->SetY($posicion_y);	$this->SetX($posicion_x - $tam_carga);	$posicion_x = ($this->GetX());
-			$this->cell($tam_carga,1.5*($tam_font_head - 3),$carga,1,0,'C');
-
-			//Abajo de carga
-			$kg = '(kg)';
-			$tam_kg = $tam_carga/2;
-			$this->SetY($posicion_y + (1.5*($tam_font_head - 3)));	$this->SetX($posicion_x + ($tam_carga/2));
-			$this->cell($tam_carga/2,1.5*($tam_font_head - 3),$kg,1,0,'C');
-
-			$kN = 'kN';
-			$tam_kN = $tam_carga/2;
-			$this->SetY($posicion_y + (1.5*($tam_font_head - 3)));	$this->SetX($posicion_x);
-			$this->cell($tam_carga/2,1.5*($tam_font_head - 3),$kN,1,0,'C');
-
-			//--- SE MUEVE LA FUENTE PARA AJUSTAR AL TAMAÑO
-
-			$tam_font_head = 5.5;	$this->SetFont('Arial','',$tam_font_head);
-
-			//Abajo de Escpecimenes
-			$area = 'AREA EN';
-			$tam_area = $this->GetStringWidth($area) + 3;
-			$this->SetY($posicion_y + (1.5*($tam_font_head - 2.5)));	$this->SetX($posicion_x - $tam_area); $posicion_x = $this->GetX();
-			$this->multicell($tam_area,0.75*($tam_font_head - 2.5),utf8_decode($area."\n".'cm²'),1,'C');
-
-			$lado2 = 'LADO 2 EN';
-			$tam_lado2 = $this->GetStringWidth($lado2) + 3;
-			$this->SetY($posicion_y + (1.5*($tam_font_head - 2.5)));	$this->SetX($posicion_x - $tam_lado2); $posicion_x = $this->GetX();
-			$this->multicell($tam_lado2,0.75*($tam_font_head - 2.5),$lado2."\n".'cm',1,'C');
-
-			$lado1 = 'LADO 1 EN';
-			$tam_lado1 = $this->GetStringWidth($lado1) + 3;
-			$this->SetY($posicion_y + (1.5*($tam_font_head - 2.5)));	$this->SetX($posicion_x - $tam_lado1); $posicion_x = $this->GetX();
-			$this->multicell($tam_lado1,0.75*($tam_font_head - 2.5),$lado1."\n".'cm',1,'C');
-
-			$edad = 'EDAD EN';
-			$tam_edad = $this->GetStringWidth($edad) + 3;
-			$this->SetY($posicion_y + (1.5*($tam_font_head - 2.5)));	$this->SetX($posicion_x - $tam_edad); $posicion_x = $this->GetX();
-			$this->multicell($tam_edad,0.75*($tam_font_head - 2.5),utf8_decode($edad."\n".'DIAS'),1,'C');
-
-			$tam_font_head = 6;	$this->SetFont('Arial','',$tam_font_head);
-
-
-			$rev = 'REV. cm';
-			$tam_rev = $this->GetStringWidth($rev) + 3;
-			$this->SetY($posicion_y + (1.5*($tam_font_head - 3)));	$this->SetX($posicion_x - $tam_rev);	$posicion_x = $this->GetX();
-			$this->cell($tam_rev,1.5*($tam_font_head - 3),$rev,1,2,'C');
-
-			
-
-			//Especimenes
-			$especimenes = 'ESPECIMENES';
-			$tam_especimenes = ($tam_area + $tam_lado1 + $tam_lado2 + $tam_edad + $tam_rev);
-			$this->SetY($posicion_y);	$this->SetX($posicion_x); 
-			$this->cell($tam_especimenes,1.5*($tam_font_head - 3),$especimenes,1,2,'C');
-
-			//$this->SetY($posicion_y + 3*($tam_font_head - 3)); pone al final de la celda para el salto
-			//$posicion_y = $this->GetY(); Esta era la posicion a la que brincaba cuando pasaban los especimenes
-
-			
-
-			//Fecha de ensaye
-			$fecha = 'FECHA DE ENSAYE';
-			$tam_fecha = $this->GetStringWidth($fecha) + 3;
-			$this->SetX($posicion_x - $tam_fecha); $posicion_x = $this->GetX();
-			$this->cell($tam_fecha,1.5*(2*($tam_font_head) - 6),$fecha,1,0,'C');
-
-			//Elemento
-			$elemento = 'ELEMENTO MUESTREADO';
-			$tam_ele = $posicion_x - 10;
-			$this->SetX(10);
-			$this->cell($tam_ele,1.5*(2*($tam_font_head) - 6),$elemento,1,2,'C');
-
-			$this->ln(1);
 
 			//Definimos el array con los tamaños de cada celda para crear las duplas
 
+			$tam_localizacion; //Verificar como mostrare la locaclizacion
 			$array_campo = 	array(
-									$tam_resistencia,
-									$tam_proyecto,
-									$tam_kgcm,
-									$tam_mp,
-									$tam_kg,
-									$tam_kN,
-									$tam_area,
-									$tam_lado2,
-									$tam_lado1,
-									$tam_edad,
-									$tam_rev,
 									$tam_clave,
-									$tam_fecha
-
+									$tam_fecha,
+									$tam_fprima,
+									$tam_pro,
+									$tam_obra,
+									$tam_agregado,
+									$tam_volumen,
+									$tam_concreto,
+									$tam_unidad,
+									$tam_hora,
+									$tam_muestreo,
+									$tam_recoleccion,									
 							);
 
 
-			//Guardamos la posicion de Y para insertar la cellda de "Elemento muestreado"
-			$ele_posicion_y = $this->GetY();
-			
+						
+			$this->SetX(10); //Definimos donde empieza los registros
 			foreach ($regisFormato as $registro) {
-				$this->SetX(-10); $posicion_x = $this->GetX();
 				$j=0;
 				foreach ($registro as $campo) {
-					$this->SetX($posicion_x - $array_campo[$j]); $posicion_x = $this->GetX();
 					$this->cell($array_campo[$j],$tam_font_head - 2.5,$campo,1,0,'C');
 					$j++;
 				}
 				$this->Ln();
 			}
-			//Guardamos la posicion en donde se quedo la Y para comparar con el tamaño de la celda del "Elemento"
-			$endDown_table = $this->GetY();
-			
-			//Modificamos el valor de Y para empezar en el inicio de la tabla
-			$this->SetY($ele_posicion_y);
-			//Insertamos las celdas de "Elemento muestreado"
-			$this->multicell($tam_ele,$tam_font_head - 2.5,'','L,T');
-			if($this->GetY() < $endDown_table){
-				$num_iteraciones = (($endDown_table - $this->GetY()) / ($tam_font_head - 2.5));
-				for ($i=0; $i < $num_iteraciones; $i++) { 
-					$this->cell($tam_ele,$tam_font_head - 2.5,'','L',2);
-				}
-			}
-
-				
-
-			$this->cell(0,$tam_font_head - 2.5,'',1,2);
-			$this->cell(0,1.5*($tam_font_head - 3),'',1,2);
-
-
-			//Guardamos la posicion de Y para insertar la cellda de "Elemento muestreado"
-			$ele_posicion_y = $this->GetY();
-		
-			for ($i=0; $i < 8; $i++){
-				//Definimos la posicion de X para tomarlo como referencia
-				$this->SetX(-10); $posicion_x = $this->GetX();	
-				for ($j=0; $j < sizeof($array_campo); $j++){ 
-					//Definimos la posicion apartir de la cual vamos a insertar la celda
-					$this->SetX($posicion_x - $array_campo[$j]); $posicion_x = $this->GetX();
-					$this->cell($array_campo[$j],$tam_font_head - 2.5,'',1,0,'C');
-				}	
-				$this->Ln();
-			}
-			//Guardamos la posicion en donde se quedo la Y para comparar con el tamaño de la celda del "Elemento"
-			$endDown_table = $this->GetY();
-			
-			//Modificamos el valor de Y para empezar en el inicio de la tabla
-			$this->SetY($ele_posicion_y);
-			//Insertamos las celdas de "Elemento muestreado"
-			$this->multicell($tam_ele,$tam_font_head - 2.5,'','L,T');
-			if($this->GetY() < $endDown_table){
-				$num_iteraciones = (($endDown_table - $this->GetY()) / ($tam_font_head - 2.5));
-				for ($i=0; $i < $num_iteraciones - 1; $i++) { 
-					$this->cell($tam_ele,$tam_font_head - 2.5,'','L',2);
-				}
-				$this->cell($tam_ele,$tam_font_head - 2.5,'','L,B',2);
-			}
-			/*
-					BYUENAS
-			for ($i=0; $i < 8; $i++){
-				//Definimos la posicion de X para tomarlo como referencia
-				$this->SetX(-10); $posicion_x = $this->GetX();	
-				for ($j=0; $j < 15; $j++){ 
-					//Definimos la posicion apartir de la cual vamos a insertar la celda
-					$this->SetX($posicion_x - $array_campo[$j]); $posicion_x = $this->GetX();
-					$this->cell($array_campo[$j],$tam_font_head - 2.5,'',1,0,'C');
-				}
-				$this->Ln();
-			}
-			*/
-
-
-
-			/*
-			for ($i=0; $i < 8; $i++)
-				$this->cell(0,$tam_font_head - 2.5,'DUMMY',1,2,'C');
-			*/
-
-			//$this->ln(2); BORRAR DESPUES DE QUE TODO ESTE BIEN
-
-			
-
-
-			
+					
 		}
 		/*
 		function Footer(){
@@ -487,11 +278,11 @@
 		}
 		*/
 		//Funcion que crea un nuevo formato
-		function CreateNew($infoFormato){
+		function CreateNew($infoFormato,$regisFormato){
 			$pdf  = new CCH('L','mm','Letter');
 			$pdf->AddPage();
 			$pdf->putInfo($infoFormato);
-			$pdf->putTables();
+			$pdf->putTables($regisFormato);
 			$pdf->Output();
 		}
 

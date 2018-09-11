@@ -41,190 +41,232 @@ class registrosCampo{
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$dbS->beginTransaction();
 		if($arr['error'] == 0){
-			$a= $dbS->qarrayA("
-								SELECT
-									id_obra,
-									revenimiento, 
-									prefijo,
-									consecutivoProbeta,
-									MONTH(NOW()) AS mes,
-									DAY(NOW()) AS dia
-								FROM
-									ordenDeTrabajo,
-									obra,
-									formatoCampo
-								WHERE
-									id_obra = obra_id AND
-									id_ordenDeTrabajo =  formatoCampo.ordenDeTrabajo_id AND
-									id_formatoCampo = 1QQ
-				",
-				array($formatoCampo_id),
-				"SELECT"
-			);
-			if(!$dbS->didQuerydied && !($a=="empty")){
-				//Hacemos la clave
-				$mes = $this->numberToRomanRepresentation($a['mes']);
-				$remplazable = '@UnitIO@';
-				$clave = $a['prefijo']."-".$mes."-".$a['dia']."-".$remplazable."-".$a['consecutivoProbeta'];
-				$b= $dbS->qarrayA("
-			      	SELECT 
-						tipoConcreto,
-						prueba1,
-						prueba2,
-						prueba3,
-						prueba4
-					FROM
-						formatoCampo
-					WHERE
-						id_formatoCampo = 1QQ
-					",
-					array($formatoCampo_id),
-					"SELECT"
-				);
-				if(!$dbS->didQuerydied && !($b=="empty")){
-					$c= $dbS->qAll("
-				      	SELECT 
-							diasEnsaye,
-							formatoCampo_id
-						FROM
-							registrosCampo
-						WHERE
-							active=1 AND	
-							formatoCampo_id = 1QQ
+			$rows = $dbS->qarrayA(
+						"
+							SELECT
+								COUNT(*) AS numRows
+							FROM
+								registrosCampo
+							WHERE
+								formatoCampo_id = 1QQ
+						"
+						,
+						array($formatoCampo_id),
+						"SELECT"
+					);
+			//Verifique que la consulta no devlviera empty, en cualquier caso que se consulte a un formato que no existe devuelve 0
+			if(!$dbS->didQuerydied && $rows['numRows']<8){
+				//Obtenemos la informacion para generar la claveEspecimen
+				$a= $dbS->qarrayA("
+										SELECT
+											id_obra,
+											revenimiento, 
+											prefijo,
+											consecutivoProbeta,
+											MONTH(NOW()) AS mes,
+											DAY(NOW()) AS dia
+										FROM
+											ordenDeTrabajo,
+											obra,
+											formatoCampo
+										WHERE
+											id_obra = obra_id AND
+											id_ordenDeTrabajo =  formatoCampo.ordenDeTrabajo_id AND
+											id_formatoCampo = 1QQ
 						",
 						array($formatoCampo_id),
 						"SELECT"
 					);
-					if(!$dbS->didQuerydied && !($c=="empty")){
-
-						$aux=0;
-						foreach ($c as $row) {
-							$row['diasEnsaye'];
-							$aux++;
-						}
-						$pruebas=array($b['prueba1'],$b['prueba2'],$b['prueba3'],$b['prueba4']);
-						$groupsOf4=(floor($aux/4)+1);
-						$opciones=array("Pendiente"=> "Pendiente");
-						for($i=0;$i<$groupsOf4;$i++){
-							foreach ($pruebas as $key => $value) {
-								$flag=true;
-								$keyAux;
-								foreach ($c as $key2 => $value2) {
-									if((string)$value2['diasEnsaye'] === (string)($key+1)){
-										//echo "value2[diasEnsaye]: ".$value2['diasEnsaye']." key: ".$key;
-										$flag=false;
-										$keyAux=$key2;
-										break;
-									} 
-								}
-								if($flag){
-									$opciones[ (string)(($key+1)+(4*$i)) ] = $value;
-								}else{
-									unset($b[$keyAux]);
-								}
-							}
-						}
-						$diasEnsaye;
-						foreach ($opciones as $key => $value) {
-							$diasEnsaye=$key;
-							break;
-						}
-						
-						$dbS->squery("
-							INSERT INTO
-								registrosCampo(claveEspecimen,formatoCampo_id, fecha, revProyecto,diasEnsaye,consecutivoProbeta)
-
-							VALUES
-								('1QQ',1QQ, CURDATE(),'1QQ','1QQ','1QQ')
-						",array($clave,$formatoCampo_id, $a['revenimiento'], $diasEnsaye,$a['consecutivoProbeta']),"INSERT");
-						if(!$dbS->didQuerydied){
-							$id = $dbS->lastInsertedID;
-							$dbS->squery(
-								"
-									UPDATE 
-										obra
-									SET
-										consecutivoProbeta = consecutivoProbeta+1
-
-									WHERE
-										 id_obra = 1QQ
-								"
-								,
-								array($a['id_obra']),
-								"UPDATE"
+					if(!$dbS->didQuerydied && !($a=="empty")){
+						//Hacemos la clave
+						$mes = $this->numberToRomanRepresentation($a['mes']);
+						$remplazable = '@UnitIO@';
+						$clave = $a['prefijo']."-".$mes."-".$a['dia']."-".$remplazable."-".$a['consecutivoProbeta'];
+						$b= $dbS->qarrayA("
+					      	SELECT 
+								tipoConcreto,
+								prueba1,
+								prueba2,
+								prueba3,
+								prueba4
+							FROM
+								formatoCampo
+							WHERE
+								id_formatoCampo = 1QQ
+							",
+							array($formatoCampo_id),
+							"SELECT"
+						);
+						if(!$dbS->didQuerydied && !($b=="empty")){
+							$c= $dbS->qAll("
+						      	SELECT 
+									diasEnsaye,
+									formatoCampo_id
+								FROM
+									registrosCampo
+								WHERE
+									active=1 AND	
+									formatoCampo_id = 1QQ
+								",
+								array($formatoCampo_id),
+								"SELECT"
 							);
-							if(!$dbS->didQuerydied){
-								$dbS->commitTransaction();
-								$arr = array('id_registrosCampo' => $id,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);
-								return json_encode($arr);
-							}
-							else{
-								$dbS->rollbackTransaction();
-								$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 11);
-								return json_encode($arr);
-							}
-							
-						}else{
-							$dbS->rollbackTransaction();
-							$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 10);
-							return json_encode($arr);
-						}
-					}else{
-						if($c=="empty"){
-							$dbS->squery("
-								INSERT INTO
-									registrosCampo(claveEspecimen,formatoCampo_id, fecha, revProyecto,diasEnsaye,consecutivoProbeta)
+							if(!$dbS->didQuerydied && !($c=="empty")){
 
-								VALUES
-									('1QQ',1QQ, CURDATE(),'1QQ',1)
-							",array($clave,$formatoCampo_id, $a['revenimiento'],$a['consecutivoProbeta']),"INSERT");
-							if(!$dbS->didQuerydied){
-								$id = $dbS->lastInsertedID;
-								$dbS->squery(
-									"
-										UPDATE 
-											obra
-										SET
-											consecutivoProbeta = consecutivoProbeta+1
-
-										WHERE
-											 id_obra = 1QQ
-									"
-									,
-									array($a['id_obra']),
-									"UPDATE"
-								);
-								if(!$dbS->didQuerydied){
-									$dbS->commitTransaction();
-									$arr = array('id_registrosCampo' => $id,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);
-									return json_encode($arr);
+								$aux=0;
+								foreach ($c as $row) {
+									$row['diasEnsaye'];
+									$aux++;
 								}
-								else{
+								$pruebas=array($b['prueba1'],$b['prueba2'],$b['prueba3'],$b['prueba4']);
+								$groupsOf4=(floor($aux/4)+1);
+								$opciones=array("Pendiente"=> "Pendiente");
+								for($i=0;$i<$groupsOf4;$i++){
+									foreach ($pruebas as $key => $value) {
+										$flag=true;
+										$keyAux;
+										foreach ($c as $key2 => $value2) {
+											if((string)$value2['diasEnsaye'] === (string)($key+1)){
+												//echo "value2[diasEnsaye]: ".$value2['diasEnsaye']." key: ".$key;
+												$flag=false;
+												$keyAux=$key2;
+												break;
+											} 
+										}
+										if($flag){
+											$opciones[ (string)(($key+1)+(4*$i)) ] = $value;
+										}else{
+											unset($b[$keyAux]);
+										}
+									}
+								}
+								$diasEnsaye;
+								foreach ($opciones as $key => $value) {
+									$diasEnsaye=$key;
+									break;
+								}
+								
+								$dbS->squery("
+									INSERT INTO
+										registrosCampo(claveEspecimen,formatoCampo_id, fecha, revProyecto,diasEnsaye,consecutivoProbeta)
+
+									VALUES
+										('1QQ',1QQ, CURDATE(),'1QQ','1QQ','1QQ')
+								",array($clave,$formatoCampo_id, $a['revenimiento'], $diasEnsaye,$a['consecutivoProbeta']),"INSERT");
+								if(!$dbS->didQuerydied){
+									$id = $dbS->lastInsertedID;
+									$dbS->squery(
+										"
+											UPDATE 
+												obra
+											SET
+												consecutivoProbeta = consecutivoProbeta+1
+
+											WHERE
+												 id_obra = 1QQ
+										"
+										,
+										array($a['id_obra']),
+										"UPDATE"
+									);
+									if(!$dbS->didQuerydied){
+										$dbS->commitTransaction();
+										$arr = array('id_registrosCampo' => $id,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);
+										return json_encode($arr);
+									}
+									else{
+										$dbS->rollbackTransaction();
+										$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 11);
+										return json_encode($arr);
+									}
+									
+								}else{
 									$dbS->rollbackTransaction();
-									$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 9);
+									$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 10);
 									return json_encode($arr);
 								}
 							}else{
-								$dbS->rollbackTransaction();
-								$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 8);
-								return json_encode($arr);
-							}
+								if($c=="empty"){
+									$dbS->squery("
+										INSERT INTO
+											registrosCampo(claveEspecimen,formatoCampo_id, fecha, revProyecto,diasEnsaye,consecutivoProbeta)
+
+										VALUES
+											('1QQ',1QQ, CURDATE(),'1QQ',1,'1QQ')
+									",array($clave,$formatoCampo_id, $a['revenimiento'],$a['consecutivoProbeta']),"INSERT");
+									if(!$dbS->didQuerydied){
+										$id = $dbS->lastInsertedID;
+										$dbS->squery(
+											"
+												UPDATE 
+													obra
+												SET
+													consecutivoProbeta = consecutivoProbeta+1
+
+												WHERE
+													 id_obra = 1QQ
+											"
+											,
+											array($a['id_obra']),
+											"UPDATE"
+										);
+										if(!$dbS->didQuerydied){
+											$dbS->commitTransaction();
+											$arr = array('id_registrosCampo' => $id,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);
+											return json_encode($arr);
+										}
+										else{
+											$dbS->rollbackTransaction();
+											$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 9);
+											return json_encode($arr);
+										}
+									}else{
+										$dbS->rollbackTransaction();
+										$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 8);
+										return json_encode($arr);
+									}
+								}else{
+									$dbS->rollbackTransaction();
+									$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 7);
+									return json_encode($arr);
+								}	
+							}	
 						}else{
 							$dbS->rollbackTransaction();
-							$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 7);
+							$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 6);
 							return json_encode($arr);
-						}	
-					}	
-				}else{
-					$dbS->rollbackTransaction();
-					$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 6);
+						}
+					}else{
+						$dbS->rollbackTransaction();
+						if($a == "empty"){
+							$arr = array('id_registrosCampo' => 'NULL','token' => $token,'estatus' => 'No se encontro formato con id_formatoCampo:'.$formatoCampo_id,'error' => 15);
+							return json_encode($arr);
+						}
+						else{
+							$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+							return json_encode($arr);
+						}
+						
+
+					}
+			}
+			else{
+				$dbS->rollbackTransaction();
+				if($dbS->didQuerydied){
+					$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta de rows, verifica tus datos y vuelve a intentarlo','error' => 12);
 					return json_encode($arr);
 				}
-			}else{
-				$dbS->rollbackTransaction();
-				$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
-				return json_encode($arr);
-
+				else{
+					if($rows == "empty"){
+						$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'No se encontraron registros asociados.','error' => 13);
+						return json_encode($arr);
+					}
+					else{
+						$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Se alcanzo el maximo de registros.','error' => 14);
+						return json_encode($arr);
+					}
+					
+				}
 			}
 		}
 		$dbS->rollbackTransaction();
