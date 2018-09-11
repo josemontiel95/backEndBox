@@ -1,8 +1,9 @@
 <?php 
+	//include_once("./../library_watermark/rotation.php");
 	include_once("./../../FPDF/fpdf.php");
-
 	//Formato de campo de cilindros
 	class CCH extends fpdf{
+		var $angle=0;
 		function Header(){
 			//Espacio definido para los logotipos
 			//Definimos las dimensiones del logotipo de Lacocs
@@ -31,6 +32,48 @@
 			//Definimos la altura a la que estara la informacion del documento
 			$this->SetY(34); $posicion_y = $this->GetY();
 			
+			//Put the watermark
+   			$this->SetFont('Arial','B',50);
+	    	$this->SetTextColor(192,192,192);
+    		$this->RotatedText(100,130,'PREELIMINAR',45);
+		}
+
+		function RotatedText($x, $y, $txt, $angle)
+		{
+		    //Text rotated around its origin
+		    $this->Rotate($angle,$x,$y);
+		    $this->Text($x,$y,$txt);
+		    $this->Rotate(0);
+		}
+
+		function Rotate($angle,$x=-1,$y=-1)
+		{
+			if($x==-1)
+				$x=$this->x;
+			if($y==-1)
+				$y=$this->y;
+			if($this->angle!=0)
+				$this->_out('Q');
+			$this->angle=$angle;
+			if($angle!=0)
+			{
+				$angle*=M_PI/180;
+				$c=cos($angle);
+				$s=sin($angle);
+				$cx=$x*$this->k;
+				$cy=($this->h-$y)*$this->k;
+				$this->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',$c,$s,-$s,$c,$cx,$cy,-$cx,-$cy));
+			}
+		}
+
+		function _endpage()
+		{
+			if($this->angle!=0)
+			{
+				$this->angle=0;
+				$this->_out('Q');
+			}
+			parent::_endpage();
 		}
 
 		//Funcion que coloca la informacion del informe, como: el No. de informe, Obra, etc.
@@ -77,7 +120,7 @@
 			$this->Cell($tam_informeNo,$tam_font_right - 3,$informeNo,0,0,'C');
 
 			//Caja de texto
-			$this->Cell(0,$tam_font_right - 3,'DUMMY','B',0,'C');
+			$this->Cell(0,$tam_font_right - 3,$infoFormato['informeNo'],'B',0,'C');
 
 			$this->Ln($tam_font_left - 2);
 
@@ -232,7 +275,8 @@
 
 
 						
-			$this->SetX(10); //Definimos donde empieza los registros
+			$this->SetX(10); //Definimos donde empieza los 
+			
 			foreach ($regisFormato as $registro) {
 				$j=0;
 				foreach ($registro as $campo) {
@@ -241,18 +285,35 @@
 				}
 				$this->Ln();
 			}
+
+			
+			//Calculo del tamaño de los registros
+			/*
+			for($i=0;$i<8;$i++){
+				$this->cell(0,$tam_font_head - 2.5,'',1,2,'C');
+			}*/
+
+			$this->Ln(2);
+			//$this->cell(0,10,$this->GetY(),1,2,'C');
+			
 					
 		}
-		/*
+		
 		function Footer(){
-			$tam_footer = 28;
-			
+			$posicion_y = 140;
+			$tam_observaciones = 20;
 			$tam_font_footer = 7;	$this->SetFont('Arial','B',$tam_font_footer);
-			
+			$observaciones = 'OBSERVACIONES:';
 
 			//Observaciones
-			$this->cell(0,2*($tam_font_footer - 2.5),'',1,2,'C');
+			$this->SetY($posicion_y);
+			$this->cell(0,2*($tam_font_footer - 2.5),$observaciones,1,2,'L,T,R');
+			$this->cell(0,$tam_observaciones,'',1,2);
 
+			//Metodos
+			$metodos = 'METODOS EMPLEADOS: NMX-C-161-ONNCCE-2013, NMX-C-159-ONNCCE-2016, NMX-C156-ONNCCE-2010';
+			$this->cell(0,($tam_font_footer - 3),$metodos,1,2);
+			/*
 			//Metodos empleados
 			$metodos = 'METODOS EMPLEADOS: EL ENSAYO REALIZADO CUMPLE CON LAS NORMAS MEXICANAS NMX-C-161-ONNCCE-2013, NMX-C-156-ONNCCE-2010,'."\n".'NMX-C-159-ONNCCE-2016,NMX-C-109-ONNCCE-2013,NMX-C-083-ONNCCE-2014';
 			//$this->multicell(0,($tam_font_head - 2.5),$metodos,1,2);
@@ -273,10 +334,9 @@
 			$this->multicell($posicion_x -10,($tam_font_footer - 3),$metodos,1,2);
 
 			$this->SetY(-($tam_footer + 10)); //Defenimos el margen de abajo
-			$this->cell(0,$tam_footer,'',1,'C');
-
+			$this->cell(0,$tam_footer,'',1,'C');*/
+			
 		}
-		*/
 		//Funcion que crea un nuevo formato
 		function CreateNew($infoFormato,$regisFormato){
 			$pdf  = new CCH('L','mm','Letter');
@@ -357,10 +417,6 @@
 	        else
 	            return strlen($s);
 	    }
-
-
-
-
 	}
 	/*
 	$pdf  = new CCH('L','mm','Letter');
