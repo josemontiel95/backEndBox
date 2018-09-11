@@ -168,7 +168,8 @@ class Tecnicos_ordenDeTrabajo{
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$s= $dbS->qAll("
-			      SELECT 
+			      SELECT
+			      	id_tecnicos_ordenDeTrabajo, 
 			      	id_usuario,
 					nombre,
 			        apellido,
