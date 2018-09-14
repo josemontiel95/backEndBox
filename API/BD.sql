@@ -177,6 +177,8 @@ CREATE TABLE ordenDeTrabajo(
 	lugar VARCHAR(150) NOT NULL,
 	laboratorio_id INT(11),
 	jefa_lab_id INT(11),
+
+	status int(11) NOT NULL DEFAULT 0,
 	
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -202,6 +204,9 @@ CREATE TABLE ordenDeTrabajo(
 	ON DELETE SET NULL ON UPDATE CASCADE
 )ENGINE=INNODB;
 ALTER TABLE ordenDeTrabajo AUTO_INCREMENT=1001;
+
+ALTER TABLE ordenDeTrabajo 
+ADD COLUMN  status int(11) NOT NULL DEFAULT 0;
 
 
 INSERT INTO ordenDeTrabajo(cotizacion_id,obra_id,actividades,condicionesTrabajo,jefe_brigada_id,fechaInicio,fechaFin,horaInicio,horaFin,observaciones,lugar,jefa_lab_id,laboratorio_id)
@@ -461,6 +466,8 @@ CREATE TABLE formatoCampo(
 	flexometro_id INT(11),
 	termometro_id INT(11),
 
+	status int(11) NOT NULL,
+
 	posInicial POINT NOT NULL,
 	posFinal POINT,
 
@@ -496,6 +503,8 @@ CREATE TABLE formatoCampo(
 )ENGINE=INNODB;
 ALTER TABLE formatoCampo AUTO_INCREMENT=1001;
 
+ALTER TABLE formatoCampo 
+ADD COLUMN  status int(11) NOT NULL;
 
 
 CREATE TABLE registrosCampo(
@@ -884,6 +893,8 @@ CREATE TABLE systemstatus(
 	ensayo_def_distanciaApoyos INT NOT NULL,
 	ensayo_def_kN INT NOT NULL,
 	ensayo_def_divisorKn INT NOT NULL,
+	maxNoOfRegistrosCCH INT NOT NULL,
+	multiplosNoOfRegistrosCCH INT NOT NULL,
 
 	ensayo_def_MPa INT NOT NULL,
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -904,6 +915,9 @@ ALTER TABLE systemstatus ADD ensayo_def_distanciaApoyos INT NOT NULL;
 ALTER TABLE systemstatus ADD ensayo_def_kN INT NOT NULL;
 ALTER TABLE systemstatus ADD ensayo_def_MPa INT NOT NULL;
 ALTER TABLE systemstatus ADD ensayo_def_divisorKn INT NOT NULL;
+ALTER TABLE systemstatus ADD maxNoOfRegistrosCCH INT NOT NULL;
+ALTER TABLE systemstatus ADD multiplosNoOfRegistrosCCH INT NOT NULL;
+
 
 INSERT INTO 
 
@@ -992,3 +1006,63 @@ INSERT INTO ordenDeTrabajo(cotizacion_id,obra_id,actividades,condicionesTrabajo,
 INSERT INTO usuario (nombre, apellido, email, fechaDeNac, rol_usuario_id, contraseña) VALUES("mike", "soto", "maike.soto@lacocs.com","1993-08-26", 1001, "ba3253876aed6bc22d4a6ff53d8406c6ad864195ed144ab5c87621b6c233b548baeae6956df346ec8c17f5ea10f35ee3cbc514797ed7ddd3145464e2a0bab413")
 
 select id_usuario,nombre,rol,laboratorio from usuario,laboratorio,rol_usuario where id_usuario=id_rol_usuario AND laboratorio_id=id_laboratorio;
+
+
+./mysqldump -t --complete-insert -h 160.153.46.5  -u lacocsAdmin -pJulio2018% boxLacocs systemstatus --where="id_systemstatus = 1010"
+
+INSERT INTO `systemstatus` (`id_systemstatus`, `cch_def_prueba1`, `cch_def_prueba2`, `cch_def_prueba3`, `createdON`, `lastEditedON`, `active`, `ensayo_def_buscula_id`, `ensayo_def_prensa_id`, `ensayo_def_regVerFle_id`, `cch_def_prueba4`, `ensayo_def_observaciones`, `ensayo_def_pi`, `ensayo_def_distanciaApoyos`, `ensayo_def_kN`, `ensayo_def_MPa`, `ensayo_def_divisorKn`, `maxNoOfRegistrosCCH`, `multiplosNoOfRegistrosCCH`) VALUES (1010,7,14,28,'2018-09-08 16:54:31','2018-09-08 16:54:31',1,1005,1008,1006,28,'NO HAY OBSERVACIONES',3,45,102,10,1000,0,0);
+
+INSERT INTO `systemstatus` (
+	`cch_def_prueba1`, 
+	`cch_def_prueba2`, 
+	`cch_def_prueba3`, 
+	`createdON`, 
+	`lastEditedON`, 
+	`active`, 
+	`ensayo_def_buscula_id`, 
+	`ensayo_def_prensa_id`, 
+	`ensayo_def_regVerFle_id`, 
+	`cch_def_prueba4`, 
+	`ensayo_def_observaciones`, 
+	`ensayo_def_pi`, 
+	`ensayo_def_distanciaApoyos`, 
+	`ensayo_def_kN`, 
+	`ensayo_def_MPa`, 
+	`ensayo_def_divisorKn`, 
+	`maxNoOfRegistrosCCH`, 
+	`multiplosNoOfRegistrosCCH`)
+VALUES (
+	7,
+	14,
+	28,
+	'2018-09-08 16:54:31',
+	'2018-09-08 16:54:31',
+	1,
+	1005,
+	1008,
+	1006,
+	28,
+	'NO HAY OBSERVACIONES',
+	3,
+	45,
+	102,
+	10,
+	1000,
+	8,
+	4
+	);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

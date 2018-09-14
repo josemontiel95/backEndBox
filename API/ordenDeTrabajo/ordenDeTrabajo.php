@@ -369,6 +369,7 @@ class ordenDeTrabajo{
 							telefonoDeContacto,
 							obra_id,
 							obra.obra,
+							ordenDeTrabajo.status,
 							lugar,
 							area,
 							ordenDeTrabajo.laboratorio_id,
