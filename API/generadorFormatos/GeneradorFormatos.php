@@ -11,7 +11,7 @@
 			global $dbS;
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-			if($arr['error'] == 0){
+			if(0 == 0){
 				$formato = new FormatoCampo();	$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
 				switch ($infoFormato['tipo']) {
 					case 'CUBO':

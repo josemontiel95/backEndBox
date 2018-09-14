@@ -372,7 +372,7 @@ class registrosCampo{
 
 						",array($new_clave,$campo,$valor,$id_registrosCampo),"UPDATE");
 						if(!$dbS->didQuerydied){
-							$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => '¡Exito en la inserccion de un registro!','Clave:'=>$new_clave,'error' => 0);
+							$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => '¡Exito en la inserccion de un registro!','clave'=>$new_clave,'error' => 0);
 							return json_encode($arr);
 						}
 						else{
@@ -435,7 +435,8 @@ class registrosCampo{
 					tempMuestreo,
 					tempRecoleccion,
 					localizacion,
-					status
+					status,
+					herramienta_id
 			      FROM 
 			      	registrosCampo
 			      WHERE 
@@ -473,26 +474,36 @@ class registrosCampo{
 		if($arr['error'] == 0){
 			$s= $dbS->qAll("
 			      SELECT
-			      	id_registrosCampo,
-					formatoCampo_id,
-			        claveEspecimen,
-					fecha,
-					fprima,
-					revProyecto,
-					revObra,
-					tamagregado,
-					volumen,
-					unidad,
-					horaMuestreo,
-					tempMuestreo,
-					tempRecoleccion,
-					localizacion,
-					status
-			      FROM 
-			      	registrosCampo
+			      	rc.id_registrosCampo,
+					rc.formatoCampo_id,
+			        rc.claveEspecimen,
+					rc.fecha,
+					rc.fprima,
+					rc.revProyecto,
+					rc.revObra,
+					rc.tamagregado,
+					rc.volumen,
+					rc.unidad,
+					rc.horaMuestreo,
+					rc.tempMuestreo,
+					rc.tempRecoleccion,
+					rc.localizacion,
+					rc.status,
+					rc.herramienta_id,
+					CASE
+						WHEN MOD(rc.diasEnsaye,4) = 1 THEN fc.prueba1  
+						WHEN MOD(rc.diasEnsaye,4) = 2 THEN fc.prueba2  
+						WHEN MOD(rc.diasEnsaye,4) = 3 THEN fc.prueba3  
+						WHEN MOD(rc.diasEnsaye,4) = 0 THEN fc.prueba4  
+						ELSE 'Error, Contacta a soporte'
+					END AS diasEnsaye     
+				FROM 
+			      	registrosCampo AS rc, 
+			      	formatoCampo AS fc
 			      WHERE 
-			      	registrosCampo.active = 1 AND
-			      	formatoCampo_id = 1QQ
+			      	rc.formatoCampo_id= fc.id_formatoCampo AND
+			      	rc.active = 1 AND
+			      	rc.formatoCampo_id = 1QQ
 			      ",
 			      array($id_formatoCampo),
 			      "SELECT"
@@ -721,7 +732,7 @@ class registrosCampo{
 						$aux++;
 					}
 					$pruebas=array($a['prueba1'],$a['prueba2'],$a['prueba3'],$a['prueba4']);
-					$groupsOf4=(floor($aux/4)+1);
+					$groupsOf4=(ceil($aux/4));
 					$opciones=array("Pendiente"=> "Pendiente");
 					for($i=0;$i<$groupsOf4;$i++){
 						foreach ($pruebas as $key => $value) {

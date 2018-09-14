@@ -2,6 +2,9 @@
 
 
 include_once("./../../usuario/Usuario.php");
+include_once("./../../mailer/Mailer.php");
+include_once("./../../mailer/sendgrid-php/sendgrid-php.php");
+
 class formatoCampo{
 	private $id_formatoCampo;
 	private $informeNo;
@@ -302,7 +305,9 @@ class formatoCampo{
 					cch_def_prueba1,
 					cch_def_prueba2,
 					cch_def_prueba3,
-					cch_def_prueba4
+					cch_def_prueba4,
+					maxNoOfRegistrosCCH,
+					multiplosNoOfRegistrosCCH
 				FROM
 					systemstatus
 				ORDER BY id_systemstatus DESC;
@@ -317,7 +322,70 @@ class formatoCampo{
 		return json_encode($arr);
 	}
 
+	/*
+		Esta funcion es llamada en;
+			Archivo: LlenaFormatoCCH.component.ts
+			Usuario: Jefe de Brigada
+			Protocolo: GET
+	*/
+	public function getNumberOfRegistrosByID($token,$rol_usuario_id,$id_formatoCampo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA("
+			      SELECT 
+			      	COUNT(*) As No
+			      FROM 
+			      	registrosCampo
+			      WHERE
+			      	active=1 AND 
+			      	formatoCampo_id=1QQ;
+			      ",
+			      array($id_formatoCampo),
+			      "SELECT"
+			      );
 
+			if(!$dbS->didQuerydied && $s!="empty" ){
+				$a= $dbS->qarrayA("
+			      SELECT 
+			      	COUNT(*) As No
+			      FROM 
+			      	registrosCampo 
+			      WHERE 
+			      	herramienta_id IS NULL AND
+			      	formatoCampo_id= 1QQ;
+			      ",
+			      array($id_formatoCampo),
+			      "SELECT"
+			      );
+				if(!$dbS->didQuerydied && $a!="empty" ){
+					$tipoModificable;
+					if($a['No']==$s['No']){
+						$tipoModificable=1;
+					}else{
+						$tipoModificable=0;
+					}
+					$arr = array('id_formatoCampo' => $id_formatoCampo,'tipoModificable' => $tipoModificable,'numberOfRegistrosByID' => $s['No'],'estatus' => 'Exito','error' => 0);
+
+				}else{
+					$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro ese id','error' => 5);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getNumberOfRegistrosByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		return json_encode($arr);
+	}
+
+
+	/*
+		Esta funcion es llamada en;
+			Archivo: LlenaFormatoCCH.component.ts
+			Usuario: Jefe de Brigada
+			Protocolo: GET
+	*/
 
 	public function getInfoByID($token,$rol_usuario_id,$id_formatoCampo){
 		global $dbS;
@@ -340,6 +408,7 @@ class formatoCampo{
 					CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion,
 					formatoCampo.tipo AS tipo_especimen,
 					formatoCampo.cono_id,
+					formatoCampo.status,
 					CONO,
 					formatoCampo.varilla_id,
 					VARILLA,
@@ -527,7 +596,10 @@ class formatoCampo{
 
 	public function completeFormato($token,$rol_usuario_id,$id_formatoCampo){
 		global $dbS;
+
 		$usuario = new Usuario();
+		$mailer = new Mailer();
+
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$dbS->squery("	UPDATE
@@ -540,8 +612,31 @@ class formatoCampo{
 					 "
 					,array($id_formatoCampo),"UPDATE"
 			      	);
-			$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
-			if($dbS->didQuerydied){
+			if(!$dbS->didQuerydied){
+				$dbS->squery("	UPDATE
+								registrosCampo
+							SET
+								status = 2
+							WHERE
+								active = 1 AND
+								formatoCampo_id = 1QQ
+					 "
+					,array($id_formatoCampo),"UPDATE"
+			      	);
+				if(!$dbS->didQuerydied){
+					$correo= "josemontiel@me.com";
+					$nombre= "T4U";
+					$pdf= "https://www.facebook.com/tech4umexico/";
+					$j="http://lacocs.montielpalacios.com/API/generadorFormatos/get/endpoint.php?function=generateInformeCampo&&token=23&&rol_usuario_id=23&&id_formatoCampo=".$id_formatoCampo;
+					if($mailer->sendMailBasic($correo, $nombre, $pdf)==202){
+						$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
+					}else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 7);
+					}
+				}else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}		
 		}
