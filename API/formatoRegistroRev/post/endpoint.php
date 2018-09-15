@@ -19,13 +19,6 @@
 			$formato = new FormatoRegistroRev();
 			echo $formato->initInsertRev($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ordenDeTrabajo']);
 		break;
-		case 'insertRegistroJefeBrigada':
-			$registrorev = new FormatoRegistroRev();
-			echo $registrorev->insertRegistroJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['campo'],$_POST['valor'],$_POST['id_formatoRegistroRev']);
-		break;
-		case 'hola':
-			echo 'Como estas?';
-			break;
 		case 'insertJefeBrigada':
 			$formato = new FormatoRegistroRev();
 			echo $formato->insertJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['campo'],$_POST['valor'],$_POST['id_formatoRegistroRev']);		
