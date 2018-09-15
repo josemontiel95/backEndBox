@@ -137,7 +137,7 @@ class Herramienta_ordenDeTrabajo{
 						$herra_tipo=1009;
 						$id_herramienta=50;
 					break;
-					case"VIGA":
+					case"VIGAS":
 						$herra_tipo=1010;
 						$id_herramienta=60;
 					break;
@@ -162,6 +162,7 @@ class Herramienta_ordenDeTrabajo{
 						herramienta_id=id_herramienta AND
 						herramienta_ordenDeTrabajo.active=1 AND 
 						herramienta_tipo_id='1QQ' AND
+						herramienta_ordenDeTrabajo.ordenDeTrabajo_id=formatoCampo.ordenDeTrabajo_id AND 
 					  	id_formatoCampo='1QQ'
 					",
 					array($id_herramienta,$herra_tipo,$id_formatoCampo),
