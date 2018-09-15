@@ -13,7 +13,59 @@ class FormatoRegistroRev{
 
 	private $wc = '/1QQ/';
 
-	
+	public function insertJefeBrigada($token,$rol_usuario_id,$campo,$valor,$id_formatoRegistroRev){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			switch ($campo) {
+				case '1':
+					$campo = 'regNo';
+					break;
+				case '2':
+					$campo = 'localizacion';
+					break;
+				case '3':
+					$campo = 'tipoConcreto';
+					break;
+				case '4':
+					$campo = 'cono_id';
+					break;
+				case '5':
+					$campo = 'varilla_id';
+					break;
+				case '6':
+					$campo = 'flexometro_id';
+					break;
+				case '7':
+					$campo = 'posInicial';
+					break;
+				case '8':
+					$campo = 'posFinal';
+					break;
+			}
+
+			$dbS->squery("
+						UPDATE
+							formatoRegistroRev
+						SET
+							1QQ = '1QQ'
+						WHERE
+							id_formatoRegistroRev = 1QQ
+
+				",array($campo,$valor,$id_formatoRegistroRev),"UPDATE");
+			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_formatoRegistroRev' => $id_formatoRegistroRev,'estatus' => '¡Exito en la inserccion de informacion!','error' => 0);
+				return json_encode($arr);
+			}else{
+				$arr = array('id_formatoRegistroRev' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+				return json_encode($arr);
+			}
+		}
+		return json_encode($arr);
+
+	}
 	public function getAllAdmin($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
@@ -88,8 +140,102 @@ class FormatoRegistroRev{
 		}
 		return json_encode($arr);	
 	}
+	public function initInsertRev($token,$rol_usuario_id,$id_ordenDeTrabajo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
+		if($arr['error'] == 0){
+			//Informacion para crear el "Informe No."
+			$a= $dbS->qarrayA("
+		      	SELECT 
+		      		id_obra,
+					cotizacion,
+					consecutivoDocumentos,
+					prefijo,
+					YEAR(NOW()) AS anio
+				FROM
+					obra,
+					(
+						SELECT
+							obra_id
+						FROM
+							ordenDeTrabajo
+						WHERE
+							id_ordenDeTrabajo = 1QQ
 
-	public function insertJefeBrigada($token,$rol_usuario_id,$regNo,$ordenDeTrabajo_id,$localizacion,$cono_id,$varilla_id,$flexometro_id,$longitud,$latitud){
+					)AS ordenDeTrabajo
+				WHERE
+					id_obra = ordenDeTrabajo.obra_id
+				",
+				array($id_ordenDeTrabajo),
+				"SELECT"
+			);
+			if(!$dbS->didQuerydied && !($a=="empty")){
+				//Creamos el informe No.
+				$año = $a['anio'] - 2000;
+				$infoNo = $a['prefijo']."/".$a['cotizacion']."/".$año."/".$a['consecutivoDocumentos'];
+				$dbS->squery(
+					"
+						INSERT INTO
+							formatoRegistroRev
+							(
+								regNo,
+								observaciones,
+								ordenDeTrabajo_id
+							)
+						VALUES
+							(
+								'1QQ',
+								'NO HAY OBSERVACIONES',
+								1QQ
+							)
+
+					"
+					,
+					array($infoNo,$id_ordenDeTrabajo)
+					,
+					"INSERT"
+				);
+				if(!$dbS->didQuerydied){
+					$id = $dbS->lastInsertedID;
+					$dbS->squery(
+								"
+									UPDATE
+										obra
+									SET
+										consecutivoDocumentos = consecutivoDocumentos+1
+									WHERE
+										id_obra = 1QQ
+
+								"
+								,
+								array($a['id_obra'])
+								,
+								"SELECT"
+							);
+					if(!$dbS->didQuerydied){
+						$dbS->commitTransaction();
+						$arr = array('id_formatoRegistroRev' => $id,'informeNo'=>$infoNo,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);									
+					}
+					else{
+						$dbS->rollbackTransaction();
+						$arr = array('id_formatoRegistroRev' => 'NULL','token' => $token,	'estatus' => 'Error en la modificacion de consecutivoDocumentos, verifica tus datos y vuelve a intentarlo','error' => 5);
+					}
+				}else{
+					$dbS->rollbackTransaction();
+					$arr = array('id_formatoRegistroRev' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			else{
+				$dbS->rollbackTransaction();
+				$arr = array('id_formatoRegistroRev' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 7);
+			}	
+		}
+		return json_encode($arr);
+
+	}
+	public function insertJefeBrigada2($token,$rol_usuario_id,$regNo,$ordenDeTrabajo_id,$localizacion,$cono_id,$varilla_id,$flexometro_id,$longitud,$latitud){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);

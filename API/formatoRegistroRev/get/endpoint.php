@@ -14,6 +14,10 @@
 	include_once("./../RegistrosRev.php");
 
 	switch ($function) {
+
+		case 'hola':
+			echo "adios";
+		break;
 		
 		case 'getInfoByID':
 			$formato = new FormatoRegistroRev();
