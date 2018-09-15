@@ -897,6 +897,8 @@ CREATE TABLE systemstatus(
 	multiplosNoOfRegistrosCCH INT NOT NULL,
 
 	ensayo_def_MPa INT NOT NULL,
+
+	apiRoot VARCHAR(100) NOT NULL,
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	active INT NOT NULL DEFAULT 1,
@@ -1030,7 +1032,9 @@ INSERT INTO `systemstatus` (
 	`ensayo_def_MPa`, 
 	`ensayo_def_divisorKn`, 
 	`maxNoOfRegistrosCCH`, 
-	`multiplosNoOfRegistrosCCH`)
+	`multiplosNoOfRegistrosCCH`,
+	`apiRoot`
+	)
 VALUES (
 	7,
 	14,
@@ -1049,7 +1053,8 @@ VALUES (
 	10,
 	1000,
 	8,
-	4
+	4,
+	"http://lacocs.montielpalacios.com/"
 	);
 
 

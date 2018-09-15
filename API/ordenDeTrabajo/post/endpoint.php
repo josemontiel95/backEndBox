@@ -39,6 +39,14 @@
 			$orden = new ordenDeTrabajo();
 			echo $orden->activate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ordenDeTrabajo']);
 		break;
+		case 'upStatusByID':
+			$orden = new ordenDeTrabajo();
+			echo $orden->upStatusByID($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ordenDeTrabajo']);
+		break;
+		case 'completeOrden':
+			$orden = new ordenDeTrabajo();
+			echo $orden->completeOrden($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ordenDeTrabajo']);
+		break;
 	}
 ?>
 

@@ -457,13 +457,190 @@ class ordenDeTrabajo{
 		return json_encode($arr);
 	}
 
+	/*
+		FUNCIONAMINETO:
+						Incrementa el estado de una orden de trabajo, esto para verificar las transiciones que se hacen.
+	*/
+	public function upStatusByID($token,$rol_usuario_id,$id_ordenDeTrabajo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+							ordenDeTrabajo
+							SET
+								status = status+1
+							WHERE
+								active=1 AND
+								id_ordenDeTrabajo = 1QQ
+					 "
+					,array($id_ordenDeTrabajo),"UPDATE"
+			      	);
+			if(!$dbS->didQuerydied){
+				$a = $dbS->qarrayA("	SELECT
+											status
+										FROM
+											ordenDeTrabajo
+										WHERE
+											active=1 AND
+											id_ordenDeTrabajo = 1QQ
+					 "
+					,array($id_ordenDeTrabajo),"SELECT"
+			      	);
+				if(!$dbS->didQuerydied && ($a != "empty")){
+					$arr = array('id_ordenDeTrabajo' => $id_ordenDeTrabajo,'estatus' => 'Se cambio exitosamente el status de la ordenDeTrabajo, status:'.$a['status'],'error' => 0);
+				}
+				else{
+					if($a == "empty"){
+						$arr = array('estatus' => 'No se encontro ordenDeTrabajo con id:'.$id_ordenDeTrabajo,'error' => 5);
+					}
+					else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la consulta del status, verifica tus datos y vuelve a intentarlo','error' => 6);
+					}
+				}
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el cambio del status, verifica tus datos y vuelve a intentarlo','error' => 7);
+			}
+
+		}
+		return json_encode($arr);
+	}
 
 
+	public function completeOrden($token,$rol_usuario_id,$id_ordenDeTrabajo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->beginTransaction(); //Iniciamos la transacción
+			//Validamos que no existan formatos incompletos con un count para contar los formatos que esten
+			$rows = $dbS->qarrayA(
+										"
+											SELECT 
+												COUNT(*) As No
+											FROM 
+												formatoCampo
+											WHERE
+												(status = 0 OR status = 2) AND 
+												ordenDeTrabajo_id = 1QQ
 
+										"
+										,
+										array($id_ordenDeTrabajo)
+										,
+										"SELECT"
 
+									);
+			if(!$dbS->didQuerydied && ($rows['No'] == 0)){
+				$dbS->squery(
+								"
+									UPDATE
+										ordenDeTrabajo
+									SET
+										status = 3
+									WHERE
+										id_ordenDeTrabajo = 1QQ
+								"
+								,
+								array($id_ordenDeTrabajo)
+								,
+								"UPDATE"
 
+							);
 
+				if(!$dbS->didQuerydied){
+					//Realizamos el cambio de los formatos
+					$dbS->squery(
+									"
+										UPDATE 
+											formatoCampo
+										SET
+											status = 2
+										WHERE
+											ordenDeTrabajo_id = 1QQ
+									"
+									,
+									array($id_ordenDeTrabajo)
+									,
+									"UPDATE"
+								);
+					if(!$dbS->didQuerydied){ 
+						//Buscamos los formatos incompletos
+						$formatos = $dbS->qAll(
+															"
+																SELECT
+																	id_formatoCampo
+																FROM
+																	formatoCampo
+																WHERE
+																	status = 2 AND
+																	ordenDeTrabajo_id = 1QQ
+															"
+															,
+															array($id_ordenDeTrabajo)
+															,
+															"SELECT"
+														);
+						if(!$dbS->didQuerydied){
+								//Realizamos un foreach para cambiar el status de todos los registros que estan relacionados a esos formatos de campo
+								foreach ($formatos as $formato) {
+									$dbS->squery(
+											"
+												UPDATE 
+													registrosCampo
+												SET
+													status = 3
+												WHERE
+													formatoCampo_id = 1QQ
+											"
+											,
+											array($formato['id_formatoCampo'])
+											,
+											"UPDATE"
+										);
+									//Por cada iteracion validamos si no ocurrio algun error en la query y devolvemos el id de donde ocurrio el error
+									if($dbS->didQuerydied){
+										$dbS->rollbackTransaction();
+										$arr = array('id_formatoCampo' => $formato['id_formatoCampo'],'estatus' => 'Ocurrio un error en ese id, con respecto a la actualizacion del registro','error' => 6); //Error pendiente
+										return json_encode($arr); //Hacemos un return para romper el ciclo y regresar la respuesta
+									}
+									
+								}
 
+								//Como se evaluaron todas las iteracion no necesitamos validar mas, pasamos directo a regresar el resultado
+								$dbS->commitTransaction();
+								$arr = array('id_ordenDeTrabajo' => $id_ordenDeTrabajo,'estatus' => 'Se completo exitosamente la ordenDeTrabajo','error' => 0);	
+						}
+						else{
+							$dbS->rollbackTransaction();
+							$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la consulta de los formatos completos, verifica tus datos y vuelve a intentarlo','error' => 7);
+						}							
+					}
+					else{
+						$dbS->rollbackTransaction();
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el cambio del status de los formatos, verifica tus datos y vuelve a intentarlo','error' => 8);
+					}	
+				}
+				else{
+					$dbS->rollbackTransaction();
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el cambio del status de la orden de trabajo, verifica tus datos y vuelve a intentarlo','error' => 9);
+				}
+			}
+			else{
+				$dbS->rollbackTransaction();
+				if($rows['No'] != 0){
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus'=>'Existen formatos incompletos o la orden de trabajo ya se completo','error'=>6);
+				}
+				else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion del cambio de status, verifica tus datos y vuelve a intentarlo','error' => 10);
+				}
+				
+			}
+
+		}
+		return json_encode($arr);
+	}
 
 }
 

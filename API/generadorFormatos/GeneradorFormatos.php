@@ -28,16 +28,19 @@
 		}
 
 
-		function generateCCH($token,$rol_usuario_id,$id_formatoCampo){
+		function generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir){
+			echo $target_dir;
 			global $dbS;
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$formato = new FormatoCampo();	$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
+				$formato = new FormatoCampo();	
+				$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
 				switch ($infoFormato['tipo_especimen']) {
 					case 'CUBO':
 						$regisFormato = $this->getRegCCH($token,$rol_usuario_id,$id_formatoCampo);
-						$pdf = new CCH();	$pdf->CreateNew($infoFormato,$regisFormato);
+						$pdf = new CCH();	
+						$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
 						break;
 					case 'CILINDRO':
 						//$pdf = new InformeCilindros();	$pdf->CreateNew($infoFormato,$regisFormato);
