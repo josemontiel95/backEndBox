@@ -24,21 +24,49 @@ class RegistrosRev{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$dbS->squery("
+			//Extraemos la informacion
+			$informacion = $dbS->qarrayA(
+											"
+												SELECT
+													revenimiento 
+												FROM
+													ordenDeTrabajo,
+													obra,
+													formatoRegistroRev
+												WHERE
+													id_obra = obra_id AND
+													id_ordenDeTrabajo =  formatoRegistroRev.ordenDeTrabajo_id AND
+													id_formatoRegistroRev = 1QQ
+											"
+											,
+											array($id_formatoRegistroRev),
+											"SELECT"
+										);
+			if(!$dbS->didQuerydied && ($informacion != "empty")){
+				$dbS->squery("
 						INSERT INTO
-							registrosRev(formatoRegistroRev_id)
+							registrosRev(revProyecto,fecha,formatoRegistroRev_id)
 
 						VALUES
-							(1QQ)
-				",array($id_formatoRegistroRev),"INSERT");
-			if(!$dbS->didQuerydied){
-				$id=$dbS->lastInsertedID;
-				$arr = array('id_registrosRev' => $id,'estatus' => '¡Exito en la inicializacion','error' => 0);
-				return json_encode($arr);
-			}else{
-				$arr = array('id_registrosRev' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
-				return json_encode($arr);
+							(1QQ,CURDATE(),1QQ)
+				",array($informacion['revenimiento'],$id_formatoRegistroRev),"INSERT");
+				if(!$dbS->didQuerydied){
+					$id=$dbS->lastInsertedID;
+					$arr = array('id_registrosRev' => $id,'estatus' => '¡Exito en la inicializacion','error' => 0);
+					return json_encode($arr);
+				}else{
+					$arr = array('id_registrosRev' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+					return json_encode($arr);
+				}
 			}
+			else{
+				if($informacion == "empty"){
+					$arr = array('id_registrosRev' => 'NULL','estatus' => 'No hay registros','error' => 6);
+				}
+				else{
+					$arr = array('id_registrosRev' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 7);
+				}
+			}	
 		}
 		return json_encode($arr);
 

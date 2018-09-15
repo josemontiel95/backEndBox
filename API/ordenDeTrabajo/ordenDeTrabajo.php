@@ -488,7 +488,7 @@ class ordenDeTrabajo{
 					,array($id_ordenDeTrabajo),"SELECT"
 			      	);
 				if(!$dbS->didQuerydied && ($a != "empty")){
-					$arr = array('id_ordenDeTrabajo' => $id_ordenDeTrabajo,'estatus' => 'Se cambio exitosamente el status de la ordenDeTrabajo, status:'.$a['status'],'error' => 0);
+					$arr = array('id_ordenDeTrabajo' => $id_ordenDeTrabajo,'estatus' => 'Se cambio exitosamente el status de la ordenDeTrabajo.','status'=>$a['status'],'error' => 0);
 				}
 				else{
 					if($a == "empty"){
