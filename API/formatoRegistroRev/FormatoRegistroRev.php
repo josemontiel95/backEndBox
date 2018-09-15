@@ -26,21 +26,18 @@ class FormatoRegistroRev{
 					$campo = 'localizacion';
 					break;
 				case '3':
-					$campo = 'tipoConcreto';
-					break;
-				case '4':
 					$campo = 'cono_id';
 					break;
-				case '5':
+				case '4':
 					$campo = 'varilla_id';
 					break;
-				case '6':
+				case '5':
 					$campo = 'flexometro_id';
 					break;
-				case '7':
+				case '6':
 					$campo = 'posInicial';
 					break;
-				case '8':
+				case '7':
 					$campo = 'posFinal';
 					break;
 			}
