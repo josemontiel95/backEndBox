@@ -45,6 +45,7 @@
 			echo $formatocampo->deactivate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_registrosCampo']);
 		break;
 		case 'completeFormato':
+			//Realizamos la query para obtener la informacion para el formato
 			$formatocampo = new formatoCampo();
 			echo $formatocampo->completeFormato($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoCampo']);
 		break;

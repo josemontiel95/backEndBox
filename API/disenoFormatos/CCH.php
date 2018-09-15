@@ -338,12 +338,13 @@
 			
 		}
 		//Funcion que crea un nuevo formato
-		function CreateNew($infoFormato,$regisFormato){
+		function CreateNew($infoFormato,$regisFormato,$target_dir){
+			echo $target_dir;
 			$pdf  = new CCH('L','mm','Letter');
 			$pdf->AddPage();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($regisFormato);
-			$pdf->Output();
+			$pdf->Output('F',$target_dir);
 		}
 
 

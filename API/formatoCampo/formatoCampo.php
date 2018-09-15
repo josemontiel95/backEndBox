@@ -4,6 +4,7 @@
 include_once("./../../usuario/Usuario.php");
 include_once("./../../mailer/Mailer.php");
 include_once("./../../mailer/sendgrid-php/sendgrid-php.php");
+include_once("./../../generadorFormatos/GeneradorFormatos.php");
 
 class formatoCampo{
 	private $id_formatoCampo;
@@ -627,11 +628,63 @@ class formatoCampo{
 					$correo= "josemontiel@me.com";
 					$nombre= "T4U";
 					$pdf= "https://www.facebook.com/tech4umexico/";
-					$j="http://lacocs.montielpalacios.com/API/generadorFormatos/get/endpoint.php?function=generateInformeCampo&&token=23&&rol_usuario_id=23&&id_formatoCampo=".$id_formatoCampo;
-					if($mailer->sendMailBasic($correo, $nombre, $pdf)==202){
-						$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
-					}else{
-						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 7);
+					$info = $dbS->qarrayA(
+											"
+												SELECT
+													id_cliente,
+													id_obra,
+													id_ordenDeTrabajo
+												FROM
+													cliente,
+													obra,
+													ordenDeTrabajo,
+													formatoCampo
+												WHERE
+													formatoCampo.ordenDeTrabajo_id = ordenDeTrabajo.id_ordenDeTrabajo AND
+													ordenDeTrabajo.obra_id = obra.id_obra AND
+													obra.cliente_id = cliente.id_cliente AND
+													id_formatoCampo = 1QQ
+
+
+											"
+											,
+											array($id_formatoCampo)
+											,
+											"SELECT"
+										);
+					if(!$dbS->didQuerydied && ($info != "empty")){
+						$var_system = $dbS->qarrayA(
+														"
+															SELECT
+																apiRoot
+															FROM
+																systemstatus
+															ORDER BY id_systemstatus DESC;
+														",array(),"SELECT"
+														);
+						if(!$dbS->didQuerydied && ($var_system != "empty")){
+							$target_dir = "./../../../SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/";
+							$dirDatabase = $var_system['apiRoot']."SystemData/UserData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/"."preliminarCCH.pdf";
+							if (!file_exists($target_dir)) {
+								echo 'Se creo con exito la nueva carpeta';
+							    mkdir($target_dir, 0777, true);
+							}
+							$target_dir=$target_dir."preliminarCCH.pdf";
+							//Llamada a el generador de formatos
+							$generador = new GeneradorFormatos();
+							$generador->generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir);
+							if($mailer->sendMailBasic($correo, $nombre, $dirDatabase)==202){
+								$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
+							}else{
+								$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 7);
+							}
+						}
+						else{
+							echo 'erro en la llamada a la api';
+						}
+					}
+					else{
+						echo 'erro en la llamada al info';
 					}
 				}else{
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 6);
