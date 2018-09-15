@@ -171,6 +171,60 @@ class ordenDeTrabajo{
 		return json_encode($arr);	
 	}
 
+	//Devuelve todas las ordenes de trabajo que aun estan pendientes de completar
+	public function getAllJefaLab($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id= $usuario->laboratorio_id;
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      		SELECT 
+							id_ordenDeTrabajo,
+							jefa_lab_id,
+							obra_id,
+							obra.obra,
+							creadores.nombre AS CreadoPorJefaLab,
+							actividades,
+							condicionesTrabajo,
+							fechaInicio,
+							fechaFin,
+							horaInicio,
+							horaFin,
+							observaciones,
+							lugar,
+							ordenDeTrabajo.laboratorio_id,
+							laboratorio,
+							usuario.nombre AS nombre_jefe_brigada_id,
+							jefe_brigada_id,
+							IF(ordenDeTrabajo.active = 1,'Si','No') AS active,
+							ordenDeTrabajo.status,
+							ordenDeTrabajo.active AS activeColor
+						from
+							usuario,ordenDeTrabajo,obra,laboratorio,
+							(SELECT id_usuario, nombre FROM usuario) AS creadores
+						WHERE
+							obra_id = id_obra AND
+							ordenDeTrabajo.laboratorio_id = id_laboratorio AND
+							jefe_brigada_id = usuario.id_usuario AND
+							jefa_lab_id = creadores.id_usuario AND 
+							ordenDeTrabajo.status <3 AND
+							ordenDeTrabajo.laboratorio_id = 1QQ
+			      ",
+			      array($laboratorio_id),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+						if($arr == "empty")
+							$arr = array('estatus' =>"No hay registros", 'error' => 5); 
+						
+			}else
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 6);
+		}
+		return json_encode($arr);	
+	}
+
 	public function getAllByJefeBrigada($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
