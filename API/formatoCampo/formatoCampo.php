@@ -664,7 +664,7 @@ class formatoCampo{
 														);
 						if(!$dbS->didQuerydied && ($var_system != "empty")){
 							$target_dir = "./../../../SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/";
-							$dirDatabase = $var_system['apiRoot']."SystemData/UserData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/"."preliminarCCH.pdf";
+							$dirDatabase = $var_system['apiRoot']."SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/"."preliminarCCH.pdf";
 							if (!file_exists($target_dir)) {
 								echo 'Se creo con exito la nueva carpeta';
 							    mkdir($target_dir, 0777, true);
