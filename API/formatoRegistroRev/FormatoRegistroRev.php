@@ -391,5 +391,115 @@ class FormatoRegistroRev{
 		return json_encode($arr);
 	}
 
+	public function completeFormato($token,$rol_usuario_id,$id_formatoRegistroRev){
+		global $dbS;
+
+		$usuario = new Usuario();
+		$mailer = new Mailer();
+
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+								formatoRegistroRev
+							SET
+								status = 1
+							WHERE
+								active = 1 AND
+								id_formatoRegistroRev = 1QQ
+					 "
+					,array($id_formatoRegistroRev),"UPDATE"
+			      	);
+			if(!$dbS->didQuerydied){
+				$dbS->squery("	
+							UPDATE
+								registrosRev
+							SET
+								status = 2
+							WHERE
+								active = 1 AND
+								formatoRegistroRev_id = 1QQ
+					 "
+					,array($id_formatoRegistroRev),"UPDATE"
+			      	);
+				if(!$dbS->didQuerydied){
+					$correo= "josemontiel@me.com";
+					$pdf= "https://www.facebook.com/tech4umexico/";
+					$info = $dbS->qarrayA(
+											"
+												SELECT
+													id_cliente,
+													id_obra,
+													id_ordenDeTrabajo,
+													CONCAT(nombre,'(',razonSocial,')') AS nombre,
+													email
+												FROM
+													cliente,
+													obra,
+													ordenDeTrabajo,
+													formatoRegistroRev
+												WHERE
+													formatoRegistroRev.ordenDeTrabajo_id = ordenDeTrabajo.id_ordenDeTrabajo AND
+													ordenDeTrabajo.obra_id = obra.id_obra AND
+													obra.cliente_id = cliente.id_cliente AND
+													id_formatoRegistroRev = 1QQ
+
+
+											"
+											,
+											array($id_formatoRegistroRev)
+											,
+											"SELECT"
+										);
+					if(!$dbS->didQuerydied && ($info != "empty")){
+						$var_system = $dbS->qarrayA(
+														"
+															SELECT
+																apiRoot
+															FROM
+																systemstatus
+															ORDER BY id_systemstatus DESC;
+														",array(),"SELECT"
+														);
+						if(!$dbS->didQuerydied && ($var_system != "empty")){
+							$hora_de_creacion = getdate();
+							$target_dir = "./../../../SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/";
+							$dirDatabase = $var_system['apiRoot']."SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/"."preliminarCCH"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+							if (!file_exists($target_dir)) {
+							    mkdir($target_dir, 0777, true);
+							}
+							$target_dir=$target_dir."preliminarCCH"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+							//Llamada a el generador de formatos
+							$generador = new GeneradorFormatos();
+							//Cachamos la excepcion
+							try{
+								//$generador->generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir);
+								if($mailer->sendMailBasic($correo, $info['nombre'], $pdf)==202){
+									$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
+								}else{
+									$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 6);
+								}
+							}catch(Exception $e){
+								$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 7);
+								return json_encode($arr);
+							}
+
+						}
+						else{
+							$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la consulta del apiRoot','error' =>8);
+						}
+					}
+					else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la consulta de la informacion para la carpeta','error' => 9);
+					}
+				}else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 10);
+				}
+			}else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 11);
+			}		
+		}
+		return json_encode($arr);
+	}
+
 }
 ?>
