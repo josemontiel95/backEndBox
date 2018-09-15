@@ -62,24 +62,51 @@ class Herramienta_ordenDeTrabajo{
 	}
 	*/
 	//
-	/*
-	public function getHerraForStatus($token,$rol_usuario_id,$id_ordenDeTrabajo){
+	
+	public function getHerraOrdenComplete($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll(
-				  "
-			      	
+							  "
+						      	SELECT
+									id_herramienta,
+									id_herramienta_tipo,
+								    tipo,
+									placas,
+									condicion AS condicionActual,
+									fechaDevolucion,
+									herramienta_ordenDeTrabajo.status AS condicionDespuesDeEvaluar,	
+									herramienta_ordenDeTrabajo.observaciones			      		
+								FROM
+									herramientas,
+									herramienta_tipo,
+									herramienta_ordenDeTrabajo,
+									ordenDeTrabajo
+								WHERE
+									herramienta_ordenDeTrabajo.herramienta_id = herramientas.id_herramienta AND
+									herramientas.herramienta_tipo_id = herramienta_tipo.id_herramienta_tipo AND
+									ordenDeTrabajo.id_ordenDeTrabajo = herramienta_ordenDeTrabajo.ordenDeTrabajo_id AND
+									ordenDeTrabajo.status = 3 AND
+									herramienta_ordenDeTrabajo.active = 0 AND
+									herramienta_ordenDeTrabajo.ordenDeTrabajo_id = 1QQ
 
-			      ",
-			      array(),
-			      "SELECT"
-			      );
+						      ",
+						      array($id_ordenDeTrabajo),
+						      "SELECT"
+						      );
+			if(!$dbS->didQuerydied){
+				if($arr == "empty")
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); 
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
 		}
 		return json_encode($arr);
 
-	}*/
+	}
 
 
 	public function getHerramientaForDropdownRegistro($token,$rol_usuario_id,$id_formatoCampo){
