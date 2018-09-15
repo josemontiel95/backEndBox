@@ -673,7 +673,7 @@ class formatoCampo{
 							//Obtenemos la hora para que no se repitan en caso de crear un nuevo formato
 							$hora_de_creacion = getdate();
 							$target_dir = "./../../../SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/";
-							$dirDatabase = $var_system['apiRoot']."SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/"."preliminarCCH.pdf";
+							$dirDatabase = $var_system['apiRoot']."SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/"."preliminarCCH"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
 							if (!file_exists($target_dir)) {
 								echo 'Se creo con exito la nueva carpeta';
 							    mkdir($target_dir, 0777, true);
