@@ -62,6 +62,26 @@ class Herramienta_ordenDeTrabajo{
 	}
 	*/
 	//
+	/*
+	public function getHerraForStatus($token,$rol_usuario_id,$id_ordenDeTrabajo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll(
+				  "
+			      	
+
+			      ",
+			      array(),
+			      "SELECT"
+			      );
+		}
+		return json_encode($arr);
+
+	}*/
+
+
 	public function getHerramientaForDropdownRegistro($token,$rol_usuario_id,$id_formatoCampo){
 		global $dbS;
 		$usuario = new Usuario();

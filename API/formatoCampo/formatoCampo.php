@@ -340,7 +340,7 @@ class formatoCampo{
 			      	registrosCampo
 			      WHERE
 			      	active=1 AND 
-			      	formatoCampo_id=1QQ;
+			      	formatoCampo_id=1QQ
 			      ",
 			      array($id_formatoCampo),
 			      "SELECT"
