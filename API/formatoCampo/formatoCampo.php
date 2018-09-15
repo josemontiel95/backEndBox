@@ -633,14 +633,15 @@ class formatoCampo{
 			      	);
 				if(!$dbS->didQuerydied){
 					$correo= "josemontiel@me.com";
-					$nombre= "T4U";
 					$pdf= "https://www.facebook.com/tech4umexico/";
 					$info = $dbS->qarrayA(
 											"
 												SELECT
 													id_cliente,
 													id_obra,
-													id_ordenDeTrabajo
+													id_ordenDeTrabajo,
+													CONCAT(nombre,'(',razonSocial,')') AS nombre,
+													email
 												FROM
 													cliente,
 													obra,
@@ -675,7 +676,6 @@ class formatoCampo{
 							$target_dir = "./../../../SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/";
 							$dirDatabase = $var_system['apiRoot']."SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/"."preliminarCCH"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
 							if (!file_exists($target_dir)) {
-								echo 'Se creo con exito la nueva carpeta';
 							    mkdir($target_dir, 0777, true);
 							}
 							$target_dir=$target_dir."preliminarCCH"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
@@ -684,30 +684,29 @@ class formatoCampo{
 							//Cachamos la excepcion
 							try{
 								$generador->generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir);
+								if($mailer->sendMailBasic($correo, $info['nombre'], $dirDatabase)==202){
+									$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
+								}else{
+									$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 6);
+								}
 							}catch(Exception $e){
-								echo 'Eror en la generacion del formato:'.$e->getMessage();
+								$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 7);
+								return json_encode($arr);
 							}
 
-							
-
-							if($mailer->sendMailBasic($correo, $nombre, $dirDatabase)==202){
-								$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
-							}else{
-								$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 7);
-							}
 						}
 						else{
-							echo 'erro en la llamada a la api';
+							$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la consulta del apiRoot','error' =>8);
 						}
 					}
 					else{
-						echo 'erro en la llamada al info';
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la consulta de la informacion para la carpeta','error' => 9);
 					}
 				}else{
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 6);
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 10);
 				}
 			}else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 5);
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 11);
 			}		
 		}
 		return json_encode($arr);
