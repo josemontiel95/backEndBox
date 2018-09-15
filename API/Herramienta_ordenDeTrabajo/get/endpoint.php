@@ -21,6 +21,10 @@
 			$herra = new Herramienta_ordenDeTrabajo();
 			echo $herra->getAllHerraOrden($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
 		break;
+		case 'getHerraOrdenComplete':
+			$herra = new Herramienta_ordenDeTrabajo();
+			echo $herra->getHerraOrdenComplete($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
+		break;
 		case 'getAllHerraAvailable':
 			$herra = new Herramienta_ordenDeTrabajo();
 			echo $herra->getAllHerraAvailable($_GET['token'],$_GET['rol_usuario_id']);

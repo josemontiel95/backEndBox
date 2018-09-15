@@ -30,7 +30,65 @@ class Tecnicos_ordenDeTrabajo{
 		}
 		return json_encode($arr);
 	}*/
+	/*
+	public function getTecOrdenComplete($token,$rol_usuario_id,$id_ordenDeTrabajo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll(
+							  "	 SELECT
+							      	id_usuario,
+									nombre,
+							        apellido,
+									foto
+								  FROM 
+							      	tecnicos_ordenDeTrabajo,usuario
+							      WHERE 
+							      		tecnico_id = id_usuario AND 
+							      		usuario.active = 1 AND
+							      		ordenDeTrabajo_id = 1QQ 
 
+
+
+						      	SELECT
+									id_herramienta,
+									id_herramienta_tipo,
+								    tipo,
+									placas,
+									condicion AS condicionActual,
+									fechaDevolucion,
+									herramienta_ordenDeTrabajo.status AS condicionDespuesDeEvaluar,	
+									herramienta_ordenDeTrabajo.observaciones			      		
+								FROM
+									herramientas,
+									herramienta_tipo,
+									herramienta_ordenDeTrabajo,
+									ordenDeTrabajo
+								WHERE
+									herramienta_ordenDeTrabajo.herramienta_id = herramientas.id_herramienta AND
+									herramientas.herramienta_tipo_id = herramienta_tipo.id_herramienta_tipo AND
+									ordenDeTrabajo.id_ordenDeTrabajo = herramienta_ordenDeTrabajo.ordenDeTrabajo_id AND
+									ordenDeTrabajo.status = 3 AND
+									herramienta_ordenDeTrabajo.active = 0 AND
+									herramienta_ordenDeTrabajo.ordenDeTrabajo_id = 1QQ
+
+						      ",
+						      array($id_ordenDeTrabajo),
+						      "SELECT"
+						      );
+			if(!$dbS->didQuerydied){
+				if($arr == "empty")
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); 
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+
+	}
+	*/
 	public function getTecAvailable($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -263,6 +321,7 @@ class Tecnicos_ordenDeTrabajo{
 			$arr= $dbS->qAll("
 					
 			      	SELECT
+			      		id_tecnicos_ordenDeTrabajo,
 						id_usuario,
 						CONCAT(nombre,' ',apellido) AS nombre,
 						IF(CURDATE()=DATE(T2.createdON),'SI','NO') AS estado
@@ -273,7 +332,7 @@ class Tecnicos_ordenDeTrabajo{
 						(SELECT * FROM listaAsistencia WHERE  CURDATE()=DATE(listaAsistencia.createdON)) AS T2 ON  id_tecnicos_ordenDeTrabajo=tecnicos_ordenDeTrabajo_id
 					WHERE
 						tecnico_id = id_usuario AND
-						tecnicos_ordenDeTrabajo.ordenDeTrabajo_id = 1QQ;
+						tecnicos_ordenDeTrabajo.ordenDeTrabajo_id = 1QQ
 						
 			      ",
 			      array($id_ordenDeTrabajo),
