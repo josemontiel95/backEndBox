@@ -28,7 +28,7 @@
 			break;
 		case 'insertJefeBrigada':
 			$formato = new FormatoRegistroRev();
-			echo $formato->insertJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['regNo'],$_POST['ordenDeTrabajo_id'],$_POST['localizacion'],$_POST['cono_id'],$_POST['varilla_id'],$_POST['flexometro_id'],$_POST['longitud'],$_POST['latitud']);		
+			echo $formato->insertJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['campo'],$_POST['valor'],$_POST['id_formatoRegistroRev']);		
 		break;
 		case 'updateFooter':
 			$formato = new FormatoRegistroRev();
