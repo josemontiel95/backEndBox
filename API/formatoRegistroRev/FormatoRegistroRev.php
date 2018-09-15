@@ -2,6 +2,10 @@
 
 
 include_once("./../../usuario/Usuario.php");
+include_once("./../../mailer/Mailer.php");
+include_once("./../../mailer/sendgrid-php/sendgrid-php.php");
+include_once("./../../generadorFormatos/GeneradorFormatos.php");
+
 class FormatoRegistroRev{
 	private $id_formatoCampo;
 	private $informeNo;
