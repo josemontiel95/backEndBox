@@ -1,5 +1,12 @@
 <?php 
 
+/*
+
+	Definimos la configuracion de la zona horaria
+	-Direcctorio de zonas de America: http://php.net/manual/es/timezones.america.php
+
+*/
+date_default_timezone_set('America/Mexico_City');
 
 include_once("./../../usuario/Usuario.php");
 include_once("./../../mailer/Mailer.php");
@@ -663,16 +670,26 @@ class formatoCampo{
 														",array(),"SELECT"
 														);
 						if(!$dbS->didQuerydied && ($var_system != "empty")){
+							//Obtenemos la hora para que no se repitan en caso de crear un nuevo formato
+							$hora_de_creacion = getdate();
 							$target_dir = "./../../../SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/";
 							$dirDatabase = $var_system['apiRoot']."SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/"."preliminarCCH.pdf";
 							if (!file_exists($target_dir)) {
 								echo 'Se creo con exito la nueva carpeta';
 							    mkdir($target_dir, 0777, true);
 							}
-							$target_dir=$target_dir."preliminarCCH.pdf";
+							$target_dir=$target_dir."preliminarCCH"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
 							//Llamada a el generador de formatos
 							$generador = new GeneradorFormatos();
-							$generador->generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir);
+							//Cachamos la excepcion
+							try{
+								$generador->generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir);
+							}catch(Exception $e){
+								echo 'Eror en la generacion del formato:'.$e->getMessage();
+							}
+
+							
+
 							if($mailer->sendMailBasic($correo, $nombre, $dirDatabase)==202){
 								$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
 							}else{
