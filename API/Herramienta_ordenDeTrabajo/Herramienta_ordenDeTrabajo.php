@@ -110,7 +110,7 @@ class Herramienta_ordenDeTrabajo{
 						$herra_tipo=1009;
 						$id_herramienta=50;
 					break;
-					case"VIGA":
+					case"VIGAS":
 						$herra_tipo=1010;
 						$id_herramienta=60;
 					break;
