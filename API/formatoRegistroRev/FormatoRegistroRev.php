@@ -268,6 +268,7 @@ class FormatoRegistroRev{
 			        obra,
 					formatoRegistroRev.localizacion,
 					formatoRegistroRev.observaciones,
+					formatoRegistroRev.status,
 					nombre,
 					razonSocial,
 					CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion,
