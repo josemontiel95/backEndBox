@@ -135,6 +135,7 @@ class Herramienta_ordenDeTrabajo{
 						herramienta_id=id_herramienta AND
 						herramienta_ordenDeTrabajo.active=1 AND 
 						herramienta_tipo_id='1QQ' AND
+						herramienta_ordenDeTrabajo.ordenDeTrabajo_id=formatoCampo.ordenDeTrabajo_id AND 
 					  	id_formatoCampo='1QQ'
 					",
 					array($id_herramienta,$herra_tipo,$id_formatoCampo),
