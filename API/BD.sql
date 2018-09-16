@@ -558,6 +558,9 @@ CREATE TABLE formatoRegistroRev(
 	varilla_id INT(11),
 	flexometro_id INT(11),
 
+	status INT NOT NULL DEFAULT 0,
+
+
 	posInicial POINT NOT NULL,
 	posFinal POINT,
 
@@ -584,8 +587,8 @@ CREATE TABLE formatoRegistroRev(
 	ON DELETE SET NULL ON UPDATE CASCADE
 
 )ENGINE=INNODB;
-
 ALTER TABLE formatoRegistroRev AUTO_INCREMENT=1001;
+
 
 
 CREATE TABLE registrosRev(

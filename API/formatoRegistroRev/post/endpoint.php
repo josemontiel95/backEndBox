@@ -40,8 +40,13 @@
 			echo $registrorev->insertRegistroJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['campo'],$_POST['valor'],$_POST['id_registrosRev']);
 		break;
 		case 'deactivate':
-					$formatocampo = new RegistrosRev();
-					echo $formatocampo->deactivate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_registrosRev']);
+			$formatocampo = new RegistrosRev();
+			echo $formatocampo->deactivate($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_registrosRev']);
+		break;
+		case 'completeFormato':
+			//Realizamos la query para obtener la informacion para el formato
+			$formato = new FormatoRegistroRev();
+			echo $formato->completeFormato($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev']);
 		break;
 
 	}
