@@ -2,9 +2,6 @@
 include_once("./../../configSystem.php");
 include_once("./../../usuario/Usuario.php");
 class footerEnsayo{
-
-
-	
 	
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
@@ -240,18 +237,32 @@ class footerEnsayo{
 		);
 		if(!$dbS->didQuerydied && !($a=="empty")){
 			$dbS->squery("
-				INSERT INTO
-					ensayoCilindro(registrosCampo_id,formatoCampo_id,footerEnsayo_id,peso,d1,d2,h1,h2,carga,falla)
-				VALUES
-					(1QQ,1QQ,1QQ,0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0)
-				",array($id_RegistroCCH, $a['formatoCampo_id'],$id ),
-				"INSERT"
+				UPDATE 
+					registrosCampo
+				SET
+					footerEnsayo_id= 1QQ
+				WHERE 
+					id_registrosCampo= 1QQ
+				",array($id,$id_RegistroCCH),
+				"UPDATE"
 			);
+
 			if(!$dbS->didQuerydied){
-				$idRegGabsCil=$dbS->lastInsertedID;
-				return $idRegGabsCil;
-			}
-			else{
+				$dbS->squery("
+					INSERT INTO
+						ensayoCilindro(registrosCampo_id,formatoCampo_id,footerEnsayo_id,peso,d1,d2,h1,h2,carga,falla)
+					VALUES
+						(1QQ,1QQ,1QQ,0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0)
+					",array($id_RegistroCCH, $a['formatoCampo_id'],$id ),
+					"INSERT"
+				);
+				if(!$dbS->didQuerydied){
+					$idRegGabsCil=$dbS->lastInsertedID;
+					return $idRegGabsCil;
+				}else{
+					return-2;
+				}
+			}else{
 				return-2;
 			}
 
@@ -274,18 +285,32 @@ class footerEnsayo{
 		);
 		if(!$dbS->didQuerydied && !($a=="empty")){
 			$dbS->squery("
-				INSERT INTO
-					ensayoCubo(registrosCampo_id,formatoCampo_id,footerEnsayo_id)
-				VALUES
-					(1QQ,1QQ,1QQ)
-				",array($id_RegistroCCH, $a['formatoCampo_id'],$id ),
-				"INSERT"
+				UPDATE 
+					registrosCampo
+				SET
+					footerEnsayo_id= 1QQ
+				WHERE 
+					id_registrosCampo= 1QQ
+				",array($id,$id_RegistroCCH),
+				"UPDATE"
 			);
+
 			if(!$dbS->didQuerydied){
-				$idRegGabsCubo=$dbS->lastInsertedID;
-				return $idRegGabsCubo;
-			}
-			else{
+				$dbS->squery("
+					INSERT INTO
+						ensayoCubo(registrosCampo_id,formatoCampo_id,footerEnsayo_id)
+					VALUES
+						(1QQ,1QQ,1QQ)
+					",array($id_RegistroCCH, $a['formatoCampo_id'],$id ),
+					"INSERT"
+				);
+				if(!$dbS->didQuerydied){
+					$idRegGabsCubo=$dbS->lastInsertedID;
+					return $idRegGabsCubo;
+				}else{
+					return-2;
+				}
+			}else{
 				return-2;
 			}
 
@@ -308,21 +333,34 @@ class footerEnsayo{
 		);
 		if(!$dbS->didQuerydied && !($a=="empty")){
 			$dbS->squery("
-				INSERT INTO
-					ensayoViga(registrosCampo_id,formatoCampo_id,footerEnsayo_id,fecha)
-				VALUES
-					(1QQ,1QQ,1QQ,CURDATE())
-				",array($id_RegistroCCH, $a['formatoCampo_id'],$id ),
-				"INSERT"
+				UPDATE 
+					registrosCampo
+				SET
+					footerEnsayo_id= 1QQ
+				WHERE 
+					id_registrosCampo= 1QQ
+				",array($id,$id_RegistroCCH),
+				"UPDATE"
 			);
+
 			if(!$dbS->didQuerydied){
-				$idRegGabsCubo=$dbS->lastInsertedID;
-				return $idRegGabsCubo;
-			}
-			else{
+				$dbS->squery("
+					INSERT INTO
+						ensayoViga(registrosCampo_id,formatoCampo_id,footerEnsayo_id,fecha)
+					VALUES
+						(1QQ,1QQ,1QQ,CURDATE())
+					",array($id_RegistroCCH, $a['formatoCampo_id'],$id ),
+					"INSERT"
+				);
+				if(!$dbS->didQuerydied){
+					$idRegGabsCubo=$dbS->lastInsertedID;
+					return $idRegGabsCubo;
+				}else{
+					return-2;
+				}
+			}else{
 				return-2;
 			}
-
 		}
 		return-2;
 	}

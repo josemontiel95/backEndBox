@@ -608,8 +608,7 @@ class Usuario{
 						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion, verifica tus datos y vuelve a intentarlo','error' => 3);
 						return json_encode($arr);
 					}
-				}
-				else{
+				}else{
 					$arr = array('estatus'=>'Ese correo ya existe','error' => 4);
 					return json_encode($arr);
 				}
@@ -891,11 +890,13 @@ class Usuario{
 										(
 											SELECT
 												tecnico_id,
-												IF(tecnicos_ordenDeTrabajo.active = 0 AND CURDATE()>ordenDeTrabajo.fechaInicio, 'SI','NO') AS estado
+												IF( CURDATE()>ordenDeTrabajo.fechaInicio,'NO','SI') AS estado
 											FROM
 												tecnicos_ordenDeTrabajo,
 												ordenDeTrabajo
 											WHERE
+												tecnicos_ordenDeTrabajo.active=1 AND
+												CURDATE()>ordenDeTrabajo.fechaInicio AND
 												ordenDeTrabajo_id = id_ordenDeTrabajo 
 										) AS estado_tec
 										ON usuario.id_usuario = estado_tec.tecnico_id
@@ -903,7 +904,7 @@ class Usuario{
 									  	usuario.active = 1 AND
 									  	rol_usuario_id = 1004 AND
 									  	(estado_tec.estado='SI' OR estado_tec.estado IS NULL) AND
-									  	laboratorio_id = 1QQ
+									  	laboratorio_id = 1QQ 
 							      ",
 							      array($arr['laboratorio_id']),
 							      "SELECT"

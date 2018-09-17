@@ -24,7 +24,8 @@ class ordenDeTrabajo{
 								SELECT
 									id_formatoCampo AS id_formato,
 									informeNo AS formatoNo,
-									IF(informeNo IS NOT NULL,'CONTROL DE CONCRETO HIDRAULICO','ERROR')AS tipo
+									IF(informeNo IS NOT NULL,'CONTROL DE CONCRETO HIDRAULICO','ERROR')AS tipo,
+									status
 								FROM
 									formatoCampo
 								WHERE
@@ -40,7 +41,8 @@ class ordenDeTrabajo{
 								SELECT
 									id_formatoRegistroRev AS id_formato,
 									regNo AS formatoNo,
-									IF(regNo IS NOT NULL,'REVENIMIENTO','ERROR')AS tipo
+									IF(regNo IS NOT NULL,'REVENIMIENTO','ERROR')AS tipo,
+									status
 								FROM
 									formatoRegistroRev
 								WHERE

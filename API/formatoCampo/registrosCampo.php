@@ -653,9 +653,10 @@ class registrosCampo{
 					FROM
 						registrosCampo,formatoCampo,ordenDeTrabajo
 					WHERE
+						registrosCampo.footerEnsayo_id IS NULL AND
 						id_formatoCampo = formatoCampo_id AND
 						id_ordenDeTrabajo = ordenDeTrabajo_id AND
-						(registrosCampo.status = 2 OR registrosCampo.status = 3) AND
+						(registrosCampo.status > 1) AND
 						DATE_ADD(fecha, INTERVAL diasEnsaye DAY) <= CURDATE() AND
 						laboratorio_id = 1QQ 
 			      ",

@@ -59,6 +59,8 @@ CREATE TABLE usuario (
 )ENGINE=INNODB;
 ALTER TABLE usuario AUTO_INCREMENT=1001;
 
+
+
 CREATE TABLE cliente(
 	id_cliente INT(11) NOT NULL AUTO_INCREMENT,
 	rfc VARCHAR(13) NOT NULL,
@@ -276,6 +278,7 @@ CREATE TABLE herramientas(
 )ENGINE=INNODB;
 ALTER TABLE herramientas AUTO_INCREMENT=1001;
 
+ALTER TABLE herramientas MODIFY placas VARCHAR(60);
 
 
 CREATE TABLE herramienta_ordenDeTrabajo(
@@ -529,7 +532,7 @@ CREATE TABLE registrosCampo(
 
 	status INT NOT NULL DEFAULT 0,
 
-
+	footerEnsayo_id INT(11) NULL DEFAULT NULL,
 
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -538,6 +541,10 @@ CREATE TABLE registrosCampo(
 
 	PRIMARY KEY (id_registrosCampo),
 
+	FOREIGN KEY(footerEnsayo_id) 
+	REFERENCES footerEnsayo(id_footerEnsayo)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
 	FOREIGN KEY(herramienta_id) 
 	REFERENCES herramientas(id_herramienta)
 	ON DELETE SET NULL ON UPDATE CASCADE
@@ -545,7 +552,7 @@ CREATE TABLE registrosCampo(
 
 ALTER TABLE registrosCampo AUTO_INCREMENT=1001;
 
-ALTER TABLE registrosCampo ADD diasEnsaye INT;
+
 
 CREATE TABLE formatoRegistroRev(
 	id_formatoRegistroRev INT(11) NOT NULL AUTO_INCREMENT,
@@ -899,6 +906,7 @@ CREATE TABLE systemstatus(
 	ensayo_def_divisorKn INT NOT NULL,
 	maxNoOfRegistrosCCH INT NOT NULL,
 	multiplosNoOfRegistrosCCH INT NOT NULL,
+	maxNoOfRegistrosRev INT NOT NULL,
 
 	ensayo_def_MPa INT NOT NULL,
 
@@ -923,6 +931,7 @@ ALTER TABLE systemstatus ADD ensayo_def_MPa INT NOT NULL;
 ALTER TABLE systemstatus ADD ensayo_def_divisorKn INT NOT NULL;
 ALTER TABLE systemstatus ADD maxNoOfRegistrosCCH INT NOT NULL;
 ALTER TABLE systemstatus ADD multiplosNoOfRegistrosCCH INT NOT NULL;
+ALTER TABLE systemstatus ADD maxNoOfRegistrosRev INT NOT NULL;
 
 
 INSERT INTO 
@@ -1037,7 +1046,8 @@ INSERT INTO `systemstatus` (
 	`ensayo_def_divisorKn`, 
 	`maxNoOfRegistrosCCH`, 
 	`multiplosNoOfRegistrosCCH`,
-	`apiRoot`
+	`apiRoot`,
+	`maxNoOfRegistrosRev`
 	)
 VALUES (
 	7,
@@ -1058,7 +1068,8 @@ VALUES (
 	1000,
 	8,
 	4,
-	"http://lacocs.montielpalacios.com/"
+	"http://lacocs.montielpalacios.com/",
+	10
 	);
 
 
