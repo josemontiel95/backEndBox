@@ -214,7 +214,8 @@
 							unidad,
 							horaMuestreo,
 							tempMuestreo,
-							tempRecoleccion
+							tempRecoleccion,
+							localizacion
 						FROM
 							registrosCampo,
 							formatoCampo
