@@ -25,7 +25,7 @@
 			$titulo_informe = '"INFORME DE PRUEBAS A COMPRESIÓN DE CILINDROS DE CONCRETO HIDRÁULICO"';
 			$tam_tituloInforme = $this->GetStringWidth($titulo_informe)+130;
 			$tam_font_info = 6.5;
-			//Fecha
+			//Direccion
 			$this->SetFont('Arial','B',$tam_font_info);
 			$direccion_lacocs = '35 NORTE No.3023, UNIDAD HABITACIONAL AQUILES SERDAN, PUEBLA, PUE.';
 			$tam_direccion = $this->GetStringWidth($direccion_lacocs)+6;

@@ -25,5 +25,9 @@
 			$generador = new GeneradorFormatos();
 			echo $generador->getRegCuboByFCCH($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
 			break;
+		case 'generateRevenimiento':
+		$generador = new GeneradorFormatos();
+		echo $generador->generateRevenimiento($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoRegistroRev']);
+		break;
 	}
 ?>

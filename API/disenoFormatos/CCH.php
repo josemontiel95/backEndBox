@@ -154,7 +154,7 @@
 
 		}
 
-		function putTables($regisFormato){
+		function putTables($infoFormato,$regisFormato){
 			//Guardamos la posicion de la Y para alinear todas las celdas a la misma altura
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 
@@ -295,57 +295,120 @@
 
 			$this->Ln(2);
 			//$this->cell(0,10,$this->GetY(),1,2,'C');
-			
-					
-		}
-		
-		function Footer(){
+
 			$posicion_y = 140;
-			$tam_observaciones = 20;
+			$tam_observaciones = 10;
 			$tam_font_footer = 7;	$this->SetFont('Arial','B',$tam_font_footer);
 			$observaciones = 'OBSERVACIONES:';
 
 			//Observaciones
 			$this->SetY($posicion_y);
-			$this->cell(0,2*($tam_font_footer - 2.5),$observaciones,1,2,'L,T,R');
-			$this->cell(0,$tam_observaciones,'',1,2);
+			$this->cell(0,2*($tam_font_footer - 2.5),$observaciones,'L,T,R',2);
+			$this->cell(0,$tam_observaciones,$infoFormato['observaciones'],'L,B,R',2);
 
 			//Metodos
 			$metodos = 'METODOS EMPLEADOS: NMX-C-161-ONNCCE-2013, NMX-C-159-ONNCCE-2016, NMX-C156-ONNCCE-2010';
-			$this->cell(0,($tam_font_footer - 3),$metodos,1,2);
-			/*
-			//Metodos empleados
-			$metodos = 'METODOS EMPLEADOS: EL ENSAYO REALIZADO CUMPLE CON LAS NORMAS MEXICANAS NMX-C-161-ONNCCE-2013, NMX-C-156-ONNCCE-2010,'."\n".'NMX-C-159-ONNCCE-2016,NMX-C-109-ONNCCE-2013,NMX-C-083-ONNCCE-2014';
-			//$this->multicell(0,($tam_font_head - 2.5),$metodos,1,2);
+			$this->cell(0,($tam_font_footer - 3),$metodos,1,2,'C');
 
-			//Incertidumbre
-			$incertidumbre = 'INCERTIDUMBRE';
-			$tam_incertidumbre = $this->GetStringWidth($incertidumbre)+20;
-			$this->SetX(-($tam_incertidumbre + 10));
-			//Guardamos las posiciones de esa linea
-			$posicion_x = $this->GetX();	$posicion_y = $this->GetY();
+			$this->cell(0,2,'',1,2,'C');
 
-			$this->multicell($tam_incertidumbre,($tam_font_footer - 3),$incertidumbre."\n".'DUMMY',1,'C');
 
-			//Metodos empleados
-			$this->SetY($posicion_y);
-			$metodos = 'METODOS EMPLEADOS: EL ENSAYO REALIZADO CUMPLE CON LAS NORMAS MEXICANAS NMX-C-161-ONNCCE-2013, NMX-C-156-ONNCCE-2010,'."\n".'NMX-C-159-ONNCCE-2016,NMX-C-109-ONNCCE-2013,NMX-C-083-ONNCCE-2014';
-			$tam_metodos = $this->GetStringWidth($metodos)+3;
-			$this->multicell($posicion_x -10,($tam_font_footer - 3),$metodos,1,2);
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			//Instrumentos
+			$tam_font_footer = 6.5; $this->SetFont('Arial','',$tam_font_footer);
+			$instrumentos = 'Inventario de'."\n".'instrumentos';
+			$tam_instrumentos = $this->GetStringWidth('Inventario de')+5;
+			$this->multicell($tam_instrumentos,$tam_font_footer - 2,$instrumentos,1,'C');
 
-			$this->SetY(-($tam_footer + 10)); //Defenimos el margen de abajo
-			$this->cell(0,$tam_footer,'',1,'C');*/
+			$this->SetXY(($posicion_x + $tam_instrumentos),$posicion_y);
+			$cono = 'Cono';
+			$tam_cono = $this->GetStringWidth($cono)+15;
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$this->cell($tam_cono,($tam_font_footer - 2),$cono,1,2,'C');
+			$this->cell($tam_cono,($tam_font_footer - 2),$infoFormato['CONO'],1,2,'C');
+
+			$this->SetXY(($posicion_x + $tam_cono),$posicion_y);
+			$varilla = 'Varilla';
+			$tam_varilla = $this->GetStringWidth($varilla)+15;
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$this->cell($tam_varilla,($tam_font_footer - 2),$varilla,1,2,'C');
+			$this->cell($tam_varilla,($tam_font_footer - 2),$infoFormato['VARILLA'],1,2,'C');
+
+
+			$this->SetXY(($posicion_x + $tam_varilla),$posicion_y);
+			$flexometro = 'Flexometro';
+			$tam_flexometro = $this->GetStringWidth($flexometro)+15;
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$this->cell($tam_flexometro,($tam_font_footer - 2),$flexometro,1,2,'C');
+			$this->cell($tam_flexometro,($tam_font_footer - 2),$infoFormato['FLEXOMETRO'],1,2,'C');
+
+			$this->SetXY(($posicion_x + $tam_flexometro),$posicion_y);
+			$termo = 'TERMÓMETRO';
+			$tam_termo = $this->GetStringWidth($termo)+15;
+			$this->cell($tam_termo,($tam_font_footer - 2),utf8_decode($termo),1,2,'C');
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$this->cell($tam_termo,($tam_font_footer - 2),$infoFormato['TERMOMETRO'],1,2,'C');
+
+			$bandC = 0;
+			$bandCi = 0;
+			$bandV = 0;
+			switch ($infoFormato['tipo_especimen']) {
+				case 'CILINDRO':
+					$bandC = 1;
+					break;
+				case 'CUBO':
+					$bandCi = 1;
+					break;
+				case 'VIGAS':
+					$bandV = 1;
+					break;
+			}
+
+			$this->SetXY(($posicion_x + $tam_flexometro + 12),$posicion_y);
+			$cili = 'CILINDROS';
+			$tam_cili = $this->GetStringWidth($termo)+10;
+			$this->cell($tam_cili,($tam_font_footer - 2),utf8_decode($cili),0,0,'C');
+
+			$this->cell($tam_cili-10,($tam_font_footer - 2),'',1,0,'C',$bandC);
+			$posicion_x = $this->GetX();
+
+
+			$cubos = 'CUBOS';
+			$tam_cubos = $this->GetStringWidth($termo)+10;
+			$this->cell($tam_cubos,($tam_font_footer - 2),utf8_decode($cubos),0,0,'C');
+			$this->cell($tam_cubos-10,($tam_font_footer - 2),'',1,0,'C',$bandCi);
+
+			$vigas = 'VIGAS';
+			$tam_vigas = $this->GetStringWidth($termo)+10;
+			$this->cell($tam_vigas,($tam_font_footer - 2),utf8_decode($vigas),0,0,'C');
+			$this->cell($tam_vigas-10,($tam_font_footer - 2),'',1,0,'C',$bandV);
+			
+					
+		}
+		
+		function Footer(){
+			
 			
 		}
 		//Funcion que crea un nuevo formato
+
 		function CreateNew($infoFormato,$regisFormato,$target_dir){
 			$pdf  = new CCH('L','mm','Letter');
 			$pdf->AddPage();
 			$pdf->putInfo($infoFormato);
-			$pdf->putTables($regisFormato);
+			$pdf->putTables($infoFormato,$regisFormato);
 			$pdf->Output('F',$target_dir);
 		}
-
+	
+		/*
+		function CreateNew($infoFormato,$regisFormato){
+			$pdf  = new CCH('L','mm','Letter');
+			$pdf->AddPage();
+			$pdf->putInfo($infoFormato);
+			$pdf->putTables($infoFormato,$regisFormato);
+			//$pdf->Footer($infoFormato);
+			$pdf->Output();
+		}*/
 
 		/*
 			Funciones para alinear el texto en una columna
