@@ -2,9 +2,11 @@
 	include_once("./../../formatoCampo/formatoCampo.php");
 	include_once("./../../formatoCampo/registrosCampo.php");
 	include_once("./../../disenoFormatos/InformeCilindros.php");
+	include_once("./../../disenoFormatos/Revenimiento.php");
 	include_once("./../../disenoFormatos/InformeCubos.php");
 	include_once("./../../usuario/Usuario.php");
 	include_once("./../../disenoFormatos/CCH.php");
+	include_once("./../../formatoRegistroRev/FormatoRegistroRev.php");
 
 	class GeneradorFormatos{
 		function generateInformeCampo($token,$rol_usuario_id,$id_formatoCampo){
@@ -13,7 +15,7 @@
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if(0 == 0){
 				$formato = new FormatoCampo();	$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
-				switch ($infoFormato['tipo']) {
+				switch ($infoFormato['tipo_especimen']) {
 					case 'CUBO':
 						$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
 						$pdf = new InformeCubos();	$pdf->CreateNew($infoFormato,$regisFormato);
@@ -27,6 +29,145 @@
 			}
 		}
 
+		function generateRevenimiento($token,$rol_usuario_id,$id_formatoRegistroRev){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			$info = $this->getInfoRev($token,$rol_usuario_id,$id_formatoRegistroRev);
+			$registros = $this->getRegRev($token,$rol_usuario_id,$id_formatoRegistroRev);
+			$pdf = new Revenimiento();	$pdf->CreateNew($info,$registros,$target_dir);
+		}
+
+		function getInfoRev($token,$rol_usuario_id,$id_formatoRegistroRev){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				$s= $dbS->qarrayA("
+			      SELECT
+			      	regNo,
+			        obra,
+					formatoRegistroRev.localizacion AS localizacionRev,
+					formatoRegistroRev.observaciones,
+					formatoRegistroRev.status,
+					nombre,
+					razonSocial,
+					CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion,
+					obra.localizacion,
+					formatoRegistroRev.cono_id,
+					CONO,
+					formatoRegistroRev.varilla_id,
+					VARILLA,
+					formatoRegistroRev.flexometro_id,
+					FLEXOMETRO
+			      FROM 
+			        ordenDeTrabajo,cliente,obra,formatoRegistroRev,
+			        (
+							SELECT
+								id_formatoRegistroRev,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS CONO
+							FROM
+								formatoRegistroRev
+							LEFT JOIN
+								herramientas
+							ON
+								formatoRegistroRev.cono_id = herramientas.id_herramienta
+						)AS cono,
+						(
+							SELECT
+								id_formatoRegistroRev,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS VARILLA
+							FROM
+								formatoRegistroRev
+							LEFT JOIN
+								herramientas
+							ON
+								formatoRegistroRev.varilla_id = herramientas.id_herramienta
+						)AS varilla,
+						(
+							SELECT
+								id_formatoRegistroRev,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS FLEXOMETRO
+							FROM
+								formatoRegistroRev
+							LEFT JOIN
+								herramientas
+							ON
+								formatoRegistroRev.flexometro_id = herramientas.id_herramienta
+						)AS flexometro
+			      WHERE 
+			      	obra_id = id_obra AND
+			      	cliente_id = id_cliente AND
+			      	cono.id_formatoRegistroRev = formatoRegistroRev.id_formatoRegistroRev AND
+					varilla.id_formatoRegistroRev = formatoRegistroRev.id_formatoRegistroRev AND
+					flexometro.id_formatoRegistroRev = formatoRegistroRev.id_formatoRegistroRev AND
+					ordenDeTrabajo.id_ordenDeTrabajo = formatoRegistroRev.ordenDeTrabajo_id AND
+			      	formatoRegistroRev.id_formatoRegistroRev = 1QQ
+			      ",
+			      array($id_formatoRegistroRev),
+			      "SELECT"
+			      );
+
+				
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('No existen registro relacionados con el id_formatoRegistroRev'=>$id_formatoRegistroRev,'error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getRegCCH, verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+		}
+
+		function getRegRev($token,$rol_usuario_id,$id_formatoRegistroRev){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				$s= $dbS->qAll("
+			      SELECT
+			      	fecha,
+					revProyecto,	
+					revObtenido,
+					tamAgregado,
+					idenConcreto,
+					volumen,
+					horaDeterminacion,
+					unidad,
+					concretera_id,
+					remisionNo,
+					horaSalida,
+					horaLlegada
+			      FROM 
+			      	registrosRev
+			      WHERE 
+			      	registrosRev.active = 1 AND
+			      	formatoRegistroRev_id = 1QQ
+			      ",
+			      array($id_formatoRegistroRev),
+			      "SELECT"
+			      );
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('No existen registro relacionados con el id_formatoRegistroRev'=>$id_formatoRegistroRev,'error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getRegCCH, verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+
+		}
+
 
 		function generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir){
 			global $dbS;
@@ -35,21 +176,26 @@
 			if($arr['error'] == 0){
 				$formato = new FormatoCampo();	
 				$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
-				switch ($infoFormato['tipo_especimen']) {
-					case 'CUBO':
-						$regisFormato = $this->getRegCCH($token,$rol_usuario_id,$id_formatoCampo);
-						$pdf = new CCH();	
-						$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
-						break;
-					case 'CILINDRO':
-						//$pdf = new InformeCilindros();	$pdf->CreateNew($infoFormato,$regisFormato);
-						break;
-
-				
-				}
+				$regisFormato = $this->getRegCCH($token,$rol_usuario_id,$id_formatoCampo);
+				$pdf = new CCH();	
+				$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
 			}
 		}
-
+		
+		/*
+		function generateCCH($token,$rol_usuario_id,$id_formatoCampo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				$formato = new FormatoCampo();	
+				$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
+				$regisFormato = $this->getRegCCH($token,$rol_usuario_id,$id_formatoCampo);
+				$pdf = new CCH();	
+				$pdf->CreateNew($infoFormato,$regisFormato);
+			}
+		}
+	*/
 		function getRegCCH($token,$rol_usuario_id,$id_formatoCampo){
 			global $dbS;
 			$usuario = new Usuario();
