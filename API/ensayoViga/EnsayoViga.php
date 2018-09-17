@@ -63,11 +63,11 @@ class EnsayoViga{
 						UPDATE
 							ensayoViga
 						SET
-							fecha = CURDATE(),
+							fecha = CURDATE() AND
 							1QQ = '1QQ'
 						WHERE
 							id_ensayoViga = 1QQ
-				",array($campo,$valor,$id_ensayoViga),"UPDATE");
+				",array($campo,$valor,$id_ensayoViga),"UPDATE- EnsayoViga ::  insertRegistroTecMuestra");
 			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
 			if(!$dbS->didQuerydied){
 				$fechaEnsayo = $dbS->qarrayA(
