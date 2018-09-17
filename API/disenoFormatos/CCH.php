@@ -270,7 +270,8 @@
 									$tam_unidad,
 									$tam_hora,
 									$tam_muestreo,
-									$tam_recoleccion,									
+									$tam_recoleccion,
+									$tam_localizacion									
 							);
 
 
@@ -280,6 +281,13 @@
 			foreach ($regisFormato as $registro) {
 				$j=0;
 				foreach ($registro as $campo) {
+
+					//Funcion para truncar la cadena
+					$tam_campo = $this->GetStringWidth($campo); //Tamaño de la informacion del campo
+					while($tam_cadena_prueba>$array_campo[$j]){
+						$campo = substr($$campo,0,(strlen($campo))-1);
+						$tam_campo =  $pdf->GetStringWidth($$campo)+2;
+					}
 					$this->cell($array_campo[$j],$tam_font_head - 2.5,$campo,1,0,'C');
 					$j++;
 				}
