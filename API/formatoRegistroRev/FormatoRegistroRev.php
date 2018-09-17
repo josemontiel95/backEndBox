@@ -17,6 +17,56 @@ class FormatoRegistroRev{
 
 	private $wc = '/1QQ/';
 
+	public function getformatoDefoults($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr = $dbS->qarrayA(
+				"	SELECT
+						id_systemstatus,
+						maxNoOfRegistrosRev
+					FROM
+						systemstatus
+					ORDER BY id_systemstatus DESC;
+				",array(),"SELECT"
+			);
+			if(!$dbS->didQuerydied){
+				$id=$dbS->lastInsertedID;
+			}
+			else{
+				$arr = array('id_systemstatus' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
+	public function getNumberOfRegistrosByID($token,$rol_usuario_id,$formatoRegistroRev_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA("
+			      SELECT 
+			      	COUNT(*) As No
+			      FROM 
+			      	registrosRev
+			      WHERE
+			      	active=1 AND 
+			      	formatoRegistroRev_id=1QQ
+			      ",
+			      array($formatoRegistroRev_id),
+			      "SELECT"
+			      );
+			if(!$dbS->didQuerydied && $a!="empty" ){
+				$arr = array('id_formatoCampo' => $id_formatoCampo,'numberOfRegistrosByID' => $s['No'],'estatus' => 'Exito','error' => 0);
+
+			}else{
+				$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro ese id','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
+
 	public function insertJefeBrigada($token,$rol_usuario_id,$campo,$valor,$id_formatoRegistroRev){
 		global $dbS;
 		$usuario = new Usuario();

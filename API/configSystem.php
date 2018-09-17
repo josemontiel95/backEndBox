@@ -4,7 +4,9 @@
 		"request"	=> "zxcviuegfweofihw",
 		"prefix"	=> 3
 	);
-	
+	include_once("mailer/Mailer.php");
+	include_once("mailer/sendgrid-php/sendgrid-php.php");
+
 	include_once("mysqlSystem.php");
 	$dbS = new MySQLSystem();
 	

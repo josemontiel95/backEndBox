@@ -24,7 +24,8 @@ class ordenDeTrabajo{
 								SELECT
 									id_formatoCampo AS id_formato,
 									informeNo AS formatoNo,
-									IF(informeNo IS NOT NULL,'CONTROL DE CONCRETO HIDRAULICO','ERROR')AS tipo
+									IF(informeNo IS NOT NULL,'CONTROL DE CONCRETO HIDRAULICO','ERROR')AS tipo,
+									status
 								FROM
 									formatoCampo
 								WHERE
@@ -40,7 +41,8 @@ class ordenDeTrabajo{
 								SELECT
 									id_formatoRegistroRev AS id_formato,
 									regNo AS formatoNo,
-									IF(regNo IS NOT NULL,'REVENIMIENTO','ERROR')AS tipo
+									IF(regNo IS NOT NULL,'REVENIMIENTO','ERROR')AS tipo,
+									status
 								FROM
 									formatoRegistroRev
 								WHERE
@@ -141,6 +143,12 @@ class ordenDeTrabajo{
 							horaFin,
 							observaciones,
 							lugar,
+							CASE 
+								WHEN ordenDeTrabajo.status = 0 THEN 'Edicion JL'
+								WHEN ordenDeTrabajo.status = 1 THEN 'Ejecucion JB'
+								WHEN ordenDeTrabajo.status = 2 THEN 'Terminado JB'
+								ELSE 'Error'
+							END AS odtStatus,
 							ordenDeTrabajo.laboratorio_id,
 							laboratorio,
 							usuario.nombre AS nombre_jefe_brigada_id,
@@ -151,6 +159,7 @@ class ordenDeTrabajo{
 							usuario,ordenDeTrabajo,obra,laboratorio,
 							(SELECT id_usuario, nombre FROM usuario) AS creadores
 						WHERE
+							ordenDeTrabajo.status < 3 AND 
 							obra_id = id_obra AND
 							ordenDeTrabajo.laboratorio_id = id_laboratorio AND
 							jefe_brigada_id = usuario.id_usuario AND
@@ -249,10 +258,17 @@ class ordenDeTrabajo{
 							ordenDeTrabajo.laboratorio_id,
 							laboratorio,
 							jefe_brigada_id,
-							IF(ordenDeTrabajo.active = 1,'Si','No') AS active
+							IF(ordenDeTrabajo.active = 1,'Si','No') AS active,
+							CASE 
+								WHEN ordenDeTrabajo.status = 0 THEN 'Edicion JL'
+								WHEN ordenDeTrabajo.status = 1 THEN 'Ejecucion JB'
+								WHEN ordenDeTrabajo.status = 2 THEN 'Terminado JB'
+								ELSE 'Error'
+							END AS odtStatus
 						from
 							ordenDeTrabajo,obra,laboratorio
 						WHERE
+							ordenDeTrabajo.status < 3 AND ordenDeTrabajo.status > 0 AND
 							obra_id = id_obra AND
 							ordenDeTrabajo.laboratorio_id = id_laboratorio AND
 							jefe_brigada_id = 1QQ
@@ -572,7 +588,8 @@ class ordenDeTrabajo{
 			$rows = $dbS->qarrayA(
 										"
 											SELECT 
-												COUNT(*) As No
+												COUNT(*) As No,
+												status
 											FROM 
 												formatoCampo
 											WHERE

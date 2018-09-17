@@ -84,11 +84,11 @@ class EnsayoCilindro{
 						FROM
 							ensayoCilindro
 						WHERE
-							fecha = CURDATE(),
+							fecha = CURDATE() AND
 							id_ensayoCilindro = 1QQ
 					",
 					array($id_ensayoCilindro),
-					"SELECT"
+					"SELECT-EnsayoCilindro :: insertRegistroTecMuestra"
 				);
 				$arr = array('id_ensayoCilindro' => $id_ensayoCilindro,'estatus' => '¡Exito en la inserccion de un registro!','fechaEnsayo' => $fechaEnsayo['fecha'],'error' => 0);
 				return json_encode($arr);
