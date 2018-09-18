@@ -472,6 +472,8 @@ CREATE TABLE formatoCampo(
 
 	status int(11) NOT NULL,
 
+	ensayadoFin int(11) NOT NULL DEFAULT 0,
+
 	posInicial POINT NOT NULL,
 	posFinal POINT,
 
@@ -508,7 +510,8 @@ CREATE TABLE formatoCampo(
 ALTER TABLE formatoCampo AUTO_INCREMENT=1001;
 
 ALTER TABLE formatoCampo 
-ADD COLUMN  status int(11) NOT NULL;
+ADD COLUMN ensayadoFin int(11) NOT NULL DEFAULT 0;
+	
 
 
 CREATE TABLE registrosCampo(
@@ -669,6 +672,9 @@ CREATE TABLE ensayoCilindro(
 	carga FLOAT(7.3) NOT NULL,
 	falla INT(11) NOT NULL,
 	fecha DATE,
+
+	status INT NOT NULL DEFAULT 0,
+
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

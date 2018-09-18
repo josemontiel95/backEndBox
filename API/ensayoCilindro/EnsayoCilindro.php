@@ -182,6 +182,7 @@ class EnsayoCilindro{
 						ensayoCilindro.formatoCampo_id,
 						registrosCampo.fecha AS fechaColado,
 						informeNo, 
+						ensayoCilindro.status AS status,
 						CASE
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
@@ -242,6 +243,7 @@ class EnsayoCilindro{
 						ensayoCilindro.formatoCampo_id,
 						registrosCampo.fecha AS fechaColado,
 						informeNo, 
+						ensayoCilindro.status AS status,
 						CASE
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
@@ -286,32 +288,33 @@ class EnsayoCilindro{
 		if($arr['error'] == 0){
 				$dbS->beginTransaction();
 				$a = $dbS->qarrayA(
-										"
-											SELECT
-												registrosCampo_id
-											FROM
-												ensayoCilindro
-											WHERE
-												id_ensayoCilindro = 1QQ
-										",
-										array($id_ensayoCilindro),
-										"SELECT"
+					"
+						SELECT
+							registrosCampo_id
+						FROM
+							ensayoCilindro
+						WHERE
+							id_ensayoCilindro = 1QQ
+					",
+					array($id_ensayoCilindro),
+					"SELECT"
 									 );
 				if(!$dbS->didQuerydied){
 					$dbS->squery("
 						UPDATE
 							registrosCampo
 						SET
-							status = 1QQ
+							statusEnsayo = 1
 						WHERE
 							id_registrosCampo = 1QQ
-					",array(3,$a['registrosCampo_id']),"UPDATE");
+					",array($a['registrosCampo_id']),"UPDATE");
 					if(!$dbS->didQuerydied){
 						$dbS->squery("
 						UPDATE
 							ensayoCilindro
 						SET
-							fecha = CURDATE()
+							fecha = CURDATE(),
+							status = 1
 						WHERE
 							id_ensayoCilindro = 1QQ
 						",array($id_ensayoCilindro),"UPDATE");

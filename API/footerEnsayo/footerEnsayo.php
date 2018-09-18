@@ -5,6 +5,164 @@ class footerEnsayo{
 	
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
+	
+	public function ping2($data){
+		echo $data;
+	}
+
+	public function completeFormato($token,$rol_usuario_id,$id_footerEnsayo){
+		global $dbS;
+
+		$usuario = new Usuario();
+		$mailer = new Mailer();
+
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
+		if($arr['error'] == 0){
+			$dbS->squery("	
+							UPDATE
+								footerEnsayo
+							SET
+								status = 1
+							WHERE
+								active = 1 AND
+								id_footerEnsayo = 1QQ
+					 "
+					,array($id_footerEnsayo),"UPDATE"
+			      	);
+			if(!$dbS->didQuerydied){
+				$a = $dbS->qarrayA(
+					"	SELECT
+							tipo
+						FROM
+							footerEnsayo
+						WHERE
+							id_footerEnsayo =1QQ
+					"
+					,
+					array($id_footerEnsayo)
+					,
+					"SELECT"
+				);
+				if(!$dbS->didQuerydied && !($a=="empty")){
+					$table = "";
+					switch($a['tipo']){
+						case "CILINDRO":
+							$table="ensayoCilindro";
+						break;
+						case "CUBO":
+							$table="ensayoCubo";
+						break;
+						case "VIGAS":
+							$table="ensayoViga";
+						break;
+					}
+					$b = $dbS->qAll(
+						"	SELECT
+								registrosCampo_id,
+								formatoCampo_id
+							FROM
+								1QQ
+							WHERE
+								footerEnsayo_id =1QQ
+						"
+						,
+						array($table,$id_footerEnsayo)
+						,
+						"SELECT"
+					);
+					if(!$dbS->didQuerydied && !($b=="empty")){
+						foreach ($b as $value) {
+							$dbS->squery("	
+								UPDATE
+									formatoCampo
+								SET
+									ensayadoFin = ensayadoFin -1
+								WHERE
+									id_formatoCampo = 1QQ
+								"
+								,array($value['formatoCampo_id']),"UPDATE"
+						    );
+						}
+						if(!$dbS->didQuerydied ){
+							$dbS->squery("	
+									UPDATE
+										1QQ
+									SET
+										status = 2
+									WHERE
+										active = 1 AND
+										footerEnsayo_id = 1QQ
+							"
+							,array($table,$id_footerEnsayo),"UPDATE"
+					      	);
+							if(!$dbS->didQuerydied){
+								$correo= "josemontiel@me.com";
+								$pdf= "https://www.facebook.com/tech4umexico/";
+								$var_system = $dbS->qarrayA(
+								"	SELECT
+										apiRoot
+									FROM
+										systemstatus
+									ORDER BY id_systemstatus DESC;
+								",array(),"SELECT"
+								);
+								if(!$dbS->didQuerydied && ($var_system != "empty")){
+									
+									//Obtenemos la hora para que no se repitan en caso de crear un nuevo formato
+									$hora_de_creacion = getdate();
+									$target_dir = "./../../../SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/";
+									$dirDatabase = $var_system['apiRoot']."SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/"."preliminarCCH"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+									if (!file_exists($target_dir)) {
+									    //mkdir($target_dir, 0777, true);
+									}
+									$target_dir=$target_dir."preliminarCCH"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+									//Llamada a el generador de formatos
+									//$generador = new GeneradorFormatos();
+									//Cachamos la excepcion
+									try{
+										//$generador->generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir);
+										//$mailer->sendMailBasic($correo, $info['nombre'], $dirDatabase)
+										if(202==202){
+											$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
+										}else{
+											$dbS->rollbackTransaction();
+											$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 6);
+										}
+									}catch(Exception $e){
+										$dbS->rollbackTransaction();
+										$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 7);
+										return json_encode($arr);
+									}
+								}else{
+									$dbS->rollbackTransaction();
+									$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la consulta del apiRoot','error' =>8);
+								}
+								
+							}else{
+								$dbS->rollbackTransaction();
+								$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 10);
+							}
+						}else{
+							$dbS->rollbackTransaction();
+							$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 10);
+						}
+					}else{
+						$dbS->rollbackTransaction();
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 10);
+					}
+				}else{
+					$dbS->rollbackTransaction();
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 12);
+				}
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 11);
+			}		
+		}
+		$dbS->commitTransaction();
+		return json_encode($arr);
+	}
 
 	public function initInsert($token,$rol_usuario_id,$tipo,$id_RegistroCCH){
 		global $dbS;
