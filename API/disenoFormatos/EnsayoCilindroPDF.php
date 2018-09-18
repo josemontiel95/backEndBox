@@ -3,7 +3,7 @@
 	//include_once("./../../FPDF/fpdf.php");
 	include_once("./../FPDF/fpdf.php");
 	//Formato de campo de cilindros
-	class EnsayoCubo extends fpdf{
+	class EnsayoCilindroPDF extends fpdf{
 		var $angle=0;
 		function Header(){
 			//Espacio definido para los logotipos
@@ -20,15 +20,13 @@
 			$tam_cell = $this->GetStringWidth($titulo_linea1);
 			$this->SetX((210-$tam_cell)/2);
 			$this->Cell($tam_cell,$tam_font_titulo - 3,utf8_decode($titulo_linea1),0,'C');
-			$this->Ln($tam_font_titulo - 5);
-
-			$tam_font_titulo = 9;
+			$this->Ln(8);
 
 			//Titulo del informe
-			$tam_font_tituloInforme = 9;
+			$tam_font_tituloInforme = 7;
 			$this->SetFont('Arial','B',$tam_font_tituloInforme);
-			$titulo_informe = '"ENSAYO A COMPRESIÓN DE CUBOS DE CONCRETO HIDRÁULICO"';
-			$tam_titulo_informe = $this->GetStringWidth($titulo_informe)+6;
+			$titulo_informe = '"ENSAYO A COMPRESIÓN DE CILINROS DE CONCRETO HIDRÁULICO"';
+			$tam_titulo_informe = $this->GetStringWidth($titulo_informe)+3;
 			$this->SetX((210-$tam_titulo_informe)/2);
 			$this->Cell($titulo_informe,$tam_font_tituloInforme - 3,utf8_decode($titulo_informe),0,'C');
 
@@ -118,10 +116,10 @@
 		function putInfo(){
 
 			$this->Ln(4);
-			$tam_font_right = 8;	$this->SetFont('Arial','B',$tam_font_right);
+			$tam_font_right = 8;	$this->SetFont('Arial','',$tam_font_right);
 			$tam_line = 160;
 			$fechaEnsaye = 'FECHA DE ENSAYE:';
-			$tam_fechaEnsaye = $this->GetStringWidth($fechaEnsaye)+6;
+			$tam_fechaEnsaye = $this->GetStringWidth($fechaEnsaye)+20;
 			$this->SetX(-($tam_fechaEnsaye+35));
 			$this->Cell($tam_fechaEnsaye,$tam_font_right - 3,$fechaEnsaye,1,0,'C');
 
@@ -129,7 +127,7 @@
 			$this->Cell(0,$tam_font_right - 3,'',1,0,'C');
 			$this->Ln($tam_font_right - 2);
 
-
+			//Salto de linea 
 			$this->ln(4);
 			/*
 			$tam_font_left = 8;	$this->SetFont('Arial','B',$tam_font_left);
@@ -180,129 +178,117 @@
 
 		function putTables(){
 
-			$tam_font_head = 7;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
+			$tam_font_head = 5;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
 
 
 			$fechaColado = 'FECHA DE COLADO';
 			$tam_fechaColado = $this->GetStringWidth($fechaColado)+3;
-			$this->Cell($tam_fechaColado,$tam_font_head - 3,$fechaColado,1,'C');
+			$this->Cell($tam_fechaColado,$tam_font_head+3,$fechaColado,1,0,'C');
 
-			/*
-			$this->SetXY(($posicion_x + $tam_revPro),$posicion_y);
-			$revObtenido = 'REV.'."\n".'OBTENIDO'."\n".'EN cm';
-			$tam_revObtenido = $this->GetStringWidth('OBTENIDO')+3;
+			$infoNumero = 'INFORME NUMERO';
+			$tam_infoNumero = $this->GetStringWidth($infoNumero)+3;
+			$this->Cell($tam_infoNumero,$tam_font_head+3,$infoNumero,1,0,'C');
+
+			$clave = 'CLAVE';
+			$tam_clave = $this->GetStringWidth($clave)+24;
+			$this->Cell($tam_clave,$tam_font_head+3,$clave,1,0,'C');
+
+			$peso = 'PESO EN kg';
+			$tam_peso = $this->GetStringWidth($peso)+8;
+			$this->Cell($tam_peso,$tam_font_head+3,$peso,1,0,'C');
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+
+			$edad = 'EDAD DE';
+			$tam_edad = $this->GetStringWidth($edad)+3;
+			$this->Cell($tam_edad,($tam_font_head+3)/3,$edad,'L,T,R',2,'C');
+			$this->cell($tam_edad,($tam_font_head+3)/3,utf8_decode('ENSAYE'),'L,R',2,'C');
+			$this->cell($tam_edad,($tam_font_head+3)/3,utf8_decode('EN DIÁS'),'L,B,R',0,'C');
+
+			$this->SetXY($posicion_x + $tam_edad,$posicion_y);
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$diametro = 'DIAMETROS (cm)';
+			$tam_diametro = $this->GetStringWidth($diametro)+5;
+			$this->Cell($tam_diametro,($tam_font_head+3)/2,$diametro,'L,T,R',2,'C');
+			$tam_d1 = $tam_d2 = $tam_diametro/2;
+			$this->cell($tam_d1,($tam_font_head+3)/2,'D1',1,0,'C');
+			$this->cell($tam_d2,($tam_font_head+3)/2,'D2',1,0,'C');
+
+			$this->SetXY($posicion_x + $tam_diametro,$posicion_y);
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$altura = 'ALTURAS (cm)';
+			$tam_altura = $this->GetStringWidth($altura)+5;
+			$this->Cell($tam_altura,($tam_font_head+3)/2,$altura,'L,T,R',2,'C');
+			$tam_h1 = $tam_h2 = $tam_altura/2;
+			$this->cell($tam_h1,($tam_font_head+3)/2,'H1',1,0,'C');
+			$this->cell($tam_h2,($tam_font_head+3)/2,'H2',1,0,'C');
+
+			$this->SetXY($posicion_x + $tam_altura,$posicion_y);
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$carga = 'CARGA';
+			$tam_carga = $this->GetStringWidth($carga)+8;
+			$this->Cell($tam_carga,($tam_font_head+3)/2,$carga,'L,T,R',2,'C');
+			$this->cell($tam_carga,($tam_font_head+3)/2,'kg','L,B,R',0,'C');
+
+			$this->SetXY($posicion_x + $tam_carga,$posicion_y);
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$area = 'AREA';
+			$tam_area = $this->GetStringWidth($area)+10;
+			$this->Cell($tam_area,($tam_font_head+3)/2,$area,'L,T,R',2,'C');
+			$this->cell($tam_area,($tam_font_head+3)/2,utf8_decode('cm²'),'L,B,R',2,'C');
+
+			$this->SetXY($posicion_x + $tam_area,$posicion_y);
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$resis = 'COMPRESIÓN kg/cm²';
+			$tam_resis = $this->GetStringWidth($resis)+2;
 			$posicion_x = $this->GetX();
-			$this->multicell($tam_revObtenido,$tam_alto_determinacion/3,$revObtenido,1,'C');
+			$this->Cell($tam_resis,($tam_font_head+3)/2,'RESISTENCIA A','L,T,R',2,'C');
+			$this->cell($tam_resis,($tam_font_head+3)/2,utf8_decode($resis),'L,B,R',2,'C');
 
-			$this->SetXY(($posicion_x + $tam_revObtenido),$posicion_y);
-			$nominal = 'TAMAÑO.'."\n".'NOMINAL'."\n".'DEL'."\n".'AGREGADO'."\n".'mm';
-			$tam_nominal = $this->GetStringWidth('AGREGADO')+3;
+			$this->SetXY($posicion_x + $tam_resis,$posicion_y);
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$falla = 'FALLA N°';
+			
 			$posicion_x = $this->GetX();
-			$this->multicell($tam_nominal,$tam_alto_determinacion/5,utf8_decode($nominal),1,'C');
-			
-			$this->SetXY(($posicion_x + $tam_nominal),$posicion_y);
-			$iden = "\n".'IDENTIFICACION'."\n".'DEL CONCRETO';
-			$tam_iden = $this->GetStringWidth('IDENTIFICACION')+3;
-			$posicion_x = $this->GetX(); 
-			$this->cell($tam_iden,$tam_alto_determinacion/4,'','L,R,T',2,'C');
-			$this->cell($tam_iden,$tam_alto_determinacion/4,utf8_decode('IDENTIFICACIÓN'),'L,R',2,'C');
-			$this->cell($tam_iden,$tam_alto_determinacion/4,utf8_decode('DEL CONCRETO'),'L,R',2,'C');
-			$this->cell($tam_iden,$tam_alto_determinacion/4,'','L,R,B',2,'C');
-
-			$this->SetXY(($posicion_x + $tam_iden),$posicion_y);
-			$volumen = "\n".'VOLUMEN'."\n".'m³';
-			$tam_volumen = $this->GetStringWidth('VOLUMEN')+3;
-			$posicion_x = $this->GetX(); 
-			$this->cell($tam_volumen,$tam_alto_determinacion/4,'','L,R,T',2,'C');
-			$this->cell($tam_volumen,$tam_alto_determinacion/4,utf8_decode('VOLUMEN'),'L,R',2,'C');
-			$this->cell($tam_volumen,$tam_alto_determinacion/4,utf8_decode('m³'),'L,R',2,'C');
-			$this->cell($tam_volumen,$tam_alto_determinacion/4,'','L,R,B',2,'C');
-			
-
-			$this->SetXY(($posicion_x + $tam_volumen),$posicion_y);
-			$hora_determinacion = 'DETERMINACIÓN';
-			$hora = 'HORA DE LA';
-			$tam_hora = $this->GetStringWidth($hora);
-			$tam_ancho_hora_determinacion = 13; 
-			$posicion_x = $posicion_x + $tam_volumen;
-			$this->multicell($tam_ancho_hora_determinacion,$tam_alto_determinacion,'',1);
-			//tENEMOS QUE PONER POR SEPARADO EL TEXTO DENTRO DE LA CELDA
-			$this->TextWithDirection($posicion_x+($tam_ancho_hora_determinacion/2),$this->gety() - (($tam_alto_determinacion-$tam_hora)/2),utf8_decode($hora),'U');	
-			$this->TextWithDirection($posicion_x+($tam_ancho_hora_determinacion/2)+3,$this->gety() - 2,utf8_decode($determinacion),'U');	
-
-
-			$this->SetXY(($posicion_x + $tam_ancho_hora_determinacion),$posicion_y);
-			$unidad = 'UNIDAD';
-			$tam_unidad = $this->GetStringWidth('UNIDAD')+2;
-			$posicion_x = $this->GetX(); 
-			$this->cell($tam_unidad,$tam_alto_determinacion,$unidad,1,2,'C');
-
-			$this->SetXY(($posicion_x + $tam_unidad),$posicion_y);
-			$provedor = 'PROVEDOR DEL'."\n".'CONCRETO';
-			$tam_provedor = $this->GetStringWidth('PROVEDOR DEL')+2;
-			$posicion_x = $this->GetX(); 
-			$this->cell($tam_provedor,$tam_alto_determinacion/4,'','L,R,T',2,'C');
-			$this->cell($tam_provedor,$tam_alto_determinacion/4,utf8_decode('PROVEDOR DEL'),'L,R',2,'C');
-			$this->cell($tam_provedor,$tam_alto_determinacion/4,utf8_decode('CONCRETO'),'L,R',2,'C');
-			$this->cell($tam_provedor,$tam_alto_determinacion/4,'','L,R,B',2,'C');
-
-			$this->SetXY(($posicion_x + $tam_provedor),$posicion_y);
-			$remision = 'NUMERO DE'."\n".'REMISIÓN';
-			$tam_remision = $this->GetStringWidth('NUMERO DE')+2;
-			$posicion_x = $this->GetX(); 
-			$this->cell($tam_remision,$tam_alto_determinacion/4,'','L,R,T',2,'C');
-			$this->cell($tam_remision,$tam_alto_determinacion/4,utf8_decode('NUMERO DE'),'L,R',2,'C');
-			$this->cell($tam_remision,$tam_alto_determinacion/4,utf8_decode('REMISIÓN'),'L,R',2,'C');
-			$this->cell($tam_remision,$tam_alto_determinacion/4,'','L,R,B',2,'C');
-
-			$this->SetXY(($posicion_x + $tam_remision),$posicion_y);
-			$salida = 'HORA DE'."\n".'SALIDA DE'."\n".'PLANTA';
-			$tam_salida = $this->GetStringWidth('SALIDA DE')+2.5;
-			$posicion_x = $this->GetX(); 
-			$this->cell($tam_salida,$tam_alto_determinacion/5,'','L,R,T',2,'C');
-			$this->cell($tam_salida,$tam_alto_determinacion/5,utf8_decode('HORA DE'),'L,R',2,'C');
-			$this->cell($tam_salida,$tam_alto_determinacion/5,utf8_decode('SALIDA DE'),'L,R',2,'C');
-			$this->cell($tam_salida,$tam_alto_determinacion/5,utf8_decode('PLANTA'),'L,R',2,'C');
-			$this->cell($tam_salida,$tam_alto_determinacion/5,'','L,R,B',2,'C');
-
-			$this->SetXY(($posicion_x + $tam_salida),$posicion_y);
-			$salida = 'HORA DE'."\n".'LLEGADA A'."\n".'OBRA';
-			$posicion_x = $this->GetX(); 
-			$this->cell(0,$tam_alto_determinacion/5,'','L,R,T',2,'C');
-			$this->cell(0,$tam_alto_determinacion/5,utf8_decode('HORA DE'),'L,R',2,'C');
-			$this->cell(0,$tam_alto_determinacion/5,utf8_decode('LLEGADA A'),'L,R',2,'C');
-			$this->cell(0,$tam_alto_determinacion/5,utf8_decode('OBRA'),'L,R',2,'C');
-			$this->cell(0,$tam_alto_determinacion/5,'','L,R,B',2,'C');
-			$tam_llegada = $this->GetX() - $posicion_x;
-			$this->Ln(0);
+			$this->cell(0,($tam_font_head+3),utf8_decode($falla),1,2,'C');
+			$tam_falla = $this->GetX() - $posicion_x;
 		
 
 			//Definimos el array con los tamaños de cada celda para crear las duplas
 			$array_campo = 	array(
-									$tam_ancho_determinacion,
-									$tam_revPro,
-									$tam_revObtenido,
-									$tam_nominal,
-									$tam_iden,
-									$tam_volumen,
-									$tam_ancho_hora_determinacion,
-									$tam_unidad,
-									$tam_provedor,
-									$tam_remision,
-									$tam_salida,
-									$tam_llegada
+									$tam_fechaColado,
+									$tam_infoNumero,
+									$tam_clave,
+									$tam_edad,
+									$tam_d1,
+									$tam_d2,
+									$tam_carga,
+									$tam_area,
+									$tam_resis
 							);
 
 			$tam_font_head = 5.5;	$this->SetFont('Arial','',$tam_font_head);
-
+			/*
 			foreach ($regisFormato as $registro) {
 				$j=0;
 				foreach ($registro as $campo) {
+
+					//Funcion para truncar la cadena
+					$tam_campo = $this->GetStringWidth($campo); //Tamaño de la informacion del campo
+					while($tam_cadena_prueba>$array_campo[$j]){
+						$campo = substr($$campo,0,(strlen($campo))-1);
+						$tam_campo =  $pdf->GetStringWidth($$campo)+2;
+					}
 					$this->cell($array_campo[$j],$tam_font_head - 2.5,$campo,1,0,'C');
 					$j++;
 				}
 				$this->Ln();
-			}
+			}*/
 			/*
 			for($i=0;$i<11;$i++{
 				$this->cell(0,$tam_alto_determinacion/5,'','L,R,B',2,'C');
@@ -461,7 +447,7 @@
 	}
 	
 	
-	$pdf  = new EnsayoCubo('P','mm','Letter');
+	$pdf  = new EnsayoCilindroPDF('P','mm','Letter');
 	$pdf->AddPage();
 	$pdf->putInfo();
 	$pdf->putTables();

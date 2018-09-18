@@ -1,9 +1,13 @@
 <?php 
 	
-	include_once("./../../FPDF/fpdf.php");
+	include_once("./../../FPDF/fpdf.php"); //Chida
+	//include_once("Firma.jpeg");
 	//include_once("./../FPDF/fpdf.php");
 	//Formato de campo de cilindros
 	class Revenimiento extends fpdf{
+		private $infoFormato;
+
+
 		var $angle=0;
 		function Header(){
 			//Espacio definido para los logotipos
@@ -156,7 +160,6 @@
 			$regNo = 'REG. No.';
 			$tam_regNo = $this->GetStringWidth($regNo)+6;
 			$this->SetX(-($tam_regNo+40));
-			$this->Cell($tam_regNo,$tam_font_right - 3,$regNo,0,0,'C');
 
 			//Caja de texto
 			$this->Cell(0,$tam_font_right - 4,$infoFormato['regNo'],'B',0,'C');
@@ -174,7 +177,7 @@
 			$this->Cell($this->GetStringWidth($locObra)+2,$tam_font_left - 3,utf8_decode($locObra),0);
 			//Caja de texto
 			$this->SetX(50);
-			$this->Cell(0,$tam_font_left - 4,$infoFormato['localizacion'],'B',0);
+			$this->Cell(0,$tam_font_left - 4,utf8_decode($infoFormato['localizacion']),'B',0);
 			$this->Ln(4);
 			$nomCli = 'Nombre del Cliente:';
 			$this->Cell($this->GetStringWidth($nomCli)+2,$tam_font_left - 3,utf8_decode($nomCli),0);
@@ -208,7 +211,7 @@
 			$this->ln(8);
 		}
 
-		function putTables($regisFormato){
+		function putTables($infoFormato,$regisFormato){
 
 			$tam_font_head = 7;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
 
@@ -336,7 +339,7 @@
 									$tam_llegada
 							);
 
-			$tam_font_head = 5.5;	$this->SetFont('Arial','',$tam_font_head);
+			$tam_font_head = 6;	$this->SetFont('Arial','',$tam_font_head);
 
 			foreach ($regisFormato as $registro) {
 				$j=0;
@@ -352,16 +355,14 @@
 				$this->cell($array_campo[$j],$tam_font_head - 2.5,'',1,0,'C');
 			}*/
 			$this->Ln(4);
-			
-					
-		}
-		
-		function Footer(){
-			
-			$tam_font_footer = 7;	$this->SetFont('Arial','',$tam_font_footer);
-			$observaciones = 'OBSERVACIONES:';
 
-			$this->multicell(0,($tam_font_footer - 2.5),$observaciones,'B',2);
+
+			$this->SetY(-100);	
+
+			$tam_font_footer = 7;	$this->SetFont('Arial','',$tam_font_footer);
+			$observaciones = 'OBSERVACIONES: ';
+
+			$this->multicell(0,($tam_font_footer - 2.5),$observaciones.$infoFormato['observaciones'],'B',2);
 
 			$this->ln(4);
 
@@ -377,21 +378,21 @@
 			$tam_cono = $this->GetStringWidth($cono)+12;
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 			$this->cell($tam_cono,($tam_font_footer - 2),$cono,1,2,'C');
-			$this->cell($tam_cono,($tam_font_footer - 2),'',1,2,'C');
+			$this->cell($tam_cono,($tam_font_footer - 2),$infoFormato['CONO'],1,2,'C');
 
 			$this->SetXY(($posicion_x + $tam_cono),$posicion_y);
 			$varilla = 'Varilla';
 			$tam_varilla = $this->GetStringWidth($varilla)+10;
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 			$this->cell($tam_varilla,($tam_font_footer - 2),$varilla,1,2,'C');
-			$this->cell($tam_varilla,($tam_font_footer - 2),'',1,2,'C');
+			$this->cell($tam_varilla,($tam_font_footer - 2),$infoFormato['VARILLA'],1,2,'C');
 
 
 			$this->SetXY(($posicion_x + $tam_varilla),$posicion_y);
 			$flexometro = 'Flexometro';
 			$tam_flexometro = $this->GetStringWidth($flexometro)+10;
 			$this->cell($tam_flexometro,($tam_font_footer - 2),$flexometro,1,2,'C');
-			$this->cell($tam_flexometro,($tam_font_footer - 2),'',1,2,'C');
+			$this->cell($tam_flexometro,($tam_font_footer - 2),$infoFormato['FLEXOMETRO'],1,2,'C');
 
 
 			//Lado derecho
@@ -409,28 +410,71 @@
 
 			$this->cell($tam_box/3,($tam_font_footer - 1),'CA = NORMAL','B,R',0,'C');
 
+			$this->ln(12);
+
+			$tam_font_footer = 8; $this->SetFont('Arial','',$tam_font_footer);
+			$posicion_y = $this->GetY();
+			$tam_boxElaboro = 70;	$tam_first = 10; $tam_second = 20;
+			$this->SetX(20); $posicion_y = $this->GetY();
+			$this->cell($tam_boxElaboro,$tam_first,'ELABORO','L,T,R',2,'C');
+			$this->cell($tam_boxElaboro,$tam_second,'','L,B,R',2,'C');
+			$posicion_x = $this->GetX(); 
+
+			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('________________________________'));	
+			$this->TextWithDirection($tam_boxElaboro/2,$this->gety() - 3,utf8_decode('SIGNATARIO/LABORATORISTA'));	
+
+			//Tamaño de la imagen
+			$tam_image = 25;
+			$this->Image('https://upload.wikimedia.org/wikipedia/commons/a/a0/Firma_de_Morelos.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+
+
+			$tam_font_footer = 8; $this->SetFont('Arial','',$tam_font_footer);
+			$tam_boxCliente = 70;
+			$this->SetXY(120,$posicion_y);
+			$posicion_y = $this->GetY();
+			$this->cell($tam_boxCliente,$tam_first,'ENTERADO(CLIENTE)','L,T,R',2,'C');
+			$this->cell($tam_boxCliente,$tam_second,'','L,B,R',2,'C');
+			$posicion_x = $this->GetX(); 
+
+			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('________________________________'));	
+			$this->TextWithDirection(($posicion_x + ($tam_boxCliente /2))-($this->GetStringWidth('NOMBRE DE QUIEN RECIBE')/2),$this->gety() - 3,utf8_decode('NOMBRE DE QUIEN RECIBE'));	
+			$this->Image('https://upload.wikimedia.org/wikipedia/commons/a/a0/Firma_de_Morelos.png',(($posicion_x+($tam_boxCliente)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+		
+
+
+			
+					
+		}
+		
+		function Footer(){
+				
+			
+
 			
 		}
 		//Funcion que crea un nuevo formato
-
 		function CreateNew($infoFormato,$regisFormato,$target_dir){
 			$pdf  = new Revenimiento('P','mm','Letter');
 			$pdf->AddPage();
 			$pdf->putInfo($infoFormato);
-			$pdf->putTables($regisFormato);
+			$pdf->putTables($infoFormato,$regisFormato);
 			$pdf->Output('F',$target_dir);
 		}
 
 
 		/*
 		function CreateNew($infoFormato,$regisFormato){
+			//Asignacion de la informacion a las variables locales
+
+			$this->infoFormato = $infoFormato;
+
 			$pdf  = new Revenimiento('P','mm','Letter');
 			$pdf->AddPage();
 			$pdf->putInfo($infoFormato);
-			$pdf->putTables($regisFormato);
+			$pdf->putTables($infoFormato,$regisFormato);
 			$pdf->Output();
-		}*/
-
+		}
+		*/
 		/*
 			Funciones para alinear el texto en una columna
 			Fuente: https://huguidugui.wordpress.com/2013/11/26/fpdf-ajustar-texto-en-celdas/
@@ -508,8 +552,8 @@
 	$pdf->AddPage();
 	$pdf->putInfo();
 	$pdf->putTables();
-	$pdf->Output();
-	*/
+	$pdf->Output();*/
+	
 	
 
 
