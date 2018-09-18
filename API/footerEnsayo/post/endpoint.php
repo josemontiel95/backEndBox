@@ -23,6 +23,11 @@
 			echo $footer->insertRegistroTecMuestra($_POST['token'],$_POST['rol_usuario_id'],$_POST['campo'],$_POST['valor'],$_POST['id_footerEnsayo']);		
 		break;
 		
+		case 'completeFormato':
+			$footer = new footerEnsayo();
+			echo $footer->completeFormato($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_footerEnsayo']);		
+		break;
+		
 	}
 	
 ?>

@@ -848,7 +848,7 @@ class Herramienta{
 					WHERE 
 						T2.active IS NULL
 			      ",
-			      array($laboratorio_id,$herramienta_tipo_id),
+			      array($herramienta_tipo_id,$laboratorio_id),
 			      "SELECT"
 			      );
 

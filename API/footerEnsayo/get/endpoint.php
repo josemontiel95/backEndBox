@@ -25,5 +25,10 @@
 			$footer = new footerEnsayo();
 			echo $footer->ping();
 			break;
+			
+		case 'ping2':
+			$footer = new footerEnsayo();
+			echo $footer->ping2($_GET['data']);
+			break;
 	}
 ?>
