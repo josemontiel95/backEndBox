@@ -4,6 +4,7 @@
 
 	//Formato de campo de cilindros
 	class EnsayoVigaPDF extends fpdf{
+		var $angle=0;
 		function Header()
 		{
 			
@@ -366,6 +367,9 @@
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 			$this->Cell($tam_flexo,(($tam_font_head))/2,$flexo,1,2,'C');
 			$this->Cell($tam_flexo,(($tam_font_head))/2,'','L,B,R',0,'C');
+			//Aqui van las notas
+			$this->SetXY($posicion_x+$tam_flexo,$posicion_y);
+			$this->Cell(0,(($tam_font_head)),'',1,0,'C');
 
 			$this->Ln();
 

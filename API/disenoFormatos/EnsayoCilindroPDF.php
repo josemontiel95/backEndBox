@@ -18,7 +18,7 @@
 			$this->SetFont('Arial','B',$tam_font_titulo); 
 			$titulo_linea1 = 'LABORATORIO DE CONTROL DE CALIDAD Y SUPERVISIÓN S.A DE C.V';
 			$tam_cell = $this->GetStringWidth($titulo_linea1);
-			$this->SetX((210-$tam_cell)/2);
+			$this->SetX((216-$tam_cell)/2);
 			$this->Cell($tam_cell,$tam_font_titulo - 3,utf8_decode($titulo_linea1),0,'C');
 			$this->Ln(8);
 
@@ -27,7 +27,7 @@
 			$this->SetFont('Arial','B',$tam_font_tituloInforme);
 			$titulo_informe = '"ENSAYO A COMPRESIÓN DE CILINROS DE CONCRETO HIDRÁULICO"';
 			$tam_titulo_informe = $this->GetStringWidth($titulo_informe)+3;
-			$this->SetX((210-$tam_titulo_informe)/2);
+			$this->SetX((216-$tam_titulo_informe)/2);
 			$this->Cell($titulo_informe,$tam_font_tituloInforme - 3,utf8_decode($titulo_informe),0,'C');
 
 			$this->ln(4);
@@ -259,20 +259,100 @@
 			$tam_falla = $this->GetX() - $posicion_x;
 		
 
+			$this->Ln(0);
 			//Definimos el array con los tamaños de cada celda para crear las duplas
 			$array_campo = 	array(
 									$tam_fechaColado,
 									$tam_infoNumero,
 									$tam_clave,
+									$tam_peso,
 									$tam_edad,
 									$tam_d1,
 									$tam_d2,
+									$tam_h1,
+									$tam_h2,
 									$tam_carga,
 									$tam_area,
-									$tam_resis
+									$tam_resis,
+									$tam_falla
 							);
 
 			$tam_font_head = 5.5;	$this->SetFont('Arial','',$tam_font_head);
+			for ($i=0; $i < 50; $i++){
+				//Definimos la posicion de X para tomarlo como referenci
+				for ($j=0; $j <13; $j++){ 
+					//Definimos la posicion apartir de la cual vamos a insertar la celda
+					$this->cell($array_campo[$j],$tam_font_head - 2,'',1,0,'C');
+				}	
+				$this->Ln();
+			}
+
+			$tam_font_head = 7; $this->SetFont('Arial','B',$tam_font_head);
+			$observaciones = 'OBSERVACIONES:';
+			$this->cell(0,$tam_font_head - 2,utf8_decode($observaciones.' LA VELOCIDAD DE APLICACIÓN ES DE'.''.'kg/cm²*min'),'L,T,R',2);
+			$this->cell(20,$tam_font_head - 1,'','L,B',0);
+
+			$inventario = 'Inventario de';
+			$tam_inventario = $this->GetStringWidth($inventario)+10;
+			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
+			$this->Cell($tam_inventario,(($tam_font_head)-1)/2,$inventario,'L,T,R',2,'C');
+			$this->Cell($tam_inventario,(($tam_font_head)-1)/2,'instrumento','L,B,R',2,'C');
+			
+			$this->SetXY($posicion_x+$tam_inventario,$posicion_y);
+			$prensa = 'BASCULA';
+			$tam_prensa = $this->GetStringWidth($prensa)+12;
+			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
+			$this->Cell($tam_prensa,(($tam_font_head)-1)/2,$prensa,'L,T,R',2,'C');
+			$this->Cell($tam_prensa,(($tam_font_head)-1)/2,'','L,B,R',2,'C');
+			
+			$this->SetXY($posicion_x+$tam_prensa,$posicion_y);
+			$flexo = 'REGLA VERNIER O FLEXOMETRO';
+			$tam_flexo = $this->GetStringWidth($flexo)+12;
+			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
+			$this->Cell($tam_flexo,(($tam_font_head)-1)/2,$flexo,'L,T,R',2,'C');
+			$this->Cell($tam_flexo,(($tam_font_head)-1)/2,'','L,B,R',0,'C');
+		
+			
+			$prensa = 'PRENSA';
+			$this->SetXY($posicion_x+$tam_flexo,$posicion_y);
+			$tam_prensa = $this->GetStringWidth($prensa)+12;
+			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
+			$this->Cell($tam_prensa,(($tam_font_head)-1)/2,$prensa,'L,T,R',2,'C');
+			$this->Cell($tam_prensa,(($tam_font_head)-1)/2,'','L,B,R',0,'C');
+
+			$this->SetY($posicion_y);
+			$this->cell(0,(($tam_font_head)-1),'','B,R',2);
+			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
+			$tam_abajo = 5;
+			$this->multicell(40,$tam_abajo,'SIMBOLOGIA:'."\n".'                 D = DIAMETRO'."\n".'                 H = ALTURA',1);
+
+			$tam_image = 15;
+			$tam_font_footer = 6; $this->SetFont('Arial','b',$tam_font_footer);
+			
+			$tam_boxElaboro = (196-40)/2;	$tam_first = 7.5; $tam_second = 7.5;
+			$this->SetXY($posicion_x+40,$posicion_y);
+			$this->cell($tam_boxElaboro,$tam_first,'REALIZO','L,T,R',2,'C');
+			$posicion_x = $this->GetX();
+			$this->cell($tam_boxElaboro,$tam_second,'','L,B,R',2,'C');
+
+			$this->TextWithDirection($posicion_x+20,$this->gety() - 5,utf8_decode('___________________________________________'));	
+			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('Nombre y firma')/2),$this->gety() - 2,utf8_decode('Nombre y firma'));	
+			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('TEC. GABINO MENA PEREZ')/2),$this->gety() - 6,utf8_decode('TEC. GABINO MENA PEREZ'));	
+			$this->Image('https://upload.wikimedia.org/wikipedia/commons/a/a0/Firma_de_Morelos.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+
+
+			$tam_boxElaboro = (196-40)/2;	$tam_first = 7.5; $tam_second = 7.5;
+			$this->SetXY($posicion_x+$tam_boxElaboro,$posicion_y);
+			$this->cell($tam_boxElaboro,$tam_first,'Vo. Bo.','L,T,R',2,'C');
+			$posicion_x = $this->GetX();
+			$this->cell($tam_boxElaboro,$tam_second,'','L,B,R',2,'C');
+
+			$this->TextWithDirection($posicion_x+20,$this->gety() - 5,utf8_decode('___________________________________________'));	
+			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('Nombre y firma')/2),$this->gety() - 2,utf8_decode('Nombre y firma'));	
+			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('ING. LAURA CATILLO DE LA ROSA')/2),$this->gety() - 6,utf8_decode('ING. LAURA CATILLO DE LA ROSA'));	
+			$this->Image('https://upload.wikimedia.org/wikipedia/commons/a/a0/Firma_de_Morelos.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+
+
 			/*
 			foreach ($regisFormato as $registro) {
 				$j=0;
