@@ -22,5 +22,9 @@
 			echo $ensayo->getRegistrosByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ensayoCilindro']);
 			break;
 		
+		case 'getAllRegistrosFromFooterByID':
+			$ensayo = new EnsayoCilindro();
+			echo $ensayo->getAllRegistrosFromFooterByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['footerEnsayo_id']);
+			break;
 	}
 ?>

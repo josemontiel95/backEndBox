@@ -100,7 +100,7 @@ class EnsayoViga{
 			$s= $dbS->qarrayA("
 			    	SELECT
 						id_ensayoViga,
-						footerEnsayo_id,
+						ensayoViga.formatoCampo_id AS formatoCampo_id,
 						IF(registrosCampo.status = 3,'SI','NO') AS completado,
 						encargado_id,
 						CONCAT(nombre,' ',apellido) AS nombre,
@@ -138,7 +138,7 @@ class EnsayoViga{
 					FROM 
 						ensayoViga,registrosCampo,formatoCampo,footerEnsayo,usuario
 					WHERE
-						footerEnsayo_id = id_footerEnsayo AND
+						ensayoViga.footerEnsayo_id = id_footerEnsayo AND
 						encargado_id = id_usuario AND
 						id_formatoCampo = ensayoViga.formatoCampo_id AND
 						id_registrosCampo = ensayoViga.registrosCampo_id AND
