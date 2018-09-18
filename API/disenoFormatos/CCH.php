@@ -155,7 +155,7 @@
 
 		}
 		//function putTables($infoFormato,$regisFormato) el chido
-		function putTables(){
+		function putTables($infoFormato,$regisFormato){
 			//Guardamos la posicion de la Y para alinear todas las celdas a la misma altura
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 
@@ -398,7 +398,7 @@
 			$tam_image = 15;
 
 			$tam_font_footer = 7;
-			$this->Ln(4);	$this->SetX(40);
+			$this->Ln(8);	$this->SetX(40);
 			$tamCelda_ancho = 90;
 			$tamCelda_alto = 10;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
