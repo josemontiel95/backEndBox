@@ -115,7 +115,7 @@ class EnsayoCubo{
 			$s= $dbS->qarrayA("
 			    	SELECT
 						id_ensayoCubo,
-						footerEnsayo_id,
+						ensayoCubo.formatoCampo_id AS formatoCampo_id,
 						IF(registrosCampo.status = 3,'SI','NO') AS completado,
 						l1,
 						l2,

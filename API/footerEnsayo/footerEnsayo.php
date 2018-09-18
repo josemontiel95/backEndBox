@@ -385,6 +385,13 @@ class footerEnsayo{
 					encargado_id,
 					CONCAT(nombre,' ',apellido) AS nombre,
 					footerEnsayo.tipo AS tipo,
+					footerEnsayo.status AS status,
+					CASE
+						WHEN footerEnsayo.status = 0 AND DATE(footerEnsayo.createdON) = CURDATE() THEN 1
+						WHEN footerEnsayo.status = 0 AND DATE(footerEnsayo.createdON) = DATE_SUB(CURDATE(), INTERVAL 1 DAY) THEN 2
+						WHEN footerEnsayo.status = 0 AND DATE(footerEnsayo.createdON) = DATE_SUB(CURDATE(), INTERVAL 2 DAY) THEN 3
+						ELSE 4
+					END AS color,
 					CASE
 						WHEN DATE(footerEnsayo.createdON) = CURDATE() THEN 'Hoy'
 						WHEN DATE(footerEnsayo.createdON) = DATE_SUB(CURDATE(), INTERVAL 1 DAY) THEN 'Ayer'
@@ -541,7 +548,9 @@ class footerEnsayo{
 					observaciones,
 					prensas.placas AS prensa_placas,
 					encargado_id,
-					CONCAT(nombre,' ',apellido) AS nombre
+					CONCAT(nombre,' ',apellido) AS nombre,
+					DATE(footerEnsayo.createdON) AS fecha,
+					footerEnsayo.status AS status
 				FROM
 					footerEnsayo,
 					usuario,

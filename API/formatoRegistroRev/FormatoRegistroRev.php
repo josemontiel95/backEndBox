@@ -516,18 +516,18 @@ class FormatoRegistroRev{
 														);
 						if(!$dbS->didQuerydied && ($var_system != "empty")){
 							$hora_de_creacion = getdate();
-							$target_dir = "./../../../SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/";
-							$dirDatabase = $var_system['apiRoot']."SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/"."preliminarCCH"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+							$target_dir = "./../../../SystemData/FormatosDataRev/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/";
+							$dirDatabase = $var_system['apiRoot']."SystemData/FormatosDataRev/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/"."preliminarRev"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
 							if (!file_exists($target_dir)) {
 							    mkdir($target_dir, 0777, true);
 							}
-							$target_dir=$target_dir."preliminarCCH"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+							$target_dir=$target_dir."preliminarRev"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
 							//Llamada a el generador de formatos
 							$generador = new GeneradorFormatos();
 							//Cachamos la excepcion
 							try{
-								//$generador->generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir);
-								if($mailer->sendMailBasic($correo, $info['nombre'], $pdf)==202){
+								$generador->generateRevenimiento($token,$rol_usuario_id,$id_formatoRegistroRev,$target_dir);
+								if($mailer->sendMailBasic($correo, $info['nombre'], $dirDatabase)==202){
 									$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
 								}else{
 									$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 6);

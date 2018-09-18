@@ -29,13 +29,14 @@
 			}
 		}
 
-		function generateRevenimiento($token,$rol_usuario_id,$id_formatoRegistroRev){
+		function generateRevenimiento($token,$rol_usuario_id,$id_formatoRegistroRev,$target_dir){
 			global $dbS;
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			$info = $this->getInfoRev($token,$rol_usuario_id,$id_formatoRegistroRev);
 			$registros = $this->getRegRev($token,$rol_usuario_id,$id_formatoRegistroRev);
-			$pdf = new Revenimiento();	$pdf->CreateNew($info,$registros,$target_dir);
+			$pdf = new Revenimiento();	
+			$pdf->CreateNew($info,$registros,$target_dir);
 		}
 
 		function getInfoRev($token,$rol_usuario_id,$id_formatoRegistroRev){
