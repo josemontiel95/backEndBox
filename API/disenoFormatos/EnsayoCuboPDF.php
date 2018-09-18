@@ -234,8 +234,10 @@
 			
 			$this->Cell(0,($tam_font_head+3)/2,'RESISTENCIA A','L,T,R',2,'C');
 			$this->cell(0,($tam_font_head+3)/2,utf8_decode($resis),'L,B,R',2,'C');
-			$tam_resis = $this->GetX() - $posicion_x;
+
 			
+			$tam_resis = $this->GetX() - $posicion_x;
+			$this->lN(0);
 		
 
 			//Definimos el array con los tamaños de cada celda para crear las duplas
@@ -252,6 +254,15 @@
 							);
 
 			$tam_font_head = 5.5;	$this->SetFont('Arial','',$tam_font_head);
+			for ($i=0; $i < 45; $i++){
+				//Definimos la posicion de X para tomarlo como referenci
+				for ($j=0; $j < 9; $j++){ 
+					//Definimos la posicion apartir de la cual vamos a insertar la celda
+					$this->cell($array_campo[$j],$tam_font_head - 2,'',1,0,'C');
+				}	
+				$this->Ln();
+			}
+
 			/*
 			foreach ($regisFormato as $registro) {
 				$j=0;

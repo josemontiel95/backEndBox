@@ -1,6 +1,7 @@
 <?php 
 	//include_once("./../library_watermark/rotation.php");
 	include_once("./../../FPDF/fpdf.php");
+	//include_once("./../FPDF/fpdf.php");
 	//Formato de campo de cilindros
 	class CCH extends fpdf{
 		var $angle=0;
@@ -153,8 +154,8 @@
 			$this->Ln(2);
 
 		}
-
-		function putTables($infoFormato,$regisFormato){
+		//function putTables($infoFormato,$regisFormato) el chido
+		function putTables(){
 			//Guardamos la posicion de la Y para alinear todas las celdas a la misma altura
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 
@@ -278,6 +279,7 @@
 						
 			$this->SetX(10); //Definimos donde empieza los 
 			
+			
 			foreach ($regisFormato as $registro) {
 				$j=0;
 				foreach ($registro as $campo) {
@@ -304,6 +306,7 @@
 			$this->Ln(2);
 			//$this->cell(0,10,$this->GetY(),1,2,'C');
 
+			
 			$posicion_y = 140;
 			$tam_observaciones = 10;
 			$tam_font_footer = 7;	$this->SetFont('Arial','B',$tam_font_footer);
@@ -391,6 +394,27 @@
 			$this->cell($tam_vigas,($tam_font_footer - 2),utf8_decode($vigas),0,0,'C');
 			$this->cell($tam_vigas-10,($tam_font_footer - 2),'',1,0,'C',$bandV);
 			
+
+			$tam_image = 15;
+
+			$tam_font_footer = 7;
+			$this->Ln(4);	$this->SetX(40);
+			$tamCelda_ancho = 90;
+			$tamCelda_alto = 10;
+			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
+			$this->cell($tamCelda_ancho,$tamCelda_alto,'','B',2);
+			$this->cell($tamCelda_ancho,($tam_font_footer - 3),'LABORATORISTA/ASIGNATARIO',0,0,'C');
+
+			$this->Image('https://upload.wikimedia.org/wikipedia/commons/a/a0/Firma_de_Morelos.png',(($posicion_x+($tamCelda_ancho)/2)-($tam_image/2)),($posicion_y + (($tamCelda_alto)/2))-($tam_image/2),$tam_image,$tam_image);
+
+			$tamCelda_ancho = 60;
+			$this->SetXY($posicion_x + 150,$posicion_y);
+			$posicion_x = $this->GetX();
+			$this->cell($tamCelda_ancho,$tamCelda_alto,'','B',2);
+			
+			$this->cell($tamCelda_ancho,($tam_font_footer - 3),'ENTERADO',0,0,'C');
+
+			$this->Image('https://upload.wikimedia.org/wikipedia/commons/a/a0/Firma_de_Morelos.png',(($posicion_x+($tamCelda_ancho)/2)-($tam_image/2)),($posicion_y + (($tamCelda_alto)/2))-($tam_image/2),$tam_image,$tam_image);
 					
 		}
 		
@@ -492,8 +516,10 @@
 	/*
 	$pdf  = new CCH('L','mm','Letter');
 	$pdf->AddPage();
+	$pdf->putTables();
 	$pdf->Output();
 	*/
+	
 	
 
 
