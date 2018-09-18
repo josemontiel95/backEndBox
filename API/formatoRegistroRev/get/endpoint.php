@@ -19,6 +19,14 @@
 			echo "adios";
 		break;
 		
+		case 'getNumberOfRegistrosByID':
+			$formato = new FormatoRegistroRev();
+			echo $formato->getNumberOfRegistrosByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['formatoRegistroRev_id']);
+		break;
+		case 'getformatoDefoults':
+			$formato = new FormatoRegistroRev();
+			echo $formato->getformatoDefoults($_GET['token'],$_GET['rol_usuario_id']);
+		break;
 		case 'getInfoByID':
 			$formato = new FormatoRegistroRev();
 			echo $formato->getInfoByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoRegistroRev']);

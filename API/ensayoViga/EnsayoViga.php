@@ -63,11 +63,11 @@ class EnsayoViga{
 						UPDATE
 							ensayoViga
 						SET
-							fecha = CURDATE(),
+							fecha = CURDATE() AND
 							1QQ = '1QQ'
 						WHERE
 							id_ensayoViga = 1QQ
-				",array($campo,$valor,$id_ensayoViga),"UPDATE");
+				",array($campo,$valor,$id_ensayoViga),"UPDATE- EnsayoViga ::  insertRegistroTecMuestra");
 			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
 			if(!$dbS->didQuerydied){
 				$fechaEnsayo = $dbS->qarrayA(
@@ -100,7 +100,7 @@ class EnsayoViga{
 			$s= $dbS->qarrayA("
 			    	SELECT
 						id_ensayoViga,
-						footerEnsayo_id,
+						ensayoViga.formatoCampo_id AS formatoCampo_id,
 						IF(registrosCampo.status = 3,'SI','NO') AS completado,
 						encargado_id,
 						CONCAT(nombre,' ',apellido) AS nombre,
@@ -138,7 +138,7 @@ class EnsayoViga{
 					FROM 
 						ensayoViga,registrosCampo,formatoCampo,footerEnsayo,usuario
 					WHERE
-						footerEnsayo_id = id_footerEnsayo AND
+						ensayoViga.footerEnsayo_id = id_footerEnsayo AND
 						encargado_id = id_usuario AND
 						id_formatoCampo = ensayoViga.formatoCampo_id AND
 						id_registrosCampo = ensayoViga.registrosCampo_id AND

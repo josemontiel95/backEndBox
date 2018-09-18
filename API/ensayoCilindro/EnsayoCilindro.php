@@ -84,11 +84,11 @@ class EnsayoCilindro{
 						FROM
 							ensayoCilindro
 						WHERE
-							fecha = CURDATE(),
+							fecha = CURDATE() AND
 							id_ensayoCilindro = 1QQ
 					",
 					array($id_ensayoCilindro),
-					"SELECT"
+					"SELECT-EnsayoCilindro :: insertRegistroTecMuestra"
 				);
 				$arr = array('id_ensayoCilindro' => $id_ensayoCilindro,'estatus' => '¡Exito en la inserccion de un registro!','fechaEnsayo' => $fechaEnsayo['fecha'],'error' => 0);
 				return json_encode($arr);
@@ -166,7 +166,7 @@ class EnsayoCilindro{
 			$s= $dbS->qarrayA("
 			    	SELECT
 						id_ensayoCilindro,
-						footerEnsayo_id,
+						ensayoCilindro.formatoCampo_id AS formatoCampo_id,
 						IF(registrosCampo.status = 3,'SI','NO') AS completado,
 						peso,
 						d1,
@@ -214,6 +214,66 @@ class EnsayoCilindro{
 			}
 			else{
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		return json_encode($arr);
+	}
+	public function getAllRegistrosFromFooterByID($token,$rol_usuario_id,$footerEnsayo_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qAll("
+			    	SELECT
+						id_ensayoCilindro,
+						ensayoCilindro.formatoCampo_id AS formatoCampo_id,
+						IF(registrosCampo.status = 3,'SI','NO') AS completado,
+						peso,
+						d1,
+						d2,
+						h1,
+						h2,
+						carga,
+						falla,
+						registrosCampo_id,
+						claveEspecimen,
+						ensayoCilindro.fecha AS fechaEnsayo,
+						diasEnsaye,
+						ensayoCilindro.formatoCampo_id,
+						registrosCampo.fecha AS fechaColado,
+						informeNo, 
+						CASE
+							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
+							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
+							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
+							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
+							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
+							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
+							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
+							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
+							ELSE 'Error, Contacta a soporte'
+						END AS diasEnsayeFinal
+					FROM 
+						ensayoCilindro,registrosCampo,formatoCampo
+					WHERE
+						id_formatoCampo = ensayoCilindro.formatoCampo_id AND
+						id_registrosCampo = ensayoCilindro.registrosCampo_id AND
+						ensayoCilindro.footerEnsayo_id = 1QQ
+			      ",
+			      array($footerEnsayo_id),
+			      "SELECT"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('No existen registro relacionados con el footerEnsayo_id'=>$id_ensayoCilindro,'error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getAllRegistrosFromFooterByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 			}
 		}
 		return json_encode($arr);

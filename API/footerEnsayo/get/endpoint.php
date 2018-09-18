@@ -17,5 +17,13 @@
 			$footer = new footerEnsayo();
 			echo $footer->getFooterByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_footerEnsayo']);
 			break;
+		case 'getAllFooterPendientes':
+			$footer = new footerEnsayo();
+			echo $footer->getAllFooterPendientes($_GET['token'],$_GET['rol_usuario_id']);
+			break;
+		case 'ping':
+			$footer = new footerEnsayo();
+			echo $footer->ping();
+			break;
 	}
 ?>

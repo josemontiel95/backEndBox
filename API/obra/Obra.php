@@ -130,6 +130,7 @@ class Obra{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      SELECT 
@@ -138,11 +139,12 @@ class Obra{
 			      FROM 
 			        obra
 			      WHERE
-			      	 active = 1
+			      	 active = 1 AND 
+			      	 laboratorio_id= 1QQ
 			      ORDER BY 
 			      	obra	
 			      ",
-			      array(),
+			      array($laboratorio_id),
 			      "SELECT"
 			      );
 

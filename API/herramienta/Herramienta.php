@@ -811,6 +811,7 @@ class Herramienta{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id = $usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      	SELECT 
@@ -833,20 +834,21 @@ class Herramienta{
 						   	herramientas.active = 1 AND
 						    herramienta_tipo_id = id_herramienta_tipo AND
 						    herramienta_tipo_id = 1QQ AND 
+						    herramientas.laboratorio_id = 1QQ AND
 						    id_herramienta > 1000) AS T1 
 					    LEFT JOIN 
 					    	(SELECT
-							*
+								*
 							FROM 
-							herramienta_ordenDeTrabajo
+								herramienta_ordenDeTrabajo
 							WHERE 
-							herramienta_ordenDeTrabajo.active=1) AS T2 
+								herramienta_ordenDeTrabajo.active=1) AS T2 
 					    ON
 					    	herramienta_id=id_herramienta
 					WHERE 
 						T2.active IS NULL
 			      ",
-			      array($herramienta_tipo_id),
+			      array($laboratorio_id,$herramienta_tipo_id),
 			      "SELECT"
 			      );
 

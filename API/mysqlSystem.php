@@ -24,11 +24,35 @@ class MySQLSystem{
 		mysqli_connect($this->dbsrvr,$this->dbuser,$this->dbpssw,$this->dbname);
 
 		// Check connection
-		if (mysqli_connect_errno())
-		  {
+		if (mysqli_connect_errno()){
 		  echo "Failed to connect to MySQL: " . mysqli_connect_error();
-		  }
+
+		}else{
+			$this->setTimeZone();
+		}
 	}
+
+	public function setTimeZone(){
+
+		$query='SELECT MONTH(CURDATE()) AS month';
+
+		$result = mysqli_query($this->connection,$query);
+		if (mysqli_num_rows($result)!=0) { //Aqui solo se tiene un valor
+			$values= mysqli_fetch_array($result, MYSQLI_ASSOC); //Obtiene una fila de resultados como un array asociativo, nunerico o ambos.
+		}
+		if($values['month']>10 || $values['month']<4){
+			$query="set time_zone = '-06:00'";
+			$result = mysqli_query($this->connection,$query);
+		}else{
+			$query="set time_zone = '-05:00'";
+			$result = mysqli_query($this->connection,$query);
+		}
+		$queryTypeTemp=$this->queryType;
+		$this->queryType="SetTimeZone";
+		$this->logQuery('SELECT MONTH(CURDATE()) AS month');
+		$this->queryType=$queryTypeTemp;
+	}
+
 
 	/** 
 	Instrucciones de consulta
@@ -50,7 +74,10 @@ class MySQLSystem{
 				UPDATE log SET status="FAILED"  WHERE id_log='.$this->lastInsertedLogID
 			;//Aqui ingresa la query al registro de querys
 			//echo '<p>LOG-'.$query.'-</p>';
+			$mailer = new Mailer();
+			$mailer->sendMailErrorDB($q,$this->queryType);
 			mysqli_query($this->connection,$query);
+
 		}else{
 			$this->didQuerydied=false;
 			$query='

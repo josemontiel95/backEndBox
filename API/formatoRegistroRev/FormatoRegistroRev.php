@@ -17,6 +17,56 @@ class FormatoRegistroRev{
 
 	private $wc = '/1QQ/';
 
+	public function getformatoDefoults($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr = $dbS->qarrayA(
+				"	SELECT
+						id_systemstatus,
+						maxNoOfRegistrosRev
+					FROM
+						systemstatus
+					ORDER BY id_systemstatus DESC;
+				",array(),"SELECT"
+			);
+			if(!$dbS->didQuerydied){
+				$id=$dbS->lastInsertedID;
+			}
+			else{
+				$arr = array('id_systemstatus' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
+	public function getNumberOfRegistrosByID($token,$rol_usuario_id,$formatoRegistroRev_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA("
+			      SELECT 
+			      	COUNT(*) As No
+			      FROM 
+			      	registrosRev
+			      WHERE
+			      	active=1 AND 
+			      	formatoRegistroRev_id=1QQ
+			      ",
+			      array($formatoRegistroRev_id),
+			      "SELECT"
+			      );
+			if(!$dbS->didQuerydied && $a!="empty" ){
+				$arr = array('id_formatoCampo' => $id_formatoCampo,'numberOfRegistrosByID' => $s['No'],'estatus' => 'Exito','error' => 0);
+
+			}else{
+				$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro ese id','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
+
 	public function insertJefeBrigada($token,$rol_usuario_id,$campo,$valor,$id_formatoRegistroRev){
 		global $dbS;
 		$usuario = new Usuario();
@@ -466,18 +516,18 @@ class FormatoRegistroRev{
 														);
 						if(!$dbS->didQuerydied && ($var_system != "empty")){
 							$hora_de_creacion = getdate();
-							$target_dir = "./../../../SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/";
-							$dirDatabase = $var_system['apiRoot']."SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/"."preliminarCCH"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+							$target_dir = "./../../../SystemData/FormatosDataRev/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/";
+							$dirDatabase = $var_system['apiRoot']."SystemData/FormatosDataRev/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/"."preliminarRev"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
 							if (!file_exists($target_dir)) {
 							    mkdir($target_dir, 0777, true);
 							}
-							$target_dir=$target_dir."preliminarCCH"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+							$target_dir=$target_dir."preliminarRev"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
 							//Llamada a el generador de formatos
 							$generador = new GeneradorFormatos();
 							//Cachamos la excepcion
 							try{
-								//$generador->generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir);
-								if($mailer->sendMailBasic($correo, $info['nombre'], $pdf)==202){
+								$generador->generateRevenimiento($token,$rol_usuario_id,$id_formatoRegistroRev,$target_dir);
+								if($mailer->sendMailBasic($correo, $info['nombre'], $dirDatabase)==202){
 									$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
 								}else{
 									$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 6);

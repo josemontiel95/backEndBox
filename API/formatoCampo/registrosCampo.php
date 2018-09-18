@@ -605,59 +605,76 @@ class registrosCampo{
 		$laboratorioUser=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$s= $dbS->qAll("
-			      	SELECT 
-						id_registrosCampo,
-						fecha,
-						informeNo,
-						claveEspecimen,
-						MOD(diasEnsaye,4) AS W,
-						id_ordenDeTrabajo,
-						laboratorio_id,
-						tipo,
-						registrosCampo.active,
-						IF(registrosCampo.status = 3,'SI','NO') AS completado,
-						IF(DATE_ADD(fecha, INTERVAL diasEnsaye DAY) < CURDATE(),'ATRASADO','AGENDADO PARA HOY') AS estado,
-						CASE
-							WHEN MOD(diasEnsaye,4) = 1 AND DATE_ADD(fecha, INTERVAL prueba1 DAY) < CURDATE() THEN 'ATRASADO'
-							WHEN MOD(diasEnsaye,4) = 1 AND DATE_ADD(fecha, INTERVAL prueba1 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
-							WHEN MOD(diasEnsaye,4) = 2 AND DATE_ADD(fecha, INTERVAL prueba2 DAY) < CURDATE() THEN 'ATRASADO'
-							WHEN MOD(diasEnsaye,4) = 2 AND DATE_ADD(fecha, INTERVAL prueba2 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
-							WHEN MOD(diasEnsaye,4) = 3 AND DATE_ADD(fecha, INTERVAL prueba3 DAY) < CURDATE() THEN 'ATRASADO'
-							WHEN MOD(diasEnsaye,4) = 3 AND DATE_ADD(fecha, INTERVAL prueba3 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
-							WHEN MOD(diasEnsaye,4) = 0 AND DATE_ADD(fecha, INTERVAL prueba4 DAY) < CURDATE() THEN 'ATRASADO'
-							WHEN MOD(diasEnsaye,4) = 0 AND DATE_ADD(fecha, INTERVAL prueba4 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
-							ELSE 'Error, Contacta a soporte'
-						END AS estado,
-						CASE
-							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
-							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
-							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
-							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
-							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
-							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
-							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
-							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
-							ELSE 'Error, Contacta a soporte'
-						END AS diasEnsaye,
-						CASE
-							WHEN MOD(diasEnsaye,4) = 1 THEN DATE_ADD(fecha, INTERVAL prueba1 DAY)
-							WHEN MOD(diasEnsaye,4) = 1 THEN DATE_ADD(fecha, INTERVAL prueba1 DAY)
-							WHEN MOD(diasEnsaye,4) = 2 THEN DATE_ADD(fecha, INTERVAL prueba2 DAY)  
-							WHEN MOD(diasEnsaye,4) = 2 THEN DATE_ADD(fecha, INTERVAL prueba2 DAY)
-							WHEN MOD(diasEnsaye,4) = 3 THEN DATE_ADD(fecha, INTERVAL prueba3 DAY)  
-							WHEN MOD(diasEnsaye,4) = 3 THEN DATE_ADD(fecha, INTERVAL prueba3 DAY)
-							WHEN MOD(diasEnsaye,4) = 0 THEN DATE_ADD(fecha, INTERVAL prueba4 DAY)  
-							WHEN MOD(diasEnsaye,4) = 0 THEN DATE_ADD(fecha, INTERVAL prueba4 DAY)
-							ELSE 'Error, Contacta a soporte'
-						END AS fechaEnsayeAsignado  
-					FROM
-						registrosCampo,formatoCampo,ordenDeTrabajo
+					SELECT 
+						* 
+					FROM 
+						(
+				      	SELECT 
+							id_registrosCampo,
+							fecha,
+							informeNo,
+							claveEspecimen,
+							MOD(diasEnsaye,4) AS W,
+							id_ordenDeTrabajo,
+							laboratorio_id,
+							tipo,
+							registrosCampo.active,
+							IF(registrosCampo.status = 3,'SI','NO') AS completado,
+							CASE
+								WHEN MOD(diasEnsaye,4) = 1 AND DATE_ADD(fecha, INTERVAL prueba1 DAY) < CURDATE() THEN 'ATRASADO'
+								WHEN MOD(diasEnsaye,4) = 1 AND DATE_ADD(fecha, INTERVAL prueba1 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
+								WHEN MOD(diasEnsaye,4) = 2 AND DATE_ADD(fecha, INTERVAL prueba2 DAY) < CURDATE() THEN 'ATRASADO'
+								WHEN MOD(diasEnsaye,4) = 2 AND DATE_ADD(fecha, INTERVAL prueba2 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
+								WHEN MOD(diasEnsaye,4) = 3 AND DATE_ADD(fecha, INTERVAL prueba3 DAY) < CURDATE() THEN 'ATRASADO'
+								WHEN MOD(diasEnsaye,4) = 3 AND DATE_ADD(fecha, INTERVAL prueba3 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
+								WHEN MOD(diasEnsaye,4) = 0 AND DATE_ADD(fecha, INTERVAL prueba4 DAY) < CURDATE() THEN 'ATRASADO'
+								WHEN MOD(diasEnsaye,4) = 0 AND DATE_ADD(fecha, INTERVAL prueba4 DAY) = CURDATE() THEN 'AGENDADO PARA HOY'
+								ELSE 'Error, Contacta a soporte'
+							END AS estado,
+							CASE
+								WHEN MOD(diasEnsaye,4) = 1 AND DATE_ADD(fecha, INTERVAL prueba1 DAY) < CURDATE() THEN 2
+								WHEN MOD(diasEnsaye,4) = 1 AND DATE_ADD(fecha, INTERVAL prueba1 DAY) = CURDATE() THEN 1
+								WHEN MOD(diasEnsaye,4) = 2 AND DATE_ADD(fecha, INTERVAL prueba2 DAY) < CURDATE() THEN 2
+								WHEN MOD(diasEnsaye,4) = 2 AND DATE_ADD(fecha, INTERVAL prueba2 DAY) = CURDATE() THEN 1
+								WHEN MOD(diasEnsaye,4) = 3 AND DATE_ADD(fecha, INTERVAL prueba3 DAY) < CURDATE() THEN 2
+								WHEN MOD(diasEnsaye,4) = 3 AND DATE_ADD(fecha, INTERVAL prueba3 DAY) = CURDATE() THEN 1
+								WHEN MOD(diasEnsaye,4) = 0 AND DATE_ADD(fecha, INTERVAL prueba4 DAY) < CURDATE() THEN 2
+								WHEN MOD(diasEnsaye,4) = 0 AND DATE_ADD(fecha, INTERVAL prueba4 DAY) = CURDATE() THEN 1
+								ELSE 'Error, Contacta a soporte'
+							END AS color,
+							CASE
+								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
+								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
+								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
+								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
+								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
+								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
+								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
+								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
+								ELSE 'Error, Contacta a soporte'
+							END AS diasEnsaye,
+							CASE
+								WHEN MOD(diasEnsaye,4) = 1 THEN DATE_ADD(fecha, INTERVAL prueba1 DAY)
+								WHEN MOD(diasEnsaye,4) = 1 THEN DATE_ADD(fecha, INTERVAL prueba1 DAY)
+								WHEN MOD(diasEnsaye,4) = 2 THEN DATE_ADD(fecha, INTERVAL prueba2 DAY)  
+								WHEN MOD(diasEnsaye,4) = 2 THEN DATE_ADD(fecha, INTERVAL prueba2 DAY)
+								WHEN MOD(diasEnsaye,4) = 3 THEN DATE_ADD(fecha, INTERVAL prueba3 DAY)  
+								WHEN MOD(diasEnsaye,4) = 3 THEN DATE_ADD(fecha, INTERVAL prueba3 DAY)
+								WHEN MOD(diasEnsaye,4) = 0 THEN DATE_ADD(fecha, INTERVAL prueba4 DAY)  
+								WHEN MOD(diasEnsaye,4) = 0 THEN DATE_ADD(fecha, INTERVAL prueba4 DAY)
+								ELSE 'Error, Contacta a soporte'
+							END AS fechaEnsayeAsignado  
+						FROM
+							registrosCampo,formatoCampo,ordenDeTrabajo
+						WHERE
+							registrosCampo.footerEnsayo_id IS NULL AND
+							id_formatoCampo = formatoCampo_id AND
+							id_ordenDeTrabajo = ordenDeTrabajo_id AND
+							(registrosCampo.status > 1) AND
+							laboratorio_id = 1QQ
+						) AS T1
 					WHERE
-						id_formatoCampo = formatoCampo_id AND
-						id_ordenDeTrabajo = ordenDeTrabajo_id AND
-						(registrosCampo.status = 2 OR registrosCampo.status = 3) AND
-						DATE_ADD(fecha, INTERVAL diasEnsaye DAY) <= CURDATE() AND
-						laboratorio_id = 1QQ 
+						DATE_ADD(fecha, INTERVAL diasEnsaye DAY) <= CURDATE()
 			      ",
 			      array($usuario->laboratorio_id),
 			      "SELECT"
