@@ -21,7 +21,8 @@
 						$pdf = new InformeCubos();	$pdf->CreateNew($infoFormato,$regisFormato);
 						break;
 					case 'CILINDRO':
-						//$pdf = new InformeCilindros();	$pdf->CreateNew($infoFormato,$regisFormato);
+						$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+						$pdf = new InformeCilindros();	$pdf->CreateNew($infoFormato,$regisFormato);
 						break;
 
 				
@@ -368,6 +369,76 @@
 							id_registrosCampo = ensayoCubo.registrosCampo_id AND
 							id_formatoCampo = ensayoCubo.formatoCampo_id AND 
 							ensayoCubo.formatoCampo_id = 1QQ
+				      ",
+				      array($id_formatoCampo),
+				      "SELECT"
+				      );
+				
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('No existen registro relacionados con el id_formatoCampo'=>$id_formatoCampo,'error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+
+		}
+
+		function getRegCilindroByFCCH($token,$rol_usuario_id,$id_formatoCampo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				$s= $dbS->qAll("
+				    	SELECT
+				    		ensayoCilindro.fecha AS fechaEnsaye,
+							claveEspecimen,
+							revObra,
+							carga,
+							(d1+d2)/2 AS diametro,
+							(h1/h2)/2 AS altura,
+				    		ROUND((((carga/(l1*l2))/fprima)*100),3)  AS porcentResis,
+				    		fprima,
+				    		ROUND((carga/(l1*l2)),3) AS kg,
+				    		ROUND(((carga/(l1*l2))/var_system.ensayo_def_MPa),3)  AS mpa,
+				    		ROUND(((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn),3) AS kn,
+				    		ROUND((l1*l2),3) AS area,
+							l2,
+							l1,
+							CASE
+								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
+								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
+								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
+								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
+								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
+								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
+								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
+								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
+								ELSE 'Error, Contacta a soporte'
+							END AS diasEnsaye
+						FROM
+							ensayoCilindro,
+							registrosCampo,
+							formatoCampo,
+							(
+								SELECT
+									ensayo_def_kN,
+									ensayo_def_MPa,
+									ensayo_def_divisorKn
+								FROM
+									systemstatus
+								ORDER BY id_systemstatus DESC LIMIT 1
+							)AS var_system
+						WHERE
+							id_registrosCampo = ensayoCilindro.registrosCampo_id AND
+							id_formatoCampo = ensayoCilindro.formatoCampo_id AND 
+							ensayoCilindro.formatoCampo_id = 1QQ
 				      ",
 				      array($id_formatoCampo),
 				      "SELECT"
