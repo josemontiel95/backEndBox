@@ -185,6 +185,7 @@ class footerEnsayo{
 						footerEnsayo
 					WHERE
 						CURDATE() = DATE(createdON) AND
+						status = 0 AND
 						tipo = '1QQ'
 				",
 				array($tipo),
