@@ -36,6 +36,11 @@
 			$formato = new formatoCampo();
 			echo $formato->getNumberOfRegistrosByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
 		break;
+		
+		case 'getAllAdministrativo':
+			$formato = new formatoCampo();
+			echo $formato->getAllAdministrativo($_GET['token'],$_GET['rol_usuario_id']);
+		break;
 		case 'getAllAdmin':
 			$formato = new formatoCampo();
 			echo $formato->getAllAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);

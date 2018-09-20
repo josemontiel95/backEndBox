@@ -119,7 +119,50 @@ class formatoCampo{
 		return json_encode($arr);
 
 	}
+	public function getAllAdministrativo($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			     	SELECT
+						fc.id_formatoCampo,
+						fc.informeNo,
+						fc.observaciones,
+						fc.tipo,
+						o.cotizacion,
+						c.razonSocial,
+						o.obra,
+						fc.ensayadoFin
+					FROM
+						formatoCampo AS fc,
+						ordenDeTrabajo AS ot,
+						obra AS o,
+						cliente AS c
+					WHERE
+						fc.ordenDeTrabajo_id = ot.id_ordenDeTrabajo AND
+						ot.obra_id = o.id_obra AND
+						o.cliente_id = c.id_cliente AND
+						fc.ensayadoFin = 0 AND 
+						ot.laboratorio_id = 1QQ
+					ORDER BY 
+						fc.lastEditedON DESC	        
 
+			      ",
+			      array($laboratorio_id),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+						if($arr == "empty")
+							$arr = array('estatus' =>"No hay registros", 'error' => 5); 
+						
+			}else
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 6);
+		}
+		return json_encode($arr);	
+	}
 
 
 	public function getAllAdmin($token,$rol_usuario_id,$id_ordenDeTrabajo){

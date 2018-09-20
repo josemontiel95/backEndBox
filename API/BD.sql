@@ -472,7 +472,7 @@ CREATE TABLE formatoCampo(
 
 	status int(11) NOT NULL,
 
-	ensayadoFin int(11) NOT NULL DEFAULT 0,
+	ensayadoFin int(11) NOT NULL DEFAULT 8,
 
 	posInicial POINT NOT NULL,
 	posFinal POINT,
@@ -512,6 +512,7 @@ ALTER TABLE formatoCampo AUTO_INCREMENT=1001;
 ALTER TABLE formatoCampo 
 ADD COLUMN ensayadoFin int(11) NOT NULL DEFAULT 0;
 	
+ALTER TABLE formatoCampo ALTER ensayadoFin SET DEFAULT 8;
 
 
 CREATE TABLE registrosCampo(
@@ -535,6 +536,9 @@ CREATE TABLE registrosCampo(
 
 	status INT NOT NULL DEFAULT 0,
 
+	statusEnsayo INT NOT NULL DEFAULT 0,
+
+
 	footerEnsayo_id INT(11) NULL DEFAULT NULL,
 
 
@@ -555,6 +559,8 @@ CREATE TABLE registrosCampo(
 
 ALTER TABLE registrosCampo AUTO_INCREMENT=1001;
 
+ALTER TABLE registrosCampo
+ADD COLUMN statusEnsayo INT NOT NULL DEFAULT 0;
 
 
 CREATE TABLE formatoRegistroRev(
@@ -657,6 +663,54 @@ CREATE TABLE listaAsistencia(
 )ENGINE=INNODB;
 ALTER TABLE listaAsistencia AUTO_INCREMENT=1001;
 
+CREATE TABLE loteCorreos(
+	id_loteCorreos INT(11) NOT NULL AUTO_INCREMENT,
+	creador_id INT(11),
+	correosNo INT(11) DEFAULT 0,
+	
+	status INT NOT NULL DEFAULT 0,
+
+	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	active INT NOT NULL DEFAULT 1,
+
+	PRIMARY KEY(id_loteCorreos),
+
+	FOREIGN KEY(creador_id)
+	REFERENCES usuario(id_usuario)
+	ON DELETE SET NULL ON UPDATE CASCADE
+
+)ENGINE=INNODB;
+ALTER TABLE loteCorreos AUTO_INCREMENT=1001;
+
+INSERT INTO loteCorreos(creador_id) VALUES (1045);
+
+CREATE TABLE correoDeLote(
+	id_correoDeLote INT(11) NOT NULL AUTO_INCREMENT,
+	loteCorreos_id INT(11),
+	formatoCampo_id INT(11),
+	pdf  varchar(150),
+
+	status INT NOT NULL DEFAULT 0,
+
+	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	active INT NOT NULL DEFAULT 1,
+
+	PRIMARY KEY(id_correoDeLote),
+
+	FOREIGN KEY(loteCorreos_id)
+	REFERENCES loteCorreos(id_loteCorreos)
+	ON DELETE SET NULL ON UPDATE CASCADE,
+
+	FOREIGN KEY(formatoCampo_id)
+	REFERENCES formatoCampo(id_formatoCampo)
+	ON DELETE SET NULL ON UPDATE CASCADE
+
+)ENGINE=INNODB;
+ALTER TABLE correoDeLote AUTO_INCREMENT=1001;
+
+
 
 CREATE TABLE ensayoCilindro(
 	id_ensayoCilindro INT(11) NOT NULL AUTO_INCREMENT,
@@ -712,6 +766,8 @@ CREATE TABLE ensayoCubo(
 	falla INT(11) NOT NULL,
 	fecha DATE,
 
+	status INT NOT NULL DEFAULT 0,
+
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	active INT NOT NULL DEFAULT 1,
@@ -734,6 +790,9 @@ CREATE TABLE ensayoCubo(
 ALTER TABLE ensayoCubo AUTO_INCREMENT=1001;
 ALTER TABLE ensayoCubo ADD falla INT(11) NOT NULL;
 
+ALTER TABLE ensayoCubo ADD status INT NOT NULL DEFAULT 0;
+
+
 CREATE TABLE ensayoViga(
 	id_ensayoViga INT(11) NOT NULL AUTO_INCREMENT,
 	registrosCampo_id INT(11),
@@ -755,6 +814,8 @@ CREATE TABLE ensayoViga(
  	carga FLOAT(5.3),
  	defectos VARCHAR(20),
  	fecha DATE,
+
+ 	status INT NOT NULL DEFAULT 0,
 	
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -778,6 +839,8 @@ CREATE TABLE ensayoViga(
 
 ALTER TABLE ensayoViga AUTO_INCREMENT=1001;
 ALTER TABLE ensayoViga ADD defectos VARCHAR(20);
+
+ALTER TABLE ensayoViga ADD status INT NOT NULL DEFAULT 0;
 
 
 CREATE TABLE footerEnsayo(

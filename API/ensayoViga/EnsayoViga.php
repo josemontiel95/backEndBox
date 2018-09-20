@@ -63,7 +63,7 @@ class EnsayoViga{
 						UPDATE
 							ensayoViga
 						SET
-							fecha = CURDATE() AND
+							fecha = CURDATE(),
 							1QQ = '1QQ'
 						WHERE
 							id_ensayoViga = 1QQ
@@ -87,6 +87,78 @@ class EnsayoViga{
 			}else{
 				$arr = array('id_ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
 				return json_encode($arr);
+			}
+		}
+		return json_encode($arr);
+	}
+	public function getAllRegistrosFromFooterByID($token,$rol_usuario_id,$footerEnsayo_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qAll("
+			    	SELECT
+						id_ensayoViga,
+						ensayoViga.formatoCampo_id AS formatoCampo_id,
+						IF(registrosCampo.status = 3,'SI','NO') AS completado,
+						encargado_id,
+						CONCAT(nombre,' ',apellido) AS nombre,
+						ensayoViga.fecha AS fechaEnsayo,
+						condiciones,
+						lijado,
+						cuero,
+						ancho1,
+						ancho2,
+						per1,
+						per2,
+						l1,
+						l2,
+						l3,
+						disApoyo,
+						disCarga,
+						carga,
+						defectos,
+						registrosCampo_id,
+						claveEspecimen,
+						registrosCampo.fecha AS fechaColado,
+						diasEnsaye,
+						informeNo,
+						ensayoViga.formatoCampo_id,
+						ensayoViga.status AS status,
+						CASE
+							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
+							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
+							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
+							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
+							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
+							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
+							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
+							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
+							ELSE 'Error, Contacta a soporte'
+						END AS diasEnsayeFinal
+					FROM 
+						ensayoViga,registrosCampo,formatoCampo,footerEnsayo,usuario
+					WHERE
+						ensayoViga.footerEnsayo_id = id_footerEnsayo AND
+						encargado_id = id_usuario AND
+						id_formatoCampo = ensayoViga.formatoCampo_id AND
+						id_registrosCampo = ensayoViga.registrosCampo_id AND
+						ensayoViga.footerEnsayo_id = 1QQ
+			      ",
+			      array($footerEnsayo_id),
+			      "SELECT-- ensayoViga :: getAllRegistrosFromFooterByID"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('No existen registro relacionados con el id_ensayoViga'=>$id_ensayoViga,'error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 			}
 		}
 		return json_encode($arr);
@@ -124,6 +196,7 @@ class EnsayoViga{
 						registrosCampo.fecha AS fechaColado,
 						diasEnsaye,
 						ensayoViga.formatoCampo_id,
+						ensayoViga.status AS status,
 						CASE
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
@@ -170,54 +243,54 @@ class EnsayoViga{
 		if($arr['error'] == 0){
 				$dbS->beginTransaction();
 				$a = $dbS->qarrayA(
-										"
-											SELECT
-												registrosCampo_id
-											FROM
-												ensayoViga
-											WHERE
-												id_ensayoViga = 1QQ
-										",
-										array($id_ensayoViga),
-										"SELECT"
+					"	SELECT
+							registrosCampo_id
+						FROM
+							ensayoViga
+						WHERE
+							id_ensayoViga = 1QQ
+					",
+					array($id_ensayoViga),
+					"SELECT"
 									 );
 				if(!$dbS->didQuerydied){
 					$dbS->squery("
 						UPDATE
 							registrosCampo
 						SET
-							status = 1QQ
+							statusEnsayo = 1
 						WHERE
 							id_registrosCampo = 1QQ
-					",array(3,$a['registrosCampo_id']),"UPDATE");
+					",array($a['registrosCampo_id']),"UPDATE");
 					if(!$dbS->didQuerydied){
 						$dbS->squery("
 						UPDATE
 							ensayoViga
 						SET
-							fecha = CURDATE()
+							fecha = CURDATE(),
+							status = 1
 						WHERE
 							id_ensayoViga = 1QQ
 						",array($id_ensayoViga),"UPDATE");
 						if(!$dbS->didQuerydied){
 							$dbS->commitTransaction();
-							$arr = array('id_ensayoViga' => $id_ensayoViga,'estatus' => '¡Ensayo completado!','error' => 0);
+							$arr = array('ensayoViga' => $id_ensayoCilindro,'estatus' => '¡Ensayo completado!','error' => 0);
 							return json_encode($arr);
 						}
 						else{
 							$dbS->rollbackTransaction();
-							$arr = array('id_ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroViga, verifica tus datos y vuelve a intentarlo','error' => 5);
+							$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del ensayoViga, verifica tus datos y vuelve a intentarlo','error' => 5);
 							return json_encode($arr);	
 						}
 					}
 					else{
 						$dbS->rollbackTransaction();
-						$arr = array('id_ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCCH, verifica tus datos y vuelve a intentarlo','error' => 5);
+						$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCCH, verifica tus datos y vuelve a intentarlo','error' => 5);
 						return json_encode($arr);
 					}
 				}else{
 					$dbS->rollbackTransaction();
-					$arr = array('id_ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
+					$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
 					return json_encode($arr);
 				}		
 		}

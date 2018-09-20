@@ -35,7 +35,7 @@ class EnsayoCubo{
 						UPDATE
 							ensayoCubo
 						SET
-							fecha = CURDATE() AND
+							fecha = CURDATE(),
 							1QQ = '1QQ'
 						WHERE
 							id_ensayoCubo = 1QQ
@@ -128,6 +128,7 @@ class EnsayoCubo{
 						ensayoCubo.formatoCampo_id,
 						registrosCampo.fecha AS fechaColado,
 						informeNo,
+						ensayoCubo.status AS status,
 						CASE
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
@@ -165,6 +166,65 @@ class EnsayoCubo{
 		return json_encode($arr);
 	}
 
+	public function getAllRegistrosFromFooterByID($token,$rol_usuario_id,$footerEnsayo_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qAll("
+			    	SELECT
+						id_ensayoCubo,
+						ensayoCubo.formatoCampo_id AS formatoCampo_id,
+						IF(registrosCampo.status = 3,'SI','NO') AS completado,
+						l1,
+						l2,
+						carga,
+						falla,
+						registrosCampo_id,
+						claveEspecimen,
+						ensayoCubo.fecha AS fechaEnsayo,
+						diasEnsaye,
+						ensayoCubo.formatoCampo_id,
+						registrosCampo.fecha AS fechaColado,
+						informeNo,
+						ensayoCubo.status AS status,
+						CASE
+							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
+							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
+							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
+							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
+							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
+							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
+							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
+							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
+							ELSE 'Error, Contacta a soporte'
+						END AS diasEnsayeFinal
+					FROM 
+						ensayoCubo,registrosCampo,formatoCampo
+					WHERE
+						id_formatoCampo = ensayoCubo.formatoCampo_id AND
+						id_registrosCampo = ensayoCubo.registrosCampo_id AND
+						ensayoCubo.footerEnsayo_id = 1QQ
+			      ",
+			      array($footerEnsayo_id),
+			      "SELECT"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('No existen registro relacionados con el id_ensayoCubo'=>$id_ensayoCubo,'error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		return json_encode($arr);
+	}
+
 	public function completeEnsayo($token,$rol_usuario_id,$id_ensayoCubo){
 		global $dbS;
 		$usuario = new Usuario();
@@ -172,54 +232,54 @@ class EnsayoCubo{
 		if($arr['error'] == 0){
 				$dbS->beginTransaction();
 				$a = $dbS->qarrayA(
-										"
-											SELECT
-												registrosCampo_id
-											FROM
-												ensayoCubo
-											WHERE
-												id_ensayoCubo = 1QQ
-										",
-										array($id_ensayoCubo),
-										"SELECT"
+					"	SELECT
+							registrosCampo_id
+						FROM
+							ensayoCubo
+						WHERE
+							id_ensayoCubo = 1QQ
+					",
+					array($id_ensayoCubo),
+					"SELECT"
 									 );
 				if(!$dbS->didQuerydied){
 					$dbS->squery("
 						UPDATE
 							registrosCampo
 						SET
-							status = 1QQ
+							statusEnsayo = 1
 						WHERE
 							id_registrosCampo = 1QQ
-					",array(3,$a['registrosCampo_id']),"UPDATE");
+					",array($a['registrosCampo_id']),"UPDATE");
 					if(!$dbS->didQuerydied){
 						$dbS->squery("
 						UPDATE
 							ensayoCubo
 						SET
-							fecha = CURDATE()
+							fecha = CURDATE(),
+							status = 1
 						WHERE
 							id_ensayoCubo = 1QQ
 						",array($id_ensayoCubo),"UPDATE");
 						if(!$dbS->didQuerydied){
 							$dbS->commitTransaction();
-							$arr = array('id_ensayoCubo' => $id_ensayoCubo,'estatus' => '¡Ensayo completado!','error' => 0);
+							$arr = array('registroCubo' => $id_ensayoCilindro,'estatus' => '¡Ensayo completado!','error' => 0);
 							return json_encode($arr);
 						}
 						else{
 							$dbS->rollbackTransaction();
-							$arr = array('id_ensayoCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCubo, verifica tus datos y vuelve a intentarlo','error' => 5);
+							$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCubo, verifica tus datos y vuelve a intentarlo','error' => 5);
 							return json_encode($arr);	
 						}
 					}
 					else{
 						$dbS->rollbackTransaction();
-						$arr = array('id_ensayoCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCCH, verifica tus datos y vuelve a intentarlo','error' => 5);
+						$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCCH, verifica tus datos y vuelve a intentarlo','error' => 5);
 						return json_encode($arr);
 					}
 				}else{
 					$dbS->rollbackTransaction();
-					$arr = array('id_ensayoCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
+					$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
 					return json_encode($arr);
 				}		
 		}
