@@ -191,7 +191,7 @@ class footerEnsayo{
 				array($tipo),
 				"SELECT"
 			);
-			if($arr == "empty"){
+			if(!$dbS->didQuerydied && $arr == "empty"){
 				$var_system = $dbS->qarrayA(
 				"
 					SELECT
@@ -239,7 +239,7 @@ class footerEnsayo{
 								$arr = array('id_footerEnsayo' => $id, 'id_RegistroGabs' => $idRegGabsCubo,'estatus' => '¡Exito en la inicializacion','error' => 0,'existe' => 0);
 							}
 						break;
-						case"VIGA":
+						case"VIGAS":
 							$idRegGabsViga=$this->checkifRegCCHRegVIGA($id_RegistroCCH);
 							if($idRegGabsViga==-1){
 								$idRegGabsViga=$this->initEnsayoViga($id_RegistroCCH,$id);
@@ -250,6 +250,10 @@ class footerEnsayo{
 							}else{
 								$arr = array('id_footerEnsayo' => $id, 'id_RegistroGabs' => $idRegGabsViga,'estatus' => '¡Exito en la inicializacion','error' => 0,'existe' => 0);
 							}
+						break;
+						default:
+							$dbS->rollbackTransaction();
+							$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error, verifica tus datos y vuelve a intentarlo','error' => 11);
 						break;
 					}
 					$dbS->commitTransaction();
@@ -262,51 +266,61 @@ class footerEnsayo{
 
 			}
 			else{
-				switch($tipo){
-						case"CILINDRO":
-							$idRegGabsCil=$this->checkifRegCCHRegCILINDRO($id_RegistroCCH);
-							if($idRegGabsCil==-1){
-								$idRegGabsCil=$this->initEnsayoCilindro($id_RegistroCCH,$arr['id_footerEnsayo']);
-								$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsCil,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, se inicializo un nuevo registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
-							}else{ 
-								if($idRegGabsCil==-2){
-									$dbS->rollbackTransaction();
-									$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
-								}else{
-									$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsCil,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, ya existia un registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
+				if(!$dbS->didQuerydied){
+					switch($tipo){
+							case"CILINDRO":
+								$idRegGabsCil=$this->checkifRegCCHRegCILINDRO($id_RegistroCCH);
+								if($idRegGabsCil==-1){
+									$idRegGabsCil=$this->initEnsayoCilindro($id_RegistroCCH,$arr['id_footerEnsayo']);
+									$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsCil,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, se inicializo un nuevo registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
+								}else{ 
+									if($idRegGabsCil==-2){
+										$dbS->rollbackTransaction();
+										$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+									}else{
+										$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsCil,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, ya existia un registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
+									}
 								}
-							}
-						break;
-						case"CUBO":
-							$idRegGabsCubo=$this->checkifRegCCHRegCUBO($id_RegistroCCH);
-							if($idRegGabsCubo==-1){
-								$idRegGabsCubo=$this->initEnsayoCubo($id_RegistroCCH,$arr['id_footerEnsayo']);
-								$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsCubo,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, se inicializo un nuevo registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
-							}else{ 
-								if($idRegGabsCubo==-2){
-									$dbS->rollbackTransaction();
-									$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
-								}else{
-									$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsCubo,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, ya existia un registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
+							break;
+							case"CUBO":
+								$idRegGabsCubo=$this->checkifRegCCHRegCUBO($id_RegistroCCH);
+								if($idRegGabsCubo==-1){
+									$idRegGabsCubo=$this->initEnsayoCubo($id_RegistroCCH,$arr['id_footerEnsayo']);
+									$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsCubo,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, se inicializo un nuevo registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
+								}else{ 
+									if($idRegGabsCubo==-2){
+										$dbS->rollbackTransaction();
+										$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+									}else{
+										$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsCubo,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, ya existia un registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
+									}
 								}
-							}
-						break;
-						case"VIGA":
-							$idRegGabsViga=$this->checkifRegCCHRegVIGA($id_RegistroCCH);
-							if($idRegGabsViga==-1){
-								$idRegGabsViga=$this->initEnsayoViga($id_RegistroCCH,$arr['id_footerEnsayo']);
-								$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsViga,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, se inicializo un nuevo registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
-							}else{ 
-								if($idRegGabsViga==-2){
-									$dbS->rollbackTransaction();
-									$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
-								}else{
-									$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsViga,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, ya existia un registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
+							break;
+							case"VIGAS":
+								$idRegGabsViga=$this->checkifRegCCHRegVIGA($id_RegistroCCH);
+								if($idRegGabsViga==-1){
+									$idRegGabsViga=$this->initEnsayoViga($id_RegistroCCH,$arr['id_footerEnsayo']);
+									$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsViga,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, se inicializo un nuevo registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
+								}else{ 
+									if($idRegGabsViga==-2){
+										$dbS->rollbackTransaction();
+										$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+									}else{
+										$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsViga,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, ya existia un registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
+									}
 								}
-							}
-						break;
+							break;
+							default:
+								$dbS->rollbackTransaction();
+								$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error, verifica tus datos y vuelve a intentarlo','error' => 11);
+							break;
+       	
+					}
+					$dbS->commitTransaction();
+				}else{
+					$dbS->rollbackTransaction();
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error, verifica tus datos y vuelve a intentarlo','error' => 12);
 				}
-				$dbS->commitTransaction();
 			}
 			
 			

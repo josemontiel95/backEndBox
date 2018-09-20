@@ -25,5 +25,9 @@
 			$ensayo = new EnsayoViga();
 			echo $ensayo->getRegistrosByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ensayoViga']);
 			break;
+		case 'getAllRegistrosFromFooterByID':
+			$ensayo = new EnsayoViga();
+			echo $ensayo->getAllRegistrosFromFooterByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['footerEnsayo_id']);
+			break;
 	}
 ?>
