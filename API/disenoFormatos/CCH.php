@@ -286,9 +286,9 @@
 
 					//Funcion para truncar la cadena
 					$tam_campo = $this->GetStringWidth($campo); //Tamaño de la informacion del campo
-					while($tam_cadena_prueba>$array_campo[$j]){
-						$campo = substr($$campo,0,(strlen($campo))-1);
-						$tam_campo =  $pdf->GetStringWidth($$campo)+2;
+					while($tam_campo>$array_campo[$j]){
+						$campo = substr($campo,0,(strlen($campo))-1);
+						$tam_campo =  $this->GetStringWidth($campo)+2;
 					}
 					$this->cell($array_campo[$j],$tam_font_head - 2.5,$campo,1,0,'C');
 					$j++;
@@ -315,7 +315,7 @@
 			//Observaciones
 			$this->SetY($posicion_y);
 			$this->cell(0,2*($tam_font_footer - 2.5),$observaciones,'L,T,R',2);
-			$this->cell(0,$tam_observaciones,$infoFormato['observaciones'],'L,B,R',2);
+			$this->cell(0,$tam_observaciones,utf8_encode($infoFormato['observaciones']),'L,B,R',2);
 
 			//Metodos
 			$metodos = 'METODOS EMPLEADOS: NMX-C-161-ONNCCE-2013, NMX-C-159-ONNCCE-2016, NMX-C156-ONNCCE-2010';

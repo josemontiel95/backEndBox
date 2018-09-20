@@ -171,7 +171,7 @@
 			$this->Cell($this->GetStringWidth($obra)+2,$tam_font_left - 3,$obra,0);
 			//Caja de texto
 			$this->SetX(50);
-			$this->Cell(0,$tam_font_left - 4,$infoFormato['obra'],'B',0);
+			$this->Cell(0,$tam_font_left - 4,utf8_decode($infoFormato['obra']),'B',0);
 			$this->Ln(4);
 			$locObra = 'Localización de la Obra:';
 			$this->Cell($this->GetStringWidth($locObra)+2,$tam_font_left - 3,utf8_decode($locObra),0);

@@ -380,12 +380,15 @@
 
 			$this->Ln(4);
 
+			$tam_image = 15;
 			$tam_font_head =8;	$this->SetFont('Arial','B',$tam_font_head);//Fuente para clave
 			$superviso = 'Supervisó:';
 			$this->SetX(70);
-			$this->Cell($this->GetStringWidth($superviso)+2,(($tam_font_head)),utf8_decode($superviso),0,0);
+			$this->Cell($this->GetStringWidth($superviso)+2,(($tam_font_head)),utf8_decode($superviso.$this->Image('https://upload.wikimedia.org/wikipedia/commons/a/a0/Firma_de_Morelos.png',$this->GetX()+($this->GetStringWidth($superviso)+10),$this->GetY()-2,$tam_image,$tam_image)),0,0);
 			$this->Cell($this->GetStringWidth($superviso)+20,(($tam_font_head)-2),'','B',2);
 			$this->Cell($this->GetStringWidth($superviso)+20,(($tam_font_head)-2),'Nombre,firma y puesto',0,0);
+
+
 
 		}
 
