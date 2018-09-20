@@ -26,16 +26,34 @@
 			$lote = new loteCorreos();
 			echo $lote->completeFormato($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
 		break;
-		case 'getRegistrosByID':
-			$registro = new registrosCampo();
-			echo $registro->getRegistrosByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_registrosCampo']);
-		break;
 		
+		case 'getLoteByID':
+			$lote = new loteCorreos();
+			echo $lote->getLoteByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['lote']);
+		break;
+
+		case 'getAllAdministrativo':
+			$lote = new loteCorreos();
+			echo $lote->getAllAdministrativo($_GET['token'],$_GET['rol_usuario_id']);
+		break;
 		case 'getAllFormatosByLote':
 			$lote = new loteCorreos();
 			echo $lote->getAllFormatosByLote($_GET['token'],$_GET['rol_usuario_id'],$_GET['lote']);
 		break;
+		case 'generateAllFormatosByLote':
+			$lote = new loteCorreos();
+			echo $lote->generateAllFormatosByLote($_GET['token'],$_GET['rol_usuario_id'],$_GET['lote']);
+		break;
+
+		case 'sentAllEmailFormatosByLote':
+			$lote = new loteCorreos();
+			echo $lote->sentAllEmailFormatosByLote($_GET['token'],$_GET['rol_usuario_id'],$_GET['lote']);
+		break;
 		
+		case 'getAllFormatos':
+			$lote = new loteCorreos();
+			echo $lote->getAllFormatos($_GET['token'],$_GET['rol_usuario_id']);
+		break;
 		case 'ping2':
 			$lote = new loteCorreos();
 			echo $lote->ping2($_GET['data']);

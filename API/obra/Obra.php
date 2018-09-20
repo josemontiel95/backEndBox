@@ -64,7 +64,7 @@ class Obra{
 							active=1 AND
 							id_obra = 1QQ
 					 "
-					,array($obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,$cotizacion,$consecutivoProbeta,$id_obra),"UPDATE"
+					,array($obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,$cotizacion,$consecutivoProbeta,$consecutivoDocumentos,$id_obra),"UPDATE"
 			      	);
 			$arr = array('id_obra' => $id_obra, 'obra' => $obra,'estatus' => 'Exito de actualizacion','error' => 0);
 			if($dbS->didQuerydied){
