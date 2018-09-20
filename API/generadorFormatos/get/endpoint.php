@@ -19,7 +19,7 @@
 			break;
 		case 'generateCCH':
 			$generador = new GeneradorFormatos();
-			echo $generador->generateCCH($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
+			echo $generador->generateCCH($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo'],$_GET['target_dir']);
 			break;
 		case 'getRegCuboByFCCH':
 			$generador = new GeneradorFormatos();
@@ -27,7 +27,11 @@
 			break;
 		case 'generateRevenimiento':
 		$generador = new GeneradorFormatos();
-		echo $generador->generateRevenimiento($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoRegistroRev']);
+		echo $generador->generateRevenimiento($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoRegistroRev'],$_GET['target_dir']);
+		break;
+		case 'generateInformeRevenimiento':
+		$generador = new GeneradorFormatos();
+		echo $generador->generateInformeRevenimiento($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoRegistroRev'],$_GET['target_dir']);
 		break;
 	}
 ?>

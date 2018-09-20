@@ -2,6 +2,7 @@
 	include_once("./../../formatoCampo/formatoCampo.php");
 	include_once("./../../formatoCampo/registrosCampo.php");
 	include_once("./../../disenoFormatos/InformeCilindros.php");
+	include_once("./../../disenoFormatos/InformeRevenimiento.php");
 	include_once("./../../disenoFormatos/Revenimiento.php");
 	include_once("./../../disenoFormatos/InformeCubos.php");
 	include_once("./../../usuario/Usuario.php");
@@ -39,6 +40,16 @@
 			$info = $this->getInfoRev($token,$rol_usuario_id,$id_formatoRegistroRev);
 			$registros = $this->getRegRev($token,$rol_usuario_id,$id_formatoRegistroRev);
 			$pdf = new Revenimiento();	
+			$pdf->CreateNew($info,$registros,$target_dir);
+		}
+
+		function generateInformeRevenimiento($token,$rol_usuario_id,$id_formatoRegistroRev,$target_dir){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			$info = $this->getInfoRev($token,$rol_usuario_id,$id_formatoRegistroRev);
+			$registros = $this->getRegRev($token,$rol_usuario_id,$id_formatoRegistroRev);
+			$pdf = new InformeRevenimiento();	
 			$pdf->CreateNew($info,$registros,$target_dir);
 		}
 		/*
@@ -276,13 +287,15 @@
 					volumen,
 					horaDeterminacion,
 					unidad,
-					concretera_id,
+					concretera,
 					remisionNo,
 					horaSalida,
 					horaLlegada
 			      FROM 
-			      	registrosRev
+			      	registrosRev,
+			      	concretera
 			      WHERE 
+			      	concretera_id = id_concretera AND 
 			      	registrosRev.active = 1 AND
 			      	formatoRegistroRev_id = 1QQ
 			      ",
