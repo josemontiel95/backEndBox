@@ -492,8 +492,8 @@
 			$pdf->AddPage();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($infoFormato,$regisFormato);
-			//$pdf->Output('F',$target_dir);
-			$pdf->Output();
+			$pdf->Output('F',$target_dir);
+			//$pdf->Output();
 		}
 	
 		/*
