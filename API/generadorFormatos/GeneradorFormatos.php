@@ -9,7 +9,7 @@
 	include_once("./../../formatoRegistroRev/FormatoRegistroRev.php");
 
 	class GeneradorFormatos{
-		function generateInformeCampo($token,$rol_usuario_id,$id_formatoCampo){
+		function generateInformeCampo($token,$rol_usuario_id,$id_formatoCampo,$target_dir){
 			global $dbS;
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -17,12 +17,14 @@
 				$formato = new FormatoCampo();	$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
 				switch ($infoFormato['tipo_especimen']) {
 					case 'CUBO':
+						
 						$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-						$pdf = new InformeCubos();	$pdf->CreateNew($infoFormato,$regisFormato);
+						$pdf = new InformeCubos();	$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
 						break;
 					case 'CILINDRO':
-						$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-						$pdf = new InformeCilindros();	$pdf->CreateNew($infoFormato,$regisFormato);
+						//$infoFormato = $this->getInfoCilindro($token,$rol_usuario_id,$id_formatoCampo);
+						$regisFormato = $this->getRegCilindroByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+						$pdf = new InformeCilindros();	$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
 						break;
 
 				
@@ -62,6 +64,8 @@
 				$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
 			}
 		}
+
+
 
 		function getInfoEnsayoCubo($token,$rol_usuario_id,$id_ensayoCubo){
 			global $dbS;
@@ -116,6 +120,61 @@
 			return json_encode($arr);
 		}
 
+		/*
+			Es este o es el otro
+		function getInfoEnsayoCubo($token,$rol_usuario_id,$id_ensayoCubo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				$s= $dbS->qarrayA("
+				    	SELECT
+				    		registrosCampo.fecha AS fechaColado,
+				    		informeNo,
+				    		claveEspecimen,
+							l1,
+							l2,
+							carga,
+							(l1*l2)AS area,
+							carga/(l1*l2) AS resistencia,	
+							ensayoCubo.fecha AS fechaEnsayo,						
+							CASE
+								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
+								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
+								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
+								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
+								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
+								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
+								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
+								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
+								ELSE 'Error, Contacta a soporte'
+							END AS diasEnsayeFinal
+						FROM 
+							ensayoCubo,registrosCampo,formatoCampo
+						WHERE
+							id_formatoCampo = ensayoCubo.formatoCampo_id AND
+							id_registrosCampo = ensayoCubo.registrosCampo_id AND
+							id_ensayoCubo = 1QQ
+				      ",
+				      array($id_ensayoCubo),
+				      "SELECT"
+				      );
+				
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('No existen registro relacionados con el id_ensayoCubo'=>$id_ensayoCubo,'error' => 5);
+					}
+					else{
+						return json_encode($s);
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return json_encode($arr);
+		}
+		*/
 		function getInfoRev($token,$rol_usuario_id,$id_formatoRegistroRev){
 			global $dbS;
 			$usuario = new Usuario();
@@ -321,14 +380,78 @@
 
 		}
 
-	
-		function getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo){
+		/*
+		function getInfoVigaByFCCH($token,$rol_usuario_id,$id_formatoCampo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				$s= $dbS->qarrayA("
+				    	 SELECT
+					      	informeNo,
+					      	tipoConcreto,
+					      	fprima,
+					        obra,
+							obra.localizacion,
+							nombre,
+							CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion,
+							registrosCampo.localizacion,
+							footerEnsayo.observaciones
+					      FROM 
+					        ordenDeTrabajo,
+					        cliente,
+					        obra,
+					        formatoCampo,
+					        registrosCampo,
+					        footerEnsayo,
+					        ensayoViga
+					      WHERE 
+
+
+					      	ordenDeTrabajo.obra_id = obra.id_obra AND
+
+					      	obra.cliente_id = cliente.id_cliente AND
+					   
+							ordenDeTrabajo.id_ordenDeTrabajo = formatoCampo.ordenDeTrabajo_id AND
+
+							registrosCampo.formatoCampo_id = formatoCampo.id_formatoCampo AND
+
+							ensayoViga.footerEnsayo_id = footerEnsayo.id_footerEnsayo AND
+
+							ensayoViga.FormatoCampo_id = formatoCampo.id_formatoCampo AND
+
+							ensayoViga.registrosCampo_id = registrosCampo.id_registrosCampo AND
+
+					      	formatoCampo.id_formatoCampo = 1QQ
+				      ",
+				      array($id_formatoCampo),
+				      "SELECT"
+				      );
+				
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('No existen registro relacionados con el id_formatoCampo'=>$id_formatoCampo,'error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+		}
+		*/
+
+		function getRegVigaByFCCH($token,$rol_usuario_id,$id_formatoCampo){
 			global $dbS;
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
 				$s= $dbS->qAll("
 				    	SELECT
+
 				    		ROUND((((carga/(l1*l2))/fprima)*100),3)  AS porcentResis,
 				    		fprima,
 				    		ROUND((carga/(l1*l2)),3) AS kg,
@@ -351,7 +474,8 @@
 							END AS diasEnsaye,
 							revObra,
 							claveEspecimen,
-							ensayoCubo.fecha AS fechaEnsaye	
+							ensayoCubo.fecha AS fechaEnsaye,
+							localizacion
 						FROM
 							ensayoCubo,
 							registrosCampo,
@@ -387,9 +511,195 @@
 				}
 			}
 			return $arr;
+		}
+		function getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				$s= $dbS->qAll("
+				    	SELECT
+
+				    		ROUND((((carga/(l1*l2))/fprima)*100),3)  AS porcentResis,
+				    		fprima,
+				    		ROUND((carga/(l1*l2)),3) AS kg,
+				    		ROUND(((carga/(l1*l2))/var_system.ensayo_def_MPa),3)  AS mpa,
+				    		carga,
+				    		ROUND(((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn),3) AS kn,
+				    		ROUND((l1*l2),3) AS area,
+							l2,
+							l1,
+							CASE
+								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
+								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
+								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
+								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
+								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
+								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
+								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
+								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
+								ELSE 'Error, Contacta a soporte'
+							END AS diasEnsaye,
+							revObra,
+							claveEspecimen,
+							ensayoCubo.fecha AS fechaEnsaye,
+							localizacion
+						FROM
+							ensayoCubo,
+							registrosCampo,
+							formatoCampo,
+							(
+								SELECT
+									ensayo_def_pi
+									ensayo_def_kN,
+									ensayo_def_MPa,
+									ensayo_def_divisorKn
+								FROM
+									systemstatus
+								ORDER BY id_systemstatus DESC LIMIT 1
+							)AS var_system
+						WHERE
+							id_registrosCampo = ensayoCubo.registrosCampo_id AND
+							id_formatoCampo = ensayoCubo.formatoCampo_id AND 
+							ensayoCubo.formatoCampo_id = 1QQ
+				      ",
+				      array($id_formatoCampo),
+				      "SELECT"
+				      );
+				
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('No existen registro relacionados con el id_formatoCampo'=>$id_formatoCampo,'error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
 
 		}
 
+		function getRegCilindroByFCCH($token,$rol_usuario_id,$id_formatoCampo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				$s= $dbS->qAll("
+				    	SELECT
+				    		falla,
+				    		ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100),3)  AS porcentResis,
+				    		fprima,
+				    		ROUND((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4)),3) AS kg,
+				    		ROUND(((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/var_system.ensayo_def_MPa),3)  AS mpa,
+				    		carga,
+				    		ROUND(((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn),3) AS kn,
+				    		ROUND(((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4),3) AS area,
+				    		ROUND (h1+h2)/2 AS altura,
+				    		ROUND (d1+d2)/2 AS diametro,
+							CASE
+								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
+								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
+								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
+								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
+								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
+								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
+								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
+								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
+								ELSE 'Error, Contacta a soporte'
+							END AS diasEnsaye,
+							peso,
+							revObra,
+							claveEspecimen,
+							ensayoCilindro.fecha AS fechaEnsaye,
+							localizacion
+						FROM
+							ensayoCilindro,
+							registrosCampo,
+							formatoCampo,
+							(
+								SELECT
+									ensayo_def_pi,
+									ensayo_def_kN,
+									ensayo_def_MPa,
+									ensayo_def_divisorKn
+								FROM
+									systemstatus
+								ORDER BY id_systemstatus DESC LIMIT 1
+							)AS var_system
+						WHERE
+							id_registrosCampo = ensayoCilindro.registrosCampo_id AND
+							id_formatoCampo = ensayoCilindro.formatoCampo_id AND 
+							ensayoCilindro.formatoCampo_id = 1QQ
+				      ",
+				      array($id_formatoCampo),
+				      "SELECT"
+				      );
+				
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('No existen registro relacionados con el id_formatoCampo'=>$id_formatoCampo,'error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+
+		}
+
+		function getInfoCilindro($token,$rol_usuario_id,$id_formatoCampo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				$s= $dbS->qarrayA("
+			     				SELECT
+									informeNo,
+									obra.obra,
+									obra.localizacion,
+									cliente.nombre,
+									CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion,
+									formatoCampo.observaciones
+								FROM
+									formatoCampo,
+									ordenDeTrabajo,
+									obra,
+									cliente
+								WHERE
+									cliente.id_cliente = obra.cliente_id AND
+									obra.id_obra = ordenDeTrabajo.obra_id AND
+									ordenDeTrabajo.id_ordenDeTrabajo = formatoCampo.ordenDeTrabajo_id AND
+									formatoCampo.id_formatoCampo = 1QQ
+			      ",
+			      array($id_formatoCampo),
+			      "SELECT"
+			      );
+
+				
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('No existen registro relacionados con el id_formatoCampo'=>$id_formatoCampo,'error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getRegCCH, verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+		}
+
+		/*
 		function getRegCilindroByFCCH($token,$rol_usuario_id,$id_formatoCampo){
 			global $dbS;
 			$usuario = new Usuario();
@@ -459,6 +769,7 @@
 			return $arr;
 
 		}
+		*/
 	}
 	
 

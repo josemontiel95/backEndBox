@@ -81,9 +81,10 @@
 			//Espacio definido para los logotipos
 			//Definimos las dimensiones del logotipo de ema
 			$ancho_ema = 50;	$alto_ema = 20;
+			$posicion_x = $this->GetX();
 			//$this->SetX(-($ancho_ema + 10));
-			//$this->Image('ema.jpeg',null,null,$ancho_ema,$alto_ema);
-			$this->cell(0,20,'',1,2);
+			$this->Image('http://lacocs.montielpalacios.com/SystemData/BackData/Assets/ema.jpeg',$posicion_x,$this->GetY(),$ancho_ema,$alto_ema);
+			//$this->cell(0,20,'',1,2);
 			//Información de la empresa
 			$tam_font_titulo = 8;
 			$this->SetFont('Arial','B',$tam_font_titulo); 
