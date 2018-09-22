@@ -2,10 +2,10 @@
 class MySQLSystem{
 	
 	/* Variables de BDD */
-	private $dbname = "boxLacocs";
-	private $dbuser = "lacocsAdmin";
-	private $dbpssw = "Julio2018%";
-	private $dbsrvr = "160.153.46.5";
+	private $dbname = "lacocs";
+	private $dbuser = "lacocsadmin";
+	private $dbpssw = "Septiembre2018#";
+	private $dbsrvr = "mysqlcluster14.registeredsite.com";
 	
 	/* Variables de buffer */
 	private $resultSet;

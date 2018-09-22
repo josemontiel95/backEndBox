@@ -452,6 +452,7 @@ class FormatoRegistroRev{
 		$mailer = new Mailer();
 
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			$dbS->squery("	UPDATE
 								formatoRegistroRev
@@ -484,6 +485,8 @@ class FormatoRegistroRev{
 													id_cliente,
 													id_obra,
 													id_ordenDeTrabajo,
+													cliente.email AS emailCliente,
+													obra.correo_residente AS emailResidente,
 													CONCAT(nombre,'(',razonSocial,')') AS nombre,
 													email
 												FROM
@@ -527,28 +530,42 @@ class FormatoRegistroRev{
 							//Cachamos la excepcion
 							try{
 								$generador->generateRevenimiento($token,$rol_usuario_id,$id_formatoRegistroRev,$target_dir);
-								if($mailer->sendMailBasic($correo, $info['nombre'], $dirDatabase)==202){
+								if($mailer->sendMailBasic($info['emailCliente'], $info['nombre'], $dirDatabase)==202){
 									$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
 								}else{
 									$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 6);
+									$dbS->rollbackTransaction();
+									return json_encode($arr);
 								}
+								if($mailer->sendMailBasic($info['emailResidente'], $info['nombre'], $dirDatabase)==202){
+									$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
+								}else{
+									$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 6);
+									$dbS->rollbackTransaction();
+									return json_encode($arr);
+								}
+								$dbS->commitTransaction();
 							}catch(Exception $e){
 								$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 7);
+								$dbS->rollbackTransaction();
 								return json_encode($arr);
 							}
 
 						}
 						else{
+							$dbS->rollbackTransaction();
 							$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la consulta del apiRoot','error' =>8);
 						}
-					}
-					else{
+					}else{
+						$dbS->rollbackTransaction();
 						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la consulta de la informacion para la carpeta','error' => 9);
 					}
 				}else{
+					$dbS->rollbackTransaction();
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 10);
 				}
 			}else{
+				$dbS->rollbackTransaction();
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 11);
 			}		
 		}

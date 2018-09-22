@@ -517,7 +517,7 @@ class Herramienta{
 					 	HT.id_herramienta_tipo=H.herramienta_tipo_id AND
 					   	HO.active = 1 AND
 					 	H.laboratorio_id= 1QQ AND
-					   	H.herramienta_tipo_id = 1003 AND
+					   	H.herramienta_tipo_id = 1004 AND
 					   	HO.ordenDeTrabajo_id = 1QQ
 			      ",
 			      array($laboratorio_id,$id_ordenDeTrabajo),

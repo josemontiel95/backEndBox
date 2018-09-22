@@ -474,6 +474,8 @@ CREATE TABLE formatoCampo(
 
 	ensayadoFin int(11) NOT NULL DEFAULT 8,
 
+	loteStatus int(11) NOT NULL DEFAULT 0,
+
 	posInicial POINT NOT NULL,
 	posFinal POINT,
 
@@ -510,9 +512,11 @@ CREATE TABLE formatoCampo(
 ALTER TABLE formatoCampo AUTO_INCREMENT=1001;
 
 ALTER TABLE formatoCampo 
-ADD COLUMN ensayadoFin int(11) NOT NULL DEFAULT 0;
+ADD COLUMN loteStatus int(11) NOT NULL DEFAULT 0;
 	
 ALTER TABLE formatoCampo ALTER ensayadoFin SET DEFAULT 8;
+
+ALTER TABLE formatoCampo ALTER loteStatus SET DEFAULT 0;
 
 
 CREATE TABLE registrosCampo(
@@ -667,7 +671,7 @@ CREATE TABLE loteCorreos(
 	id_loteCorreos INT(11) NOT NULL AUTO_INCREMENT,
 	creador_id INT(11),
 	correosNo INT(11) DEFAULT 0,
-	
+
 	status INT NOT NULL DEFAULT 0,
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
