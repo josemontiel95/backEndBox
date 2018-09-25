@@ -460,8 +460,9 @@
 			$tam_image = 15;
 
 			$tam_font_footer = 7;
-			$this->Ln(12);	$this->SetX(40);
+			$this->Ln(12);	
 			$tamCelda_ancho = 90;
+			$this->SetX((279.4-$tamCelda_ancho)/2);
 			$tamCelda_alto = 10;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 			$this->cell($tamCelda_ancho,$tamCelda_alto,'','B',2);
@@ -470,6 +471,7 @@
 
 			$this->Image('https://upload.wikimedia.org/wikipedia/commons/a/a0/Firma_de_Morelos.png',(($posicion_x+($tamCelda_ancho)/2)-($tam_image/2)),($posicion_y + (($tamCelda_alto)/2))-($tam_image/2),$tam_image,$tam_image);
 
+			/*
 			$tamCelda_ancho = 60;
 			$this->SetXY($posicion_x + 150,$posicion_y);
 			$posicion_x = $this->GetX();
@@ -478,11 +480,23 @@
 			$this->cell($tamCelda_ancho,($tam_font_footer - 3),'ENTERADO',0,0,'C');
 
 			$this->Image('https://upload.wikimedia.org/wikipedia/commons/a/a0/Firma_de_Morelos.png',(($posicion_x+($tamCelda_ancho)/2)-($tam_image/2)),($posicion_y + (($tamCelda_alto)/2))-($tam_image/2),$tam_image,$tam_image);
+			*/
 					
 		}
 		
 		function Footer(){
-			
+			$this->SetY(-15);
+		    $this->SetFont('Arial','',8);
+		    $tam_noPagina = $this->GetStringWidth('Page '.$this->PageNo().'/{nb}');
+		    $posicion_x = (279.4 - $tam_noPagina)/2;
+		    $this->SetX($posicion_x);
+		    $this->Cell($tam_noPagina,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+
+		    //Clave de validacion
+		    $clave = 'FI-05-LCC-02-6.5';
+		    $tam_clave = $this->GetStringWidth($clave);
+		    $this->SetX(-($tam_clave + 10));
+		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');
 			
 		}
 		//Funcion que crea un nuevo formato
@@ -490,6 +504,7 @@
 		function CreateNew($infoFormato,$regisFormato,$target_dir){
 			$pdf  = new CCH('L','mm','Letter');
 			$pdf->AddPage();
+			$pdf->AliasNbPages();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($infoFormato,$regisFormato);
 			$pdf->Output('F',$target_dir);
