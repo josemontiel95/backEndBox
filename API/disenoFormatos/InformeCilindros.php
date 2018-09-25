@@ -3,6 +3,7 @@
 	include_once("./../../FPDF/fpdf.php");
 	//Formato de campo de cilindros
 	class InformeCilindros extends fpdf{
+		public $arrayCampos;
 		var $angle=0;
 		function RotatedText($x, $y, $txt, $angle)
 		{
@@ -92,7 +93,7 @@
 			$this->SetY(30);
 			$tam_font_titulo = 8.5;
 			$this->SetFont('Arial','B',$tam_font_titulo); 
-			$titulo = 'LABORATORIO DE CONTROL DE CALIDAD Y SUPERVISIÓN S.A DE C.V';
+			$titulo = 'LABORATORIO DE CONTROL DE CALIDAD Y SUPERVISIÓN S.A. DE C.V.';
 			$tam_cell = $this->GetStringWidth($titulo);
 			$this->SetX((279-$tam_cell)/2);
 			$this->Cell($tam_cell,$tam_font_titulo - 3,utf8_decode($titulo),0,'C');
@@ -105,10 +106,10 @@
 			$tam_font_info = 6.5;
 			//Direccion
 			$this->SetFont('Arial','B',$tam_font_info);
-			$direccion_lacocs = '35 NORTE No.3023, UNIDAD HABITACIONAL AQUILES SERDAN, PUEBLA, PUE.';
+			$direccion_lacocs = '35 NORTE No.3023, UNIDAD HABITACIONAL AQUILES SERDÁN, PUEBLA, PUE.';
 			$tam_direccion = $this->GetStringWidth($direccion_lacocs)+6;
 			$this->SetX(-$tam_tituloInforme-10);
-			$this->Cell($tam_direccion,$tam_font_info - 3,$direccion_lacocs,0,'C');
+			$this->Cell($tam_direccion,$tam_font_info - 3,utf8_decode($direccion_lacocs),0,'C');
 			//Telefono
 			$this->SetX($this->GetX()+20);
 			$telefono = 'TELS. 8686-973/ 8686-974';
@@ -138,14 +139,17 @@
 			$this->SetX(-($tam_informeNo+50));
 			$this->Cell($tam_informeNo,$tam_font_right - 3,$informeNo,0,0,'C');
 			//Caja de texto
+			$this->SetFont('Arial','',$tam_font_right);
 			$this->Cell(0,$tam_font_right - 3,utf8_decode($infoFormato['informeNo']),'B',0,'C');
 			$this->Ln($tam_font_right - 2);
 			//-Informe al cual sustituye
+			$this->SetFont('Arial','B',$tam_font_right);
 			$sustituyeInforme = 'ESTE INFORME SUSTITUYE A:';
 			$tam_sustituyeInforme = $this->GetStringWidth($sustituyeInforme)+6;
 			$this->SetX(-$tam_sustituyeInforme-50);
 			$this->Cell($tam_sustituyeInforme,$tam_font_right - 3,$sustituyeInforme,0,0,'C');
 			//Caja de texto
+			$this->SetFont('Arial','',$tam_font_right);
 			$this->Cell(0,$tam_font_right - 3,utf8_decode('N/A'),'B',0,'C');
 			//--Divide la informacion de la derecha y la izquierda
 			$this->Ln($tam_font_right - 1);
@@ -188,7 +192,7 @@
 		function putTables($infoFormato,$regisFormato){
 			//Guardamos la posicion de la Y para alinear todas las celdas a la misma altura
 			$posicion_y = $this->GetY();
-			$tam_font_head = 6;	$this->SetFont('Arial','',$tam_font_head);
+			$tam_font_head = 6;	$this->SetFont('Arial','B',$tam_font_head);
 			$falla = 'FALLA';
 			$tam_falla = $this->GetStringWidth($falla)+3;
 			$this->SetX(-($tam_falla + 10));
@@ -209,14 +213,14 @@
 			$this->multicell($tam_proyecto,$tam_font_head - 3,utf8_decode("F'c"."\n".'PROYECTO'."\n".'(kg/cm²)'),1,'C');
 			//----------------------SE MUEVEN FUENTES---------------------
 			//Resistencia a compresion
-			$tam_font_head = 5.5;	$this->SetFont('Arial','',$tam_font_head);
+			$tam_font_head = 5.5;	
 			$resis_compresion  = 'RESISTENCIA A';
 			$tam_resis = $this->GetStringWidth($resis_compresion)+10;
 			$this->SetY($posicion_y);
 			$this->SetX($posicion_x - $tam_resis);
 			$posicion_x = $this->GetX();
 			$this->multicell($tam_resis,0.75*($tam_font_head - 2.5),utf8_decode($resis_compresion."\n".'COMPRESIÓN'),1,'C');
-			$tam_font_head = 6;	$this->SetFont('Arial','',$tam_font_head);
+			$tam_font_head = 6;
 			//Abajo de resistencia a compresion
 			$kgcm = 'kg/cm²';
 			$tam_kgcm = $tam_resis/2;
@@ -244,7 +248,7 @@
 			$this->SetY($posicion_y + (1.5*($tam_font_head - 3)));	$this->SetX($posicion_x);
 			$this->cell($tam_carga/2,1.5*($tam_font_head - 3),$kN,1,0,'C');
 			//--- SE MUEVE LA FUENTE PARA AJUSTAR AL TAMAÑO
-			$tam_font_head = 5.5;	$this->SetFont('Arial','',$tam_font_head);
+			$tam_font_head = 5.5;	
 			//Abajo de Escpecimenes
 			$area = 'AREA EN';
 			$tam_area = $this->GetStringWidth($area) + 3;
@@ -262,7 +266,7 @@
 			$tam_edad = $this->GetStringWidth($edad) + 3;
 			$this->SetY($posicion_y + (1.5*($tam_font_head - 2.5)));	$this->SetX($posicion_x - $tam_edad); $posicion_x = $this->GetX();
 			$this->multicell($tam_edad,0.75*($tam_font_head - 2.5),utf8_decode($edad."\n".'DIAS'),1,'C');
-			$tam_font_head = 6;	$this->SetFont('Arial','',$tam_font_head);
+			$tam_font_head = 6;	
 			$peso = 'PESO EN kg';
 			$tam_peso = $this->GetStringWidth($peso) + 3;
 			$this->SetY($posicion_y + (1.5*($tam_font_head - 3)));	$this->SetX($posicion_x - $tam_peso);	$posicion_x = $this->GetX();
@@ -318,19 +322,21 @@
 			$tam_resistencia,
 									*/
 			//Guardamos la posicion de Y para insertar la cellda de "Elemento muestreado"
+			$this->SetFont('Arial','',$tam_font_head);
 			$ele_posicion_y = $this->GetY();
 			
 			$ele_posicion_y = $this->GetY(); 
 			$band = 0;
 			$num_rows = 0;
+			$array_aux = array_pop($regisFormato);
 			foreach ($regisFormato as $registro) {
 				$this->SetX(-10); $posicion_x = $this->GetX();
 				$j=0;
 				foreach ($registro as $campo) {
 					$this->SetX($posicion_x - $array_campo[$j]); $posicion_x = $this->GetX();
-					if($j < sizeof($array_campo)-1){
-						$this->cell($array_campo[$j],$tam_font_head - 3,$campo,1,0,'C');
-					}
+					
+					$this->cell($array_campo[$j],$tam_font_head - 3,utf8_decode($campo),1,0,'C');
+					
 					$j++;
 				}
 				$num_rows++;
@@ -340,12 +346,12 @@
 				for ($i=0; $i < (8-$num_rows); $i++){
 				//Definimos la posicion de X para tomarlo como referencia
 				$this->SetX(-10); $posicion_x = $this->GetX();	
-				for ($j=0; $j < sizeof($array_campo); $j++){ 
+				for ($j=0; $j < sizeof($array_campo) -1 ; $j++){ 
 					//Definimos la posicion apartir de la cual vamos a insertar la celda
 					$this->SetX($posicion_x - $array_campo[$j]); $posicion_x = $this->GetX();
-					if($j < sizeof($array_campo)-1){
-						$this->cell($array_campo[$j],$tam_font_head - 3,'',1,0,'C');
-					}
+					
+					$this->cell($array_campo[$j],$tam_font_head - 3,'',1,0,'C');
+					
 					
 				}	
 				$this->Ln();
@@ -357,13 +363,14 @@
 			//Modificamos el valor de Y para empezar en el inicio de la tabla
 			$this->SetY($ele_posicion_y);
 			//Insertamos las celdas de "Elemento muestreado"
+			/*
 			$campo = $regisFormato[0]['localizacion'];
 			$tam_campo = $this->GetStringWidth($campo); //Tamaño de la 
 			while($tam_campo>($tam_ele*6)){
 						$campo = substr($campo,0,(strlen($campo))-1);
 						$tam_campo =  $this->GetStringWidth($campo)+2;
-			}
-			$this->multicell($tam_ele,$tam_font_head - 3,$campo,'L,T');
+			}*/
+			$this->multicell($tam_ele,$tam_font_head - 3,utf8_decode($array_aux),'L,T');
 			
 			if($this->GetY() < $endDown_table){
 				$num_iteraciones = (($endDown_table - $this->GetY()) / ($tam_font_head - 3));
@@ -384,12 +391,11 @@
 			for ($i=0; $i < 8; $i++){
 				//Definimos la posicion de X para tomarlo como referencia
 				$this->SetX(-10); $posicion_x = $this->GetX();	
-				for ($j=0; $j < sizeof($array_campo); $j++){ 
+				for ($j=0; $j < sizeof($array_campo)-1; $j++){ 
 					//Definimos la posicion apartir de la cual vamos a insertar la celda
 					$this->SetX($posicion_x - $array_campo[$j]); $posicion_x = $this->GetX();
-					if($j < sizeof($array_campo)-1){
+					
 					$this->cell($array_campo[$j],$tam_font_head - 3,'',1,0,'C');
-					}
 				}	
 				$this->Ln();
 			}
@@ -442,6 +448,7 @@
 
 			$this->SetFont('Arial','B',$tam_font_footer);
 			//Metodos empleados
+			//
 			$metodos = 'METODOS EMPLEADOS: EL ENSAYO REALIZADO CUMPLE CON LAS NORMAS MEXICANAS NMX-C-161-ONNCCE-2013, NMX-C-156-ONNCCE-2010,'."\n".'NMX-C-159-ONNCCE-2016,NMX-C-109-ONNCCE-2013,NMX-C-083-ONNCCE-2014';
 			//$this->multicell(0,($tam_font_head - 2.5),$metodos,1,2);
 
@@ -452,20 +459,20 @@
 			//Guardamos las posiciones de esa linea
 			$posicion_x = $this->GetX();	$posicion_y = $this->GetY();
 
-			$this->multicell($tam_incertidumbre,($tam_font_footer - 3),$incertidumbre."\n".'DUMMY',1,'C');
+			$this->multicell($tam_incertidumbre,($tam_font_footer - 3),$incertidumbre."\n".'PENDIENTE',1,'C');
 
 			//Metodos empleados
 			$this->SetY($posicion_y);
-			$metodos = 'METODOS EMPLEADOS: EL ENSAYO REALIZADO CUMPLE CON LAS NORMAS MEXICANAS NMX-C-161-ONNCCE-2013, NMX-C-156-ONNCCE-2010,'."\n".'NMX-C-159-ONNCCE-2016,NMX-C-109-ONNCCE-2013,NMX-C-083-ONNCCE-2014';
+			$metodos = 'MÉTODOS EMPLEADOS: EL ENSAYO REALIZADO CUMPLE CON LAS NORMAS MEXICANAS NMX-C-161-ONNCCE-2013, NMX-C-156-ONNCCE-2010,'."\n".'NMX-C-159-ONNCCE-2016,NMX-C-109-ONNCCE-2013,NMX-C-083-ONNCCE-2014';
 			$tam_metodos = $this->GetStringWidth($metodos)+3;
-			$this->multicell($posicion_x -10,($tam_font_footer - 3),$metodos,1,2);
+			$this->multicell($posicion_x -10,($tam_font_footer - 3),utf8_decode($metodos),1,2);
 
 			$this->Ln(1);
 
 			
 
 			$tam_image = 20;
-			$tam_font_footer = 8; $this->SetFont('Arial','',$tam_font_footer);
+			$tam_font_footer = 8; $this->SetFont('Arial','B',$tam_font_footer);
 			
 			$tam_boxElaboro = 259/3;	$tam_first = 12.5; $tam_second = 12.5;
 			$posicion_y = $this->GetY();
@@ -474,19 +481,21 @@
 			$this->cell($tam_boxElaboro,$tam_second,'','L,B,R',2,'C');
 
 			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('___________________________________________'));	
+			$this->SetFont('Arial','',$tam_font_footer);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('SIGNATARIO/JEFE DE LABORATORIO')/2),$this->gety() - 3,utf8_decode('SIGNATARIO/JEFE DE LABORATORIO'));	
 			$this->Image('https://upload.wikimedia.org/wikipedia/commons/a/a0/Firma_de_Morelos.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 
 			
 
 			$this->SetXY($posicion_x+$tam_boxElaboro,$posicion_y);
+			$this->SetFont('Arial','B',$tam_font_footer);
 			$this->cell($tam_boxElaboro,$tam_first,'Vo. Bo.','L,T,R',2,'C');
 			$posicion_x = $this->GetX();
 
 			
 			$this->cell($tam_boxElaboro,$tam_second,'','L,B,R',2,'C');
 			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('___________________________________________'));	
-
+			$this->SetFont('Arial','',$tam_font_footer);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('DIRECTOR GENERAL/GERENTE GENERAL')/2),$this->gety() - 3,utf8_decode('DIRECTOR GENERAL/GERENTE GENERAL'));	
 			$this->SetFont('Arial','B',$tam_font_footer);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('M en I. MARCO ANTONIO CERVANTES M.')/2),$this->gety() - 12,utf8_decode('M en I. MARCO ANTONIO CERVANTES M.'));	
@@ -497,10 +506,12 @@
 
 			$this->SetXY($posicion_x+$tam_boxElaboro,$posicion_y);
 
+			$this->SetFont('Arial','B',$tam_font_footer);
 			$this->cell($tam_boxElaboro,$tam_first,'Recibe','L,T,R',2,'C');
 			$this->cell($tam_boxElaboro,$tam_second,'','L,B,R',2,'C');
 			$posicion_x = $this->GetX();
 			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('___________________________________________'));	
+			$this->SetFont('Arial','',$tam_font_footer);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NOMBRE DE QUIEN RECIBE')/2),$this->gety() - 3,utf8_decode('NOMBRE DE QUIEN RECIBE'));	
 			$this->Image('https://upload.wikimedia.org/wikipedia/commons/a/a0/Firma_de_Morelos.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 			$this->Ln(0);
@@ -511,16 +522,147 @@
 			
 			
 		}
-		function Footer(){
+
+		function calculateSize(){
+			$tam_font_head = 6;	$this->SetFont('Arial','',$tam_font_head);
+			$falla = 'FALLA';
+			$tam_falla = $this->GetStringWidth($falla)+3;
 			
+			$resistencia = 'RESISTENCIA';	
+			$tam_resistencia = $this->GetStringWidth($resistencia)+3;
+			
+			$proyecto = 'PROYECTO';
+			$tam_proyecto = $this->GetStringWidth($proyecto)+3;
+			
+			//----------------------SE MUEVEN FUENTES---------------------
+			//Resistencia a compresion
+			$tam_font_head = 5.5;	$this->SetFont('Arial','',$tam_font_head);
+			$resis_compresion  = 'RESISTENCIA A';
+			$tam_resis = $this->GetStringWidth($resis_compresion)+10;
+			
+			$tam_font_head = 6;	$this->SetFont('Arial','',$tam_font_head);
+			//Abajo de resistencia a compresion
+			$kgcm = 'kg/cm²';
+			$tam_kgcm = $tam_resis/2;
+			
+			$mp = 'MPa';
+			$tam_mp = $tam_resis/2;
+			
+			//Carga
+			$carga = 'CARGA';
+			$tam_carga = $this->GetStringWidth($carga) + 12;
+			
+			//Abajo de carga
+			$kg = '(kg)';
+			$tam_kg = $tam_carga/2;
+			
+			$kN = 'kN';
+			$tam_kN = $tam_carga/2;
+			
+			//--- SE MUEVE LA FUENTE PARA AJUSTAR AL TAMAÑO
+			$tam_font_head = 5.5;	$this->SetFont('Arial','',$tam_font_head);
+			//Abajo de Escpecimenes
+			$area = 'AREA EN';
+			$tam_area = $this->GetStringWidth($area) + 3;
+			
+			$altura = 'ALTURA';
+			$tam_altura = $this->GetStringWidth($area) + 3;
+			
+			$diametro = 'DIAMETRO EN';
+			$tam_diametro = $this->GetStringWidth($diametro) + 3;
+			
+			$edad = 'EDAD EN';
+			$tam_edad = $this->GetStringWidth($edad) + 3;
+			
+			$tam_font_head = 6;	$this->SetFont('Arial','',$tam_font_head);
+			$peso = 'PESO EN kg';
+			$tam_peso = $this->GetStringWidth($peso) + 3;
+			
+			$rev = 'REV. cm';
+			$tam_rev = $this->GetStringWidth($rev) + 3;
+			
+			//Especimenes
+			$especimenes = 'ESPECIMENES';
+			$tam_especimenes = ($tam_area + $tam_altura + $tam_diametro + $tam_edad + $tam_peso + $tam_rev);
+			
+			
+			$posicion_y = $this->GetY();
+			//Clave
+			$clave = 'CLAVE';
+			$tam_clave = $this->GetStringWidth($clave) + 25;
+			
+			//Fecha de ensaye
+			$fecha = 'FECHA DE ENSAYE';
+			$tam_fecha = $this->GetStringWidth($fecha) + 3;
+			
+			//Elemento
+			$elemento = 'ELEMENTO MUESTREADO';
+
+			$posicion_x = 	$tam_falla +
+							$tam_resistencia +
+							$tam_proyecto +
+							$tam_kgcm +
+							$tam_mp +
+							$tam_kg +
+							$tam_kN +
+							$tam_area +
+							$tam_altura +
+							$tam_diametro +
+							$tam_edad +
+							$tam_peso +
+							$tam_rev +
+							$tam_clave +
+							$tam_fecha +
+							10;
+
+
+			$this->SetX($posicion_x);							
+			$this->Cell(0,($tam_font_head+5)/2,'','L,T,R',0,'C');
+			$tam_ele = $this->GetX() - $posicion_x;
+
+			$array_campo = array(
+									$tam_falla,
+									$tam_resistencia,
+									$tam_proyecto,
+									$tam_kgcm,
+									$tam_mp,
+									$tam_kg,
+									$tam_kN,
+									$tam_area,
+									$tam_altura,
+									$tam_diametro,
+									$tam_edad,
+									$tam_peso,
+									$tam_rev,
+									$tam_clave,
+									$tam_fecha,
+									$tam_ele
+							);
+			$this->arrayCampos = $array_campo;
+		}
+		function Footer(){
+			$this->SetY(-15);
+		    $this->SetFont('Arial','',8);
+		    $tam_noPagina = $this->GetStringWidth('Page '.$this->PageNo().'/{nb}');
+		    $posicion_x = (279.4 - $tam_noPagina)/2;
+		    $this->SetX($posicion_x);
+		    $this->Cell($tam_noPagina,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+
+		    //Clave de validacion
+		    $clave = 'FI-05-LCC-01-6.1';
+		    $tam_clave = $this->GetStringWidth($clave);
+		    $this->SetX(-($tam_clave + 10));
+		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');
 		}
 		//Funcion que crea un nuevo formato
 		function CreateNew($infoFormato,$regisFormato,$target_dir){
 			$pdf  = new informeCilindros('L','mm','Letter');
 			$pdf->AddPage();
+			$pdf->AliasNbPages();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($infoFormato,$regisFormato);
 			$pdf->Output('F',$target_dir);
+			//$pdf->Output();
 		}
 		/*
 			Funciones para alinear el texto en una columna

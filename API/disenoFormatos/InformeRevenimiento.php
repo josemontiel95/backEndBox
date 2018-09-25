@@ -26,7 +26,7 @@
 			//Definimos el las propiedades de la primera linea del titulo
 			$tam_font_titulo = 9;
 			$this->SetFont('Arial','B',$tam_font_titulo); 
-			$titulo_linea1 = 'LABORATORIO DE CONTROL DE CALIDAD Y SUPERVISIÓN S.A DE C.V';
+			$titulo_linea1 = 'LABORATORIO DE CONTROL DE CALIDAD Y SUPERVISIÓN S.A. DE C.V.';
 			$tam_cell = $this->GetStringWidth($titulo_linea1);
 			$this->SetX((210-$tam_cell)/2);
 			$this->Cell($tam_cell,$tam_font_titulo - 3,utf8_decode($titulo_linea1),0,'C');
@@ -43,11 +43,11 @@
 			$tam_font_info = 7;
 			//Direccion
 			$this->SetFont('Arial','B',$tam_font_info);
-			$direccion_lacocs = '35 NORTE No.3023, UNIDAD HABITACIONAL AQUILES SERDAN, PUEBLA, PUE.';
+			$direccion_lacocs = '35 NORTE No.3023, UNIDAD HABITACIONAL AQUILES SERDÁN, PUEBLA, PUE.';
 			$tam_direccion = $this->GetStringWidth($direccion_lacocs)+6;
 			$this->SetX((210-$tam_direccion)/2);
 			//$this->SetX(-$tam_tituloInforme-10);
-			$this->Cell($tam_direccion,$tam_font_info - 3,$direccion_lacocs,0,'C');
+			$this->Cell($tam_direccion,$tam_font_info - 3,utf8_decode($direccion_lacocs),0,'C');
 
 			$this->Ln($tam_font_info - 3);
 			//Telefono y fax
@@ -498,7 +498,18 @@
 					
 		}
 		function Footer(){
-				
+			$this->SetY(-15);
+		    $this->SetFont('Arial','',8);
+		    $tam_noPagina = $this->GetStringWidth('Page '.$this->PageNo().'/{nb}');
+		    $posicion_x = (216 - $tam_noPagina)/2;
+		    $this->SetX($posicion_x);
+		    $this->Cell($tam_noPagina,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+
+		    //Clave de validacion
+		    $clave = 'FI-02-LCC-01-1.4';
+		    $tam_clave = $this->GetStringWidth($clave);
+		    $this->SetX(-($tam_clave + 10));
+		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');
 			
 
 			
@@ -507,6 +518,7 @@
 		function CreateNew($infoFormato,$regisFormato,$target_dir){
 			$pdf  = new InformeRevenimiento('P','mm','Letter');
 			$pdf->AddPage();
+			$pdf->AliasNbPages();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($infoFormato,$regisFormato);
 			$pdf->Output('F',$target_dir);
