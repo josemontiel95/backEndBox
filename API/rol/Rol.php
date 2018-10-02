@@ -29,7 +29,8 @@ class Rol{
 			      FROM 
 			        rol_usuario
 			      WHERE 
-			      	active=1
+			      	active=1 AND 
+			      	id_rol_usuario < 1007
 			      ORDER BY 
 			      	rol
 			      ",

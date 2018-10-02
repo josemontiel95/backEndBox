@@ -321,7 +321,8 @@ class Usuario{
 			        usuario,rol_usuario,laboratorio
 			      WHERE
 			      	laboratorio_id = id_laboratorio AND
-			      	rol_usuario_id = id_rol_usuario
+			      	rol_usuario_id = id_rol_usuario AND 
+			      	rol_usuario_id < 1007
 			      ",
 			      array(),
 			      "SELECT"
