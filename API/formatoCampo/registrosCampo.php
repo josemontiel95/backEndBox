@@ -50,42 +50,68 @@ class registrosCampo{
 										",array(),"SELECT");
 			if(!$dbS->didQuerydied && ($var_system != "empty")){
 				$rows = $dbS->qarrayA(
-						"
-							SELECT
-								COUNT(*) AS numRows
-							FROM
-								registrosCampo
-							WHERE
-								formatoCampo_id = 1QQ
-						"
-						,
-						array($formatoCampo_id),
-						"SELECT"
-					);
+					"
+						SELECT
+							COUNT(*) AS numRows
+						FROM
+							registrosCampo
+						WHERE
+							formatoCampo_id = 1QQ
+					"
+					,
+					array($formatoCampo_id),
+					"SELECT"
+				);
+
+				if($dbS->didQuerydied || ($rows=="empty")){
+					$dbS->rollbackTransaction();
+					$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 20);
+					return json_encode($arr);
+				}
+				$tipo = $dbS->qarrayA(
+					"
+						SELECT
+							tipo,
+						FROM
+							formatoCampo
+						WHERE
+							id_formatoCampo = 1QQ
+					"
+					,
+					array($formatoCampo_id),
+					"SELECT"
+				);
+				$NoDeRegistros = 4;
+				if($tipo == "VIGAS"){
+					$NoDeRegistros = 3;
+				}
+				$numRows=$rows['numRows']+$NoDeRegistros;
 
 				//Verifique que la consulta no devlviera empty, en cualquier caso que se consulte a un formato que no existe devuelve 0
-				if(!$dbS->didQuerydied && $rows['numRows']<$var_system['maxNoOfRegistrosCCH']){
+				if(!$dbS->didQuerydied && $numRows<=$var_system['maxNoOfRegistrosCCH']){
 					//Obtenemos la informacion para generar la claveEspecimen
+					
 					$a= $dbS->qarrayA("
-											SELECT
-												id_obra,
-												revenimiento, 
-												prefijo,
-												consecutivoProbeta,
-												MONTH(NOW()) AS mes,
-												DAY(NOW()) AS dia
-											FROM
-												ordenDeTrabajo,
-												obra,
-												formatoCampo
-											WHERE
-												id_obra = obra_id AND
-												id_ordenDeTrabajo =  formatoCampo.ordenDeTrabajo_id AND
-												id_formatoCampo = 1QQ
+							SELECT
+								id_obra,
+								revenimiento,
+								prefijo,
+								tipo,
+								consecutivoProbeta,
+								MONTH(NOW()) AS mes,
+								DAY(NOW()) AS dia
+							FROM
+								ordenDeTrabajo,
+								obra,
+								formatoCampo
+							WHERE
+								id_obra = obra_id AND
+								id_ordenDeTrabajo =  formatoCampo.ordenDeTrabajo_id AND
+								id_formatoCampo = 1QQ
 							",
 							array($formatoCampo_id),
-							"SELECT"
-						);
+						"SELECT"
+					);
 						if(!$dbS->didQuerydied && !($a=="empty")){
 							//Hacemos la clave
 							$mes = $this->numberToRomanRepresentation($a['mes']);
