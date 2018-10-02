@@ -494,7 +494,18 @@
 		}
 		
 		function Footer(){
-				
+			$this->SetY(-15);
+		    $this->SetFont('Arial','',8);
+		    $tam_noPagina = $this->GetStringWidth('Page '.$this->PageNo().'/{nb}');
+		    $posicion_x = (216 - $tam_noPagina)/2;
+		    $this->SetX($posicion_x);
+		    $this->Cell($tam_noPagina,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+
+		    //Clave de validacion
+		    $clave = 'FI-02-LCC-02-0.1';
+		    $tam_clave = $this->GetStringWidth($clave);
+		    $this->SetX(-($tam_clave + 10));
+		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');
 			
 
 			
@@ -503,9 +514,10 @@
 		function CreateNew($infoFormato,$regisFormato,$target_dir){
 			$pdf  = new Revenimiento('P','mm','Letter');
 			$pdf->AddPage();
+			$pdf->AliasNbPages();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($infoFormato,$regisFormato);
-			$pdf->Output('F',$target_dir); chido
+			$pdf->Output('F',$target_dir);
 			//$pdf->Output();
 		}
 
