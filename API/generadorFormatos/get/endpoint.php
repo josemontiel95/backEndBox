@@ -18,6 +18,7 @@
 			echo $generador->generateInformeCampo($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo'],$_GET['target_dir']);
 			break;
 		case 'generateCCH':
+		
 			$generador = new GeneradorFormatos();
 			echo $generador->generateCCH($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo'],$_GET['target_dir']);
 			break;
@@ -32,6 +33,10 @@
 		case 'generateInformeRevenimiento':
 		$generador = new GeneradorFormatos();
 		echo $generador->generateInformeRevenimiento($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoRegistroRev'],$_GET['target_dir']);
+		break;
+		case 'vistaPrevia':
+		$generador = new GeneradorFormatos();
+		echo $generador->vistaPrevia($_GET['token'],$_GET['rol_usuario_id'],$_GET['tipo']);
 		break;
 	}
 ?>
