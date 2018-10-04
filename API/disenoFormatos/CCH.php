@@ -512,16 +512,6 @@
 		}
 	
 		/*
-		function CreateNew($infoFormato,$regisFormato){
-			$pdf  = new CCH('L','mm','Letter');
-			$pdf->AddPage();
-			$pdf->putInfo($infoFormato);
-			$pdf->putTables($infoFormato,$regisFormato);
-			//$pdf->Footer($infoFormato);
-			$pdf->Output();
-		}*/
-
-		/*
 			Funciones para alinear el texto en una columna
 			Fuente: https://huguidugui.wordpress.com/2013/11/26/fpdf-ajustar-texto-en-celdas/
 		*/

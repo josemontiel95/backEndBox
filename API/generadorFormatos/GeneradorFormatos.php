@@ -23,18 +23,15 @@
 						$pdf  = new InformeCubos('L','mm','Letter');
 						$pdf->AddPage();
 						$pdf->calculateSize();
-						//echo json_encode($pdf->arrayCampos);
 						$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo,$pdf->arrayCampos);
-						
-						//echo json_encode($regisFormato);
-						$pdf = new InformeCubos();	$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
+						echo json_encode($regisFormato);
+						/*
+						$pdf = new InformeCubos();	$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);*/
 						break;
 					case 'CILINDRO':
-						//$infoFormato = $this->getInfoCilindro($token,$rol_usuario_id,$id_formatoCampo);
 						$pdf = new InformeCilindros('L','mm','Letter');
 						$pdf->AddPage();
 						$pdf->calculateSize();
-						//echo json_encode($pdf->arrayCampos);
 						$regisFormato = $this->getRegCilindroByFCCH($token,$rol_usuario_id,$id_formatoCampo,$pdf->arrayCampos);
 						unset($pdf);
 						$pdf = new InformeCilindros();	$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
@@ -53,6 +50,56 @@
 
 				
 				}
+			}
+		}
+
+
+		function vistaPrevia($token,$rol_usuario_id,$tipo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				switch ($tipo) {
+					case 'CUBO':
+						$pdf = new InformeCubos();
+						$pdf->demo();
+						break;
+					case 'VIGAS':
+						$pdf = new InformeVigas();
+						$pdf->demo();
+						break;
+					case 'CILINDRO':
+						$pdf = new InformeCilindros();
+						$pdf->demo();
+						break;
+				}
+			}else{
+				return json_encode($arr);
+			}
+			
+		}
+
+		function getMaxString($sizeString,$tam){
+			//Instanciamos el objeto para crear el pdf
+			$pdf = new fpdf();
+			//Configuramos el tamaño y fuente de la letra
+			$pdf->SetFont('Arial','',$sizeString);
+			//Declaramos el estado inicial de la cadena
+			$string = 'W';	
+			//Calculamos el tamaño inicial de la cadena
+			$tam_string = $pdf->GetStringWidth($string);
+			if($tam_string > $tam){
+				return array('estatus' => 'No se pudo calcular, el tamaño de la celda es insuficiente para ese tamaño de letra.','error' => '1');
+			}
+			else{
+				$count = 1;
+				//Realizamos un ciclo iterativo para aumentar la cadena hasta que no queda en el tamaño de la celda y devolver el total de caracteres que puede almacenar la celda
+				while ($tam_string < $tam) {
+					$string .= 'W';
+					$tam_string = $pdf->GetStringWidth($string);
+					$count++;
+				}
+				return $count;
 			}
 		}
 
@@ -383,6 +430,7 @@
 
 
 		function generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir){
+
 			global $dbS;
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -390,8 +438,11 @@
 				$formato = new FormatoCampo();	
 				$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
 				$regisFormato = $this->getRegCCH($token,$rol_usuario_id,$id_formatoCampo);
-				$pdf = new CCH();	
+				$pdf = new CCH();
 				$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
+			}
+			else{
+				echo json_encode($arr);
 			}
 		}
 		
