@@ -72,6 +72,10 @@
 						$pdf = new InformeCilindros();
 						$pdf->demo();
 						break;
+					case 'CCH':
+						$pdf = new CCH();
+						$pdf->demo();
+						break;
 				}
 			}else{
 				return json_encode($arr);

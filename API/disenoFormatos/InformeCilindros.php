@@ -3,79 +3,254 @@
 	include_once("./../../FPDF/fpdf.php");
 	//Formato de campo de cilindros
 	class InformeCilindros extends fpdf{
+		/*
+			Informacion extra:
+								-Ancho de una celda cuando su ancho = 0 : 259.3975
+		*/
+
+		//Variables
 		public $arrayCampos;
-		var $angle=0;
-		function RotatedText($x, $y, $txt, $angle)
-		{
-		    //Text rotated around its origin
-		    $this->Rotate($angle,$x,$y);
-		    $this->Text($x,$y,$txt);
-		    $this->Rotate(0);
+		public $arrayInfo;
+		
+		//Array que contiene los letreros de la información
+		private $cellsInfo;
+
+		//Array que contiene los letreso de las tablas
+		private $cellsTables;
+
+		//Array que contiene los letreros de los detalles
+		private $cellsDetails;
+
+		function generateCellsInfo(){
+			/*
+			Lado derecho:
+							-Informe No.
+							-Este informe sustituye a:
+			*/
+			$tam_font_right = 7.5;
+			$tam_CellsRightAlto =	$tam_font_right - 3;	
+			$this->SetFont('Arial','B',$tam_font_right);
+
+			//Separacion del margen
+			$separacion = 50;
+
+			//Numero del informe
+			$informeNo = 'INFORME No.';
+			$tam_informeNo = $this->GetStringWidth($informeNo)+6;
+
+			//-Informe al cual sustituye
+			$sustituyeInforme = 'ESTE INFORME SUSTITUYE A:';
+			$tam_sustituyeInforme = $this->GetStringWidth($sustituyeInforme)+6;
+
+			/*
+				Lado izquierdo:
+								-Obra
+								-Localizacion
+								-Cliente
+								-Direccion
+			*/
+			$posicionCellsText = 50;
+
+			$tam_font_left = 7;	
+			$tam_CellsLeftAlto = $tam_font_left - 3;
+			$this->SetFont('Arial','',$tam_font_left);
+			
+			$obra = 'Nombre de la Obra:';
+			$tam_obra = $this->GetStringWidth($obra)+2;
+
+			$locObra = 'Localización de la Obra:';
+			$tam_locObra = $this->GetStringWidth($locObra)+2;
+
+			$nomCli = 'Nombre del Cliente:';
+			$tam_nomCli = $this->GetStringWidth($nomCli)+2;
+			
+			$dirCliente = 'Dirección del Cliente:';
+			$tam_dirCliente = $this->GetStringWidth($nomCli)+2;
+
+			$tam_nomObraText = $tam_localizacionText = $tam_razonText = $tam_dirClienteText = 279.3975 - ($posicionCellsText+10);
+			$tam_informeText  = $tam_sustituyeInformeText = $separacion - 10;
+
+			$this->cellsInfo 	= 	array(
+											'separacion'					=>	$separacion,
+											'posicionCellsText'				=>	$posicionCellsText,
+
+											'tam_font_right'				=>	$tam_font_right,
+											'tam_font_left'					=>	$tam_font_left,
+
+											'tam_CellsRightAlto'			=> $tam_CellsRightAlto,
+
+											'tam_CellsLeftAlto'				=>	$tam_CellsLeftAlto,
+
+											'obra'					=> $obra,
+											'tam_obra'				=> $tam_obra,
+
+											'locObra'				=> $locObra,
+											'tam_locObra'			=> $tam_locObra,
+
+
+
+											'informeNo'				=> $informeNo,
+											'tam_informeNo'			=> $tam_informeNo,
+											'tam_informeText'		=>	$tam_informeText,
+
+											'sustituyeInforme'			=>	$sustituyeInforme,
+											'tam_sustituyeInforme'		=>	$tam_sustituyeInforme,
+											'tam_sustituyeInformeText'	=>	$tam_sustituyeInformeText,
+
+											'nomCli'				=> $nomCli,
+											'tam_nomCli'			=> $tam_nomCli,
+
+											'dirCliente'			=> $dirCliente,
+											'tam_dirCliente'		=> $tam_dirCliente,
+
+											'tam_nomObraText'			=>	$tam_nomObraText,
+											'tam_localizacionText'		=>	$tam_localizacionText,
+											'tam_informeText'			=>	$tam_informeText,
+											'tam_razonText'				=>	$tam_razonText,
+											'tam_dirClienteText'		=>	$tam_dirClienteText
+									);
+
 		}
 
-		function Rotate($angle,$x=-1,$y=-1)
-		{
-			if($x==-1)
-				$x=$this->x;
-			if($y==-1)
-				$y=$this->y;
-			if($this->angle!=0)
-				$this->_out('Q');
-			$this->angle=$angle;
-			if($angle!=0)
-			{
-				$angle*=M_PI/180;
-				$c=cos($angle);
-				$s=sin($angle);
-				$cx=$x*$this->k;
-				$cy=($this->h-$y)*$this->k;
-				$this->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',$c,$s,-$s,$c,$cx,$cy,-$cx,-$cy));
-			}
+		function generateCellsCampos(){
+			//Definimos el tamaño de fuente y configuramos el tamaño
+			$tam_font_Cells = 6;
+			$tam_font_CellsSmall = 5.5;		
+			$tam_font_CellsRows = 5;
+			$tam_cellsTablesAlto = $tam_font_Cells - 3;
+			$this->SetFont('Arial','B',$tam_font_Cells);
+
+
+			$falla = 'FALLA';
+			$tam_fallaAncho = $this->GetStringWidth($falla)+3;
+			$tam_fallaAlto = 1.5*($tam_font_Cells - 3);
+			$falla = $falla.'N°';
+
+			$resistencia = 'RESISTENCIA';	
+			$tam_resistenciaAncho = $this->GetStringWidth($resistencia)+3;
+			$tam_resistenciaAlto = 1.5*($tam_font_head - 3);
+			$resistencia = '% DE'."\n".$resistencia;
+
+			$proyecto = 'PROYECTO';
+			$tam_proyectoAncho = $this->GetStringWidth($proyecto)+3;
+			$tam_proyectoAlto = $tam_font_head - 3;
+			$proyecto = "F'c"."\n".'PROYECTO'."\n".'(kg/cm²)';
+
+			//----------------------SE MUEVEN FUENTES---------------------
+			$this->SetFont('Arial','B',$tam_font_CellsSmall);
+
+			$resis_compresion  = 'RESISTENCIA A';
+			$tam_resis_compresionAncho = $this->GetStringWidth($resis_compresion)+10;
+			$tam_resis_compresionAlto = 0.75*($tam_font_head - 2.5);
+			$resis_compresion = $resis_compresion."\n".'COMPRESIÓN';
+
+			//----------------------SE MUEVEN FUENTES---------------------
+			$this->SetFont('Arial','B',$tam_font_Cells);
+
+			$kgcm = 'kg/cm²';
+			$tam_kgcmAncho = $tam_resis_compresionAncho/2;
+			$tam_kgcmAlto = 1.5*($tam_font_head - 3);
+
+			$mp = 'MPa';
+			$tam_mpAncho = $tam_resis_compresionAncho/2;
+			$tam_mpAlto = 1.5*($tam_font_head - 3);
+
+			$carga = 'CARGA';
+			$tam_cargaAncho = $this->GetStringWidth($carga) + 12;
+			$tam_cargaAlto = 1.5*($tam_font_head - 3);
+
+			$kg = '(kg)';
+			$tam_kgAncho = $tam_cargaAncho/2;
+			$tam_kgAlto = 1.5*($tam_font_head - 3);
+
+			$kN = 'kN';
+			$tam_kNAncho = $tam_cargaAncho/2;
+			$tam_kNAlto = $1.5*($tam_font_head - 3);
+
+
+			//--- SE MUEVE LA FUENTE PARA AJUSTAR AL TAMAÑO
+			$this->SetFont('Arial','B',$tam_font_CellsSmall);
+
+			$area = 'AREA EN';
+			$tam_areaAncho = $this->GetStringWidth($area) + 3;
+			$tam_areaAlto = 0.75*($tam_font_head - 2.5);
+			$area = $area."\n".'cm²';
+	
+			$altura = 'ALTURA';
+			$tam_alturaAncho = $this->GetStringWidth($area) + 3;
+			$tam_alturaAlto = 0.75*($tam_font_head - 2.5);
+			$altura = $altura."\n".'EN cm';
+
+			$diametro = 'DIAMETRO EN';
+			$tam_diametroAncho = $this->GetStringWidth($diametro) + 3;
+			$tam_diametroAlto = 0.75*($tam_font_head - 2.5);
+			$diametro = $diametro."\n".'cm';
+
+			$edad = 'EDAD EN';
+			$tam_edadAncho = $this->GetStringWidth($edad) + 3;
+			$tam_edadAlto = 0.75*($tam_font_head - 2.5);
+			$edad = $edad."\n".'DIAS';
+
+			//----------------------SE MUEVEN FUENTES---------------------
+			$this->SetFont('Arial','B',$tam_font_Cells);
+
+			$peso = 'PESO EN kg';
+			$tam_pesoAncho = $this->GetStringWidth($peso) + 3;
+			$tam_pesoAlto = 1.5*($tam_font_head - 3);
+
+			$rev = 'REV. cm';
+			$tam_revAncho = $this->GetStringWidth($rev) + 3;
+			$tam_revAlto = 1.5*($tam_font_head - 3);
+
+			$especimenes = 'ESPECIMENES';
+			$tam_especimenesAncho = ($tam_area + $tam_altura + $tam_diametro + $tam_edad + $tam_peso + $tam_rev);
+			$tam_especimenesAlto = 1.5*($tam_font_head - 3);
+
+			$clave = 'CLAVE';
+			$tam_claveAncho = $this->GetStringWidth($clave) + 25;
+			$tam_claveAlto = 1.5*($tam_font_head - 3);
+
+			$fecha = 'FECHA DE ENSAYE';
+			$tam_fechaAncho = $this->GetStringWidth($fecha) + 3;
+			$tam_fechaAlto = 1.5*($tam_font_head - 3);
+
+			$elemento = 'ELEMENTO MUESTREADO';
+			$tam_eleAncho = 259.3975 - 	(
+											$tam_fallaAncho	+
+											$tam_resistenciaAncho	+
+											$tam_proyectoAncho	+
+											$tam_resis_compresionAncho	+
+											$tam_cargaAncho	+
+											$tam_especimenesAncho	+
+											$tam_claveAncho	+
+											$tam_fechaAncho	
+										);
+			$tam_eleAlto = 1.5*($tam_font_head - 3);
+			
+			$this->cellsTables = array(
+										'falla'				=>
+										'resistencia'		=>
+										'proyecto'			=>
+										'resis_compresion'	=>
+										'kgcm'				=>
+										'mp'				=>
+										'carga'				=>
+										'kg'				=>
+										'kN'				=>
+										'area'				=>
+										'altura'			=>
+										'diametro'			=>
+										'edad'				=>
+										'peso'				=>
+										'rev'				=>
+										'clave'				=>
+										'fecha'				=>
+										'elemento'			=>
+
+								)
+
 		}
 
-		function _endpage()
-		{
-			if($this->angle!=0)
-			{
-				$this->angle=0;
-				$this->_out('Q');
-			}
-			parent::_endpage();
-		}
-
-		function TextWithDirection($x, $y, $txt, $direction='R')
-		{
-		    if ($direction=='R')
-		        $s=sprintf('BT %.2F %.2F %.2F %.2F %.2F %.2F Tm (%s) Tj ET',1,0,0,1,$x*$this->k,($this->h-$y)*$this->k,$this->_escape($txt));
-		    elseif ($direction=='L')
-		        $s=sprintf('BT %.2F %.2F %.2F %.2F %.2F %.2F Tm (%s) Tj ET',-1,0,0,-1,$x*$this->k,($this->h-$y)*$this->k,$this->_escape($txt));
-		    elseif ($direction=='U')
-		        $s=sprintf('BT %.2F %.2F %.2F %.2F %.2F %.2F Tm (%s) Tj ET',0,1,-1,0,$x*$this->k,($this->h-$y)*$this->k,$this->_escape($txt));
-		    elseif ($direction=='D')
-		        $s=sprintf('BT %.2F %.2F %.2F %.2F %.2F %.2F Tm (%s) Tj ET',0,-1,1,0,$x*$this->k,($this->h-$y)*$this->k,$this->_escape($txt));
-		    else
-		        $s=sprintf('BT %.2F %.2F Td (%s) Tj ET',$x*$this->k,($this->h-$y)*$this->k,$this->_escape($txt));
-		    if ($this->ColorFlag)
-		        $s='q '.$this->TextColor.' '.$s.' Q';
-		    $this->_out($s);
-		}
-
-		function TextWithRotation($x, $y, $txt, $txt_angle, $font_angle=0)
-		{
-		    $font_angle+=90+$txt_angle;
-		    $txt_angle*=M_PI/180;
-		    $font_angle*=M_PI/180;
-
-		    $txt_dx=cos($txt_angle);
-		    $txt_dy=sin($txt_angle);
-		    $font_dx=cos($font_angle);
-		    $font_dy=sin($font_angle);
-
-		    $s=sprintf('BT %.2F %.2F %.2F %.2F %.2F %.2F Tm (%s) Tj ET',$txt_dx,$txt_dy,$font_dx,$font_dy,$x*$this->k,($this->h-$y)*$this->k,$this->_escape($txt));
-		    if ($this->ColorFlag)
-		        $s='q '.$this->TextColor.' '.$s.' Q';
-		    $this->_out($s);
-		}
 		function Header()
 		{
 			$ancho_ema = 50;	$alto_ema = 20;
@@ -661,8 +836,8 @@
 			$pdf->AliasNbPages();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($infoFormato,$regisFormato);
-			$pdf->Output('F',$target_dir);
-			//$pdf->Output();
+			//$pdf->Output('F',$target_dir);
+			$pdf->Output();
 		}
 		/*
 			Funciones para alinear el texto en una columna
