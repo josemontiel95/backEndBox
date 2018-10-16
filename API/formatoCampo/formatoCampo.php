@@ -668,6 +668,102 @@ class formatoCampo{
 		echo $data;
 	}
 
+	public function generatePDF($token,$rol_usuario_id,$id_formatoCampo){
+		global $dbS;
+
+		$usuario = new Usuario();
+		$mailer = new Mailer();
+		$generador = new GeneradorFormatos();
+
+
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
+		if($arr['error'] == 0){
+			$info = $dbS->qarrayA(
+				"SELECT
+					id_cliente,
+					id_obra,
+					id_ordenDeTrabajo,
+					cliente.email AS emailCliente,
+					obra.correo_residente AS emailResidente,
+					obra.correo_alterno AS correo_alterno,
+					CONCAT(nombre,'(',razonSocial,')') AS nombre,
+					email
+				FROM
+					cliente,
+					obra,
+					ordenDeTrabajo,
+					formatoCampo
+				WHERE
+					formatoCampo.ordenDeTrabajo_id = ordenDeTrabajo.id_ordenDeTrabajo AND
+					ordenDeTrabajo.obra_id = obra.id_obra AND
+					obra.cliente_id = cliente.id_cliente AND
+					id_formatoCampo = 1QQ
+				",
+				array($id_formatoCampo)
+				,"SELECT -- FormatoCampo :: generatePDF : 1"
+			);
+			if($dbS->didQuerydied || ($info=="empty")){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 6);
+				return json_encode($arr);
+			}
+			$var_system = $dbS->qarrayA(
+			"
+				SELECT
+					apiRoot
+				FROM
+					systemstatus
+				ORDER BY id_systemstatus DESC;
+			",array(),"SELECT -- FormatoCampo :: generatePDF : 2"
+			);
+			if($dbS->didQuerydied || ($var_system=="empty")){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 7);
+				return json_encode($arr);
+			}
+
+			//Obtenemos la hora para que no se repitan en caso de crear un nuevo formato
+			$hora_de_creacion = getdate();
+			$target_dir = "./../../../SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/";
+			$dirDatabase = $var_system['apiRoot']."SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/"."preliminarCCH"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+			if (!file_exists($target_dir)) {
+				mkdir($target_dir, 0777, true);
+			}
+			$target_dir=$target_dir."preliminarCCH"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+			//Llamada a el generador de formatos
+			//Cachamos la excepcion
+			try{
+				$generador->generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir);
+			}catch(Exception $e){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 8);
+				return json_encode($arr);
+			}
+			$dbS->squery("	
+				UPDATE
+					formatoCampo
+				SET
+					preliminar = '1QQ'
+				WHERE
+					id_formatoCampo = 1QQ
+			"
+			,array($dirDatabase,$id_formatoCampo),"UPDATE -- formatoCampo :: generatePDF : 3"
+			);
+
+			if($dbS->didQuerydied){ // Si no murio la query de guardar el preliminar en BD
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 40);
+				return json_encode($arr);
+			}else{
+				$dbS->commitTransaction();
+				return json_encode($arr);
+			}
+
+		}
+		return json_encode($arr);
+	}
+
 	public function completeFormato($token,$rol_usuario_id,$id_formatoCampo){
 		global $dbS;
 
@@ -793,7 +889,6 @@ class formatoCampo{
 										return json_encode($arr);
 									}
 									//  Envio del segundo correo
-
 									if($mailer->sendMailBasic($info['emailResidente'], $info['nombre'], $dirDatabase)==202){
 										$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
 									}else{
