@@ -1,5 +1,5 @@
 <?php
-	//include_once("./../FPDF/fpdf.php");
+	include_once("./../../FPDF/fpdf.php"); //Salieron problemas con la extension, pero en un principio no existian esos problemas
 
 	/*
 		Clase con fines de almacenar las funciones que necesito en las demas clases que generan los formatos y hacer mas limpio el codigo de los demas formatos
@@ -13,7 +13,6 @@
 			$num_rows = 0;
 			//Modificar de modo a que acepte los resultados de la query PENDIENTE
 			for($k=0;$k<$grupos;$k++) {	
-				$this->SetX($positionPrint);
 				for ($j=0; $j < sizeof($arrayTamCells); $j++){ 
 					$this->cell($arrayTamCells[$j],$tamAltoCells,$this->getMaxString($tam_font,$arrayTamCells[$j],$valor),1,0,'C');
 				}
@@ -22,11 +21,54 @@
 			}
 			if($num_rows<$grupos){
 				for ($i=0; $i < ($grupos-$num_rows); $i++){
-					$this->SetX($positionPrint);
 					for ($j=0; $j < sizeof($arrayTamCells); $j++){ 
 						$this->cell($arrayTamCells[$j],$tamAltoCells,$this->getMaxString($tam_font,$arrayTamCells[$j],$valor),1,0,'C');
 					}
 					$this->Ln();
+				}
+			}
+		}
+
+		function putRowsWithoutInfo($grupos,$tam_font,$arrayTamCells,$tamAltoCells){
+			$this->SetFont('Arial','',$tam_font);
+			$num_rows = 0;
+			//Modificar de modo a que acepte los resultados de la query PENDIENTE
+			for($k=0;$k<$grupos;$k++) {	
+				for ($j=0; $j < sizeof($arrayTamCells); $j++){ 
+					$this->cell($arrayTamCells[$j],$tamAltoCells,'',1,0,'C');
+				}
+				$num_rows++;
+				$this->Ln();
+			}
+			if($num_rows<$grupos){
+				for ($i=0; $i < ($grupos-$num_rows); $i++){
+					for ($j=0; $j < sizeof($arrayTamCells); $j++){ 
+						$this->cell($arrayTamCells[$j],$tamAltoCells,'',1,0,'C');
+					}
+					$this->Ln();
+				}
+			}
+		}
+
+		function putRowsCCH($regisFormato,$grupos,$tam_font,$arrayTamCells,$tamAltoCells){
+			$this->SetFont('Arial','',$tam_font);
+			$num_rows = 0;
+			foreach ($regisFormato as $registro) {
+				$j=0;
+				foreach ($registro as $campo) {
+					$this->cell($arrayTamCells[$j],$tamAltoCells,utf8_decode($campo),1,0,'C');
+					$j++;
+				}
+				$num_rows++;
+				$this->Ln();
+			}
+			if($num_rows<$grupos){
+				for ($i=0; $i < ($grupos-$num_rows); $i++){
+				//Definimos la posicion de X para tomarlo como referencia
+				for ($j=0; $j < sizeof($arrayTamCells); $j++){ 
+						$this->cell($arrayTamCells[$j],$tamAltoCells,utf8_decode($campo),1,0,'C');
+				}	
+				$this->Ln();
 				}
 			}
 		}
@@ -54,6 +96,56 @@
 			}
 		}
 
+		function putInfoTablesWithPositionInformesWithoutInfo($positionPrint,$grupos,$tam_font,$arrayTamCells,$tamAltoCells){
+			$this->SetFont('Arial','',$tam_font);
+			$num_rows = 0;
+			//Modificar de modo a que acepte los resultados de la query PENDIENTE
+			for($k=0;$k<$grupos;$k++) {	
+				$this->SetX($positionPrint);
+				for ($j=0; $j < sizeof($arrayTamCells); $j++){ 
+					$this->cell($arrayTamCells[$j],$tamAltoCells,'',1,0,'C');
+				}
+				$num_rows++;
+				$this->Ln();
+			}
+			if($num_rows<$grupos){
+				for ($i=0; $i < ($grupos-$num_rows); $i++){
+					$this->SetX($positionPrint);
+					for ($j=0; $j < sizeof($arrayTamCells); $j++){ 
+						$this->cell($arrayTamCells[$j],$tamAltoCells,'',1,0,'C');
+					}
+					$this->Ln();
+				}
+			}
+		}
+
+		function putInfoTablesWithPositionInformes($positionPrint,$regisFormato,$grupos,$tam_font,$arrayTamCells,$tamAltoCells){
+			$this->SetFont('Arial','',$tam_font);
+			$num_rows = 0;
+			foreach ($regisFormato as $registro) {
+				$j=0;
+				$this->SetX($positionPrint);
+				foreach ($registro as $campo) {
+					$this->cell($arrayTamCells[$j],$tamAltoCells,utf8_decode($campo),1,0,'C');
+					$j++;
+				}
+				$num_rows++;
+				$this->Ln();
+			}
+			
+			if($num_rows<$grupos){
+				
+				for ($i=0; $i < ($grupos-$num_rows); $i++){
+					$this->SetX($positionPrint);
+					//Definimos la posicion de X para tomarlo como referencia
+					for ($j=0; $j < sizeof($arrayTamCells); $j++){ 
+							$this->cell($arrayTamCells[$j],$tamAltoCells,'',1,0,'C');
+					}	
+					$this->Ln();
+				}
+			}
+		}
+
 		function putMaxString($sizeString,$totalCharacters){
 			$this->SetFont('Arial','',$sizeString);
 			$string = 'W'; //Definimos la cadena
@@ -63,45 +155,11 @@
 			return $string;
 		}
 
-		//Posible mejora, solo con divisiones y obtener el entero---PENDIENTE---
-
-		/*
-			Funcion de reserva por si no se puede implementar posibles mejoras
-
-		function getMaxString($sizeString,$tam){
+		function getMaxString($sizeFont,$tam,$value){
 			//Instanciamos el objeto para crear el pdf
 			$pdf = new fpdf();
 			//Configuramos el tamaño y fuente de la letra
-			$pdf->SetFont('Arial','',$sizeString);
-			//Declaramos el estado inicial de la cadena
-			$string = 'W';	
-			//Calculamos el tamaño inicial de la cadena
-			$tam_string = $pdf->GetStringWidth($string);
-			if($tam_string >= $tam){
-				return array('estatus' => 'No se pudo calcular, el tamaño de la celda es insuficiente para ese tamaño de letra.','error' => '1');
-			}
-			else{
-				$count = 1;
-				//Realizamos un ciclo iterativo para aumentar la cadena hasta que no queda en el tamaño de la celda y devolver el total de caracteres que puede almacenar la celda
-				while ($tam_string < $tam) {
-					$string .= 'W';
-					$tam_string = $pdf->GetStringWidth($string);
-					$count++;
-				}
-				//return $count - 1;
-				$count --;
-				$string = substr($string,0,-1);
-				$tam_string = substr($this->GetStringWidth($string),0,6);
-				return	array('string' => $string, 'tam_stringCarac' => $count, 'tam_stringPoints' => $tam_string);
-			}
-		
-		}*/
-
-		function getMaxString($sizeString,$tam,$value){
-			//Instanciamos el objeto para crear el pdf
-			$pdf = new fpdf();
-			//Configuramos el tamaño y fuente de la letra
-			$pdf->SetFont('Arial','',$sizeString);
+			$pdf->SetFont('Arial','',$sizeFont);
 			//Declaramos el estado inicial de la cadena
 			$string = 'W';	
 			//Calculamos el tamaño inicial de la cadena
@@ -118,15 +176,26 @@
 							return 	$totalCharacters;
 						break;
 					case 'string':
-							return $this->putMaxString($sizeString,$totalCharacters);
+							return $this->putMaxString($sizeFont,$totalCharacters);
 						break;
 					case 'tam_stringPoints':
-							return $this->GetStringWidth(	$this->putMaxString($sizeString,$totalCharacters)	);
+							return $this->GetStringWidth(	$this->putMaxString($sizeFont,$totalCharacters)	);
 						break;
 					
 				}
 			}
 
+		}
+
+		function printInfo($sizeFont,$tam,$string){
+			//Obtenemos el total de caracteres que se puede almacenar en esa cadena
+			$totalCharacters = $this->getMaxString($sizeFont,$tam,'tam_stringCarac');
+			
+			if(strlen($string) > $totalCharacters){
+				$string = substr($string,0,$totalCharacters - 1);//Extraemos la parte de la cadena que cabe en la celda
+				$string.='...';
+			}
+			return $string;
 		}
 
 

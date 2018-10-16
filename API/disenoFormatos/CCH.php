@@ -410,7 +410,7 @@
 
 			$posicion_x = $this->GetX();
 
-			$this->Image('http://lacocs.montielpalacios.com/SystemData/BackData/Assets/lacocs.jpg',$posicion_x,$this->GetY(),$tam_lacocs + 10,$tam_lacocs);
+			$this->Image('./../../disenoFormatos/lacocs.jpg',$posicion_x,$this->GetY(),$tam_lacocs + 10,$tam_lacocs);
 			$tam_font_titulo = 8.5;
 			$this->SetFont('Arial','B',$tam_font_titulo); 
 			$posicion_x = $this->GetX();
@@ -447,14 +447,9 @@
 		
 
 		function putInfo($infoFormato){
+			$this->ln(4);	
 
-			$this->ln(4);
-			$tam_font_right = 7.5;	$this->SetFont('Arial','B',$tam_font_right);
-			$tam_line = 160;
-			
-
-			
-
+			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']);
 			/*
 				Lado izquierdo:
 								-Obra
@@ -463,60 +458,69 @@
 								-Direccion
 			*/
 
-			$tam_font_left = 7;	$this->SetFont('Arial','B',$tam_font_left); 
-
 			//Cuadro con informacion
-			$obra = 'Nombre de la Obra:';
-			$this->Cell($this->GetStringWidth($obra)+2,$tam_font_left - 3,$obra,0);
+
+			//Nombre de la obra
+			$this->Cell($this->cellsInfo['tam_obra'],$this->cellsInfo['tam_cellsAlto'],$this->cellsInfo['obra'],0);
+
+
 			//Caja de texto
-			$this->SetFont('Arial','',$tam_font_left); 
+			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
+
 			$this->SetX(50);
-			$this->Cell($tam_line,$tam_font_left - 3,utf8_decode($infoFormato['obra']),'B',0);
 
-			$this->Ln($tam_font_left - 2);
-			$this->SetFont('Arial','B',$tam_font_left); 
-			$locObra = 'Localización de la Obra:';
-			$this->Cell($this->GetStringWidth($locObra)+2,$tam_font_left - 3,utf8_decode($locObra),0);
+			$this->Cell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($infoFormato['obra']),'B',0);
+
+			$this->Ln($this->cellsInfo['tam_font_left'] - 2);
+			
+			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']); 
+			
+			//Localizacion de la obra
+			$this->Cell($this->cellsInfo['tam_locObra'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($this->cellsInfo['locObra']),0);
 
 			//Caja de texto
+			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
+
 			$this->SetX(50);
-			$this->SetFont('Arial','',$tam_font_left); 
-			$this->Cell($tam_line,$tam_font_left - 3,utf8_decode($infoFormato['localizacion']),'B',0);
-			$this->SetFont('Arial','B',$tam_font_left); 
 
-			$informeNo = 'INFORME No.';
-			$tam_informeNo = $this->GetStringWidth($informeNo)+6;
-			$this->SetX(-($tam_informeNo+40));
-			$this->Cell($tam_informeNo,$tam_font_right - 3,$informeNo,0,0,'C');
+			$this->Cell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($infoFormato['localizacion']),'B',0);
 
-			//Caja de texto
-			$this->SetFont('Arial','',$tam_font_left); 
-			$this->Cell(30,$tam_font_right - 3,utf8_decode($infoFormato['informeNo']),'B',0,'C');
+			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_right']); 
 
-			$this->Ln($tam_font_left - 2);
-
-			$this->SetFont('Arial','B',$tam_font_left); 
-			$nomCli = 'Nombre del Cliente:';
-			$this->Cell($this->GetStringWidth($nomCli)+2,$tam_font_left - 3,utf8_decode($nomCli),0);
+			//Numero del informe
+			$this->SetX(-($this->cellsInfo['tam_informeNo']+40));
+			$this->Cell($this->cellsInfo['tam_informeNo'],$this->cellsInfo['tam_cellsAlto'],$this->cellsInfo['informeNo'],0,0,'C');
 
 			//Caja de texto
-			$this->SetFont('Arial','',$tam_font_left); 
+			$this->SetFont('Arial','',$this->cellsInfo['tam_font_right']);
+		
+			$this->Cell($this->cellsInfo['tam_informeText'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($infoFormato['informeNo']),'B',0,'C');
+
+			$this->Ln($this->cellsInfo['tam_font_left'] - 2);
+
+			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']); 
+			//Nombre del cliente
+			$this->Cell($this->cellsInfo['nomCli'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($this->cellsInfo['nomCli']),0);
+
+			//Caja de texto
+			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']); 
 			$this->SetX(50);
-			$this->Cell($tam_line,$tam_font_left - 3,utf8_decode($infoFormato['razonSocial']),'B',0);
+			
+			$this->Cell($this->cellsInfo['tam_razonText'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($infoFormato['razonSocial']),'B',0);
 
-			$this->Ln($tam_font_left - 2);
+			$this->Ln($this->cellsInfo['tam_font_left'] - 2);
 
 			//Direccion del cliente
-			$this->SetFont('Arial','B',$tam_font_left); 
-			$dirCliente = 'Dirección del Cliente:';
-			$this->Cell($this->GetStringWidth($nomCli)+2,$tam_font_left - 3,utf8_decode($dirCliente),0);
+			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']); 
+			$this->Cell($this->cellsInfo['tam_dirCliente'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($this->cellsInfo['dirCliente']),0);
 			//Caja de texto
+			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
 			$this->SetX(50);
-			$this->SetFont('Arial','',$tam_font_left); 
-			$this->Cell($tam_line,$tam_font_left - 3,utf8_decode($infoFormato['direccion']),'B',0);
+
+			$this->Cell($this->cellsInfo['tam_dirClienteText'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($infoFormato['direccion']),'B',0);
 
 			//Divide la informacion del formato de la Tabla (Esta en funcion del tamaño de fuente de la informacion de la derecha)
-			$this->Ln($tam_font_left-2);
+			$this->Ln(10);
 
 			//Titulo del CCH
 			$tam_font_tituloCCH = 12; //Definimos el tamaño de la fuente
@@ -526,7 +530,7 @@
 			$this->SetX((279-$tam_cell)/2);
 			$this->Cell($tam_cell,$tam_font_tituloCCH - 3,utf8_decode($titulo_CHH),0,2,'C');
 			$this->Ln(2);
-
+			
 		}
 
 		function putCaracInfo(){
@@ -552,8 +556,7 @@
 
 			$this->SetX(50);
 
-			$result = $this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText']);
-			$this->Cell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_cellsAlto'],$result['tam_stringCarac'],'B',0);
+			$this->Cell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_cellsAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],'tam_stringCarac'),'B',0);
 
 			$this->Ln($this->cellsInfo['tam_font_left'] - 2);
 
@@ -567,8 +570,7 @@
 
 			$this->SetX(50);
 
-			$result = $this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText']);
-			$this->Cell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_cellsAlto'],$result['tam_stringCarac'],'B',0);
+			$this->Cell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_cellsAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],'tam_stringCarac'),'B',0);
 
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_right']); 
 
@@ -578,8 +580,8 @@
 
 			//Caja de texto
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_right']);
-			$result = $this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_informeText']); 
-			$this->Cell($this->cellsInfo['tam_informeText'],$this->cellsInfo['tam_cellsAlto'],$result['tam_stringCarac'],'B',0,'C');
+		
+			$this->Cell($this->cellsInfo['tam_informeText'],$this->cellsInfo['tam_cellsAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_informeText'],'tam_stringCarac'),'B',0,'C');
 
 			$this->Ln($this->cellsInfo['tam_font_left'] - 2);
 
@@ -590,8 +592,8 @@
 			//Caja de texto
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']); 
 			$this->SetX(50);
-			$result = $this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_razonText']); 
-			$this->Cell($this->cellsInfo['tam_razonText'],$this->cellsInfo['tam_cellsAlto'],$result['tam_stringCarac'],'B',0);
+			
+			$this->Cell($this->cellsInfo['tam_razonText'],$this->cellsInfo['tam_cellsAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_razonText'],'tam_stringCarac') ,'B',0);
 
 			$this->Ln($this->cellsInfo['tam_font_left'] - 2);
 
@@ -601,8 +603,8 @@
 			//Caja de texto
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
 			$this->SetX(50);
-			$result = $this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_dirClienteText']);  
-			$this->Cell($this->cellsInfo['tam_dirClienteText'],$this->cellsInfo['tam_cellsAlto'],$result['tam_stringCarac'],'B',0);
+
+			$this->Cell($this->cellsInfo['tam_dirClienteText'],$this->cellsInfo['tam_cellsAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_dirClienteText'],'tam_stringCarac'),'B',0);
 
 			//Divide la informacion del formato de la Tabla (Esta en funcion del tamaño de fuente de la informacion de la derecha)
 			$this->Ln(10);
@@ -759,9 +761,7 @@
 			//Nos posicionamos abajo de la localizacion
 			$this->SetXY($posicion_x,$posicion_y);
 
-			$resultado = $this->getMaxString($this->cellsTables['tam_font_CellsRows'],$tam_localizacion*($grupos - 0.1));
-
-			$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],$resultado['tam_stringCarac'],'R,T');
+			$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],$this->getMaxStringMultiCell($this->cellsTables['tam_font_CellsRows'],$tam_localizacion,'string',$grupos),'R,T');
 			$this->SetX($posicion_x);
 			if($this->GetY() < $endDown_table){
 				$num_iteraciones = (($endDown_table - $this->GetY()) / ($this->cellsTables['tam_cellsTablesAlto']));
@@ -781,9 +781,10 @@
 			//Nos posicionamos abajo de la localizacion
 			$this->SetXY($posicion_x,$posicion_y);
 
-			$resultado = $this->getMaxString($this->cellsTables['tam_font_CellsRows'],$tam_localizacion*($grupos - 0.1));
-
-			$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],$resultado['tam_stringCarac'],'R,T');
+			//Lineas de codigo para hacer una demostracion de los caracteres que entran en la celda del elemento muetreado
+			$string = 'Demostracion de la cantidad de caracteres que pueden entrar en esta celda.Como esta previsto para el peor de los casos solo hay 138 carac.';
+			$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],utf8_decode($string),'R,T');
+			//$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],$this->getMaxStringMultiCell($this->cellsTables['tam_font_CellsRows'],$tam_localizacion,'tam_stringCarac',$grupos),'R,T');
 			$this->SetX($posicion_x);
 			if($this->GetY() < $endDown_table){
 				$num_iteraciones = (($endDown_table - $this->GetY()) / ($this->cellsTables['tam_cellsTablesAlto']));
@@ -802,9 +803,9 @@
 			//Nos posicionamos abajo de la localizacion
 			$this->SetXY($posicion_x,$posicion_y);
 
-			$resultado = $this->getMaxString($this->cellsTables['tam_font_CellsRows'],$tam_localizacion*($grupos - 0.1));
-
-			$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],$resultado['tam_stringCarac'],'R,T');
+			//$string = 'Prueba de Localización del elemento muestreado, si existe algun error, tal como: mal saltos de linea, ortograficos o tamaño de letra contacte a 01-800-TEC4U. ¡Que tenga buen día! :)';
+			//$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],'Cadena:'.utf8_decode($string).'-Cantidad de caractares:'.strlen($string),'R,T');
+			$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],$this->getMaxStringMultiCell($this->cellsTables['tam_font_CellsRows'],$tam_localizacion,'tam_stringCarac',$grupos),'R,T');
 			$this->SetX($posicion_x);
 			if($this->GetY() < $endDown_table){
 				$num_iteraciones = (($endDown_table - $this->GetY()) / ($this->cellsTables['tam_cellsTablesAlto']));
@@ -859,11 +860,9 @@
 			$this->SetFont('Arial','',$this->cellsDetails['tam_font_details']);
 			//Restamos uno porque el no centrar el texto hace que se salga la cena
 
-			$resultado = $this->getMaxString($this->cellsDetails['tam_font_details'],$this->cellsDetails['tam_observacionAnchoTxt']);
-
 			$posicion_x = $this->GetX();
 			//Lo dejamos en 0 para que ocupe todo el espacio de la hoja
-			$this->cell(0,$this->cellsDetails['tam_observacionesAltoTxt'],$resultado['tam_stringCarac'],'L,B,R',0);
+			$this->cell(0,$this->cellsDetails['tam_observacionesAltoTxt'],$this->getMaxString($this->cellsDetails['tam_font_details'],$this->cellsDetails['tam_observacionAnchoTxt'],'tam_stringCarac'),'L,B,R',0);
 			$tam_final = $this->GetX() - $posicion_x;
 			$this->ln();
 			//Metodos
@@ -887,10 +886,8 @@
 			//Cono
 			$this->cell($this->cellsDetails['tam_cono'],$this->cellsDetails['tam_inventarioAlto'],$this->cellsDetails['cono'],1,2,'C');
 
-			$resultado = $this->getMaxString($this->cellsDetails['tam_font_inventario'],$this->cellsDetails['tam_cono']);
-
 			//Caja de texto
-			$this->cell($this->cellsDetails['tam_cono'],$this->cellsDetails['tam_inventarioAlto'],$resultado['tam_stringCarac'],1,2,'C');
+			$this->cell($this->cellsDetails['tam_cono'],$this->cellsDetails['tam_inventarioAlto'],$this->getMaxString($this->cellsDetails['tam_font_inventario'],$this->cellsDetails['tam_cono'],'tam_stringCarac'),1,2,'C');
 
 			$this->SetXY(($posicion_x + $this->cellsDetails['tam_cono']),$posicion_y);
 
@@ -900,10 +897,8 @@
 			$posicion_x = $this->GetX();
 			$this->cell($this->cellsDetails['tam_varilla'],$this->cellsDetails['tam_inventarioAlto'],$this->cellsDetails['varilla'],1,2,'C');
 
-			$resultado = $this->getMaxString($this->cellsDetails['tam_font_inventario'],$this->cellsDetails['tam_varilla']);
-
 			//Caja de texto
-			$this->cell($this->cellsDetails['tam_varilla'],$this->cellsDetails['tam_inventarioAlto'],$resultado['tam_stringCarac'],1,2,'C');
+			$this->cell($this->cellsDetails['tam_varilla'],$this->cellsDetails['tam_inventarioAlto'],$this->getMaxString($this->cellsDetails['tam_font_inventario'],$this->cellsDetails['tam_varilla'],'tam_stringCarac'),1,2,'C');
 
 
 			$this->SetXY(($posicion_x + $this->cellsDetails['tam_varilla']),$posicion_y);
@@ -914,10 +909,8 @@
 
 			$this->cell($this->cellsDetails['tam_flexometro'],$this->cellsDetails['tam_inventarioAlto'],$this->cellsDetails['flexometro'],1,2,'C');
 
-			$resultado = $this->getMaxString($this->cellsDetails['tam_font_inventario'],$this->cellsDetails['tam_flexometro']);
-
 			//Caja de texto
-			$this->cell($this->cellsDetails['tam_flexometro'],$this->cellsDetails['tam_inventarioAlto'],$resultado['tam_stringCarac'],1,2,'C');
+			$this->cell($this->cellsDetails['tam_flexometro'],$this->cellsDetails['tam_inventarioAlto'],$this->getMaxString($this->cellsDetails['tam_font_inventario'],$this->cellsDetails['tam_flexometro'],'tam_stringCarac'),1,2,'C');
 
 			$this->SetXY(($posicion_x + $this->cellsDetails['tam_flexometro']),$posicion_y);
 			
@@ -927,9 +920,8 @@
 			$posicion_y = $this->GetY(); 
 			$posicion_x = $this->GetX();
 
-			$resultado = $this->getMaxString($this->cellsDetails['tam_font_inventario'],$this->cellsDetails['tam_termo']);
 			//Caja de texto
-			$this->cell($this->cellsDetails['tam_termo'],$this->cellsDetails['tam_inventarioAlto'],$resultado['tam_stringCarac'],1,2,'C');
+			$this->cell($this->cellsDetails['tam_termo'],$this->cellsDetails['tam_inventarioAlto'],$this->getMaxString($this->cellsDetails['tam_font_inventario'],$this->cellsDetails['tam_termo'],'tam_stringCarac'),1,2,'C');
 
 			
 
@@ -967,272 +959,443 @@
 			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
 			$this->cell($this->cellsDetails['tam_laboratoristaAncho'],$this->cellsDetails['tam_laboratoristaAlto'],$this->cellsDetails['laboratorista'],0,0,'C');
 
-			$this->Image('https://upload.wikimedia.org/wikipedia/commons/a/a0/Firma_de_Morelos.png',(($posicion_x+($this->cellsDetails['tamCelda_firmaAncho'])/2)-($tam_image/2)),($posicion_y + (($this->cellsDetails['tamCelda_firmaAlto'])/2))-($tam_image/2),$tam_image,$tam_image);
+			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($this->cellsDetails['tamCelda_firmaAncho'])/2)-($tam_image/2)),($posicion_y + (($this->cellsDetails['tamCelda_firmaAlto'])/2))-($tam_image/2),$tam_image,$tam_image);
 		}
 
-		//function putTables($infoFormato,$regisFormato) el chido
+	
 		function putTables($infoFormato,$regisFormato){
 			//Guardamos la posicion de la Y para alinear todas las celdas a la misma altura
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 
-			$tam_font_head = 7;	$this->SetFont('Arial','B',$tam_font_head);//Fuente para clave
+			$this->SetFont('Arial','B',$this->cellsTables['tam_font_Cells']);//Fuente para clave
 
 			//Clave
-			$clave = 'CLAVE DEL ESPECIMEN';
-			$tam_clave = $this->GetStringWidth($clave) + 10; 
-			$this->cell($tam_clave,1.5*(2*($tam_font_head) - 6),$clave,1,0,'C');
+			$this->cell($this->cellsTables['tam_claveAncho'],$this->cellsTables['tam_claveAlto'],$this->cellsTables['clave'],1,0,'C');
 
 			//Fecha
-			$fecha = 'FECHA';
-			$tam_fecha = $this->GetStringWidth($fecha) + 7;
-			$this->cell($tam_fecha,1.5*(2*($tam_font_head) - 6),$fecha,1,0,'C');
-			//F´c
-			$fprima = 'F ` C ';
-			$tam_fprima = $this->GetStringWidth($fecha) + 2; $posicion_x = $this->GetX();
-			$this->multicell($tam_fprima,0.5*(1.5*(2*($tam_font_head) - 6)),utf8_decode($fprima."\n".'kg/cm²'),1,'C');
+			$this->cell($this->cellsTables['tam_fechaAncho'],$this->cellsTables['tam_fechaAlto'],$this->cellsTables['fecha'],1,0,'C');
 
-			
+			//F´c
+			$posicion_x = $this->GetX();
+			$this->multicell($this->cellsTables['tam_fprimaAncho'],$this->cellsTables['tam_fprimaAlto'],utf8_decode($this->cellsTables['fprima']),1,'C');
 
 			//Proyecto
-			$proyecto = 'PROYECTO';
-			$tam_pro = $this->GetStringWidth($proyecto) + 2;
-			$this->SetY($posicion_y + 0.5*(1.5*(2*($tam_font_head) - 6))); $this->SetX($posicion_x + $tam_fprima);	$posicion_x = $this->GetX();
-			$this->cell($tam_pro,0.5*(1.5*(2*($tam_font_head) - 6)),$proyecto,1,0,'C');
+			$this->SetY($posicion_y + $this->cellsTables['tam_proAlto']); 
+			$this->SetX($posicion_x + $this->cellsTables['tam_fprimaAncho']);	
+			$posicion_x = $this->GetX();
+			$this->cell($this->cellsTables['tam_proAncho'],$this->cellsTables['tam_proAlto'],$this->cellsTables['proyecto'],1,0,'C');
 
 			//Obra
-			$obra = 'OBRA';
-			$tam_obra = $this->GetStringWidth($obra) + 2;
-			$this->SetY($posicion_y + 0.5*(1.5*(2*($tam_font_head) - 6)));	$this->SetX($posicion_x + $tam_pro);
-			$this->cell($tam_obra,0.5*(1.5*(2*($tam_font_head) - 6)),$obra,1,2,'C');
+			$this->SetY($posicion_y + $this->cellsTables['tam_proAlto']);	
+			$this->SetX($posicion_x + $this->cellsTables['tam_proAncho']);
+			$this->cell($this->cellsTables['tam_obraAncho'],$this->cellsTables['tam_obraAlto'],$this->cellsTables['obra'],1,2,'C');
 
 
 			//Revenimiento
-			$rev = 'REVENIMENTO (cm)';
-			$this->SetY($posicion_y); $this->SetX($posicion_x); $posicion_x = $this->GetX();
-			$this->cell($tam_pro + $tam_obra,0.5*(1.5*(2*($tam_font_head) - 6)),$rev,1,0,'C');
+			$this->SetY($posicion_y); 
+			$this->SetX($posicion_x); 
+			$posicion_x = $this->GetX();
+			$this->cell($this->cellsTables['tam_revAncho'],$this->cellsTables['tam_revAlto'],$this->cellsTables['rev'],1,0,'C');
 
-			$tam_font_head = $tam_font_head-2;	
-			$this->SetFont('Arial','B',$tam_font_head);
+			$this->SetFont('Arial','B',$this->cellsTables['tam_font_Cells'] - 2);
 
 			//Guardamos la posicion de la x
 			$posicion_x = $this->GetX();
 
 			//Agregado
-			$agregado = 'AGREGADO';
-			$tam_agregado = $this->GetStringWidth($agregado) + 3;
-			$this->multicell($tam_agregado,(1.5*(2*($tam_font_head + 2) - 6))/5,utf8_decode('TAMAÑO'."\n".'NOMINAL'."\n".'DEL'."\n".'AGREGADO'."\n".'(mm)'),1,'C');
+			$this->multicell($this->cellsTables['tam_agregadoAncho'],$this->cellsTables['tam_agregadoAlto'],utf8_decode($this->cellsTables['agregado']),1,'C');
 
-			$posicion_x = ($posicion_x + $tam_agregado);
+			$posicion_x = ($posicion_x + $this->cellsTables['tam_agregadoAncho']);
 			//VOLUMEN
-			$volumen = 'VOLUMEN';
-			$tam_volumen = $this->GetStringWidth($volumen) + 3;
-			$this->SetY($posicion_y); $this->SetX($posicion_x);
-			$this->multicell($tam_volumen,(1.5*(2*($tam_font_head + 2) - 6))/2,utf8_decode($volumen."\n".'(mm)'),1,'C');
+			$this->SetY($posicion_y); 
+			$this->SetX($posicion_x);
+			$this->multicell($this->cellsTables['tam_volumenAncho'],$this->cellsTables['tam_volumenAlto'],utf8_decode($this->cellsTables['volumen']),1,'C');
 
-			$posicion_x = $posicion_x + $tam_volumen;
+			$posicion_x = $posicion_x + $this->cellsTables['tam_volumenAncho'];
 
-			$concreto = 'CONCRE';
-			$tam_concreto = $this->GetStringWidth($concreto) + 3;
-			$this->SetY($posicion_y); $this->SetX($posicion_x);
-			$this->multicell($tam_concreto,(1.5*(2*($tam_font_head + 2) - 6))/3,utf8_decode('TIPO DE'."\n".$concreto."\n".'TO'),1,'C');
+			//Concreto
+			$this->SetY($posicion_y); 
+			$this->SetX($posicion_x);
+			$this->multicell($this->cellsTables['tam_concretoAncho'],$this->cellsTables['tam_concretoAlto'],utf8_decode($this->cellsTables['concreto']),1,'C');
 
-			$posicion_x = $posicion_x + $tam_concreto;
+			$posicion_x = $posicion_x + $this->cellsTables['tam_concretoAncho'];
 
-			$unidad = 'UNIDAD';
-			$tam_unidad = $this->GetStringWidth($unidad) + 5;
-			$this->SetY($posicion_y); $this->SetX($posicion_x);
-			$this->cell($tam_unidad,(1.5*(2*($tam_font_head + 2) - 6)),utf8_decode($unidad),1,0,'C');
+			//Unidad
+			$this->SetY($posicion_y); 
+			$this->SetX($posicion_x);
+			$this->cell($this->cellsTables['tam_unidadAlto'],$this->cellsTables['tam_unidadAncho'],utf8_decode($this->cellsTables['unidad']),1,0,'C');
 
-			$posicion_x = $posicion_x + $tam_unidad;
+			$posicion_x = $posicion_x + $this->cellsTables['tam_unidadAlto'];
 
-			$hora = 'HORA DE';
-			$tam_hora = $this->GetStringWidth($hora) + 5;
-			$this->multicell($tam_hora,(1.5*(2*($tam_font_head + 2) - 6))/4,utf8_decode($hora."\n".'MUESTREO'."\n".'EN'."\n".'OBRA'),1,'C');
+			//Hora
+			$this->multicell($this->cellsTables['tam_horaAncho'],$this->cellsTables['tam_horaAlto'],utf8_decode($this->cellsTables['hora']),1,'C');
 
-			$posicion_x = $posicion_x + $tam_hora;
+			$posicion_x = $posicion_x + $this->cellsTables['tam_horaAncho'];
 
-			$muestreo = 'MUESTREO';
-			$tam_muestreo = $this->GetStringWidth($muestreo) + 3;
-			$this->SetY($posicion_y); $this->SetX($posicion_x);
-			$this->multicell($tam_muestreo,(1.5*(2*($tam_font_head + 2) - 6))/5,utf8_decode('TEMP.'."\n".'AMBIENTE'."\n".'DE'."\n".$muestreo."\n".'(°C)'),1,'C');
+			//Muestreo
+			$this->SetY($posicion_y); 
+			$this->SetX($posicion_x);
+			$this->multicell($this->cellsTables['tam_muestreoAncho'],$this->cellsTables['tam_muestreoAlto'],utf8_decode($this->cellsTables['muestreo']),1,'C');
 
-			$posicion_x = $posicion_x + $tam_muestreo;
+			$posicion_x = $posicion_x + $this->cellsTables['tam_muestreoAncho'];
 
-			$recoleccion = 'RECOLECCIÓN';
-			$tam_recoleccion = $this->GetStringWidth($recoleccion) + 3;
-			$this->SetY($posicion_y); $this->SetX($posicion_x);
-			$this->multicell($tam_recoleccion,(1.5*(2*($tam_font_head + 2) - 6))/5,utf8_decode('TEMP.'."\n".'AMBIENTE'."\n".'DE'."\n".$recoleccion."\n".'(°C)'),1,'C');
+			//Recolecicon
+			$this->SetY($posicion_y); 
+			$this->SetX($posicion_x);
+			$this->multicell($this->cellsTables['tam_recoleccionAncho'], $this->cellsTables['tam_recoleccionAlto'],utf8_decode( $this->cellsTables['recoleccion']),1,'C');
 
-			$posicion_x = $posicion_x + $tam_recoleccion;
+			$posicion_x = $posicion_x + $this->cellsTables['tam_recoleccionAncho'];
 
-			$tam_font_head = 7;	$this->SetFont('Arial','B',$tam_font_head);//Fuente para clave
+			$this->SetFont('Arial','B',$this->cellsTables['tam_font_Cells']);
 
-			$localizacion = 'LOCALIZACIÓN';
-			$tam_localizacion = 269- $posicion_x;
-			$this->SetY($posicion_y); $this->SetX($posicion_x);
-			$this->cell($tam_localizacion,1.5*(2*($tam_font_head) - 6),utf8_decode($localizacion),1,2,'C');
-			
-
-			//Definimos el array con los tamaños de cada celda para crear las duplas
-			$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
-			$tam_localizacion; //Verificar como mostrare la locaclizacion
-			$array_campo = 	array(
-									$tam_clave,
-									$tam_fecha,
-									$tam_fprima,
-									$tam_pro,
-									$tam_obra,
-									$tam_agregado,
-									$tam_volumen,
-									$tam_concreto,
-									$tam_unidad,
-									$tam_hora,
-									$tam_muestreo,
-									$tam_recoleccion,
-									$tam_localizacion									
-							);
-
-
+			//Localizacion
+			$this->SetY($posicion_y); 
+			$this->SetX($posicion_x);
+			$posicion_x = $this->GetX();
+			$this->cell($this->cellsTables['tam_localizacionAncho'],$this->cellsTables['tam_localizacionAlto'],utf8_decode($this->cellsTables['localizacion']),1,2,'C');
+			$posicion_y = $this->GetY();
 						
 			$this->SetX(10); //Definimos donde empieza los 
-			
-			$num_rows = 0;
-			foreach ($regisFormato as $registro) {
-				$j=0;
-				foreach ($registro as $campo) {
 
-					//Funcion para truncar la cadena
-					$tam_campo = $this->GetStringWidth($campo); //Tamaño de la informacion del campo
-					while($tam_campo>$array_campo[$j]){
-						$campo = substr($campo,0,(strlen($campo))-1);
-						$tam_campo =  $this->GetStringWidth($campo)+2;
-					}
-					$this->cell($array_campo[$j],$tam_font_head - 2.5,utf8_decode($campo),1,0,'C');
-					$j++;
-				}
-				$num_rows++;
-				$this->Ln();
-			}
-			if($num_rows<9){
-				for ($i=0; $i < (9-$num_rows); $i++){
-				//Definimos la posicion de X para tomarlo como referencia
-				for ($j=0; $j < sizeof($array_campo); $j++){ 
-					//Definimos la posicion apartir de la cual vamos a insertar la celda
-					if($j < sizeof($array_campo)){
-						$this->cell($array_campo[$j],$tam_font_head - 2.5,'',1,0,'C');
-					}
-					
-				}	
-				$this->Ln();
-				}
+			//Hacemos un "switch" para ver de que tipo de CCH devemos imprimi
+			$grupos = 4;
+			$bandC = 0;
+			$bandCi = 0;
+			$bandV = 0;
+			switch ($infoFormato['tipo_especimen']) {
+				case 'CILINDRO':
+					$bandCi = 1;
+					break;
+				case 'CUBO':
+					$bandC = 1;
+					break;
+				case 'VIGAS':
+					$bandV = 1;
+					$grupos = 3;
+					break;
 			}
 
-			
-			//Calculo del tamaño de los registros
+			$tam_localizacion = array_pop($this->arrayCampos);
 
-			$this->Ln(2);
-			$tam_observaciones = 10;
-			$tam_font_footer = 7;	$this->SetFont('Arial','B',$tam_font_footer);
-			$observaciones = 'OBSERVACIONES:';
+			//Extraemos la informacion del array para saber cuantos grupos son y cuantos registros contiene cada grupo
+			
+			$num_grupo = 1;
+			$arrayGrupo1 = array();
+			$arrayGrupo2 = array();
+			$arrayGrupo3 = array();
+			for ($i=0; $i < count($regisFormato) ; $i++) {
+				if($regisFormato[$i]['grupo'] == $num_grupo){
+					$arrayLoc[$num_grupo] = $regisFormato[$i]['localizacion'];
+					$num_grupo++;
+				}
+				switch ($regisFormato[$i]['grupo']) {
+				 	case '1':
+				 			unset($regisFormato[$i]['grupo'],$regisFormato[$i]['localizacion']);
+				 			array_push($arrayGrupo1,$regisFormato[$i]);
+				 		break;
+				 	case '2':
+				 			unset($regisFormato[$i]['grupo'],$regisFormato[$i]['localizacion']);
+				 			array_push($arrayGrupo2,$regisFormato[$i]);
+				 		break;
+				 	case '3':
+				 			unset($regisFormato[$i]['grupo'],$regisFormato[$i]['localizacion']);
+				 			array_push($arrayGrupo3,$regisFormato[$i]);
+				 		break;
+				 } 
+				
+			}
+			
+			if(count($arrayGrupo1)!=0){
+				$this->putRowsCCH($arrayGrupo1,$grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
+				$endDown_table = $this->GetY();
+
+
+				//Nos posicionamos abajo de la localizacion
+				$this->SetXY($posicion_x,$posicion_y);
+
+				$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],utf8_decode($arrayLoc[1]),'R,T');
+				$this->SetX($posicion_x);
+				if($this->GetY() < $endDown_table){
+					$num_iteraciones = (($endDown_table - $this->GetY()) / ($this->cellsTables['tam_cellsTablesAlto']));
+					for ($i=0; $i < $num_iteraciones; $i++) { 
+						$this->cell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],'','R',2);
+					}
+				}
+				$this->Line($this->GetX(), $this->GetY(),$this->GetX()+$tam_localizacion,$this->GetY());//Linea que completa la ultima celda
+				$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
+				$this->ln(0);
+			}else{
+				//Cancelacion
+				$posicion_xLine = $this->GetX();
+				$posicion_yLine = $this->GetY();
+
+				$this->putRowsWithoutInfo($grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
+				$endDown_table = $this->GetY();
+
+
+				//Nos posicionamos abajo de la localizacion
+				$this->SetXY($posicion_x,$posicion_y);
+
+				$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],'','R,T');
+				$this->SetX($posicion_x);
+				if($this->GetY() < $endDown_table){
+					$num_iteraciones = (($endDown_table - $this->GetY()) / ($this->cellsTables['tam_cellsTablesAlto']));
+					for ($i=0; $i < $num_iteraciones; $i++) { 
+						$this->cell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],'','R',2);
+					}
+				}
+				$this->Line($this->GetX(), $this->GetY(),$this->GetX()+$tam_localizacion,$this->GetY());//Linea que completa la ultima celda
+
+				$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
+				$this->Line($posicion_xLine, $posicion_yLine, $this->GetX()+$tam_localizacion, $this->GetY());//Linea que cancela
+				$this->ln(0);
+				
+			}
+
+			if(count($arrayGrupo2)!=0){
+				$this->putRowsCCH($arrayGrupo2,$grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
+				$endDown_table = $this->GetY();
+
+
+				//Nos posicionamos abajo de la localizacion
+				$this->SetXY($posicion_x,$posicion_y);
+
+				$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],utf8_decode($arrayLoc[2]),'R,T');
+				$this->SetX($posicion_x);
+				if($this->GetY() < $endDown_table){
+					$num_iteraciones = (($endDown_table - $this->GetY()) / ($this->cellsTables['tam_cellsTablesAlto']));
+					for ($i=0; $i < $num_iteraciones; $i++) { 
+						$this->cell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],'','R',2);
+					}
+				}
+				$this->Line($this->GetX(), $this->GetY(),$this->GetX()+$tam_localizacion,$this->GetY());//Linea que completa la ultima celda
+				$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
+				$this->ln(0);
+			}else{
+				//Cancelacion
+				$posicion_xLine = $this->GetX();
+				$posicion_yLine = $this->GetY();
+
+				$this->putRowsWithoutInfo($grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
+				$endDown_table = $this->GetY();
+
+
+				//Nos posicionamos abajo de la localizacion
+				$this->SetXY($posicion_x,$posicion_y);
+
+				$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],'','R,T');
+				$this->SetX($posicion_x);
+				if($this->GetY() < $endDown_table){
+					$num_iteraciones = (($endDown_table - $this->GetY()) / ($this->cellsTables['tam_cellsTablesAlto']));
+					for ($i=0; $i < $num_iteraciones; $i++) { 
+						$this->cell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],'','R',2);
+					}
+				}
+				$this->Line($this->GetX(), $this->GetY(),$this->GetX()+$tam_localizacion,$this->GetY());//Linea que completa la ultima celda
+
+				$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
+				$this->Line($posicion_xLine, $posicion_yLine, $this->GetX()+$tam_localizacion, $this->GetY());//Linea que cancela
+				$this->ln(0);
+				
+			}
+
+			if(count($arrayGrupo3)!=0 && $grupos == 3){
+				$this->putRowsCCH($arrayGrupo3,$grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
+				$endDown_table = $this->GetY();
+
+
+				//Nos posicionamos abajo de la localizacion
+				$this->SetXY($posicion_x,$posicion_y);
+
+				$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],utf8_decode($arrayLoc[3]),'R,T');
+				$this->SetX($posicion_x);
+				if($this->GetY() < $endDown_table){
+					$num_iteraciones = (($endDown_table - $this->GetY()) / ($this->cellsTables['tam_cellsTablesAlto']));
+					for ($i=0; $i < $num_iteraciones; $i++) { 
+						$this->cell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],'','R',2);
+					}
+				}
+				$this->Line($this->GetX(), $this->GetY(),$this->GetX()+$tam_localizacion,$this->GetY());//Linea que completa la ultima celda
+				$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
+				$this->ln(0);
+			}else{
+				if($grupos == 3){
+					//Cancelacion
+					$posicion_xLine = $this->GetX();
+					$posicion_yLine = $this->GetY();
+
+					$this->putRowsWithoutInfo($grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
+					$endDown_table = $this->GetY();
+
+
+					//Nos posicionamos abajo de la localizacion
+					$this->SetXY($posicion_x,$posicion_y);
+
+					$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],'','R,T');
+					$this->SetX($posicion_x);
+					if($this->GetY() < $endDown_table){
+						$num_iteraciones = (($endDown_table - $this->GetY()) / ($this->cellsTables['tam_cellsTablesAlto']));
+						for ($i=0; $i < $num_iteraciones; $i++) { 
+							$this->cell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],'','R',2);
+						}
+					}
+					$this->Line($this->GetX(), $this->GetY(),$this->GetX()+$tam_localizacion,$this->GetY());//Linea que completa la ultima celda
+
+					$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
+					$this->Line($posicion_xLine, $posicion_yLine, $this->GetX()+$tam_localizacion, $this->GetY());//Linea que cancela
+					$this->ln(0);
+				}
+				
+			}
+
+			if($grupos == 4){
+				$this->putRowsWithoutInfo(1,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
+				$this->SetXY($posicion_x,$posicion_y);
+				$this->cell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],'',1);
+			}
+			
+			
+
+			
+	
+			
+			
+			$this->Ln(10);
+		}
+
+		function putDetails($infoFormato){
+			//Hacemos un "switch" para ver de que tipo de CCH devemos imprimi
+			$grupos = 4;
+			$bandC = 0;
+			$bandCi = 0;
+			$bandV = 0;
+			switch ($infoFormato['tipo_especimen']) {
+				case 'CILINDRO':
+					$bandCi = 1;
+					break;
+				case 'CUBO':
+					$bandC = 1;
+					break;
+				case 'VIGAS':
+					$bandV = 1;
+					$grupos = 3;
+					break;
+			}
+			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
 
 			//Observaciones
 			
-			$this->cell(0,2*($tam_font_footer - 2.5),$observaciones,'L,T,R',2);
-			$this->cell(0,$tam_observaciones,utf8_encode($infoFormato['observaciones']),'L,B,R',2);
+			$this->cell(0,$this->cellsDetails['tam_observacionesAlto'],$this->cellsDetails['observaciones'],'L,T,R',2);
+			$this->SetFont('Arial','',$this->cellsDetails['tam_font_details']);
+			//Restamos uno porque el no centrar el texto hace que se salga la cena
 
+			$posicion_x = $this->GetX();
+			//Lo dejamos en 0 para que ocupe todo el espacio de la hoja
+			$this->cell(0,$this->cellsDetails['tam_observacionesAltoTxt'],utf8_encode($infoFormato['observaciones']),'L,B,R',0);
+			$tam_final = $this->GetX() - $posicion_x;
+			$this->ln();
 			//Metodos
-			$metodos = 'METODOS EMPLEADOS: NMX-C-161-ONNCCE-2013, NMX-C-159-ONNCCE-2016, NMX-C156-ONNCCE-2010';
-			$this->cell(0,($tam_font_footer - 3),$metodos,1,2,'C');
+			
+			$this->cell($this->cellsDetails['tam_metodosAncho'],$this->cellsDetails['tam_metodosAlto'],$this->cellsDetails['metodos'],1,2,'C');
 
 			$this->cell(0,2,'',1,2,'C');
 
 
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 			//Instrumentos
-			$tam_font_footer = 6.5; $this->SetFont('Arial','',$tam_font_footer);
-			$instrumentos = 'Inventario de'."\n".'instrumentos';
-			$tam_instrumentos = $this->GetStringWidth('Inventario de')+5;
-			$this->multicell($tam_instrumentos,$tam_font_footer - 2,$instrumentos,1,'C');
-
-			$this->SetXY(($posicion_x + $tam_instrumentos),$posicion_y);
-			$cono = 'Cono';
-			$tam_cono = $this->GetStringWidth($cono)+15;
-			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
-			$this->cell($tam_cono,($tam_font_footer - 2),$cono,1,2,'C');
-			$this->cell($tam_cono,($tam_font_footer - 2),utf8_decode($infoFormato['CONO']),1,2,'C');
-
-			$this->SetXY(($posicion_x + $tam_cono),$posicion_y);
-			$varilla = 'Varilla';
-			$tam_varilla = $this->GetStringWidth($varilla)+15;
-			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
-			$this->cell($tam_varilla,($tam_font_footer - 2),$varilla,1,2,'C');
-			$this->cell($tam_varilla,($tam_font_footer - 2),utf8_decode($infoFormato['VARILLA']),1,2,'C');
+			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_inventario']);
+			$this->multicell($this->cellsDetails['tam_instrumentos'],$this->cellsDetails['tam_inventarioAlto'],$this->cellsDetails['instrumentos'],1,'C');
 
 
-			$this->SetXY(($posicion_x + $tam_varilla),$posicion_y);
-			$flexometro = 'Flexometro';
-			$tam_flexometro = $this->GetStringWidth($flexometro)+15;
-			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
-			$this->cell($tam_flexometro,($tam_font_footer - 2),$flexometro,1,2,'C');
-			$this->cell($tam_flexometro,($tam_font_footer - 2),utf8_decode($infoFormato['FLEXOMETRO']),1,2,'C');
+			$this->SetXY(($posicion_x + $this->cellsDetails['tam_instrumentos']),$posicion_y);
 
-			$this->SetXY(($posicion_x + $tam_flexometro),$posicion_y);
-			$termo = 'TERMÓMETRO';
-			$tam_termo = $this->GetStringWidth($termo)+15;
-			$this->cell($tam_termo,($tam_font_footer - 2),utf8_decode($termo),1,2,'C');
-			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
-			$this->cell($tam_termo,($tam_font_footer - 2),utf8_decode($infoFormato['TERMOMETRO']),1,2,'C');
+			$posicion_y = $this->GetY(); 
+			$posicion_x = $this->GetX();
 
-			$bandC = 0;
-			$bandCi = 0;
-			$bandV = 0;
-			switch ($infoFormato['tipo_especimen']) {
-				case 'CILINDRO':
-					$bandC = 1;
-					break;
-				case 'CUBO':
-					$bandCi = 1;
-					break;
-				case 'VIGAS':
-					$bandV = 1;
-					break;
-			}
+			//Cono
+			$this->cell($this->cellsDetails['tam_cono'],$this->cellsDetails['tam_inventarioAlto'],$this->cellsDetails['cono'],1,2,'C');
 
-			$this->SetXY(($posicion_x + $tam_flexometro + 12),$posicion_y);
-			$cili = 'CILINDROS';
-			$tam_cili = $this->GetStringWidth($termo)+10;
-			$this->cell($tam_cili,($tam_font_footer - 2),utf8_decode($cili),0,0,'C');
+			//Caja de texto
+			$this->SetFont('Arial','',$this->cellsDetails['tam_font_inventario']);
+			$this->cell($this->cellsDetails['tam_cono'],$this->cellsDetails['tam_inventarioAlto'],utf8_decode($infoFormato['CONO']),1,2,'C');
 
-			$this->cell($tam_cili-10,($tam_font_footer - 2),'',1,0,'C',$bandC);
+			$this->SetXY(($posicion_x + $this->cellsDetails['tam_cono']),$posicion_y);
+
+			
+			//Varilla
+			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_inventario']);
+			$posicion_y = $this->GetY(); 
+			$posicion_x = $this->GetX();
+			$this->cell($this->cellsDetails['tam_varilla'],$this->cellsDetails['tam_inventarioAlto'],$this->cellsDetails['varilla'],1,2,'C');
+
+			//Caja de texto
+			$this->SetFont('Arial','',$this->cellsDetails['tam_font_inventario']);
+			$this->cell($this->cellsDetails['tam_varilla'],$this->cellsDetails['tam_inventarioAlto'],utf8_decode($infoFormato['VARILLA']),1,2,'C');
+
+
+			$this->SetXY(($posicion_x + $this->cellsDetails['tam_varilla']),$posicion_y);
+
+			//Felxometro
+			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_inventario']);
+			$posicion_y = $this->GetY(); 
+			$posicion_x = $this->GetX();
+
+			$this->cell($this->cellsDetails['tam_flexometro'],$this->cellsDetails['tam_inventarioAlto'],$this->cellsDetails['flexometro'],1,2,'C');
+
+			//Caja de texto
+			$this->SetFont('Arial','',$this->cellsDetails['tam_font_inventario']);
+			$this->cell($this->cellsDetails['tam_flexometro'],$this->cellsDetails['tam_inventarioAlto'],utf8_decode($infoFormato['FLEXOMETRO']),1,2,'C');
+
+			$this->SetXY(($posicion_x + $this->cellsDetails['tam_flexometro']),$posicion_y);
+			
+			//Termometro
+			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_inventario']);
+			$this->cell($this->cellsDetails['tam_termo'],$this->cellsDetails['tam_inventarioAlto'],utf8_decode($this->cellsDetails['termo']),1,2,'C');
+
+			$posicion_y = $this->GetY(); 
+			$posicion_x = $this->GetX();
+
+			//Caja de texto
+			$this->SetFont('Arial','',$this->cellsDetails['tam_font_inventario']);
+			$this->cell($this->cellsDetails['tam_termo'],$this->cellsDetails['tam_inventarioAlto'],utf8_decode($infoFormato['TERMOMETRO']),1,2,'C');
+
+			
+
+			$this->SetXY(($posicion_x + $this->cellsDetails['tam_termo'] + 12),$posicion_y);
+
+			//Cilindros
+			$this->cell($this->cellsDetails['tam_cili'],$this->cellsDetails['tam_inventarioAlto'],utf8_decode($this->cellsDetails['cili']),0,0,'C');
+
+			//Caja de texto
+			$this->cell($this->cellsDetails['tam_selectCell'],$this->cellsDetails['tam_inventarioAlto'],'',1,0,'C',$bandCi);
 			$posicion_x = $this->GetX();
 
 
-			$cubos = 'CUBOS';
-			$tam_cubos = $this->GetStringWidth($termo)+10;
-			$this->cell($tam_cubos,($tam_font_footer - 2),utf8_decode($cubos),0,0,'C');
-			$this->cell($tam_cubos-10,($tam_font_footer - 2),'',1,0,'C',$bandCi);
+			//Cubos
+			$this->cell($this->cellsDetails['tam_cubos'],$this->cellsDetails['tam_inventarioAlto'],utf8_decode($this->cellsDetails['cubos']),0,0,'C');
 
-			$vigas = 'VIGAS';
-			$tam_vigas = $this->GetStringWidth($termo)+10;
-			$this->cell($tam_vigas,($tam_font_footer - 2),utf8_decode($vigas),0,0,'C');
-			$this->cell($tam_vigas-10,($tam_font_footer - 2),'',1,0,'C',$bandV);
+			//Caja de texto
+			$this->cell($this->cellsDetails['tam_selectCell'],$this->cellsDetails['tam_inventarioAlto'],'',1,0,'C',$bandC);
+
+			//Vigas
+			$this->cell($this->cellsDetails['tam_vigas'],$this->cellsDetails['tam_inventarioAlto'],utf8_decode($this->cellsDetails['vigas']),0,0,'C');
+			//Caja de texto
+			$this->cell($this->cellsDetails['tam_selectCell'],$this->cellsDetails['tam_inventarioAlto'],'',1,0,'C',$bandV);
 			
 
 			$tam_image = 15;
 
-			$tam_font_footer = 7;
 			$this->Ln(12);	
-			$tamCelda_ancho = 90;
-			$this->SetX((279.4-$tamCelda_ancho)/2);
-			$tamCelda_alto = 10;
-			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
-			$this->cell($tamCelda_ancho,$tamCelda_alto,'','B',2);
-			$this->SetFont('Arial','B',$tam_font_footer);
-			$this->cell($tamCelda_ancho,($tam_font_footer - 3),'LABORATORISTA/ASIGNATARIO',0,0,'C');
+			$this->SetX((279.4-$this->cellsDetails['tamCelda_firmaAncho'])/2);
 
-			$this->Image('https://upload.wikimedia.org/wikipedia/commons/a/a0/Firma_de_Morelos.png',(($posicion_x+($tamCelda_ancho)/2)-($tam_image/2)),($posicion_y + (($tamCelda_alto)/2))-($tam_image/2),$tam_image,$tam_image);
+			$posicion_x = $this->GetX(); 
+			$posicion_y = $this->GetY();
 
-					
+			$this->cell($this->cellsDetails['tamCelda_firmaAncho'],$this->cellsDetails['tamCelda_firmaAlto'],'','B',2);
+			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
+			$this->cell($this->cellsDetails['tam_laboratoristaAncho'],$this->cellsDetails['tam_laboratoristaAlto'],$this->cellsDetails['laboratorista'],0,0,'C');
+
+			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($this->cellsDetails['tamCelda_firmaAncho'])/2)-($tam_image/2)),($posicion_y + (($this->cellsDetails['tamCelda_firmaAlto'])/2))-($tam_image/2),$tam_image,$tam_image);
 		}
 		
 		function Footer(){
@@ -1256,10 +1419,14 @@
 			$pdf  = new CCH('L','mm','Letter');
 			$pdf->AddPage();
 			$pdf->AliasNbPages();
+			$pdf->generateCellsInfo();
 			$pdf->putInfo($infoFormato);
+			$pdf->generateCellsCampos();	
 			$pdf->putTables($infoFormato,$regisFormato);
-			//$pdf->Output('F',$target_dir);
-			$pdf->Output();
+			$pdf->generateCellsDetails();
+			$pdf->putDetails($infoFormato);
+			$pdf->Output('F',$target_dir);
+			//$pdf->Output();
 		}
 	
 		
