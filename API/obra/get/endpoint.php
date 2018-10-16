@@ -21,6 +21,11 @@
 			$obra = new Obra();
 			echo $obra->getAllAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		case 'getAllJefaLab':
+			$obra = new Obra();
+			echo $obra->getAllJefaLab($_GET['token'],$_GET['rol_usuario_id']);
+		break;
+		
 		case 'getByIDAdmin':
 			$obra = new Obra();
 			echo $obra->getByIDAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_obra']);

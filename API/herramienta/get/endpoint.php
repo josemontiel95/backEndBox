@@ -55,7 +55,7 @@
 		break;
 		case 'getAllFromTipo':
 			$herra = new Herramienta();
-			echo $herra->getAllFromTipo($_GET['token'],$_GET['rol_usuario_id'],$_GET['herramienta_tipo_id']);
+			echo $herra->getAllFromTipo($_GET['token'],$_GET['rol_usuario_id'],$_GET['herramienta_tipo_id'],$_GET['id_ordenDeTrabajo'] );
 		break;
 		case 'getForDroptdownBasculas':
 			$herra = new Herramienta();

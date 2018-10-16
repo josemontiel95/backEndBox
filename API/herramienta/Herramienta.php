@@ -542,25 +542,39 @@ class Herramienta{
 		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
-			      SELECT 
-			        id_herramienta,
-					herramienta_tipo_id,
-					fechaDeCompra,
-					placas,
-					condicion,
-					id_herramienta_tipo,
-					tipo,
-					observaciones,
-					laboratorio_id,
-					herramientas.createdON,
-					herramientas.lastEditedON,
-					IF(herramientas.active = 1,'Si','No') AS active
-			      FROM 
-			        herramienta_tipo,
-					herramientas
-			      WHERE
-			      	 id_herramienta_tipo =  herramienta_tipo_id AND
-			      	 id_herramienta > 1000
+				SELECT 
+					h.id_herramienta,
+					h.herramienta_tipo_id,
+					h.fechaDeCompra,
+					h.placas,
+					h.condicion,
+					laboratorio,
+					ht.tipo,
+					h.observaciones,
+					DATE(h.createdON) AS createdON,
+					DATE(h.lastEditedON) AS lastEditedON,
+					IF(hodt.ordenDeTrabajo_id IS NOT NULL, 'Asignacion/es Activa/s', 'Sin Asignacion') AS asignacion,
+					IF(h.active = 1,'Si','No') AS active
+				FROM 
+					laboratorio AS l,
+					herramienta_tipo AS ht,
+					herramientas AS h LEFT JOIN 
+					(
+						SELECT 
+							herramienta_id,
+							ordenDeTrabajo_id,
+							DATE(createdON) AS asignadoEn
+						FROM 
+							herramienta_ordenDeTrabajo
+						WHERE 
+							active = 1
+					) AS hodt
+					ON hodt.herramienta_id = h.id_herramienta
+				WHERE
+					h.laboratorio_id=l.id_laboratorio AND
+					ht.id_herramienta_tipo =  h.herramienta_tipo_id AND
+					h.active = 1 AND
+					h.id_herramienta > 1000
 			      ",
 			      array(),
 			      "SELECT"
@@ -584,26 +598,38 @@ class Herramienta{
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      SELECT 
-			        id_herramienta,
-					herramienta_tipo_id,
-					fechaDeCompra,
-					placas,
-					condicion,
-					tipo,
-					observaciones,
-					herramientas.createdON,
-					herramientas.lastEditedON
+			        h.id_herramienta,
+					h.herramienta_tipo_id,
+					h.fechaDeCompra,
+					h.placas,
+					h.condicion,
+					ht.tipo,
+					h.observaciones,
+					DATE(h.createdON) AS createdON,
+					DATE(h.lastEditedON) AS lastEditedON,
+					IF(hodt.ordenDeTrabajo_id IS NOT NULL, 'Asignacion/es Activa/s', 'Sin Asignacion') AS asignacion
 			      FROM 
-			        herramienta_tipo,
-					herramientas
+			        herramienta_tipo AS ht,
+					herramientas AS h LEFT JOIN 
+					(
+						SELECT 
+							herramienta_id,
+							ordenDeTrabajo_id
+						FROM 
+							herramienta_ordenDeTrabajo
+						WHERE 
+							active = 1
+						GROUP BY herramienta_id
+					) AS hodt
+					ON hodt.herramienta_id = h.id_herramienta
 			      WHERE
-			      	 id_herramienta_tipo =  herramienta_tipo_id AND
-			      	 herramientas.active = 1 AND
-					 herramientas.laboratorio_id= 1QQ AND
-			      	 id_herramienta > 1000
+			      	 ht.id_herramienta_tipo =  h.herramienta_tipo_id AND
+			      	 h.active = 1 AND
+					 h.laboratorio_id= 1QQ AND
+			      	 h.id_herramienta > 1000
 			      ",
 			      array($laboratorio_id),
-			      "SELECT"
+			      "SELECT -- Herramienta :: getAllJefaLab"
 			      );
 
 			if(!$dbS->didQuerydied){
@@ -635,6 +661,36 @@ class Herramienta{
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
+	public function upDateJefaLab($token,$rol_usuario_id,$id_herramienta,$herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
+		if($arr['error'] == 0){
+			$dbS->squery("	UPDATE
+							herramientas
+						SET
+							herramienta_tipo_id ='1QQ',
+							fechaDeCompra = '1QQ',
+							placas = '1QQ', 
+							condicion = '1QQ',
+							observaciones = '1QQ',
+							laboratorio_id ='1QQ'
+						WHERE
+							id_herramienta = 1QQ
+					 "
+					,array($herramienta_tipo_id,$fechaDeCompra,$placas,$condicion,$observaciones,$laboratorio_id,$id_herramienta),
+					"UPDATE -- Herramienta :: upDateJefaLab"
+			      	);
+			if(!$dbS->didQuerydied){
+				$arr = array('id_herramienta' => 'No disponible, esto NO es un error', 'herramienta_tipo_id' => $herramienta_tipo_id, 'estatus' => 'Exito en actualizacion', 'error' => 0);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 5);
 			}
 		}
 		return json_encode($arr);
@@ -807,12 +863,35 @@ class Herramienta{
 	}
 
 
-	public function getAllFromTipo($token,$rol_usuario_id,$herramienta_tipo_id){
+	public function getAllFromTipo($token,$rol_usuario_id,$herramienta_tipo_id, $id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$laboratorio_id = $usuario->laboratorio_id;
 		if($arr['error'] == 0){
+			$fechasOrden= $dbS->qarrayA("
+			      	SELECT
+					  fechaInicio,
+					  fechaFin,
+					  horaInicio,
+					  horaFin
+   				    FROM
+					   ordenDeTrabajo
+   				    WHERE
+					   id_ordenDeTrabajo = 1QQ
+			      ",
+			      array($id_ordenDeTrabajo),
+			      "SELECT -- Herramienta :: getAllFromTipo :1"
+			      );
+
+			if($dbS->didQuerydied || $fechasOrden=="empty"){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 9);	
+				return json_encode($arr);
+			}
+			$fechaInicio = $fechasOrden['fechaInicio'];
+			$fechaFin = $fechasOrden['fechaFin'];
+			$horaInicio = $fechasOrden['horaInicio'];
+			$horaFin = $fechasOrden['horaFin'];
 			$arr= $dbS->qAll("
 			      	SELECT 
 						id_herramienta,
@@ -838,23 +917,29 @@ class Herramienta{
 						    id_herramienta > 1000) AS T1 
 					    LEFT JOIN 
 					    	(SELECT
-								*
+								herramienta_ordenDeTrabajo.active AS active,
+								herramienta_id
 							FROM 
-								herramienta_ordenDeTrabajo
+								herramienta_ordenDeTrabajo, ordenDeTrabajo AS odt
 							WHERE 
-								herramienta_ordenDeTrabajo.active=1) AS T2 
+								(TIMESTAMP(CONCAT('1QQ', ' ','1QQ')) >= TIMESTAMP(CONCAT(odt.fechaInicio,' ',odt.horaInicio)) AND TIMESTAMP(CONCAT('1QQ', ' ','1QQ')) <= TIMESTAMP(CONCAT(odt.fechaFin,' ',odt.horaFin)) OR
+								TIMESTAMP(CONCAT('1QQ', ' ','1QQ')) >= TIMESTAMP(CONCAT(odt.fechaInicio,' ',odt.horaInicio)) AND TIMESTAMP(CONCAT('1QQ', ' ','1QQ')) <= TIMESTAMP(CONCAT(odt.fechaFin,' ',odt.horaFin)) ) AND
+								id_ordenDeTrabajo = ordenDeTrabajo_id AND
+								herramienta_ordenDeTrabajo.active=1
+							) AS T2 
 					    ON
 					    	herramienta_id=id_herramienta
 					WHERE 
 						T2.active IS NULL
 			      ",
-			      array($herramienta_tipo_id,$laboratorio_id),
-			      "SELECT"
+			      array($herramienta_tipo_id,$laboratorio_id, $fechaInicio, $horaInicio,  $fechaInicio, $horaInicio, $fechaFin, $horaFin, $fechaFin, $horaFin),
+			      "SELECT -- Herramienta :: getAllFromTipo :2"
 			      );
 
 			if(!$dbS->didQuerydied){
-				if(count($arr) == 0)
-					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+				if($s=="empty"){
+					$arr = array('estatus' =>"No hay registros", 'error' => 0, "registros" => 0); //Pendiente
+				}
 			}
 			else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	

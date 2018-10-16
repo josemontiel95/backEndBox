@@ -143,27 +143,48 @@ class Herramienta_ordenDeTrabajo{
 					break;
 				}
 				$arr= $dbS->qAll("
-					SELECT
-					 	id_herramienta AS id_herramienta,
-					 	placas AS placas 
+					SELECT 
+						id_herramienta AS id_herramienta,
+						placas AS placas
 					FROM
-					 	herramientas
-					WHERE
-					 	id_herramienta = '1QQ'
-					UNION
-			      	SELECT 
-			      		id_herramienta,
-					    placas
-					FROM 
-						herramienta_ordenDeTrabajo,
-						formatoCampo,
-						herramientas
-					WHERE
-						herramienta_id=id_herramienta AND
-						herramienta_ordenDeTrabajo.active=1 AND 
-						herramienta_tipo_id='1QQ' AND
-						herramienta_ordenDeTrabajo.ordenDeTrabajo_id=formatoCampo.ordenDeTrabajo_id AND 
-					  	id_formatoCampo='1QQ'
+							(
+							SELECT
+							 	id_herramienta AS id_herramienta,
+							 	'Pendiente' AS placas 
+							FROM
+							 	herramientas
+							WHERE
+							 	id_herramienta = '1QQ'
+							UNION
+					      	SELECT 
+					      		id_herramienta,
+							    placas
+							FROM 
+								herramienta_ordenDeTrabajo,
+								formatoCampo,
+								herramientas
+							WHERE
+								herramienta_id=id_herramienta AND
+								herramienta_ordenDeTrabajo.active=1 AND 
+								herramienta_tipo_id='1QQ' AND
+								herramienta_ordenDeTrabajo.ordenDeTrabajo_id=formatoCampo.ordenDeTrabajo_id AND 
+							  	id_formatoCampo='1QQ'
+							) AS dispOrServ
+						LEFT JOIN 
+							(
+							SELECT 
+								id_registrosCampo,
+								herramienta_id
+							FROM 
+								registrosCampo
+							WHERE 
+								DATE(createdON) = CURDATE()
+
+							) AS rc
+						ON 
+							rc.herramienta_id = dispOrServ.id_herramienta
+					WHERE 
+						id_registrosCampo IS NULL
 					",
 					array($id_herramienta,$herra_tipo,$id_formatoCampo),
 					"SELECT"
@@ -181,6 +202,7 @@ class Herramienta_ordenDeTrabajo{
 		}
 		return json_encode($arr);
 	}	
+
 
 	//Añadimos a que obra esta agendada???? PENDIENTE
 	public function getAllHerraAvailable($token,$rol_usuario_id){
@@ -343,19 +365,20 @@ class Herramienta_ordenDeTrabajo{
 			        ordenDeTrabajo_id,
 			        herramienta_id,
 			        placas,
-			        nombre AS nombre_jefe_brigada,
+			        CONCAT(nombre,' ',apellido) AS nombre_jefe_brigada,
 			        jefe_brigada_id,
-					ordenDeTrabajo.fechaInicio AS fechaDePrestamo,
+					DATE(herramienta_ordenDeTrabajo.createdON) AS fechaDePrestamo,
 			        IF(fechaDevolucion = '0000-00-00','NO SE HA DEVUELTO','fechaDevolucion')AS FECHA_DE_DEVOLUCION,
-					status,
+					herramienta_ordenDeTrabajo.status AS status,
 					CASE
-		  				WHEN herramienta_ordenDeTrabajo.active = 1 AND CURDATE()>ordenDeTrabajo.fechaInicio THEN 'En Curso'
-		    			WHEN herramienta_ordenDeTrabajo.active = 0 AND CURDATE()>ordenDeTrabajo.fechaInicio THEN 'Completado'
-		    			WHEN herramienta_ordenDeTrabajo.active = 1 AND CURDATE()<ordenDeTrabajo.fechaInicio THEN 'Agendado'
-		    				ELSE 'Error'
+		  				WHEN herramienta_ordenDeTrabajo.active = 1 AND NOW()>TIMESTAMP(CONCAT(odt.fechaInicio,' ',odt.horaInicio)) AND NOW()<TIMESTAMP(CONCAT(odt.fechaFin,' ',odt.horaFin)) THEN 'En Curso'
+		  				WHEN herramienta_ordenDeTrabajo.active = 1 AND NOW()<TIMESTAMP(CONCAT(odt.fechaInicio,' ',odt.horaInicio)) THEN 'Agendado'
+		  				WHEN herramienta_ordenDeTrabajo.active = 1 AND NOW()>TIMESTAMP(CONCAT(odt.fechaFin,' ',odt.horaFin)) THEN 'Vencido'
+		  				WHEN herramienta_ordenDeTrabajo.active = 0 AND NOW()>TIMESTAMP(CONCAT(odt.fechaFin,' ',odt.horaFin)) THEN 'Terminado'
+		    			ELSE 'Error'
 					END AS estado
 				  FROM 
-			      	ordenDeTrabajo,usuario,herramienta_ordenDeTrabajo,herramientas
+			      	ordenDeTrabajo AS odt,usuario,herramienta_ordenDeTrabajo,herramientas
 			      WHERE 
 			      		ordenDeTrabajo_id = id_ordenDeTrabajo AND
 			      		id_usuario = jefe_brigada_id AND	
@@ -409,7 +432,7 @@ class Herramienta_ordenDeTrabajo{
 			
 			if(!$dbS->didQuerydied){
 				if($s=="empty"){
-					$arr = array("No hay herramientas asociadas a la orden:" => $id_ordenDeTrabajo, "error" =>5);
+					$arr = array("No hay herramientas asociadas a la orden:" => $id_ordenDeTrabajo, "error" =>0, "registros" => 0);
 				}
 				else{
 					return json_encode($s);

@@ -233,6 +233,79 @@ class ordenDeTrabajo{
 		}
 		return json_encode($arr);	
 	}
+	public function getFULLByJefeBrigada($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      		SELECT 
+							id_ordenDeTrabajo,
+							jefa_lab_id,
+							obra_id,
+							obra.obra,
+
+							actividades,
+							condicionesTrabajo,
+							fechaInicio,
+							fechaFin,
+							horaInicio,
+							horaFin,
+							observaciones,
+							lugar,
+
+							ordenDeTrabajo.laboratorio_id,
+							laboratorio,
+							jefe_brigada_id,
+							IF(ordenDeTrabajo.active = 1,'Si','No') AS active,
+							CASE 
+								WHEN ordenDeTrabajo.status = 0 THEN 'Edicion JL'
+								WHEN ordenDeTrabajo.status = 1 THEN 'Ejecucion JB'
+								WHEN ordenDeTrabajo.status = 2 THEN 'Terminado JB'
+								ELSE 'Error'
+							END AS odtStatus,
+							CASE
+								WHEN CURDATE() < ordenDeTrabajo.fechaInicio  THEN 'Agendado'
+								WHEN CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()< TIMESTAMP(CONCAT(ordenDeTrabajo.fechaInicio,' ',ordenDeTrabajo.horaInicio)) THEN 'Agendado para hoy'
+								WHEN CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()>= TIMESTAMP(CONCAT(ordenDeTrabajo.fechaInicio,' ',ordenDeTrabajo.horaInicio)) AND NOW() <= TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 'En curso'
+								WHEN ordenDeTrabajo.status = 1 AND CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()> TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 'Atrasado'
+								WHEN ordenDeTrabajo.status = 2 AND CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()> TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 'Terminado'
+								WHEN ordenDeTrabajo.status = 1 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 'Atrasado'
+								WHEN ordenDeTrabajo.status = 2 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 'Terminado'
+								ELSE 'Error, contacte a soporte'
+							END AS estado,
+							CASE
+								WHEN CURDATE() < ordenDeTrabajo.fechaInicio  THEN 1
+								WHEN CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()< TIMESTAMP(CONCAT(ordenDeTrabajo.fechaInicio,' ',ordenDeTrabajo.horaInicio)) THEN 1
+								WHEN CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()>= TIMESTAMP(CONCAT(ordenDeTrabajo.fechaInicio,' ',ordenDeTrabajo.horaInicio)) AND NOW() <= TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 2
+								WHEN ordenDeTrabajo.status = 1 AND CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()> TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 0
+								WHEN ordenDeTrabajo.status = 2 AND CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()> TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 3
+								WHEN ordenDeTrabajo.status = 1 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 0
+								WHEN ordenDeTrabajo.status = 2 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 3
+							END AS color
+						FROM
+							ordenDeTrabajo,obra,laboratorio
+						WHERE
+							CURDATE() >= ordenDeTrabajo.fechaInicio AND
+							ordenDeTrabajo.status > 0 AND
+							obra_id = id_obra AND
+							ordenDeTrabajo.laboratorio_id = id_laboratorio AND
+							jefe_brigada_id = 1QQ
+			      ",
+			      array($arr['id_usuario']),
+			      "SELECT"
+			      );
+
+			if(!$dbS->didQuerydied){
+						if($arr == "empty")
+							$arr = array('estatus' =>"No hay registros", 'error' => 5); 
+						
+			}else
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 6);
+		}
+		return json_encode($arr);	
+
+	}
 
 	public function getAllByJefeBrigada($token,$rol_usuario_id){
 		global $dbS;
@@ -264,10 +337,30 @@ class ordenDeTrabajo{
 								WHEN ordenDeTrabajo.status = 1 THEN 'Ejecucion JB'
 								WHEN ordenDeTrabajo.status = 2 THEN 'Terminado JB'
 								ELSE 'Error'
-							END AS odtStatus
-						from
+							END AS odtStatus,
+							CASE
+								WHEN CURDATE() < ordenDeTrabajo.fechaInicio  THEN 'Agendado'
+								WHEN CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()< TIMESTAMP(CONCAT(ordenDeTrabajo.fechaInicio,' ',ordenDeTrabajo.horaInicio)) THEN 'Agendado para hoy'
+								WHEN CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()>= TIMESTAMP(CONCAT(ordenDeTrabajo.fechaInicio,' ',ordenDeTrabajo.horaInicio)) AND NOW() <= TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 'En curso'
+								WHEN ordenDeTrabajo.status = 1 AND CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()> TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 'Atrasado'
+								WHEN ordenDeTrabajo.status = 2 AND CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()> TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 'Terminado'
+								WHEN ordenDeTrabajo.status = 1 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 'Atrasado'
+								WHEN ordenDeTrabajo.status = 2 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 'Terminado'
+								ELSE 'Error, contacte a soporte'
+							END AS estado,
+							CASE
+								WHEN CURDATE() < ordenDeTrabajo.fechaInicio  THEN 1
+								WHEN CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()< TIMESTAMP(CONCAT(ordenDeTrabajo.fechaInicio,' ',ordenDeTrabajo.horaInicio)) THEN 1
+								WHEN CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()>= TIMESTAMP(CONCAT(ordenDeTrabajo.fechaInicio,' ',ordenDeTrabajo.horaInicio)) AND NOW() <= TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 2
+								WHEN ordenDeTrabajo.status = 1 AND CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()> TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 0
+								WHEN ordenDeTrabajo.status = 2 AND CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()> TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 3
+								WHEN ordenDeTrabajo.status = 1 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 0
+								WHEN ordenDeTrabajo.status = 2 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 3
+							END AS color
+						FROM
 							ordenDeTrabajo,obra,laboratorio
 						WHERE
+							CURDATE() >= ordenDeTrabajo.fechaInicio AND
 							ordenDeTrabajo.status < 3 AND ordenDeTrabajo.status > 0 AND
 							obra_id = id_obra AND
 							ordenDeTrabajo.laboratorio_id = id_laboratorio AND

@@ -123,7 +123,13 @@ CREATE TABLE obra(
 	concretera_id INT(11),
 	tipo INT(11) NOT NULL,
 	revenimiento DOUBLE,
+
 	incertidumbre DOUBLE,
+
+	incertidumbreCilindro DOUBLE,
+	incertidumbreCubo DOUBLE,
+	incertidumbreVigas DOUBLE,
+
 	cotizacion VARCHAR(15) NOT NULL,
 	consecutivoProbeta INT NOT NULL DEFAULT 1,
 	consecutivoDocumentos INT NOT NULL DEFAULT 1,
@@ -154,7 +160,15 @@ CREATE TABLE obra(
 )ENGINE=INNODB;
 
 ALTER TABLE obra AUTO_INCREMENT=1001;
+ALTER TABLE obra
+ADD COLUMN incertidumbreCilindro DOUBLE;
+ALTER TABLE obra
+ADD COLUMN incertidumbreCubo DOUBLE;
+ALTER TABLE obra
+ADD COLUMN incertidumbreVigas DOUBLE;
 
+ALTER TABLE obra
+ADD COLUMN correo_alterno VARCHAR(100) NOT NULL;
 
 
 INSERT INTO obra(obra,prefijo,fechaDeCreacion,descripcion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento,incertidumbre) 
@@ -299,8 +313,17 @@ CREATE TABLE herramienta_ordenDeTrabajo(
 	FOREIGN KEY(ordenDeTrabajo_id) 
 	REFERENCES ordenDeTrabajo(id_ordenDeTrabajo)
 	ON DELETE SET NULL ON UPDATE CASCADE
-
 )ENGINE=INNODB;
+
+
+ALTER TABLE herramienta_ordenDeTrabajo
+ADD COLUMN fechaInicio DATE;
+ALTER TABLE herramienta_ordenDeTrabajo
+ADD COLUMN fechaFin DATE;
+ALTER TABLE herramienta_ordenDeTrabajo
+ADD COLUMN horaInicio DATE;
+ALTER TABLE herramienta_ordenDeTrabajo
+ADD COLUMN horaFin DATE;
 
 
 CREATE TABLE formato(
@@ -449,6 +472,9 @@ CREATE TABLE log(
 
 	PRIMARY KEY(id_log)
 )ENGINE=INNODB;
+ALTER TABLE log MODIFY queryType VARCHAR(100);
+
+ALTER TABLE log MODIFY placas VARCHAR(60);
 
 
 //PENDIENTE
@@ -518,6 +544,9 @@ ALTER TABLE formatoCampo ALTER ensayadoFin SET DEFAULT 8;
 
 ALTER TABLE formatoCampo ALTER loteStatus SET DEFAULT 0;
 
+ALTER TABLE formatoCampo 
+ADD COLUMN preliminar VARCHAR(200);
+
 
 CREATE TABLE registrosCampo(
 	id_registrosCampo INT(11) NOT NULL AUTO_INCREMENT,
@@ -541,6 +570,8 @@ CREATE TABLE registrosCampo(
 	status INT NOT NULL DEFAULT 0,
 
 	statusEnsayo INT NOT NULL DEFAULT 0,
+
+	grupo INT NOT NULL DEFAULT 0,
 
 
 	footerEnsayo_id INT(11) NULL DEFAULT NULL,
@@ -566,6 +597,8 @@ ALTER TABLE registrosCampo AUTO_INCREMENT=1001;
 ALTER TABLE registrosCampo
 ADD COLUMN statusEnsayo INT NOT NULL DEFAULT 0;
 
+ALTER TABLE registrosCampo
+ADD COLUMN grupo INT NOT NULL DEFAULT 0;
 
 CREATE TABLE formatoRegistroRev(
 	id_formatoRegistroRev INT(11) NOT NULL AUTO_INCREMENT,
@@ -609,7 +642,8 @@ CREATE TABLE formatoRegistroRev(
 )ENGINE=INNODB;
 ALTER TABLE formatoRegistroRev AUTO_INCREMENT=1001;
 
-
+ALTER TABLE formatoRegistroRev 
+ADD COLUMN preliminar VARCHAR(200);
 
 CREATE TABLE registrosRev(
 	id_registrosRev INT(11) NOT NULL AUTO_INCREMENT,
@@ -1012,6 +1046,11 @@ ALTER TABLE systemstatus ADD maxNoOfRegistrosCCH INT NOT NULL;
 ALTER TABLE systemstatus ADD multiplosNoOfRegistrosCCH INT NOT NULL;
 ALTER TABLE systemstatus ADD maxNoOfRegistrosRev INT NOT NULL;
 
+ALTER TABLE systemstatus ADD cch_vigaDef_prueba1 INT NOT NULL;
+ALTER TABLE systemstatus ADD cch_vigaDef_prueba2 INT NOT NULL;
+ALTER TABLE systemstatus ADD cch_vigaDef_prueba3 INT NOT NULL;
+ALTER TABLE systemstatus ADD maxNoOfRegistrosCCH_VIGAS INT NOT NULL;
+ALTER TABLE systemstatus ADD multiplosNoOfRegistrosCCH_VIGAS INT NOT NULL;
 
 INSERT INTO 
 
@@ -1126,7 +1165,12 @@ INSERT INTO `systemstatus` (
 	`maxNoOfRegistrosCCH`, 
 	`multiplosNoOfRegistrosCCH`,
 	`apiRoot`,
-	`maxNoOfRegistrosRev`
+	`maxNoOfRegistrosRev`,
+	`cch_vigaDef_prueba1`,
+	`cch_vigaDef_prueba2`,
+	`cch_vigaDef_prueba3`,
+	`maxNoOfRegistrosCCH_VIGAS`,
+	`multiplosNoOfRegistrosCCH_VIGAS`
 	)
 VALUES (
 	7,
@@ -1147,8 +1191,13 @@ VALUES (
 	1000,
 	8,
 	4,
-	"http://lacocs.montielpalacios.com/",
-	10
+	"http://qualitycontrol.lacocsmex.com.mx/",
+	10,
+	14,
+	28,
+	28,
+	9,
+	3
 	);
 
 

@@ -220,14 +220,37 @@ class MySQLSystem{
 
 	*/
 
-	//MEJORAR SI HAY TIEMPO
 	public function transquery($q = "eempty",$arrThings = array(),$destino,$queryType="NS"){
 		$this->beginTransaction();	//SE INSERTA COMO SI SE TRATARA DE LA TERMINAL, EL INICIO DE LA TRANSACCION
 		foreach ($arrThings as $a){
-				$array_aux = array($a,$destino); //ARRAY AUXILIAR PARA PODER EJECUTAR LA "squery"
-				$this->squery($q,$array_aux,$queryType);
-				if($this->didQuerydied)//POR CADA ITERACION SE REVISA SI NO HA MUERTO LA QUERY
-					break;
+				//Revisar que no exista un registro con este par en especial (herramienta-orden de Trabajo) activo.
+				$cuantos=$this->qvalue("
+					SELECT 
+						COUNT(*) 
+					FROM 
+						herramienta_ordenDeTrabajo 
+					WHERE 
+						active = 1 AND
+						herramienta_id = 1QQ AND 
+						ordenDeTrabajo_id = 1QQ
+					",
+					array($a, $destino),
+					"SELECT -- Herra_ordenDeTra :: mysqlSystem :: transquery"
+				);
+				if($cuantos==0){ // En caso de que ya este relacionada 
+					$array_aux = array($a,$destino); //ARRAY AUXILIAR PARA PODER EJECUTAR LA "squery"
+					$this->squery($q,$array_aux,$queryType);
+					if($this->didQuerydied){//POR CADA ITERACION SE REVISA SI NO HA MUERTO LA QUERY
+						break;
+					}
+				}else{
+					$this->rollbackTransaction();
+					$this->queryType="rollbackFLAG";
+					$this->logQuery("ROLLBACK");
+					$this->didQuerydied = true;
+					return ($a);
+				}
+				
 		}
 		if (!$this->didQuerydied) {
 			$this->commitTransaction();
@@ -243,20 +266,51 @@ class MySQLSystem{
 		}
 	}
 
-	/*	MEJORA EN DESARROLLO
-	
-	public function transaction($arrQuery){
-		$this->beginTransaction();
-		foreach ($arrQuery as $q) {
-			foreach ($arrThings as $a) {
-				$id = $this->squery($q,)
-			}
+	public function transqueryTecnicos($q = "eempty",$arrThings = array(),$destino,$queryType="NS"){
+		$this->beginTransaction();	//SE INSERTA COMO SI SE TRATARA DE LA TERMINAL, EL INICIO DE LA TRANSACCION
+		foreach ($arrThings as $a){
+				//Revisar que no exista un registro con este par en especial (herramienta-orden de Trabajo) activo.
+				$cuantos=$this->qvalue("
+					SELECT 
+						COUNT(*) 
+					FROM 
+						tecnicos_ordenDeTrabajo 
+					WHERE 
+						active = 1 AND
+						tecnico_id = 1QQ AND 
+						ordenDeTrabajo_id = 1QQ
+					",
+					array($a, $destino),
+					"SELECT -- Tecnicos:ODT :: mysqlSystem :: transqueryTecnicos"
+				);
+				if($cuantos==0){ // En caso de que ya este relacionada 
+					$array_aux = array($a,$destino); //ARRAY AUXILIAR PARA PODER EJECUTAR LA "squery"
+					$this->squery($q,$array_aux,$queryType);
+					if($this->didQuerydied){//POR CADA ITERACION SE REVISA SI NO HA MUERTO LA QUERY
+						break;
+					}
+				}else{
+					$this->rollbackTransaction();
+					$this->queryType="rollbackFLAG";
+					$this->logQuery("ROLLBACK");
+					$this->didQuerydied = true;
+					return ($a);
+				}
+				
+		}
+		if (!$this->didQuerydied) {
+			$this->commitTransaction();
+			return (0);
+		}
+		else{
+			$this->rollbackTransaction(); //EJECUTAMOS EL ROLL BACK PARA VOLVER AL ESTADO DE LA TABLA ANTES DE REALIZAR CAMBIOS
+			$this->squery($q,$array_aux,$queryType);	
+			$this->queryType="rollbackFLAG";
+			$this->logQuery("ROLLBACK");
+			$this->didQuerydied = true;
+			return ($a);
 		}
 	}
-	*/
 
-	/*
-									¿SEPARAR EL INICIO DE LA TRANSACCION?
-	*/
 }
 ?>
