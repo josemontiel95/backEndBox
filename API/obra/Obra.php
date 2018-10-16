@@ -15,7 +15,7 @@ class Obra{
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
-	public function insertAdmin($token,$rol_usuario_id,$obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,$cotizacion,$consecutivoProbeta,$consecutivoDocumentos){
+	public function insertAdmin($token,$rol_usuario_id,$obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre, $incertidumbreCilindro, $incertidumbreCubo, $incertidumbreVigas, $cotizacion,$consecutivoProbeta,$consecutivoDocumentos,$correo_alterno){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -23,11 +23,11 @@ class Obra{
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-						obra(laboratorio_id,obra,prefijo,fechaDeCreacion,descripcion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento, incertidumbre, cotizacion,consecutivoProbeta,consecutivoDocumentos)
+						obra(laboratorio_id,obra,prefijo,fechaDeCreacion,descripcion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento, incertidumbre, incertidumbreCilindro, incertidumbreCubo, incertidumbreVigas, cotizacion,consecutivoProbeta,consecutivoDocumentos,correo_alterno)
 
 						VALUES
-						('1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ',1QQ,1QQ,1QQ,1QQ,1QQ,'1QQ','1QQ','1QQ')
-				",array($laboratorio_id,$obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,$cotizacion,$consecutivoProbeta,$consecutivoDocumentos),"INSERT");
+						('1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ')
+				",array($laboratorio_id,$obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,  $incertidumbreCilindro, $incertidumbreCubo, $incertidumbreVigas, $cotizacion,$consecutivoProbeta,$consecutivoDocumentos,$correo_alterno),"INSERT");
 				$arr = array('id_obra' => 'No disponible, esto NO es un error', 'obra' => $obra, 'estatus' => 'Exito en insercion', 'error' => 0);
 			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
@@ -36,7 +36,7 @@ class Obra{
 		return json_encode($arr);
 	}
 
-	public function upDateAdmin($token,$rol_usuario_id,$id_obra,$obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,$cotizacion,$consecutivoProbeta,$consecutivoDocumentos){
+	public function upDateAdmin($token,$rol_usuario_id,$id_obra,$obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,  $incertidumbreCilindro, $incertidumbreCubo, $incertidumbreVigas, $cotizacion,$consecutivoProbeta,$consecutivoDocumentos,$correo_alterno){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -52,19 +52,23 @@ class Obra{
 							nombre_residente = '1QQ',
 							telefono_residente = '1QQ',
 							correo_residente = '1QQ',
-							cliente_id = 1QQ, 
-							concretera_id = 1QQ,
-							tipo = 1QQ,
+							cliente_id = '1QQ', 
+							concretera_id = '1QQ',
+							tipo = '1QQ',
 							revenimiento='1QQ',
 							incertidumbre='1QQ',
+							incertidumbreCilindro = '1QQ',
+							incertidumbreCubo = '1QQ',
+							incertidumbreVigas = '1QQ',
 							cotizacion='1QQ',
 							consecutivoProbeta='1QQ',
-							consecutivoDocumentos='1QQ'
+							consecutivoDocumentos='1QQ',
+							correo_alterno='1QQ'
 						WHERE
 							active=1 AND
-							id_obra = 1QQ
+							id_obra = '1QQ'
 					 "
-					,array($obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,$cotizacion,$consecutivoProbeta,$consecutivoDocumentos,$id_obra),"UPDATE"
+					,array($obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,  $incertidumbreCilindro, $incertidumbreCubo, $incertidumbreVigas, $cotizacion,$consecutivoProbeta,$consecutivoDocumentos,$correo_alterno,$id_obra),"UPDATE"
 			      	);
 			$arr = array('id_obra' => $id_obra, 'obra' => $obra,'estatus' => 'Exito de actualizacion','error' => 0);
 			if($dbS->didQuerydied){
@@ -75,6 +79,57 @@ class Obra{
 
 	}
 
+	public function getAllJefaLab($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll("
+			      SELECT 
+			        id_obra,
+					obra,
+					prefijo,
+					fechaDeCreacion,
+					descripcion,
+					localizacion,
+					nombre_residente,
+					telefono_residente,
+					correo_residente,
+					id_cliente,
+					nombre,
+					IF(obra.tipo = 2,'Unitario','Iguala') AS tipo,
+					DATE(obra.createdON) AS createdON,
+					DATE(obra.lastEditedON) AS lastEditedON, 
+					id_concretera,
+					concretera,
+					revenimiento,
+					incertidumbre,
+					obra.laboratorio_id,
+					cliente.active AS isClienteActive,
+					concretera.active AS isConcreteraActive,
+					IF(obra.active = 1,'Si','No') AS active,
+					l.laboratorio
+			      FROM 
+			        cliente,concretera, obra, laboratorio AS l
+				  WHERE
+				  	obra.laboratorio_id=l.id_laboratorio AND
+				  	cliente_id = id_cliente AND
+					concretera_id = id_concretera AND 
+					laboratorio_id= 1QQ
+			      ",
+			      array($laboratorio_id),
+			      "SELECT"
+			      );
+			if(!$dbS->didQuerydied){
+						if(count($arr) == 0)
+							$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
+						
+			}else
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 6);
+		}
+		return json_encode($arr);	
+	}
 
 	public function getAllAdmin($token,$rol_usuario_id){
 		global $dbS;
@@ -95,8 +150,8 @@ class Obra{
 					id_cliente,
 					nombre,
 					IF(obra.tipo = 2,'Unitario','Iguala') AS tipo,
-					obra.createdON,
-					obra.lastEditedON, 
+					DATE(obra.createdON) AS createdON,
+					DATE(obra.lastEditedON) AS lastEditedON, 
 					id_concretera,
 					concretera,
 					revenimiento,
@@ -104,12 +159,14 @@ class Obra{
 					obra.laboratorio_id,
 					cliente.active AS isClienteActive,
 					concretera.active AS isConcreteraActive,
-					IF(obra.active = 1,'Si','No') AS active
+					IF(obra.active = 1,'Si','No') AS active,
+					l.laboratorio
 			      FROM 
-			        cliente,obra,concretera
-			      WHERE
-			      	 cliente_id = id_cliente AND
-			      	 concretera_id = id_concretera
+			        cliente,concretera, obra, laboratorio AS l
+				  WHERE
+				  	obra.laboratorio_id=l.id_laboratorio AND
+				  	cliente_id = id_cliente AND
+			      	concretera_id = id_concretera
 			      ",
 			      array(),
 			      "SELECT"
@@ -233,6 +290,9 @@ class Obra{
 					concretera,
 					cotizacion,
 					consecutivoProbeta,
+					incertidumbreCilindro,
+					incertidumbreCubo,
+					incertidumbreVigas,
 					id_cliente,
 					obra.laboratorio_id AS laboratorio_id,
 					nombre,
@@ -240,7 +300,8 @@ class Obra{
 					concretera.active AS isConcreteraActive,
 					revenimiento,
 					incertidumbre,
-					consecutivoDocumentos
+					consecutivoDocumentos,
+					correo_alterno
 			      FROM 
 			      	cliente,obra,concretera
 			      WHERE

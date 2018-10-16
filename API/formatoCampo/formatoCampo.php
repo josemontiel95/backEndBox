@@ -348,27 +348,47 @@ class formatoCampo{
 	}
 
 
-	public function getformatoDefoults(){
+	public function getformatoDefoults($token,$rol_usuario_id,$tipo){
 		global $dbS;
-		$arr = $dbS->qarrayA(
-			"	SELECT
-					id_systemstatus,
-					cch_def_prueba1,
-					cch_def_prueba2,
-					cch_def_prueba3,
-					cch_def_prueba4,
-					maxNoOfRegistrosCCH,
-					multiplosNoOfRegistrosCCH
-				FROM
-					systemstatus
-				ORDER BY id_systemstatus DESC;
-			",array(),"SELECT"
-		);
-		if(!$dbS->didQuerydied){
-			$id=$dbS->lastInsertedID;
-		}
-		else{
-			$arr = array('id_systemstatus' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			if($tipo == "VIGAS"){
+				$arr = $dbS->qarrayA(
+					"	SELECT
+							id_systemstatus,
+							cch_vigaDef_prueba1,
+							cch_vigaDef_prueba2,
+							cch_vigaDef_prueba3,
+							maxNoOfRegistrosCCH_VIGAS,
+							multiplosNoOfRegistrosCCH_VIGAS
+						FROM
+							systemstatus
+						ORDER BY id_systemstatus DESC;
+					",array(),"SELECT"
+				);
+			}else{
+				$arr = $dbS->qarrayA(
+					"	SELECT
+							id_systemstatus,
+							cch_def_prueba1,
+							cch_def_prueba2,
+							cch_def_prueba3,
+							cch_def_prueba4,
+							maxNoOfRegistrosCCH,
+							multiplosNoOfRegistrosCCH
+						FROM
+							systemstatus
+						ORDER BY id_systemstatus DESC;
+					",array(),"SELECT"
+				);
+			}
+			if(!$dbS->didQuerydied && !($arr == "empty")){
+			}
+			else{
+				$arr = array('id_systemstatus' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+			return json_encode($arr);
 		}
 		return json_encode($arr);
 	}
@@ -672,15 +692,14 @@ class formatoCampo{
 				"SELECT"
 			);
 			if(!$dbS->didQuerydied && !($a=="empty")){
-				$dbS->squery("	
-						UPDATE
-							formatoCampo
-						SET
-							status = 1,
-							ensayadoFin =1QQ
-						WHERE
-							active = 1 AND
-							id_formatoCampo = 1QQ
+				$dbS->squery("	UPDATE
+						formatoCampo
+					SET
+						status = 1,
+						ensayadoFin =1QQ
+					WHERE
+						active = 1 AND
+						id_formatoCampo = 1QQ
 				 "
 				,array($a['No'],$id_formatoCampo),"UPDATE"
 		      	);
@@ -697,8 +716,6 @@ class formatoCampo{
 						,array($id_formatoCampo),"UPDATE"
 				      	);
 					if(!$dbS->didQuerydied){
-						$correo= "josemontiel@me.com";
-						$pdf= "https://www.facebook.com/tech4umexico/";
 						$info = $dbS->qarrayA(
 												"
 													SELECT
@@ -707,6 +724,7 @@ class formatoCampo{
 														id_ordenDeTrabajo,
 														cliente.email AS emailCliente,
 														obra.correo_residente AS emailResidente,
+														obra.correo_alterno AS correo_alterno,
 														CONCAT(nombre,'(',razonSocial,')') AS nombre,
 														email
 													FROM
@@ -750,19 +768,50 @@ class formatoCampo{
 								//Cachamos la excepcion
 								try{
 									$generador->generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir);
+									$dbS->squery("	
+											UPDATE
+												formatoCampo
+											SET
+												preliminar = '1QQ'
+											WHERE
+												id_formatoCampo = 1QQ
+									"
+									,array($dirDatabase,$id_formatoCampo),"UPDATE -- formatoCampo :: completeFormato"
+									);
+
+									if($dbS->didQuerydied){ // Si no murio la query de guardar el preliminar en BD
+										$dbS->rollbackTransaction();
+										$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 40);
+										return json_encode($arr);
+									}
+									//  Envio del primer correo
 									if($mailer->sendMailBasic($info['emailCliente'], $info['nombre'], $dirDatabase)==202){
 										$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
 									}else{
 										$dbS->rollbackTransaction();
 										$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 6);
+										return json_encode($arr);
 									}
+									//  Envio del segundo correo
+
 									if($mailer->sendMailBasic($info['emailResidente'], $info['nombre'], $dirDatabase)==202){
 										$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
 									}else{
 										$dbS->rollbackTransaction();
 										$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 6);
+										return json_encode($arr);
 									}
+									//  Envio del tercer correo
+									if($mailer->sendMailBasic($info['correo_alterno'], $info['nombre'], $dirDatabase)==202){
+										$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
+									}else{
+										$dbS->rollbackTransaction();
+										$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 6);
+										return json_encode($arr);
+									}
+									
 									$dbS->commitTransaction();
+									return json_encode($arr);
 
 								}catch(Exception $e){
 									$dbS->rollbackTransaction();

@@ -487,6 +487,7 @@ class FormatoRegistroRev{
 													id_ordenDeTrabajo,
 													cliente.email AS emailCliente,
 													obra.correo_residente AS emailResidente,
+													obra.correo_alterno AS correo_alterno,
 													CONCAT(nombre,'(',razonSocial,')') AS nombre,
 													email
 												FROM
@@ -530,6 +531,22 @@ class FormatoRegistroRev{
 							//Cachamos la excepcion
 							try{
 								$generador->generateRevenimiento($token,$rol_usuario_id,$id_formatoRegistroRev,$target_dir);
+								$dbS->squery("	
+										UPDATE
+											formatoRegistroRev
+										SET
+											preliminar = '1QQ'
+										WHERE
+											id_formatoRegistroRev = 1QQ
+								"
+								,array($dirDatabase,$id_formatoRegistroRev),"UPDATE -- FormatoRegistroRev :: completeFormato"
+								);
+
+								if($dbS->didQuerydied){
+									$dbS->rollbackTransaction();
+									$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 40);
+									return json_encode($arr);
+								}
 								if($mailer->sendMailBasic($info['emailCliente'], $info['nombre'], $dirDatabase)==202){
 									$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
 								}else{
@@ -538,6 +555,13 @@ class FormatoRegistroRev{
 									return json_encode($arr);
 								}
 								if($mailer->sendMailBasic($info['emailResidente'], $info['nombre'], $dirDatabase)==202){
+									$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
+								}else{
+									$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 6);
+									$dbS->rollbackTransaction();
+									return json_encode($arr);
+								}
+								if($mailer->sendMailBasic($info['correo_alterno'], $info['nombre'], $dirDatabase)==202){
 									$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
 								}else{
 									$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 6);

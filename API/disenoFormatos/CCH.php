@@ -869,6 +869,7 @@
 			
 			$this->cell($this->cellsDetails['tam_metodosAncho'],$this->cellsDetails['tam_metodosAlto'],$this->cellsDetails['metodos'],1,2,'C');
 
+
 			$this->cell(0,2,'',1,2,'C');
 
 
@@ -1387,6 +1388,7 @@
 
 			$this->Ln(12);	
 			$this->SetX((279.4-$this->cellsDetails['tamCelda_firmaAncho'])/2);
+
 
 			$posicion_x = $this->GetX(); 
 			$posicion_y = $this->GetY();

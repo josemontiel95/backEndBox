@@ -303,9 +303,8 @@ class Usuario{
 		if($this->getIDByTokenAndValidate($token)=="success"){
 			$arr= $dbS->qAll("
 			      SELECT 
-			        id_usuario,
-			        nombre,
-			        apellido,
+					id_usuario,
+					CONCAT(nombre,' ',apellido) AS nombre,
 			        laboratorio_id,
 			        laboratorio,
 			        nss,
@@ -321,7 +320,8 @@ class Usuario{
 			        usuario,rol_usuario,laboratorio
 			      WHERE
 			      	laboratorio_id = id_laboratorio AND
-			      	rol_usuario_id = id_rol_usuario
+			      	rol_usuario_id = id_rol_usuario AND 
+			      	rol_usuario_id < 1007
 			      ",
 			      array(),
 			      "SELECT"
@@ -477,21 +477,23 @@ class Usuario{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$lab=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      SELECT 
 			        id_usuario,
-					nombre
+					CONCAT(nombre, ' ',apellido) AS nombre 
 			      FROM 
 			        usuario
 			      WHERE
 			      	active = 1 AND 
-			      	rol_usuario_id = 1003
+					rol_usuario_id = 1003 AND
+					laboratorio_id= 1QQ  
 			      ORDER BY 
 			      	nombre
 			      ",
-			      array(),
-			      "SELECT"
+			      array($lab),
+			      "SELECT -- Usuario :: getJefesBrigadaForDroptdown"
 			      );
 
 			if(!$dbS->didQuerydied){
@@ -866,11 +868,14 @@ class Usuario{
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){
-			
-				$arr = $dbS->qarrayA(
+				$fechasOrden = $dbS->qarrayA(
 							"
 								SELECT
-									laboratorio_id
+									laboratorio_id,
+									fechaInicio,
+									fechaFin,
+									horaInicio,
+									horaFin
 								FROM
 									ordenDeTrabajo
 								WHERE
@@ -878,9 +883,15 @@ class Usuario{
 							"
 							,
 							array($id_ordenDeTrabajo),
-							"SELECT"
+							"SELECT -- Usuario :: getTecnicosAvailableForLab : 1"
 						);
-				if(!$dbS->didQuerydied && !($arr=="empty")){
+				
+				if(!$dbS->didQuerydied && !($fechasOrden=="empty")){
+					$fechaInicio = $fechasOrden['fechaInicio'];
+					$fechaFin = $fechasOrden['fechaFin'];
+					$horaInicio = $fechasOrden['horaInicio'];
+					$horaFin = $fechasOrden['horaFin'];
+
 					$arr= $dbS->qAll("
 							      	SELECT 
 									    id_usuario,
@@ -889,29 +900,29 @@ class Usuario{
 										usuario LEFT JOIN
 										(
 											SELECT
-												tecnico_id,
-												IF( CURDATE()>ordenDeTrabajo.fechaInicio,'NO','SI') AS estado
+												todt.tecnico_id
 											FROM
-												tecnicos_ordenDeTrabajo,
-												ordenDeTrabajo
+												tecnicos_ordenDeTrabajo AS todt,
+												ordenDeTrabajo  AS odt
 											WHERE
-												tecnicos_ordenDeTrabajo.active=1 AND
-												CURDATE()>ordenDeTrabajo.fechaInicio AND
-												ordenDeTrabajo_id = id_ordenDeTrabajo 
+												(TIMESTAMP(CONCAT('1QQ', ' ','1QQ')) >= TIMESTAMP(CONCAT(odt.fechaInicio,' ',odt.horaInicio)) AND TIMESTAMP(CONCAT('1QQ', ' ','1QQ')) <= TIMESTAMP(CONCAT(odt.fechaFin,' ',odt.horaFin)) OR
+												TIMESTAMP(CONCAT('1QQ', ' ','1QQ')) >= TIMESTAMP(CONCAT(odt.fechaInicio,' ',odt.horaInicio)) AND TIMESTAMP(CONCAT('1QQ', ' ','1QQ')) <= TIMESTAMP(CONCAT(odt.fechaFin,' ',odt.horaFin)) ) AND
+												todt.active=1 AND
+												todt.ordenDeTrabajo_id = odt.id_ordenDeTrabajo 
 										) AS estado_tec
 										ON usuario.id_usuario = estado_tec.tecnico_id
 									WHERE
 									  	usuario.active = 1 AND
 									  	rol_usuario_id = 1004 AND
-									  	(estado_tec.estado='SI' OR estado_tec.estado IS NULL) AND
+									  	estado_tec.tecnico_id IS NULL AND
 									  	laboratorio_id = 1QQ 
 							      ",
-							      array($arr['laboratorio_id']),
-							      "SELECT"
+							      array($fechaInicio, $horaInicio,  $fechaInicio, $horaInicio, $fechaFin, $horaFin, $fechaFin, $horaFin,$fechasOrden['laboratorio_id']),
+							      "SELECT -- Usuario :: getTecnicosAvailableForLab : 2"
 			     			 );
 					if(!$dbS->didQuerydied){
 						if($arr == "empty"){
-						$arr = array('estatus' =>"No hay registros de Tecnicos disponibles", 'error' => 5);
+						  $arr = array('estatus' =>"No hay registros de Tecnicos disponibles", "error" =>0, "registros" => 0);
 						}
 						return json_encode($arr);
 					}

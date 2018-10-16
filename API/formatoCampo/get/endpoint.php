@@ -47,7 +47,7 @@
 		break;
 		case 'getformatoDefoults':
 			$formato = new formatoCampo();
-			echo $formato->getformatoDefoults();
+			echo $formato->getformatoDefoults($_GET['token'],$_GET['rol_usuario_id'],$_GET['tipo']);
 		break;
 		
 		case 'getDaysPruebasForCompletition':

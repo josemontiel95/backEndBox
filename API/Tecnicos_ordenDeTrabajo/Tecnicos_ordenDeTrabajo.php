@@ -143,7 +143,7 @@ class Tecnicos_ordenDeTrabajo{
 		$tecnicosArray=json_decode($tecnicosArray);
 
 		if($arr['error'] == 0){
-			$dbS->transquery("
+			$dbS->transqueryTecnicos("
 						INSERT INTO
 						tecnicos_ordenDeTrabajo(tecnico_id,ordenDeTrabajo_id)
 						VALUES
@@ -246,7 +246,7 @@ class Tecnicos_ordenDeTrabajo{
 			
 			if(!$dbS->didQuerydied){
 				if($s=="empty"){
-					$arr = array("No hay Tecnicos asociados a la orden:" => $id_ordenDeTrabajo, "error" =>5);
+					$arr = array("No hay Tecnicos asociados a la orden:" => $id_ordenDeTrabajo, "error" =>0, "registros" => 0);
 				}
 				else{
 					return json_encode($s);

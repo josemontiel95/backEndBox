@@ -41,6 +41,7 @@
 			//Definimos las dimensiones del logotipo de Lacocs
 			$posicion_x = $this->GetX();
 
+
 			$this->Image('./../../disenoFormatos/lacocs.jpg',$posicion_x,$this->GetY(),$tam_lacocs + 10,$tam_lacocs);
 			$tam_font_titulo = 8.5;
 			$this->SetFont('Arial','B',$tam_font_titulo); 
@@ -810,6 +811,7 @@
 			
 			//Tamaño de la imagen
 			$tam_image = 25;
+
 			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 
 
@@ -823,6 +825,7 @@
 
 			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('________________________________'));	
 			$this->TextWithDirection(($posicion_x + ($tam_boxCliente /2))-($this->GetStringWidth('NOMBRE DE QUIEN RECIBE')/2),$this->gety() - 3,utf8_decode('NOMBRE DE QUIEN RECIBE'));	
+
 			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($tam_boxCliente)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);					
 		}
 		
