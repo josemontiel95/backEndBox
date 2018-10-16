@@ -795,14 +795,16 @@
 
 			$this->SetFont('Arial','',$tam_font_CellsRows);
 			$num_rows = 0;
-			foreach ($regisFormato as $registro) {
-				$j=0;
-				foreach ($registro as $campo) {
-					$this->cell($this->arrayCampos[$j],$tam_cellsTablesAlto,utf8_decode($campo),1,0,'C');
-					$j++;
+			if(!array_key_exists('error',$regisFormato)){
+				foreach ($regisFormato as $registro) {
+					$j=0;
+					foreach ($registro as $campo) {
+						$this->cell($this->arrayCampos[$j],$tam_cellsTablesAlto,utf8_decode($campo),1,0,'C');
+						$j++;
+					}
+					$num_rows++;
+					$this->Ln();
 				}
-				$num_rows++;
-				$this->Ln();
 			}
 			if($num_rows<$grupos){
 				$posicion_x = $this->GetX();

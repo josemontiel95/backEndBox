@@ -799,28 +799,30 @@
 			$num_grupo = 1;
 			$arrayGrupo1 = array();
 			$arrayGrupo2 = array();
-
-			for ($i=0; $i < count($regisFormato) ; $i++) {
-				if($regisFormato[$i]['grupo'] == $num_grupo){
-					$arrayLoc[$num_grupo] = $regisFormato[$i]['localizacion'];
-					$num_grupo++;
+			if(!array_key_exists('error',$regisFormato)){
+				for ($i=0; $i < count($regisFormato) ; $i++) {
+					if($regisFormato[$i]['grupo'] == $num_grupo){
+						$arrayLoc[$num_grupo] = $regisFormato[$i]['localizacion'];
+						$num_grupo++;
+					}
+					switch ($regisFormato[$i]['grupo']) {
+					 	case '1':
+					 			unset($regisFormato[$i]['grupo'],$regisFormato[$i]['localizacion']);
+					 			array_push($arrayGrupo1,$regisFormato[$i]);
+					 		break;
+					 	case '2':
+					 			unset($regisFormato[$i]['grupo'],$regisFormato[$i]['localizacion']);
+					 			array_push($arrayGrupo2,$regisFormato[$i]);
+					 		break;
+					 	case '3':
+					 			unset($regisFormato[$i]['grupo'],$regisFormato[$i]['localizacion']);
+					 			array_push($arrayGrupo3,$regisFormato[$i]);
+					 		break;
+					 } 
+					
 				}
-				switch ($regisFormato[$i]['grupo']) {
-				 	case '1':
-				 			unset($regisFormato[$i]['grupo'],$regisFormato[$i]['localizacion']);
-				 			array_push($arrayGrupo1,$regisFormato[$i]);
-				 		break;
-				 	case '2':
-				 			unset($regisFormato[$i]['grupo'],$regisFormato[$i]['localizacion']);
-				 			array_push($arrayGrupo2,$regisFormato[$i]);
-				 		break;
-				 	case '3':
-				 			unset($regisFormato[$i]['grupo'],$regisFormato[$i]['localizacion']);
-				 			array_push($arrayGrupo3,$regisFormato[$i]);
-				 		break;
-				 } 
-				
 			}
+			
 
 			//Guardamos la posicion de Y para insertar la cellda de "Elemento muestreado"
 			$ele_posicion_y = $this->GetY(); 
@@ -860,7 +862,7 @@
 						$this->cell($tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],'','L',2);
 					}
 				}
-				$this->Line($posicion_xLine, $posicion_yLine,$posicion_xfinal,$posicion_yfinal);//Linea que completa la ultima celda
+				$this->Line($posicion_x, $posicion_y,269.3975,$posicion_yfinal);//Linea que completa la ultima celda
 			}
 			
 
