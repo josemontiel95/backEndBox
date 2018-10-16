@@ -20,33 +20,52 @@
 					$formato = new FormatoCampo();	$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
 				switch ($infoFormato['tipo_especimen']) {
 					case 'CUBO':
-						$pdf  = new InformeCubos('L','mm','Letter');
-						$pdf->AddPage();
 						$infoFormato = $this->getInfoCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-						$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-						$pdf = new InformeCubos();	
-						$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
+						if(!(array_key_exists('error', $infoFormato))){
+							$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+							if(!(array_key_exists('error', $regisFormato))){
+								$pdf = new InformeCubos();	
+								$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
+							}
+							else{
+								return json_encode($regisFormato);
+							}
+						}else{
+							return json_encode($infoFormato);
+						}
 						break;
 					case 'CILINDRO':
-						$pdf = new InformeCilindros('L','mm','Letter');
-						$pdf->AddPage();
 						$infoFormato = $this->getInfoCiliByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-						$regisFormato = $this->getRegCilindroByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-						unset($pdf);
-						$pdf = new InformeCilindros();	$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
+						if(!(array_key_exists('error', $infoFormato))){
+							$regisFormato = $this->getRegCilindroByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+							if(!(array_key_exists('error', $regisFormato))){
+								$pdf = new InformeCilindros();	
+								$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
+							}
+							else{
+								return json_encode($regisFormato);
+							}
+
+						}
+						else{
+							return json_encode($infoFormato);
+						}
 						break;
 					case 'VIGAS':
-						$pdf  = new InformeVigas('L','mm','Letter');
-						$pdf->AddPage();
 						$infoFormato = $this->getInfoViga($token,$rol_usuario_id,$id_formatoCampo);
-						$regisFormato = $this->getRegVigaByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-						unset($pdf);
-						$pdf  = new InformeVigas();
-						$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);	
+						if(!(array_key_exists('error', $infoFormato))){
+							$regisFormato = $this->getRegVigaByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+							if(!(array_key_exists('error', $regisFormato))){
+								$pdf  = new InformeVigas();
+								$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);	
+							}
+							else{
+								return json_encode($regisFormato);
+							}
+						}else{
+							return json_encode($infoFormato);
+						}
 						break;
-
-
-				
 				}
 			}
 			else{
@@ -83,7 +102,7 @@
 
 				if(!$dbS->didQuerydied){
 					if($s=="empty"){
-						$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro ese id','error' => 5);
+						$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
 					}
 					else{
 						return $s;
@@ -93,7 +112,7 @@
 						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 				}
 			}
-			return json_encode($arr);
+			return $arr;
 		}
 
 		function getInfoCiliByFCCH($token,$rol_usuario_id,$id_formatoCampo){
@@ -125,7 +144,7 @@
 
 				if(!$dbS->didQuerydied){
 					if($s=="empty"){
-						$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro ese id','error' => 5);
+						$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
 					}
 					else{
 						return $s;
@@ -135,7 +154,7 @@
 						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 				}
 			}
-			return json_encode($arr);
+			return $arr;
 		}
 
 
@@ -244,12 +263,23 @@
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
 				$info = $this->getInfoRev($token,$rol_usuario_id,$id_formatoRegistroRev);
-				$registros = $this->getRegRev($token,$rol_usuario_id,$id_formatoRegistroRev);
-				$pdf = new Revenimiento();	
-				$pdf->CreateNew($info,$registros,$target_dir);
+				if(!(array_key_exists('error', $info))){
+					$registros = $this->getRegRev($token,$rol_usuario_id,$id_formatoRegistroRev);
+					if(!(array_key_exists('error', $registros))){
+						$pdf = new Revenimiento();	
+						$pdf->CreateNew($info,$registros,$target_dir);
+					}
+					else{
+						return json_encode($registros);
+					}
+				}
+				else{
+					return json_encode($info);
+				}
+				
 			}
 			else{
-				echo json_encode($arr);
+				return json_encode($arr);
 			}
 		}
 
@@ -327,7 +357,7 @@
 
 				if(!$dbS->didQuerydied){
 					if($s=="empty"){
-						$arr = array('id_formatoRegistroRev' => $id_formatoRegistroRev,'estatus' => 'Error no se encontro ese id','error' => 5);
+						$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
 					}
 					else{
 						return $s;
@@ -337,7 +367,7 @@
 						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 				}
 			}
-			return json_encode($arr);
+			return $arr;
 		}
 
 		function generateInformeRevenimiento($token,$rol_usuario_id,$id_formatoRegistroRev,$target_dir){
@@ -346,12 +376,20 @@
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
 				$info = $this->getInfoRev($token,$rol_usuario_id,$id_formatoRegistroRev);
-				$registros = $this->getRegRev($token,$rol_usuario_id,$id_formatoRegistroRev);
-				$pdf = new InformeRevenimiento();	
-				$pdf->CreateNew($info,$registros,$target_dir);
+				if(!(array_key_exists('error', $info))){
+					$registros = $this->getRegRev($token,$rol_usuario_id,$id_formatoRegistroRev);
+					if(!(array_key_exists('error', $registros))){
+						$pdf = new InformeRevenimiento();	
+						$pdf->CreateNew($info,$registros,$target_dir);
+					}else{
+						return json_encode($registros);
+					}
+				}else{
+					return json_encode($info);
+				}
 			}
 			else{
-				echo json_encode($arr);
+				return json_encode($arr);
 			}			
 		}
 		
@@ -483,12 +521,22 @@
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
 				$infoFormato = $this->getInfoCCH($token,$rol_usuario_id,$id_formatoCampo);
-				$regisFormato = $this->getRegCCH($token,$rol_usuario_id,$id_formatoCampo);
-				$pdf = new CCH();
-				$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
+				if(!(array_key_exists('error',$infoFormato))){
+					$regisFormato = $this->getRegCCH($token,$rol_usuario_id,$id_formatoCampo);
+					if(!(array_key_exists('error', $regisFormato))){
+						$pdf = new CCH();
+						$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
+					}
+					else{
+						return json_encode($regisFormato);
+					}
+				}else{
+					return json_encode($infoFormato);
+				}
+				
 			}
 			else{
-				echo json_encode($arr);
+				return json_encode($arr);
 			}
 		}
 		
@@ -578,7 +626,7 @@
 
 				if(!$dbS->didQuerydied){
 					if($s=="empty"){
-						$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro ese id','error' => 5);
+						$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
 					}
 					else{
 						return $s;
@@ -588,7 +636,7 @@
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 				}
 			}
-			return json_encode($arr);
+			return $arr;
 		}
 
 		function getRegCCH($token,$rol_usuario_id,$id_formatoCampo){
@@ -942,7 +990,7 @@
 				
 				if(!$dbS->didQuerydied){
 					if($s=="empty"){
-						$arr = array('No existen registro relacionados con el id_formatoCampo'=>$id_formatoCampo,'error' => 5);
+						$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
 					}
 					else{
 						return $s;
