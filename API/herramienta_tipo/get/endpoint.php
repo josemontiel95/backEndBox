@@ -25,6 +25,11 @@
 			$herra_tipo = new Herramienta_tipo();
 			echo $herra_tipo->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		
+		case 'getForDroptdownForOrdenServicio':
+			$herra_tipo = new Herramienta_tipo();
+			echo $herra_tipo->getForDroptdownForOrdenServicio($_GET['token'],$_GET['rol_usuario_id']);
+		break;
 		case 'getByIDAdmin':
 			$herra_tipo = new Herramienta_tipo();
 			echo $herra_tipo->getByIDAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta_tipo']);

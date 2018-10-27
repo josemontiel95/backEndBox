@@ -19,19 +19,19 @@
 			$tecorden = new Tecnicos_ordenDeTrabajo();
 			echo $tecorden->insertAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['ordenDeTrabajo_id'],$_POST['tecnicosArray']);		
 		break;
+		
+		case 'deactivateTecnicos':
+			$tecorden = new Tecnicos_ordenDeTrabajo();
+			echo $tecorden->deactivateTecnicos($_POST['token'],$_POST['rol_usuario_id'],$_POST['tecnicosArray'], $_POST['ordenDeTrabajo_id']);		
+		break;
 		case 'deleteTec':
 			$tecorden = new Tecnicos_ordenDeTrabajo();
-			echo $tecorden->deleteTec($_POST['token'],$_POST['rol_usuario_id'],$_POST['tecnicosArray']);		
+			echo $tecorden->deleteTec($_POST['token'],$_POST['rol_usuario_id'],$_POST['tecnicosArray'], $_POST['ordenDeTrabajo_id']);		
 		break;
 		case 'pasarLista':
 			$tecorden = new Tecnicos_ordenDeTrabajo();
 			echo $tecorden->pasarLista($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_tecnicos_ordenDeTrabajo'],$_POST['email'],$_POST['contrasena']);		
 		break;
-		/*	---No se usa--- De reserva por si se requiere despues.
-		case 'upDateAdmin':
-			$tecorden = new Tecnicos_ordenDeTrabajo();
-			echo $tecorden->upDateAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['tecnico_id'],$_POST['ordenDeTrabajo_id']);
-		break;*/
 		
 	}
 

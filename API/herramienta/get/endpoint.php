@@ -28,30 +28,26 @@
 
 		case 'getForDroptdownJefeBrigadaCono':
 			$herra = new Herramienta();
-			echo $herra->getForDroptdownJefeBrigadaCono($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
+			echo $herra->getForDroptdownJefeBrigadaCono($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo'],$_GET['status']);
 		break;
 
 		case 'getForDroptdownJefeBrigadaVarilla':
 			$herra = new Herramienta();
-			echo $herra->getForDroptdownJefeBrigadaVarilla($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
+			echo $herra->getForDroptdownJefeBrigadaVarilla($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo'],$_GET['status']);
 		break;
 
 		case 'getForDroptdownJefeBrigadaFlexometro':
 			$herra = new Herramienta();
-			echo $herra->getForDroptdownJefeBrigadaFlexometro($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
+			echo $herra->getForDroptdownJefeBrigadaFlexometro($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo'],$_GET['status']);
 		break;
 
 		case 'getForDroptdownJefeBrigadaTermometro':
 			$herra = new Herramienta();
-			echo $herra->getForDroptdownJefeBrigadaTermometro($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
+			echo $herra->getForDroptdownJefeBrigadaTermometro($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo'],$_GET['status']);
 		break;
 		case 'getAllJefaLab':
 			$herra = new Herramienta();
 			echo $herra->getAllJefaLab($_GET['token'],$_GET['rol_usuario_id']);
-		break;
-		case 'getForDroptdownTipo':
-			$herra = new Herramienta();
-			echo $herra->getForDroptdownTipo($_GET['token'],$_GET['rol_usuario_id']);
 		break;
 		case 'getAllFromTipo':
 			$herra = new Herramienta();

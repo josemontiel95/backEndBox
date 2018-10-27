@@ -109,7 +109,7 @@ class Herramienta_ordenDeTrabajo{
 	}
 
 
-	public function getHerramientaForDropdownRegistro($token,$rol_usuario_id,$id_formatoCampo){
+	public function getHerramientaForDropdownRegistro($token,$rol_usuario_id,$id_formatoCampo,$status){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -165,7 +165,7 @@ class Herramienta_ordenDeTrabajo{
 								herramientas
 							WHERE
 								herramienta_id=id_herramienta AND
-								herramienta_ordenDeTrabajo.active=1 AND 
+								herramienta_ordenDeTrabajo.active>1QQ AND 
 								herramienta_tipo_id='1QQ' AND
 								herramienta_ordenDeTrabajo.ordenDeTrabajo_id=formatoCampo.ordenDeTrabajo_id AND 
 							  	id_formatoCampo='1QQ'
@@ -186,7 +186,7 @@ class Herramienta_ordenDeTrabajo{
 					WHERE 
 						id_registrosCampo IS NULL
 					",
-					array($id_herramienta,$herra_tipo,$id_formatoCampo),
+					array($id_herramienta,$status,$herra_tipo,$id_formatoCampo),
 					"SELECT"
 				);
 				if(!$dbS->didQuerydied && !($arr=="empty")){
@@ -288,36 +288,8 @@ class Herramienta_ordenDeTrabajo{
 	
 
 	//FUNCION QUE DESACTIVA UNA HERRAMIENTA RELACIONADA CON LA ORDEN DE TRABAJO
-	public function deactivateHerra($token,$rol_usuario_id,$herramientasArray){
-		global $dbS;
-		$usuario = new Usuario();
-		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		if($arr['error'] == 0){
-			foreach ($herramientasArray as $herramienta_id){
-				$dbS->squery("	UPDATE
-								herramienta_ordenDeTrabajo
-							SET
-								active = 1QQ
-							WHERE
-								active=1 AND
-								herramienta_id = 1QQ
-						 "
-						,array(0,$herramienta_id),"UPDATE"
-				      	);
-				if(!$dbS->didQuerydied){
-					$arr = array('herramienta_id' => $herramienta_id,'estatus' => 'Herramienta se desactivo','error' => 0);
-				}
-				else{
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la desactivacion , verifica tus datos y vuelve a intentarlo','error' => 5);
-				}
-			}
 
-		}
-		return json_encode($arr);
-	}
-
-	//FUNCION QUE ELIMINA UNA TUPLA MEDIANTE EL ID DE LA HERRAMIENTA
-	public function deleteHerra($token,$rol_usuario_id,$herramientasArray){
+	public function deactivateHerra($token,$rol_usuario_id,$herramientasArray,$ordenDeTrabajo_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token,$rol_usuario_id),true);
@@ -325,12 +297,47 @@ class Herramienta_ordenDeTrabajo{
 		$herramientasArray=json_decode($herramientasArray);
 	
 		if($arr['error'] == 0){
-			$dbS->transquery("
+			$dbS->deletetransquery(
+				"UPDATE
+					herramienta_ordenDeTrabajo
+				SET
+					active = 0
+				WHERE
+					herramienta_id = 1QQ AND 
+					ordenDeTrabajo_id = 1QQ
+
+						"
+						,$herramientasArray,$ordenDeTrabajo_id,
+						"DELET-TS");
+				if(!$dbS->didQuerydied){
+					$arr = array('id_herramienta_ordenDeTrabajo' => 'No disponible, esto NO es un error', 'estatus' => 'Exito en eliminación', 'error' => 0);
+				}
+				else{
+					$id=$dbS->lastInsertedID;
+					$arr = array('Se detecto error en id:' => $id, 'token' => $token,	'estatus' => 'Error en la eliminacion , verifica tus datos y vuelve a intentarlo','error' => 5);				
+				}
+
+		}
+		return json_encode($arr);
+	
+	}
+
+	//FUNCION QUE ELIMINA UNA TUPLA MEDIANTE EL ID DE LA HERRAMIENTA
+	public function deleteHerra($token,$rol_usuario_id,$herramientasArray,$ordenDeTrabajo_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token,$rol_usuario_id),true);
+		$i=0;
+		$herramientasArray=json_decode($herramientasArray);
+	
+		if($arr['error'] == 0){
+			$dbS->deletetransquery("
 						DELETE FROM
 							herramienta_ordenDeTrabajo
 							WHERE
 								active=1 AND
-								herramienta_id = 1QQ
+								herramienta_id = 1QQ AND 
+								ordenDeTrabajo_id = 1QQ
 
 						"
 						,$herramientasArray,$ordenDeTrabajo_id,
@@ -347,11 +354,7 @@ class Herramienta_ordenDeTrabajo{
 
 		}
 		return json_encode($arr);
-
-
-
-
-		
+	
 	}
 
 
@@ -374,7 +377,7 @@ class Herramienta_ordenDeTrabajo{
 		  				WHEN herramienta_ordenDeTrabajo.active = 1 AND NOW()>TIMESTAMP(CONCAT(odt.fechaInicio,' ',odt.horaInicio)) AND NOW()<TIMESTAMP(CONCAT(odt.fechaFin,' ',odt.horaFin)) THEN 'En Curso'
 		  				WHEN herramienta_ordenDeTrabajo.active = 1 AND NOW()<TIMESTAMP(CONCAT(odt.fechaInicio,' ',odt.horaInicio)) THEN 'Agendado'
 		  				WHEN herramienta_ordenDeTrabajo.active = 1 AND NOW()>TIMESTAMP(CONCAT(odt.fechaFin,' ',odt.horaFin)) THEN 'Vencido'
-		  				WHEN herramienta_ordenDeTrabajo.active = 0 AND NOW()>TIMESTAMP(CONCAT(odt.fechaFin,' ',odt.horaFin)) THEN 'Terminado'
+						WHEN herramienta_ordenDeTrabajo.active = 0 THEN 'Terminado'
 		    			ELSE 'Error'
 					END AS estado
 				  FROM 

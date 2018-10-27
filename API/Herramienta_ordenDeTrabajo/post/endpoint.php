@@ -29,15 +29,13 @@
 		*/
 		case 'deactivateHerra':
 			$herra = new Herramienta_ordenDeTrabajo();
-			echo $herra->deactivateHerra($_POST['token'],$_POST['rol_usuario_id'],$_POST['herramienta_id']);
+			echo $herra->deactivateHerra($_POST['token'],$_POST['rol_usuario_id'],$_POST['herramientasArray'],$_POST['ordenDeTrabajo_id']);
 		break;
 		case 'deleteHerra':
 			$herra = new Herramienta_ordenDeTrabajo();
-			echo $herra->deleteHerra($_POST['token'],$_POST['rol_usuario_id'],$_POST['herramientasArray']);
+			echo $herra->deleteHerra($_POST['token'],$_POST['rol_usuario_id'],$_POST['herramientasArray'],$_POST['ordenDeTrabajo_id']);
 		break;
 	}
-
-	
 
 	/*
 	if(!empty($_GET)){

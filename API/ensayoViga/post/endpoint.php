@@ -21,6 +21,10 @@
 			$footer = new EnsayoViga();
 			echo $footer->insertRegistroTecMuestra($_POST['token'],$_POST['rol_usuario_id'],$_POST['campo'],$_POST['valor'],$_POST['id_ensayoViga']);		
 		break;
+		case 'onChangePuntosDeApoyo':
+			$footer = new EnsayoViga();
+			echo $footer->onChangePuntosDeApoyo($_POST['token'],$_POST['rol_usuario_id'],$_POST['valor'],$_POST['id_ensayoViga']);		
+		break;
 		case 'completeEnsayo':
 			$footer = new EnsayoViga();
 			echo $footer->completeEnsayo($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ensayoViga']);		

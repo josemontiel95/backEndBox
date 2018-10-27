@@ -9,6 +9,11 @@ class EnsayoCilindro{
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
+	public function ping($data){
+		return $data;	
+	}
+
+
 	public function initInsert($token,$rol_usuario_id,$registrosCampo_id,$formatoCampo_id,$footerEnsayo_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -63,6 +68,12 @@ class EnsayoCilindro{
 				case '7':
 					$campo = 'falla';
 					break;
+				case '9':
+					$campo = 'velAplicacionExp';
+					break;
+				case '10':
+					$campo = 'tiempoDeCarga';
+					break;
 
 			}
 
@@ -74,7 +85,8 @@ class EnsayoCilindro{
 							1QQ = '1QQ'
 						WHERE
 							id_ensayoCilindro = 1QQ
-				",array($campo,$valor,$id_ensayoCilindro),"UPDATE");
+				",array($campo,$valor,$id_ensayoCilindro),
+				"UPDATE -- EnsayoCilindro :: insertRegistroTecMuestra : 1");
 			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
 			if(!$dbS->didQuerydied){
 				$fechaEnsayo = $dbS->qarrayA(
@@ -88,7 +100,7 @@ class EnsayoCilindro{
 							id_ensayoCilindro = 1QQ
 					",
 					array($id_ensayoCilindro),
-					"SELECT-EnsayoCilindro :: insertRegistroTecMuestra"
+					"SELECT -- EnsayoCilindro :: insertRegistroTecMuestra : 2"
 				);
 				$arr = array('id_ensayoCilindro' => $id_ensayoCilindro,'estatus' => '¡Exito en la inserccion de un registro!','fechaEnsayo' => $fechaEnsayo['fecha'],'error' => 0);
 				return json_encode($arr);
@@ -114,7 +126,7 @@ class EnsayoCilindro{
 						FROM
 							systemstatus
 						ORDER BY id_systemstatus DESC;
-					",array(),"SELECT"
+					",array(),"SELECT  -- EnsayoCilindro :: calcularAreaResis : 1"
 					);
 			if(!$dbS->didQuerydied){
 				$variables = $dbS->qarrayA(
@@ -127,7 +139,8 @@ class EnsayoCilindro{
 							ensayoCilindro
 						WHERE 
 							id_ensayoCilindro  = 1QQ
-					",array($id_ensayoCilindro),"SELECT"
+					",array($id_ensayoCilindro),
+					"SELECT -- EnsayoCilindro :: calcularAreaResis : 2"
 					);
 				if(!$dbS->didQuerydied){
 					$dbS->commitTransaction();
@@ -141,6 +154,19 @@ class EnsayoCilindro{
 					else{
 						$resistencia = $variables['carga']/$area;
 						$error = 0;
+					}
+					if($error == 0){
+						$dbS->squery("
+						UPDATE
+							ensayoCilindro
+						SET
+							fecha = CURDATE(),
+							area = '1QQ',
+							resistencia = '1QQ'
+						WHERE
+							id_ensayoCilindro = 1QQ
+						",array($area,$resistencia,$id_ensayoCilindro),
+						"UPDATE -- EnsayoCilindro :: calcularAreaResis : 3");
 					}
 					$arr = array('area' => $area,'resistencia' => $resistencia, 'error'=> $error);
 					return json_encode($arr);
@@ -158,6 +184,7 @@ class EnsayoCilindro{
 		}
 		return json_encode($arr);
 	}
+
 	public function getRegistrosByID($token,$rol_usuario_id,$id_ensayoCilindro){
 		global $dbS;
 		$usuario = new Usuario();
@@ -193,7 +220,11 @@ class EnsayoCilindro{
 							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
 							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
 							ELSE 'Error, Contacta a soporte'
-						END AS diasEnsayeFinal
+						END AS diasEnsayeFinal,
+						velAplicacionExp,
+						tiempoDeCarga,
+						area,
+						resistencia
 					FROM 
 						ensayoCilindro,registrosCampo,formatoCampo
 					WHERE
@@ -246,13 +277,9 @@ class EnsayoCilindro{
 						ensayoCilindro.status AS status,
 						CASE
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
-							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
 							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
-							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
 							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
-							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
 							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
-							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
 							ELSE 'Error, Contacta a soporte'
 						END AS diasEnsayeFinal
 					FROM 
@@ -263,20 +290,68 @@ class EnsayoCilindro{
 						ensayoCilindro.footerEnsayo_id = 1QQ
 			      ",
 			      array($footerEnsayo_id),
-			      "SELECT"
+			      "SELECT -- EnsayoCilindro :: getAllRegistrosFromFooterByID : 1"
 			      );
 			
 			if(!$dbS->didQuerydied){
 				if($s=="empty"){
 					$arr = array('No existen registro relacionados con el footerEnsayo_id'=>$id_ensayoCilindro,'error' => 5);
-				}
-				else{
+				}else{
 					return json_encode($s);
 				}
-			}
-			else{
+			}else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getAllRegistrosFromFooterByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 			}
+		}
+		return json_encode($arr);
+	}
+
+	public function getOldMembers($token,$rol_usuario_id,$id_ensayoCilindro){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$info = $dbS->qarrayA(
+				"   SELECT 
+						grupo,
+						registrosCampo.formatoCampo_id AS formatoCampo_id,
+						id_registrosCampo
+					FROM
+						registrosCampo, ensayoCilindro
+					WHERE
+						id_registrosCampo = registrosCampo_id AND
+						id_ensayoCilindro = 1QQ
+				",
+				array($id_ensayoCilindro),
+				"SELECT -- EnsayoCilindro :: getOldMembers : 1"
+			);
+			if($dbS->didQuerydied || $info=="empty"){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getOldMembers , verifica tus datos y vuelve a intentarlo','error' => 10);
+				return json_encode($arr);
+			}
+			$arr = $dbS->qAll(
+				"   SELECT 
+						id_ensayoCilindro
+					FROM
+						registrosCampo, ensayoCilindro
+					WHERE
+						id_registrosCampo = registrosCampo_id AND
+						registrosCampo.formatoCampo_id = 1QQ AND
+						grupo = '1QQ' AND
+						id_ensayoCilindro < 1QQ
+					ORDER BY id_registrosCampo DESC
+				",
+				array($info['formatoCampo_id'],$info['grupo'],$id_ensayoCilindro),
+				"SELECT -- EnsayoCilindro :: getOldMembers : 2"
+			);
+			if($dbS->didQuerydied){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getOldMembers , verifica tus datos y vuelve a intentarlo','error' => 11);
+				return json_encode($arr);
+			}else if($arr=="empty"){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getOldMembers , verifica tus datos y vuelve a intentarlo','error' => 12);
+				return json_encode($arr);
+			}
+
 		}
 		return json_encode($arr);
 	}
@@ -288,36 +363,56 @@ class EnsayoCilindro{
 		if($arr['error'] == 0){
 				$dbS->beginTransaction();
 				$a = $dbS->qarrayA(
-					"
-						SELECT
-							registrosCampo_id
+					"	SELECT
+							registrosCampo_id,
+							footerEnsayo_id
 						FROM
 							ensayoCilindro
 						WHERE
 							id_ensayoCilindro = 1QQ
 					",
 					array($id_ensayoCilindro),
-					"SELECT"
-									 );
+					"SELECT -- EnsayoCilindro ::  completeEnsayo : 1"
+				);
 				if(!$dbS->didQuerydied){
-					$dbS->squery("
-						UPDATE
+					$dbS->squery(
+						"UPDATE
+							footerEnsayo
+						SET
+							pendingEnsayos = pendingEnsayos -1
+						WHERE
+							id_footerEnsayo = 1QQ
+						",array($a['footerEnsayo_id']),
+						"UPDATE -- EnsayoCilindro ::  completeEnsayo : 2"
+					);
+					if($dbS->didQuerydied){
+						$dbS->rollbackTransaction();
+						$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCCH, verifica tus datos y vuelve a intentarlo','error' => 40);
+						return json_encode($arr);
+					}
+
+					$dbS->squery(
+						"UPDATE
 							registrosCampo
 						SET
 							statusEnsayo = 1
 						WHERE
 							id_registrosCampo = 1QQ
-					",array($a['registrosCampo_id']),"UPDATE");
+						",array($a['registrosCampo_id']),
+						"UPDATE-- EnsayoCilindro ::  completeEnsayo : 3"
+					);
 					if(!$dbS->didQuerydied){
 						$dbS->squery("
-						UPDATE
-							ensayoCilindro
-						SET
-							fecha = CURDATE(),
-							status = 1
-						WHERE
-							id_ensayoCilindro = 1QQ
-						",array($id_ensayoCilindro),"UPDATE");
+							UPDATE
+								ensayoCilindro
+							SET
+								fecha = CURDATE(),
+								status = 1
+							WHERE
+								id_ensayoCilindro = 1QQ
+							",array($id_ensayoCilindro),
+							"UPDATE -- EnsayoCilindro ::  completeEnsayo : 4"
+						);
 						if(!$dbS->didQuerydied){
 							$dbS->commitTransaction();
 							$arr = array('id_ensayoCilindro' => $id_ensayoCilindro,'estatus' => '¡Ensayo completado!','error' => 0);
@@ -339,6 +434,51 @@ class EnsayoCilindro{
 					$arr = array('id_ensayoCilindro' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
 					return json_encode($arr);
 				}		
+		}
+		return json_encode($arr);
+	}
+	public function calcularVelocidad($token,$rol_usuario_id,$id_ensayoCilindro){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->beginTransaction();
+			$variables = $dbS->qarrayA(
+				"	SELECT
+						resistencia,
+						tiempoDeCarga
+					FROM
+						ensayoCilindro
+					WHERE 
+						id_ensayoCilindro  = 1QQ
+				",array($id_ensayoCilindro),"SELECT -- EnsayoCilindro :: calcularVelocidad : 1"
+			);
+			if(!$dbS->didQuerydied){
+			
+				$velAplicacionExp = ($variables['resistencia'])/$variables['tiempoDeCarga'];
+				
+				$dbS->squery(
+					"UPDATE
+						ensayoCilindro
+					SET
+						fecha = CURDATE(),
+						velAplicacionExp = '1QQ'
+					WHERE
+						id_ensayoCilindro = 1QQ
+					",array($velAplicacionExp,$id_ensayoCilindro),
+					"UPDATE -- EnsayoCilindro ::  calcularVelocidad : 2"
+				);
+				if($dbS->didQuerydied){
+					$dbS->rollbackTransaction();
+					$arr = array('estatus' => 'No se pudieron cargar las variables del registro.','error' => 40);
+				}else{
+					$dbS->commitTransaction();
+					$arr = array('velAplicacionExp' => $velAplicacionExp,'error' => 0);
+				}
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('estatus' => 'No se pudieron cargar las variables del registro.','error' => 6);
+			}
 		}
 		return json_encode($arr);
 	}

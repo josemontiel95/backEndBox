@@ -48,25 +48,54 @@ class Herramienta_tipo{
 		return json_encode($arr);
 	}
 
+	public function getForDroptdownForOrdenServicio($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll(
+				"	SELECT
+						id_herramienta_tipo,
+						tipo
+					FROM
+						herramienta_tipo
+					WHERE
+						asignableenOrdenDeTrabajo = 1 AND
+						herramienta_tipo.active = 1 
+					ORDER BY tipo;
+			      ",
+			      array(),
+			      "SELECT -- Herramienta_tipo :: getForDroptdownAdmin : 1"
+			      );
+
+			if(!$dbS->didQuerydied){
+				if(count($arr) == 0)
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); 
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}
+		}
+		return json_encode($arr);
+	}
 
 	public function getForDroptdownAdmin($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$arr= $dbS->qAll("
-			      SELECT 
-			      	id_herramienta_tipo,
-			        tipo
-			      FROM 
-			        herramienta_tipo
-			      WHERE
-			      	active=1
-			      ORDER BY
-			      	tipo
+			$arr= $dbS->qAll(
+				"	SELECT
+						id_herramienta_tipo,
+						tipo
+					FROM
+						herramienta_tipo
+					WHERE
+						herramienta_tipo.active = 1 
+					ORDER BY tipo;
 			      ",
 			      array(),
-			      "SELECT"
+			      "SELECT -- Herramienta_tipo :: getForDroptdownAdmin : 1"
 			      );
 
 			if(!$dbS->didQuerydied){

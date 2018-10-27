@@ -25,7 +25,8 @@ class ordenDeTrabajo{
 									id_formatoCampo AS id_formato,
 									informeNo AS formatoNo,
 									IF(informeNo IS NOT NULL,'CONTROL DE CONCRETO HIDRAULICO','ERROR')AS tipo,
-									status
+									status,
+									tipo AS tipo2
 								FROM
 									formatoCampo
 								WHERE
@@ -42,7 +43,8 @@ class ordenDeTrabajo{
 									id_formatoRegistroRev AS id_formato,
 									regNo AS formatoNo,
 									IF(regNo IS NOT NULL,'REVENIMIENTO','ERROR')AS tipo,
-									status
+									status,
+									'N.A.' AS tipo2
 								FROM
 									formatoRegistroRev
 								WHERE
@@ -219,7 +221,8 @@ class ordenDeTrabajo{
 							jefa_lab_id = creadores.id_usuario AND 
 							ordenDeTrabajo.status <3 AND
 							ordenDeTrabajo.laboratorio_id = 1QQ
-			      ",
+							ORDER BY fechaInicio ASC
+							",
 			      array($laboratorio_id),
 			      "SELECT"
 			      );
@@ -247,8 +250,8 @@ class ordenDeTrabajo{
 
 							actividades,
 							condicionesTrabajo,
-							fechaInicio,
-							fechaFin,
+							CONCAT(fechaInicio,' ',horaInicio) AS fechaInicio,
+							CONCAT(fechaFin,' ',horaFin) AS fechaFin,
 							horaInicio,
 							horaFin,
 							observaciones,
@@ -262,6 +265,7 @@ class ordenDeTrabajo{
 								WHEN ordenDeTrabajo.status = 0 THEN 'Edicion JL'
 								WHEN ordenDeTrabajo.status = 1 THEN 'Ejecucion JB'
 								WHEN ordenDeTrabajo.status = 2 THEN 'Terminado JB'
+								WHEN ordenDeTrabajo.status > 2 THEN 'Completado'
 								ELSE 'Error'
 							END AS odtStatus,
 							CASE
@@ -272,6 +276,7 @@ class ordenDeTrabajo{
 								WHEN ordenDeTrabajo.status = 2 AND CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()> TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 'Terminado'
 								WHEN ordenDeTrabajo.status = 1 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 'Atrasado'
 								WHEN ordenDeTrabajo.status = 2 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 'Terminado'
+								WHEN ordenDeTrabajo.status > 2 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 'Completado'
 								ELSE 'Error, contacte a soporte'
 							END AS estado,
 							CASE
@@ -282,6 +287,7 @@ class ordenDeTrabajo{
 								WHEN ordenDeTrabajo.status = 2 AND CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()> TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 3
 								WHEN ordenDeTrabajo.status = 1 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 0
 								WHEN ordenDeTrabajo.status = 2 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 3
+								WHEN ordenDeTrabajo.status > 2 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 4
 							END AS color
 						FROM
 							ordenDeTrabajo,obra,laboratorio
@@ -291,6 +297,7 @@ class ordenDeTrabajo{
 							obra_id = id_obra AND
 							ordenDeTrabajo.laboratorio_id = id_laboratorio AND
 							jefe_brigada_id = 1QQ
+						ORDER BY fechaInicio ASC
 			      ",
 			      array($arr['id_usuario']),
 			      "SELECT"
@@ -321,8 +328,8 @@ class ordenDeTrabajo{
 
 							actividades,
 							condicionesTrabajo,
-							fechaInicio,
-							fechaFin,
+							CONCAT(fechaInicio,' ',horaInicio) AS fechaInicio,
+							CONCAT(fechaFin,' ',horaFin) AS fechaFin,
 							horaInicio,
 							horaFin,
 							observaciones,
@@ -346,6 +353,7 @@ class ordenDeTrabajo{
 								WHEN ordenDeTrabajo.status = 2 AND CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()> TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 'Terminado'
 								WHEN ordenDeTrabajo.status = 1 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 'Atrasado'
 								WHEN ordenDeTrabajo.status = 2 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 'Terminado'
+								WHEN ordenDeTrabajo.status = 3 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 'Completado'
 								ELSE 'Error, contacte a soporte'
 							END AS estado,
 							CASE
@@ -356,6 +364,7 @@ class ordenDeTrabajo{
 								WHEN ordenDeTrabajo.status = 2 AND CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()> TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 3
 								WHEN ordenDeTrabajo.status = 1 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 0
 								WHEN ordenDeTrabajo.status = 2 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 3
+								ELSE 4
 							END AS color
 						FROM
 							ordenDeTrabajo,obra,laboratorio
