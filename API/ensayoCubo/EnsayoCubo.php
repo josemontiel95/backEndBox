@@ -233,34 +233,55 @@ class EnsayoCubo{
 				$dbS->beginTransaction();
 				$a = $dbS->qarrayA(
 					"	SELECT
-							registrosCampo_id
+							registrosCampo_id,
+							footerEnsayo_id
 						FROM
 							ensayoCubo
 						WHERE
 							id_ensayoCubo = 1QQ
 					",
 					array($id_ensayoCubo),
-					"SELECT"
+					"SELECT -- EnsayoCubo ::  completeEnsayo : 1"
 									 );
 				if(!$dbS->didQuerydied){
-					$dbS->squery("
-						UPDATE
+					$dbS->squery(
+						"UPDATE
+							footerEnsayo
+						SET
+							pendingEnsayos = pendingEnsayos -1
+						WHERE
+							id_footerEnsayo = 1QQ
+						",array($a['footerEnsayo_id']),
+						"UPDATE -- EnsayoCubo ::  completeEnsayo : 2"
+					);
+					if($dbS->didQuerydied){
+						$dbS->rollbackTransaction();
+						$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCCH, verifica tus datos y vuelve a intentarlo','error' => 40);
+						return json_encode($arr);
+					}
+					$dbS->squery(
+						"UPDATE
 							registrosCampo
 						SET
 							statusEnsayo = 1
 						WHERE
 							id_registrosCampo = 1QQ
-					",array($a['registrosCampo_id']),"UPDATE");
+						",array($a['registrosCampo_id']),
+						"UPDATE -- EnsayoCubo ::  completeEnsayo : 3"
+					);
+					
 					if(!$dbS->didQuerydied){
-						$dbS->squery("
-						UPDATE
-							ensayoCubo
-						SET
-							fecha = CURDATE(),
-							status = 1
-						WHERE
-							id_ensayoCubo = 1QQ
-						",array($id_ensayoCubo),"UPDATE");
+						$dbS->squery(
+							"UPDATE
+								ensayoCubo
+							SET
+								fecha = CURDATE(),
+								status = 1
+							WHERE
+								id_ensayoCubo = 1QQ
+							",array($id_ensayoCubo),
+							"UPDATE -- EnsayoCubo ::  completeEnsayo : 4"
+						);
 						if(!$dbS->didQuerydied){
 							$dbS->commitTransaction();
 							$arr = array('registroCubo' => $id_ensayoCilindro,'estatus' => '¡Ensayo completado!','error' => 0);

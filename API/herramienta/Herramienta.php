@@ -349,8 +349,13 @@ class Herramienta{
 		}
 		return json_encode($arr);
 	}
+	/**
+		==========================
+				Funciones para cre y llena formatoCampo
+		==========================
+	*/
 
-	public function getForDroptdownJefeBrigadaCono($token,$rol_usuario_id,$id_ordenDeTrabajo){
+	public function getForDroptdownJefeBrigadaCono($token,$rol_usuario_id,$id_ordenDeTrabajo,$status){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -373,13 +378,13 @@ class Herramienta{
 					 WHERE
 					 	HO.herramienta_id = H.id_herramienta AND
 					 	HT.id_herramienta_tipo=H.herramienta_tipo_id AND
-					   	HO.active = 1 AND
+					   	HO.active > 1QQ AND
 					 	H.laboratorio_id= 1QQ AND
 					   	H.herramienta_tipo_id = 1001 AND
 					   	HO.ordenDeTrabajo_id = 1QQ
 			      ",
-			      array($laboratorio_id,$id_ordenDeTrabajo),
-			      "SELECT"
+			      array($status,$laboratorio_id,$id_ordenDeTrabajo),
+			      "SELECT Herramienta :: getForDroptdownJefeBrigadaCono : 1"
 			      );
 
 			if(!$dbS->didQuerydied){
@@ -393,13 +398,8 @@ class Herramienta{
 		return json_encode($arr);
 	}
 
-	/**
-		==========================
-				Seguir actualizando el uso de labo
-		==========================
-	*/
 
-	public function getForDroptdownJefeBrigadaVarilla($token,$rol_usuario_id,$id_ordenDeTrabajo){
+	public function getForDroptdownJefeBrigadaVarilla($token,$rol_usuario_id,$id_ordenDeTrabajo,$status){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -422,12 +422,12 @@ class Herramienta{
 					 WHERE
 					 	HO.herramienta_id = H.id_herramienta AND
 					 	HT.id_herramienta_tipo=H.herramienta_tipo_id AND
-					   	HO.active = 1 AND
+					   	HO.active > 1QQ AND
 					 	H.laboratorio_id= 1QQ AND
 					   	H.herramienta_tipo_id = 1002 AND
 					   	HO.ordenDeTrabajo_id = 1QQ
 			      ",
-			      array($laboratorio_id,$id_ordenDeTrabajo),
+			      array($status,$laboratorio_id,$id_ordenDeTrabajo),
 			      "SELECT"
 			      );
 
@@ -446,7 +446,7 @@ class Herramienta{
 
 	
 
-	public function getForDroptdownJefeBrigadaFlexometro($token,$rol_usuario_id,$id_ordenDeTrabajo){
+	public function getForDroptdownJefeBrigadaFlexometro($token,$rol_usuario_id,$id_ordenDeTrabajo,$status){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -469,14 +469,14 @@ class Herramienta{
 					 WHERE
 					 	HO.herramienta_id = H.id_herramienta AND
 					 	HT.id_herramienta_tipo=H.herramienta_tipo_id AND
-					   	HO.active = 1 AND
+					   	HO.active > 1QQ AND
 					 	H.laboratorio_id= 1QQ AND
 					   	H.herramienta_tipo_id = 1003 AND
 					   	HO.ordenDeTrabajo_id = 1QQ
 					 
 					 	
 			      ",
-			      array($laboratorio_id,$id_ordenDeTrabajo),
+			      array($status,$laboratorio_id,$id_ordenDeTrabajo),
 			      "SELECT"
 			      );
 
@@ -492,7 +492,7 @@ class Herramienta{
 	}
 
 
-	public function getForDroptdownJefeBrigadaTermometro($token,$rol_usuario_id,$id_ordenDeTrabajo){
+	public function getForDroptdownJefeBrigadaTermometro($token,$rol_usuario_id,$id_ordenDeTrabajo,$status){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -515,12 +515,12 @@ class Herramienta{
 					 WHERE
 					 	HO.herramienta_id = H.id_herramienta AND
 					 	HT.id_herramienta_tipo=H.herramienta_tipo_id AND
-					   	HO.active = 1 AND
+					   	HO.active > 1QQ AND
 					 	H.laboratorio_id= 1QQ AND
 					   	H.herramienta_tipo_id = 1004 AND
 					   	HO.ordenDeTrabajo_id = 1QQ
 			      ",
-			      array($laboratorio_id,$id_ordenDeTrabajo),
+			      array($status,$laboratorio_id,$id_ordenDeTrabajo),
 			      "SELECT"
 			      );
 
@@ -830,37 +830,6 @@ class Herramienta{
 		-jefelab/dashboard/dashboard.component.ts
 	*/
 
-	public function getForDroptdownTipo($token,$rol_usuario_id){
-		global $dbS;
-		$usuario = new Usuario();
-		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		if($arr['error'] == 0){
-			$arr= $dbS->qAll("
-			      	SELECT
-   				       	id_herramienta_tipo,
-   				       	tipo
-   				    FROM
-   				        herramienta_tipo
-   				    WHERE
-   				    	asignableenOrdenDeTrabajo = 1 AND
-            			herramienta_tipo.active = 1 ;
-			      ",
-			      array(),
-			      "SELECT"
-			      );
-
-			if(!$dbS->didQuerydied){
-				if(count($arr) == 0)
-					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
-			}
-			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
-			}
-		}
-		return json_encode($arr);
-
-
-	}
 
 
 	public function getAllFromTipo($token,$rol_usuario_id,$herramienta_tipo_id, $id_ordenDeTrabajo){
@@ -931,13 +900,14 @@ class Herramienta{
 					    	herramienta_id=id_herramienta
 					WHERE 
 						T2.active IS NULL
+					ORDER BY placas
 			      ",
 			      array($herramienta_tipo_id,$laboratorio_id, $fechaInicio, $horaInicio,  $fechaInicio, $horaInicio, $fechaFin, $horaFin, $fechaFin, $horaFin),
 			      "SELECT -- Herramienta :: getAllFromTipo :2"
 			      );
 
 			if(!$dbS->didQuerydied){
-				if($s=="empty"){
+				if($arr=="empty"){
 					$arr = array('estatus' =>"No hay registros", 'error' => 0, "registros" => 0); //Pendiente
 				}
 			}

@@ -143,11 +143,11 @@ class Tecnicos_ordenDeTrabajo{
 		$tecnicosArray=json_decode($tecnicosArray);
 
 		if($arr['error'] == 0){
-			$dbS->transqueryTecnicos("
-						INSERT INTO
-						tecnicos_ordenDeTrabajo(tecnico_id,ordenDeTrabajo_id)
+			$dbS->transqueryTecnicos(
+					   "INSERT INTO
+							tecnicos_ordenDeTrabajo(tecnico_id,ordenDeTrabajo_id)
 						VALUES
-						(1QQ,1QQ)"
+							(1QQ,1QQ)"
 						,$tecnicosArray,$ordenDeTrabajo_id,
 						"INSERT_TS");
 
@@ -163,21 +163,51 @@ class Tecnicos_ordenDeTrabajo{
 		return json_encode($arr);
 
 	}
+	public function deactivateTecnicos($token,$rol_usuario_id,$tecnicosArray,$ordenDeTrabajo_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token,$rol_usuario_id),true);
+		$i=0;
+		$tecnicosArray=json_decode($tecnicosArray);
+	
+		if($arr['error'] == 0){
+			$dbS->deletetransquery(
+				"UPDATE
+					tecnicos_ordenDeTrabajo
+				SET
+					active = 0
+				WHERE
+					tecnico_id = 1QQ AND 
+					ordenDeTrabajo_id = 1QQ
+						"
+						,$tecnicosArray,$ordenDeTrabajo_id,
+						"DELET-TS");
+				if(!$dbS->didQuerydied){
+					$arr = array('id_herramienta_ordenDeTrabajo' => 'No disponible, esto NO es un error', 'estatus' => 'Exito en eliminación', 'error' => 0);
+				}
+				else{
+					$id=$dbS->lastInsertedID;
+					$arr = array('Se detecto error en id:' => $id, 'token' => $token,	'estatus' => 'Error en la eliminacion , verifica tus datos y vuelve a intentarlo','error' => 5);				
+				}
 
+		}
+		return json_encode($arr);
+	
+	}
 
-	public function deleteTec($token,$rol_usuario_id,$tecnicosArray){
+	public function deleteTec($token,$rol_usuario_id,$tecnicosArray,$ordenDeTrabajo_id){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token,$rol_usuario_id),true);
 		$tecnicosArray=json_decode($tecnicosArray);
 
 		if($arr['error'] == 0){
-			$dbS->transquery("
-						DELETE FROM
+			$dbS->deletetransquery(
+						"DELETE FROM
 							tecnicos_ordenDeTrabajo
-							WHERE
-								active=1 AND
-								tecnico_id = 1QQ
+						WHERE
+							tecnico_id = 1QQ AND 
+							ordenDeTrabajo_id = 1QQ
 						"
 						,$tecnicosArray,$ordenDeTrabajo_id,
 						"DELET-TS");
@@ -193,6 +223,18 @@ class Tecnicos_ordenDeTrabajo{
 		}
 		return json_encode($arr);
 
+	}
+
+	public function ping($data){
+		global $dbS;
+		$usuario = new Usuario();
+		echo $data;
+	}
+	public function ping2($token,$rol_usuario_id,$data){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		echo $data;
 	}
 
 
@@ -219,29 +261,67 @@ class Tecnicos_ordenDeTrabajo{
 		return json_encode($arr);
 	}
 	
+	public function getAllPasesLista($token,$rol_usuario_id,$id_tecnicos_ordenDeTrabajo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qAll(
+				"SELECT
+			      	DAYNAME(createdON) AS dia,
+			      	MONTHNAME(createdON) AS mes,
+			      	YEAR(createdON) AS anio,
+					TIME(createdON) AS hora
+				  FROM 
+				  	listaAsistencia
+			      WHERE 
+				  	tecnicos_ordenDeTrabajo_id = 1QQ
+					ORDER BY createdON
+			      ",
+			      array($id_tecnicos_ordenDeTrabajo),
+			      "SELECT -- Tecnicos_ordenDeTrabajo :: getAllPasesLista : 1"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array("No hay Tecnicos asociados a la orden:" => $id_ordenDeTrabajo, "error" =>0, "registros" => 0);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion query , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		return json_encode($arr);
+	}
 
 	public function getAllTecOrden($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$s= $dbS->qAll("
-			      SELECT
+			$s= $dbS->qAll(
+				"SELECT
 			      	id_tecnicos_ordenDeTrabajo, 
 			      	id_usuario,
 					nombre,
 			        apellido,
-					foto
+					foto,
+					tecnicos_ordenDeTrabajo.active,
+					asistencias
 				  FROM 
 			      	tecnicos_ordenDeTrabajo,usuario
 			      WHERE 
+				  		tecnicos_ordenDeTrabajo.active=1 AND
 			      		tecnico_id = id_usuario AND 
 			      		usuario.active = 1 AND
 			      		ordenDeTrabajo_id = 1QQ 
 
 			      ",
 			      array($id_ordenDeTrabajo),
-			      "SELECT"
+			      "SELECT -- Tecnicos_ordenDeTrabajo :: getAllTecOrden"
 			      );
 			
 			if(!$dbS->didQuerydied){
@@ -263,21 +343,21 @@ class Tecnicos_ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			//Extraemos el id del tecnico para compararlo en la validacion de la contraseña
 			$tec_info = $dbS->qarrayA(
-										"
-											SELECT
-												tecnico_id
-											FROM
-												tecnicos_ordenDeTrabajo
-											WHERE
-												id_tecnicos_ordenDeTrabajo = 1QQ
-										"
-										,
-										array($id_tecnicos_ordenDeTrabajo),
-										"SELECT"
-									);
+				"	SELECT
+						tecnico_id
+					FROM
+						tecnicos_ordenDeTrabajo
+					WHERE
+						id_tecnicos_ordenDeTrabajo = 1QQ
+				"
+				,
+				array($id_tecnicos_ordenDeTrabajo),
+				"SELECT -- Tecnicos_ordenDeTrabajo :: pasarLista : 1"
+			);
 			if(!$dbS->didQuerydied && ($tec_info != "empty")){
 				//validamos el registro del tecnico
 				if($usuario->getByEmail($email)=="success"){
@@ -289,7 +369,8 @@ class Tecnicos_ordenDeTrabajo{
 
 							VALUES
 							(1QQ)
-							",array($id_tecnicos_ordenDeTrabajo),"INSERT");
+							",array($id_tecnicos_ordenDeTrabajo),
+							"INSERT -- Tecnicos_ordenDeTrabajo :: pasarLista : 2");
 						if(!$dbS->didQuerydied){
 							 $dbS->squery(" 
 										UPDATE
@@ -300,38 +381,39 @@ class Tecnicos_ordenDeTrabajo{
 											id_tecnicos_ordenDeTrabajo = 1QQ
 
 										",
-										array($id_tecnicos_ordenDeTrabajo),"UPDATE");
-							 if (!$dbS->didQuerydied) {
+										array($id_tecnicos_ordenDeTrabajo),
+										"UPDATE -- Tecnicos_ordenDeTrabajo :: pasarLista : 3");
+							if (!$dbS->didQuerydied) {
+								$dbS->commitTransaction();
 							 	$arr = array('id_tecnicos_ordenDeTrabajo' => $id_tecnicos_ordenDeTrabajo, 'estatus' => 'Exito en el inicio de sesión', 'error' => 0);
-							 }
-							 else{
-							$arr = array('Se detecto error en id:' => $id_tecnicos_ordenDeTrabajo, 'token' => $token,	'estatus' => 'Error en el inicio de sesión problema en suma de asistencias , verifica tus datos y vuelve a intentarlo','error' => 5);
-							 }
-							
+							}else{
+								$dbS->rollbackTransaction();
+								$arr = array('Se detecto error en id:' => $id_tecnicos_ordenDeTrabajo, 'token' => $token,	'estatus' => 'Error en el inicio de sesión problema en suma de asistencias , verifica tus datos y vuelve a intentarlo','error' => 5);
+							}
 						}
 						else{
+							$dbS->rollbackTransaction();
 							$arr = array('Se detecto error en id:' => $id_tecnicos_ordenDeTrabajo, 'token' => $token,	'estatus' => 'Error en el inicio de sesión problema en registro de asistencia, verifica tus datos y vuelve a intentarlo','error' => 6);
 						}
-					}
-					else{
+					}else{
 						if($usuario->id_usuario != $tec_info['tecnico_id']){
+							$dbS->rollbackTransaction();
 							$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'usuario incorrecto','error' => 7);
-						}
-						else{
+						}else{
+							$dbS->rollbackTransaction();
 							$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Pasword incorrecto','error' => 8);
 						}
-						
 					}
-				}
-				else{
+				}else{
+					$dbS->rollbackTransaction();
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'El usuario no existe','error' => 9);
 				}
-			}
-			else{
+			}else{
 				if($tec_info == "empty"){
+					$dbS->rollbackTransaction();
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'No se encontraron registros','error' => 10);
-				}
-				else{
+				}else{
+					$dbS->rollbackTransaction();
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Error en la query, verifica tus datos','error' => 11);
 				}
 			}

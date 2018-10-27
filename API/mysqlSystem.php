@@ -35,7 +35,6 @@ class MySQLSystem{
 	public function setTimeZone(){
 
 		$query='SELECT MONTH(CURDATE()) AS month';
-
 		$result = mysqli_query($this->connection,$query);
 		if (mysqli_num_rows($result)!=0) { //Aqui solo se tiene un valor
 			$values= mysqli_fetch_array($result, MYSQLI_ASSOC); //Obtiene una fila de resultados como un array asociativo, nunerico o ambos.
@@ -43,12 +42,15 @@ class MySQLSystem{
 		if($values['month']>10 || $values['month']<4){
 			$query="set time_zone = '-06:00'";
 			$result = mysqli_query($this->connection,$query);
+			
 		}else{
 			$query="set time_zone = '-05:00'";
 			$result = mysqli_query($this->connection,$query);
+			$query="SET @@lc_time_names = 'es_MX'";
+			$result = mysqli_query($this->connection,$query);
 		}
 		$queryTypeTemp=$this->queryType;
-		$this->queryType="SetTimeZone";
+		$this->queryType="SetTimeZone && lc_time_names";
 		$this->logQuery('SELECT MONTH(CURDATE()) AS month');
 		$this->queryType=$queryTypeTemp;
 	}
@@ -163,7 +165,12 @@ class MySQLSystem{
 	
 	public function qvalue($q = "eempty", $arr = array(), $queryType="NS"){
 		$this->queryType= $queryType;
-		return $this->qarray($q,$arr,$queryType)[0];
+		$tmp= $this->qarray($q,$arr,$queryType);
+		if($tmp == "empty"){
+			return "empty";
+		}else{
+			return $tmp[0];
+		}
 	}
 	
 	public function rows($rS = "eempty"){
@@ -251,6 +258,30 @@ class MySQLSystem{
 					return ($a);
 				}
 				
+		}
+		if (!$this->didQuerydied) {
+			$this->commitTransaction();
+			return (0);
+		}
+		else{
+			$this->rollbackTransaction(); //EJECUTAMOS EL ROLL BACK PARA VOLVER AL ESTADO DE LA TABLA ANTES DE REALIZAR CAMBIOS
+			$this->squery($q,$array_aux,$queryType);	
+			$this->queryType="rollbackFLAG";
+			$this->logQuery("ROLLBACK");
+			$this->didQuerydied = true;
+			return ($a);
+		}
+	}
+
+
+	public function deletetransquery($q = "eempty",$arrThings = array(),$destino,$queryType="NS"){
+		$this->beginTransaction();	//SE INSERTA COMO SI SE TRATARA DE LA TERMINAL, EL INICIO DE LA TRANSACCION
+		foreach ($arrThings as $a){
+			$array_aux = array($a,$destino); //ARRAY AUXILIAR PARA PODER EJECUTAR LA "squery"
+			$this->squery($q,$array_aux,$queryType);
+			if($this->didQuerydied){//POR CADA ITERACION SE REVISA SI NO HA MUERTO LA QUERY
+				break;
+			}
 		}
 		if (!$this->didQuerydied) {
 			$this->commitTransaction();

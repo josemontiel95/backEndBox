@@ -169,32 +169,42 @@ class footerEnsayo{
 		$usuario = new Usuario();
 		$arr = json_decode
 		($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			//Cargamos las variables del sistema
-			$dbS->beginTransaction();	//Iniciamos la transacción
-			$arr = 	$dbS->qarrayA(
-				"SELECT
-						id_footerEnsayo,
-						buscula_id,
-						regVerFle_id,
-						prensa_id,
-						observaciones,
-						tipo,
-						createdON
+			$formatoCampo_id = 	$dbS->qvalue(
+				"   SELECT
+						formatoCampo_id
 					FROM
-						footerEnsayo
+						registrosCampo
 					WHERE
-						CURDATE() = DATE(createdON) AND
-						status = 0 AND
-						tipo = '1QQ'
+						id_registrosCampo = '1QQ'
 				",
-				array($tipo),
-				"SELECT"
+				array($id_RegistroCCH),
+				"SELECT -- FooterEnsayo :: initInsert : 1"
 			);
-			if(!$dbS->didQuerydied && $arr == "empty"){
+			if($dbS->didQuerydied || $formatoCampo_id == "empty"){
+				$dbS->rollbackTransaction();
+				$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 30);
+				return json_encode($arr);
+			}
+			$footerEnsayo_id = 	$dbS->qvalue(
+				"   SELECT
+						footerEnsayo_id
+					FROM
+						registrosCampo
+					WHERE
+						formatoCampo_id = '1QQ' AND
+						footerEnsayo_id IS NOT NULL
+					LIMIT 1
+				",
+				array($formatoCampo_id),
+				"SELECT -- FooterEnsayo :: initInsert : 2"
+			);
+	
+			if(!$dbS->didQuerydied && $footerEnsayo_id == "empty"){
 				$var_system = $dbS->qarrayA(
-				"
-					SELECT
+				"   SELECT
 						ensayo_def_buscula_id,
 						ensayo_def_regVerFle_id,
 						ensayo_def_prensa_id,
@@ -202,16 +212,16 @@ class footerEnsayo{
 					FROM
 						systemstatus
 					ORDER BY id_systemstatus DESC;
-				",array(),"SELECT"
+				",array(),"SELECT -- FooterEnsayo :: initInsert : 3"
 				);
 
-				$dbS->squery("
-						INSERT INTO
+				$dbS->squery(
+					"   INSERT INTO
 							footerEnsayo(buscula_id,regVerFle_id,prensa_id,tipo,observaciones,encargado_id)
-
 						VALUES
 							(1QQ,1QQ,1QQ,'1QQ','1QQ',1QQ)
-				",array($var_system['ensayo_def_buscula_id'],$var_system['ensayo_def_regVerFle_id'],$var_system['ensayo_def_prensa_id'],$tipo,$var_system['observaciones'],$usuario->id_usuario),"INSERT");
+				",array($var_system['ensayo_def_buscula_id'],$var_system['ensayo_def_regVerFle_id'],$var_system['ensayo_def_prensa_id'],$tipo,$var_system['observaciones'],$usuario->id_usuario),
+				"INSERT -- FooterEnsayo :: initInsert : 4");
 				if(!$dbS->didQuerydied){
 					$id=$dbS->lastInsertedID;
 					switch($tipo){
@@ -219,7 +229,12 @@ class footerEnsayo{
 							$idRegGabsCil=$this->checkifRegCCHRegCILINDRO($id_RegistroCCH);
 							if($idRegGabsCil==-1){
 								$idRegGabsCil=$this->initEnsayoCilindro($id_RegistroCCH,$id);
-								$arr = array('id_footerEnsayo' => $id, 'id_RegistroGabs' => $idRegGabsCil,'estatus' => '¡Exito en la inicializacion','error' => 0,'existe' => 0);
+								if($idRegGabsCil == -2){
+									$dbS->rollbackTransaction();
+									$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 40);
+								}else{
+									$arr = array('id_footerEnsayo' => $id, 'id_RegistroGabs' => $idRegGabsCil,'estatus' => '¡Exito en la inicializacion','error' => 0,'existe' => 0);
+								}
 							}else if($idRegGabsCil==-2){
 								$dbS->rollbackTransaction();
 								$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
@@ -231,8 +246,13 @@ class footerEnsayo{
 							$idRegGabsCubo=$this->checkifRegCCHRegCUBO($id_RegistroCCH);
 							if($idRegGabsCubo==-1){
 								$idRegGabsCubo=$this->initEnsayoCubo($id_RegistroCCH,$id);
-								$arr = array('id_footerEnsayo' => $id, 'id_RegistroGabs' => $idRegGabsCubo,'estatus' => '¡Exito en la inicializacion','error' => 0,'existe' => 0);
-							}else if($idRegGabsCubo==-2){
+								if($idRegGabsCubo == -2){
+									$dbS->rollbackTransaction();
+									$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 40);
+								}else{
+									$arr = array('id_footerEnsayo' => $id, 'id_RegistroGabs' => $idRegGabsCubo,'estatus' => '¡Exito en la inicializacion','error' => 0,'existe' => 0);
+								}
+								}else if($idRegGabsCubo==-2){
 								$dbS->rollbackTransaction();
 								$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
 							}else{
@@ -243,7 +263,12 @@ class footerEnsayo{
 							$idRegGabsViga=$this->checkifRegCCHRegVIGA($id_RegistroCCH);
 							if($idRegGabsViga==-1){
 								$idRegGabsViga=$this->initEnsayoViga($id_RegistroCCH,$id);
-								$arr = array('id_footerEnsayo' => $id, 'id_RegistroGabs' => $idRegGabsViga,'estatus' => '¡Exito en la inicializacion','error' => 0,'existe' => 0);
+								if($idRegGabsViga == -2){
+									$dbS->rollbackTransaction();
+									$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 40);
+								}else{
+									$arr = array('id_footerEnsayo' => $id, 'id_RegistroGabs' => $idRegGabsViga,'estatus' => '¡Exito en la inicializacion','error' => 0,'existe' => 0);
+								}
 							}else if($idRegGabsViga==-2){
 								$dbS->rollbackTransaction();
 								$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
@@ -268,65 +293,76 @@ class footerEnsayo{
 			else{
 				if(!$dbS->didQuerydied){
 					switch($tipo){
-							case"CILINDRO":
-								$idRegGabsCil=$this->checkifRegCCHRegCILINDRO($id_RegistroCCH);
-								if($idRegGabsCil==-1){
-									$idRegGabsCil=$this->initEnsayoCilindro($id_RegistroCCH,$arr['id_footerEnsayo']);
-									$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsCil,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, se inicializo un nuevo registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
-								}else{ 
-									if($idRegGabsCil==-2){
-										$dbS->rollbackTransaction();
-										$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
-									}else{
-										$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsCil,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, ya existia un registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
-									}
+						case"CILINDRO":
+							$idRegGabsCil=$this->checkifRegCCHRegCILINDRO($id_RegistroCCH);
+							if($idRegGabsCil==-1){
+								$idRegGabsCil=$this->initEnsayoCilindro($id_RegistroCCH,$footerEnsayo_id);
+								if($idRegGabsCil == -2){
+									$dbS->rollbackTransaction();
+									$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 40);
+								}else{
+									$arr = array('id_footerEnsayo' => $footerEnsayo_id, 'id_RegistroGabs' => $idRegGabsCil,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, se inicializo un nuevo registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
 								}
-							break;
-							case"CUBO":
-								$idRegGabsCubo=$this->checkifRegCCHRegCUBO($id_RegistroCCH);
-								if($idRegGabsCubo==-1){
-									$idRegGabsCubo=$this->initEnsayoCubo($id_RegistroCCH,$arr['id_footerEnsayo']);
-									$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsCubo,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, se inicializo un nuevo registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
-								}else{ 
-									if($idRegGabsCubo==-2){
-										$dbS->rollbackTransaction();
-										$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
-									}else{
-										$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsCubo,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, ya existia un registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
-									}
+							}else{ 
+								if($idRegGabsCil==-2){
+									$dbS->rollbackTransaction();
+									$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+								}else{
+									$arr = array('id_footerEnsayo' => $footerEnsayo_id, 'id_RegistroGabs' => $idRegGabsCil,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, ya existia un registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
 								}
-							break;
-							case"VIGAS":
-								$idRegGabsViga=$this->checkifRegCCHRegVIGA($id_RegistroCCH);
-								if($idRegGabsViga==-1){
-									$idRegGabsViga=$this->initEnsayoViga($id_RegistroCCH,$arr['id_footerEnsayo']);
-									$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsViga,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, se inicializo un nuevo registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
-								}else{ 
-									if($idRegGabsViga==-2){
-										$dbS->rollbackTransaction();
-										$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
-									}else{
-										$arr = array('id_footerEnsayo' => $arr['id_footerEnsayo'], 'id_RegistroGabs' => $idRegGabsViga,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, ya existia un registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
-									}
+							}
+						break;
+						case"CUBO":
+							$idRegGabsCubo=$this->checkifRegCCHRegCUBO($id_RegistroCCH);
+							if($idRegGabsCubo==-1){
+								$idRegGabsCubo=$this->initEnsayoCubo($id_RegistroCCH,$footerEnsayo_id);
+								if($idRegGabsCubo == -2){
+									$dbS->rollbackTransaction();
+									$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 40);
+								}else{
+									$arr = array('id_footerEnsayo' => $footerEnsayo_id, 'id_RegistroGabs' => $idRegGabsCubo,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, se inicializo un nuevo registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
 								}
-							break;
-							default:
-								$dbS->rollbackTransaction();
-								$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error, verifica tus datos y vuelve a intentarlo','error' => 11);
-							break;
-       	
+							}else{ 
+								if($idRegGabsCubo==-2){
+									$dbS->rollbackTransaction();
+									$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+								}else{
+									$arr = array('id_footerEnsayo' => $footerEnsayo_id, 'id_RegistroGabs' => $idRegGabsCubo,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, ya existia un registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
+								}
+							}
+						break;
+						case"VIGAS":
+							$idRegGabsViga=$this->checkifRegCCHRegVIGA($id_RegistroCCH);
+							if($idRegGabsViga==-1){
+								$idRegGabsViga=$this->initEnsayoViga($id_RegistroCCH,$footerEnsayo_id);
+								if($idRegGabsViga == -2){
+									$dbS->rollbackTransaction();
+									$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 40);
+								}else{
+									$arr = array('id_footerEnsayo' => $footerEnsayo_id, 'id_RegistroGabs' => $idRegGabsViga,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, se inicializo un nuevo registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
+								}
+							}else{ 
+								if($idRegGabsViga==-2){
+									$dbS->rollbackTransaction();
+									$arr = array('id_footerEnsayo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+								}else{
+									$arr = array('id_footerEnsayo' => $footerEnsayo_id, 'id_RegistroGabs' => $idRegGabsViga,'estatus' => 'Ya se creo un footer el dia de hoy para el tipo, ya existia un registro Gab de tipo:'.$tipo,'error'=>0,'existe' => 1);
+								}
+							}
+						break;
+						default:
+							$dbS->rollbackTransaction();
+							$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error, verifica tus datos y vuelve a intentarlo','error' => 11);
+						break;
 					}
 					$dbS->commitTransaction();
 				}else{
 					$dbS->rollbackTransaction();
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error, verifica tus datos y vuelve a intentarlo','error' => 12);
 				}
-			}
-			
-			
+			}			
 		}
 		return json_encode($arr);
-
 	}
 
 	public function checkifRegCCHRegCILINDRO($id_RegistroCCH){
@@ -338,7 +374,8 @@ class footerEnsayo{
 				ensayoCilindro
 			WHERE 
 				registrosCampo_id=1QQ;
-			",array($id_RegistroCCH),"SELECT"
+			",array($id_RegistroCCH),
+			"SELECT -- FooterEnsayo :: initInsert :: checkifRegCCHRegCILINDRO : 1"
 		);
 		if(!$dbS->didQuerydied){
 			if(($a == "empty")){
@@ -360,7 +397,8 @@ class footerEnsayo{
 				ensayoCubo
 			WHERE 
 				registrosCampo_id=1QQ;
-			",array($id_RegistroCCH),"SELECT"
+			",array($id_RegistroCCH),
+			"SELECT -- FooterEnsayo :: initInsert :: checkifRegCCHRegCUBO : 1"
 		);
 		if(!$dbS->didQuerydied){
 			if(($a == "empty")){
@@ -382,7 +420,8 @@ class footerEnsayo{
 				ensayoViga
 			WHERE 
 				registrosCampo_id=1QQ;
-			",array($id_RegistroCCH),"SELECT"
+			",array($id_RegistroCCH),
+			"SELECT -- FooterEnsayo :: initInsert :: checkifRegCCHRegVIGA : 1"
 		);
 		if(!$dbS->didQuerydied){
 			if(($a == "empty")){
@@ -406,7 +445,7 @@ class footerEnsayo{
 				id_registrosCampo=1QQ
 		      ",
 		      array($id_RegistroCCH),
-		      "SELECT"
+		      "SELECT -- footerEnsayo :: initInsert :: initEnsayoCilindro : 1"
 		);
 		if(!$dbS->didQuerydied && !($a=="empty")){
 			$dbS->squery("
@@ -417,7 +456,22 @@ class footerEnsayo{
 				WHERE 
 					id_registrosCampo= 1QQ
 				",array($id,$id_RegistroCCH),
-				"UPDATE"
+				"UPDATE -- footerEnsayo :: initInsert :: initEnsayoCilindro : 2"
+			);
+
+			if($dbS->didQuerydied){
+				return-2;
+			}
+
+			$dbS->squery("
+				UPDATE 
+					footerEnsayo
+				SET
+					pendingEnsayos= pendingEnsayos + 1
+				WHERE 
+					id_footerEnsayo= 1QQ
+				",array($id),
+				"UPDATE -- footerEnsayo :: initInsert :: initEnsayoCilindro : 3"
 			);
 
 			if(!$dbS->didQuerydied){
@@ -427,7 +481,7 @@ class footerEnsayo{
 					VALUES
 						(1QQ,1QQ,1QQ,0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0)
 					",array($id_RegistroCCH, $a['formatoCampo_id'],$id ),
-					"INSERT"
+					"INSERT -- footerEnsayo :: initInsert :: initEnsayoCilindro : 4"
 				);
 				if(!$dbS->didQuerydied){
 					$idRegGabsCil=$dbS->lastInsertedID;
@@ -454,7 +508,7 @@ class footerEnsayo{
 				id_registrosCampo=1QQ
 		      ",
 		      array($id_RegistroCCH),
-		      "SELECT"
+		      "SELECT -- footerEnsayo :: initInsert :: initEnsayoCubo : 1"
 		);
 		if(!$dbS->didQuerydied && !($a=="empty")){
 			$dbS->squery("
@@ -465,7 +519,22 @@ class footerEnsayo{
 				WHERE 
 					id_registrosCampo= 1QQ
 				",array($id,$id_RegistroCCH),
-				"UPDATE"
+				"UPDATE -- footerEnsayo :: initInsert :: initEnsayoCubo : 2"
+			);
+
+			if($dbS->didQuerydied){
+				return-2;
+			}
+
+			$dbS->squery("
+				UPDATE 
+					footerEnsayo
+				SET
+					pendingEnsayos= pendingEnsayos + 1
+				WHERE 
+					id_footerEnsayo= 1QQ
+				",array($id),
+				"UPDATE -- footerEnsayo :: initInsert :: initEnsayoCubo : 3"
 			);
 
 			if(!$dbS->didQuerydied){
@@ -475,7 +544,7 @@ class footerEnsayo{
 					VALUES
 						(1QQ,1QQ,1QQ)
 					",array($id_RegistroCCH, $a['formatoCampo_id'],$id ),
-					"INSERT"
+					"INSERT -- footerEnsayo :: initInsert :: initEnsayoCubo : 4"
 				);
 				if(!$dbS->didQuerydied){
 					$idRegGabsCubo=$dbS->lastInsertedID;
@@ -486,13 +555,23 @@ class footerEnsayo{
 			}else{
 				return-2;
 			}
-
 		}
 		return-2;
 	}
 
 	public function initEnsayoViga($id_RegistroCCH,$id){
 		global $dbS;
+		$disApoyo = $dbS->qvalue(
+			"   SELECT
+					ensayo_def_distanciaApoyos
+				FROM
+					systemstatus
+				ORDER BY id_systemstatus DESC;
+			",array(),"SELECT -- footerEnsayo :: initInsert :: initEnsayoViga : 0"
+			);
+		if($dbS->didQuerydied){
+			return-2;
+		}
 		$a= $dbS->qarrayA("
 	      	SELECT
 				formatoCampo_id
@@ -502,7 +581,7 @@ class footerEnsayo{
 				id_registrosCampo=1QQ
 		      ",
 		      array($id_RegistroCCH),
-		      "SELECT"
+		      "SELECT -- footerEnsayo :: initInsert :: initEnsayoViga : 1"
 		);
 		if(!$dbS->didQuerydied && !($a=="empty")){
 			$dbS->squery("
@@ -513,17 +592,32 @@ class footerEnsayo{
 				WHERE 
 					id_registrosCampo= 1QQ
 				",array($id,$id_RegistroCCH),
-				"UPDATE"
+				"UPDATE -- footerEnsayo :: initInsert :: initEnsayoViga : 2"
+			);
+
+			if($dbS->didQuerydied){
+				return-2;
+			}
+
+			$dbS->squery("
+				UPDATE 
+					footerEnsayo
+				SET
+					pendingEnsayos= pendingEnsayos + 1
+				WHERE 
+					id_footerEnsayo= 1QQ
+				",array($id),
+				"UPDATE -- footerEnsayo :: initInsert :: initEnsayoViga : 3"
 			);
 
 			if(!$dbS->didQuerydied){
 				$dbS->squery("
 					INSERT INTO
-						ensayoViga(registrosCampo_id,formatoCampo_id,footerEnsayo_id,fecha)
+						ensayoViga(registrosCampo_id,formatoCampo_id,footerEnsayo_id,fecha,disApoyo)
 					VALUES
-						(1QQ,1QQ,1QQ,CURDATE())
-					",array($id_RegistroCCH, $a['formatoCampo_id'],$id ),
-					"INSERT"
+						(1QQ,1QQ,1QQ,CURDATE(),'1QQ')
+					",array($id_RegistroCCH, $a['formatoCampo_id'],$id,$disApoyo),
+					"INSERT -- footerEnsayo :: initInsert :: initEnsayoViga : 4"
 				);
 				if(!$dbS->didQuerydied){
 					$idRegGabsCubo=$dbS->lastInsertedID;
@@ -538,7 +632,6 @@ class footerEnsayo{
 		return-2;
 	}
 
-	//
 	public function getAllFooterPendientes($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -560,16 +653,19 @@ class footerEnsayo{
 					footerEnsayo.tipo AS tipo,
 					footerEnsayo.status AS status,
 					CASE
-						WHEN footerEnsayo.status = 0 AND DATE(footerEnsayo.createdON) = CURDATE() THEN 1
-						WHEN footerEnsayo.status = 0 AND DATE(footerEnsayo.createdON) = DATE_SUB(CURDATE(), INTERVAL 1 DAY) THEN 2
-						WHEN footerEnsayo.status = 0 AND DATE(footerEnsayo.createdON) = DATE_SUB(CURDATE(), INTERVAL 2 DAY) THEN 3
+						WHEN footerEnsayo.pendingEnsayos > 0 AND footerEnsayo.status = 0 AND DATE(footerEnsayo.createdON) = CURDATE() THEN 1
+						WHEN footerEnsayo.pendingEnsayos > 0 AND footerEnsayo.status = 0 AND DATE(footerEnsayo.createdON) = DATE_SUB(CURDATE(), INTERVAL 1 DAY) THEN 2
+						WHEN footerEnsayo.pendingEnsayos > 0 AND footerEnsayo.status = 0 AND DATE(footerEnsayo.createdON) = DATE_SUB(CURDATE(), INTERVAL 2 DAY) THEN 3
+						WHEN footerEnsayo.pendingEnsayos = 0 THEN 0
 						ELSE 4
 					END AS color,
 					CASE
 						WHEN DATE(footerEnsayo.createdON) = CURDATE() THEN 'Hoy'
 						WHEN DATE(footerEnsayo.createdON) = DATE_SUB(CURDATE(), INTERVAL 1 DAY) THEN 'Ayer'
 						ELSE DATE(footerEnsayo.createdON)
-					END AS fecha
+					END AS fecha,
+					pendingEnsayos,
+					IF(footerEnsayo.pendingEnsayos = 0, 'Completado', 'Pendiente') AS estado
 				FROM
 					footerEnsayo,
 					usuario,
@@ -609,6 +705,11 @@ class footerEnsayo{
 					regVerFle.id_footerEnsayo = footerEnsayo.id_footerEnsayo AND
 					encargado_id = id_usuario AND
 					footerEnsayo.active = 1 AND
+					(
+						(pendingEnsayos = 0 AND
+						DATE(footerEnsayo.lastEditedON) = CURDATE()) OR
+						(pendingEnsayos >0)
+					)AND 
 					footerEnsayo.status = 0 AND
 					buscula_id = basculas.id_herramienta AND
 					prensa_id = prensas.id_herramienta AND

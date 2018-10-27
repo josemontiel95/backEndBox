@@ -16,15 +16,28 @@
 		case 'calcularAreaResis':
 			$ensayo = new EnsayoCilindro();
 			echo $ensayo->calcularAreaResis($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ensayoCilindro']);
-			break;
+		break;
 		case 'getRegistrosByID':
 			$ensayo = new EnsayoCilindro();
 			echo $ensayo->getRegistrosByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ensayoCilindro']);
-			break;
+		break;
+			
+		case 'getOldMembers':
+			$ensayo = new EnsayoCilindro();
+			echo $ensayo->getOldMembers($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ensayoCilindro']);
+		break;
 		
 		case 'getAllRegistrosFromFooterByID':
 			$ensayo = new EnsayoCilindro();
 			echo $ensayo->getAllRegistrosFromFooterByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['footerEnsayo_id']);
-			break;
+		break;
+		case 'ping':
+			$ensayo = new EnsayoCilindro();
+			echo $ensayo->ping($_GET['data']);
+		break;
+		case 'calcularVelocidad':
+			$ensayo = new EnsayoCilindro();
+			echo $ensayo->calcularVelocidad($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ensayoCilindro']);
+		break;
 	}
 ?>

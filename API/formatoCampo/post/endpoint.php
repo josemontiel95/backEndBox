@@ -49,6 +49,12 @@
 			$formatocampo = new formatoCampo();
 			echo $formatocampo->completeFormato($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoCampo']);
 		break;
+		case 'generatePDF':
+			//Realizamos la query para obtener la informacion para el formato
+			$formatocampo = new formatoCampo();
+			echo $formatocampo->generatePDF($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoCampo']);
+		break;
+		
 		case 'completeRegistro':
 			$registro = new registrosCampo();
 			echo $registro->completeRegistro($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_registrosCampo']);

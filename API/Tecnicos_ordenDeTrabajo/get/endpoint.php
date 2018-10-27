@@ -17,6 +17,11 @@
 			$tecorden = new Tecnicos_ordenDeTrabajo();
 			echo $tecorden->getAllTecOrden($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
 		break;
+		case 'getAllPasesLista':
+			$tecorden = new Tecnicos_ordenDeTrabajo();
+			echo $tecorden->getAllPasesLista($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_tecnicos_ordenDeTrabajo']);
+		break;
+		
 		case 'getTecAvailable':
 			$tecorden = new Tecnicos_ordenDeTrabajo();
 			echo $tecorden->getTecAvailable($_GET['token'],$_GET['rol_usuario_id']);
@@ -25,6 +30,14 @@
 			$tecorden = new Tecnicos_ordenDeTrabajo();
 			echo $tecorden->getTecAsistencia($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
 		break;
-
+		
+		case 'ping':
+			$tecorden = new Tecnicos_ordenDeTrabajo();
+			echo $tecorden->ping($_GET['data']);
+		break;
+		case 'ping2':
+			$tecorden = new Tecnicos_ordenDeTrabajo();
+			echo $tecorden->ping2($_GET['token'],$_GET['rol_usuario_id'],$_GET['data']);
+		break;
 	}
 ?>

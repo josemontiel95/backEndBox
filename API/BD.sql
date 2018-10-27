@@ -791,6 +791,13 @@ CREATE TABLE ensayoCilindro(
 ALTER TABLE ensayoCilindro AUTO_INCREMENT=1001;
 ALTER TABLE ensayoCilindro ADD status INT NOT NULL DEFAULT 0;
 
+ALTER TABLE ensayoCilindro ADD velAplicacionExp DOUBLE NULL;
+ALTER TABLE ensayoCilindro ADD tiempoDeCarga INT NULL;
+
+ALTER TABLE ensayoCilindro ADD area DOUBLE NULL;
+ALTER TABLE ensayoCilindro ADD resistencia DOUBLE NULL;
+area
+resistencia
 
 CREATE TABLE ensayoCubo(
 	id_ensayoCubo INT(11) NOT NULL AUTO_INCREMENT,
@@ -880,6 +887,15 @@ ALTER TABLE ensayoViga ADD defectos VARCHAR(20);
 
 ALTER TABLE ensayoViga ADD status INT NOT NULL DEFAULT 0;
 
+ALTER TABLE ensayoViga ADD posFractura INT NULL;
+
+ALTER TABLE ensayoViga ADD velAplicacionExp DOUBLE NULL;
+ALTER TABLE ensayoViga ADD tiempoDeCarga INT NULL;
+
+
+ALTER TABLE ensayoViga ADD mr DOUBLE NULL;
+ALTER TABLE ensayoViga ADD prom DOUBLE NULL;
+
 
 CREATE TABLE footerEnsayo(
 	id_footerEnsayo INT(11) NOT NULL AUTO_INCREMENT,
@@ -922,6 +938,8 @@ ALTER TABLE footerEnsayo AUTO_INCREMENT=1001;
 ALTER TABLE footerEnsayo 
 ADD COLUMN status INT DEFAULT 0;
 
+ALTER TABLE footerEnsayo 
+ADD COLUMN pendingEnsayos INT DEFAULT 0;
 
 CREATE TABLE laboratorio_cliente(
 	id_laboratorio_cliente INT(11) NOT NULL AUTO_INCREMENT,
@@ -1052,6 +1070,9 @@ ALTER TABLE systemstatus ADD cch_vigaDef_prueba3 INT NOT NULL;
 ALTER TABLE systemstatus ADD maxNoOfRegistrosCCH_VIGAS INT NOT NULL;
 ALTER TABLE systemstatus ADD multiplosNoOfRegistrosCCH_VIGAS INT NOT NULL;
 
+
+ALTER TABLE systemstatus MODIFY ensayo_def_pi DOUBLE;
+
 INSERT INTO 
 
 	systemstatus(
@@ -1133,13 +1154,15 @@ INSERT INTO obra(obra,prefijo,fechaDeCreacion,descripcion,cliente_id,concretera_
 
 INSERT INTO ordenDeTrabajo(cotizacion_id,obra_id,actividades,condicionesTrabajo,jefe_brigada_id,fechaInicio,fechaFin,horaInicio,horaFin,observaciones) VALUES (1001,1001,"actividades1","condiciones1",1007,"2002-12-12","2003-12-12","15:32","15:32","observaciones1");
 
+INSERT INTO herramientas(id_herramienta, herramienta_tipo_id, fechaDeCompra, placas, condicion, observaciones, laboratorio_id) VALUES("1005","1005","2018-08-03","TR-001","REGULAR","Shalalalala",1002);
+INSERT INTO herramientas(id_herramienta, herramienta_tipo_id, fechaDeCompra, placas, condicion, observaciones, laboratorio_id) VALUES("1006","1006","2018-08-03","VR-001","REGULAR","Shalalalala",1002);
+INSERT INTO herramientas(id_herramienta, herramienta_tipo_id, fechaDeCompra, placas, condicion, observaciones, laboratorio_id) VALUES("1008","1008","2018-08-04","BAS-001","REGULAR","Shalalalala",1002);
 
 ---------------------------
 
 INSERT INTO usuario (nombre, apellido, email, fechaDeNac, rol_usuario_id, contraseña) VALUES("mike", "soto", "maike.soto@lacocs.com","1993-08-26", 1001, "ba3253876aed6bc22d4a6ff53d8406c6ad864195ed144ab5c87621b6c233b548baeae6956df346ec8c17f5ea10f35ee3cbc514797ed7ddd3145464e2a0bab413")
 
 select id_usuario,nombre,rol,laboratorio from usuario,laboratorio,rol_usuario where id_usuario=id_rol_usuario AND laboratorio_id=id_laboratorio;
-
 
 ./mysqldump -t --complete-insert -h 160.153.46.5  -u lacocsAdmin -pJulio2018% boxLacocs systemstatus --where="id_systemstatus = 1010"
 
@@ -1184,7 +1207,7 @@ VALUES (
 	1006,
 	28,
 	'NO HAY OBSERVACIONES',
-	3,
+	3.141593,
 	45,
 	102,
 	10,
@@ -1199,10 +1222,6 @@ VALUES (
 	9,
 	3
 	);
-
-
-
-
 
 
 

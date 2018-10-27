@@ -48,6 +48,11 @@
 			$formato = new FormatoRegistroRev();
 			echo $formato->completeFormato($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev']);
 		break;
+		case 'generatePDF':
+			//Realizamos la query para obtener la informacion para el formato
+			$formato = new FormatoRegistroRev();
+			echo $formato->generatePDF($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev']);
+		break;
 
 	}
 
