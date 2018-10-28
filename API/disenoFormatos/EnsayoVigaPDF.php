@@ -1,104 +1,42 @@
 <?php 
-	//include_once("./../../FPDF/fpdf.php");
-	include_once("./../FPDF/fpdf.php");
+	include_once("./../../FPDF/MyPDF.php");
 
 	//Formato de campo de cilindros
-	class EnsayoVigaPDF extends fpdf{
-		var $angle=0;
-		function Header()
-		{
-			
+	class EnsayoVigaPDF extends MyPDF{
 
-			//Información de la empresa
-			$tam_font_titulo = 8.5;
-			$this->SetFont('Arial','B',$tam_font_titulo); 
-			$titulo = 'LABORATORIO DE CONTROL DE CALIDAD Y SUPERVISIÓN S.A DE C.V';
-			$tam_cell = $this->GetStringWidth($titulo);
-			$this->SetX((279-$tam_cell)/2);
-			$this->Cell($tam_cell,$tam_font_titulo - 3,utf8_decode($titulo),0,'C');
+		/*
+			Informacion extra:
+								-Ancho de una celda cuando su ancho = 0 : 259.3975
+		*/
 
-			$this->Ln(
-			);
+		//Variables
+		public $arrayCampos;
+		public $arrayInfo;
+		
+		//Array que contiene los letreros de la información
+		private $cellsInfo;
 
-			$tam_font_info = 6.5;
-			//Fecha
-			$this->SetFont('Arial','B',$tam_font_info);
-			$direccion_lacocs = '35 NORTE No.3023, UNIDAD HABITACIONAL AQUILES SERDAN. TEL:. 01 222 2315836,8686973,8686974';
-			$tam_direccion = $this->GetStringWidth($direccion_lacocs)+6;
-			$this->SetX((279 - $tam_direccion)/2);
-			$this->Cell($tam_direccion,$tam_font_info - 3,$direccion_lacocs,0,'C');
-			$this->Ln(5);
+		//Array que contiene los letreso de las tablas
+		private $cellsTables;
 
-			$tam_font_tituloInforme = 7.5;
-			$this->SetFont('Arial','B',$tam_font_tituloInforme);
-			$titulo_informe = '"REGISTRO DEL ENSAYO A FLEXIÓN DE VIGAS DE CONCRETO CON CARGA A LOS TERCIOS DEL CLARO"';
-			$tam_tituloInforme = $this->GetStringWidth($titulo_informe)+3;
-			$this->SetX((279 - $tam_tituloInforme)/2);
-			$this->Cell($tam_tituloInforme,$tam_font_info - 3,utf8_decode($titulo_informe),0,'C');
-			$this->Ln(4);
+		//Array que contiene los letreros de los detalles
+		private $cellsDetails;
 
-			$tam_font_tituloInforme = 7;
-			$this->SetFont('Arial','B',$tam_font_tituloInforme);
-			$tituloMetodos = 'METODOS EMPLEADOS: NMX-C-161-ONNCCE-2013,NMX-C-191-ONNCCE-1015';
-			$tam_tituloMetodos = $this->GetStringWidth($tituloMetodos)+3;
-			$this->SetX((279 - $tam_tituloMetodos)/2);
-			$this->Cell($tam_tituloMetodos,$tam_font_info - 3,utf8_decode($tituloMetodos),0,'C');
 
-			//---Divide espacios entre el titulo del formato y la información del formato
-			$this->Ln($tam_font_tituloInforme - 2);
-		}
-
-		//Funcion que coloca la informacion del informe, como: el No. de informe, Obra, etc.
-
-		function putInfo(){
-
-			/*
-			Lado derecho:
-							-Informe No.
-							-Este informe sustituye a:
-			*/
-			/*
-			$tam_font_right = 7.5;	$this->SetFont('Arial','B',$tam_font_right);
-
-			//Numero del informe
-			$informeNo = 'INFORME No.';
-			$tam_informeNo = $this->GetStringWidth($informeNo)+6;
-			$this->SetX(-($tam_informeNo+50));
-			$this->Cell($tam_informeNo,$tam_font_right - 3,$informeNo,0,0,'C');
-
-			//Caja de texto
-			$this->Cell(0,$tam_font_right - 3,'DUMMY','B',0,'C');
-
-			$this->Ln($tam_font_right - 2);
-
-			//-Informe al cual sustituye
-			$sustituyeInforme = 'ESTE INFORME SUSTITUYE A:';
-			$tam_sustituyeInforme = $this->GetStringWidth($sustituyeInforme)+6;
-			$this->SetX(-$tam_sustituyeInforme-50);
-			$this->Cell($tam_sustituyeInforme,$tam_font_right - 3,$sustituyeInforme,0,0,'C');
-
-			//Caja de texto
-			$this->Cell(0,$tam_font_right - 3,'DUMMY','B',0,'C');
-
-			//--Divide la informacion de la derecha y la izquierda
-			$this->Ln($tam_font_right - 1);
-
-			/*
-				Lado izquierdo:
-								-Obra
-								-Localizacion
-								-Cliente
-								-Direccion
-			*/
-
-			$tam_font_left = 7;	$this->SetFont('Arial','',$tam_font_left);
+		
+		//Funcion que coloca una vista previa de la información
+		function generateCellsInfo(){
+			//Asignamos el tamñao de la fuente
+			$tam_font_left = 7;	
+			$this->SetFont('Arial','',$tam_font_left);
+			$tam_nomObraText;
 
 			$nomCli = 'CLIENTE:';
 			$this->Cell($this->GetStringWidth($nomCli)+2,$tam_font_left - 3,utf8_decode($nomCli),0);
 
 			//Caja de texto
 			$this->SetX(50);
-			$this->Cell(170,$tam_font_left - 3,'DUMMY','B',0);
+			$this->Cell(170,$tam_font_left - 3,'B',0);
 
 			$this->SetX($this->GetX()+11.5);
 			$regNo = 'Registro N°:';
@@ -153,10 +91,128 @@
 
 			//Divide la informacion del formato de la Tabla (Esta en funcion del tamaño de fuente de la informacion de la derecha)
 			$this->Ln($tam_font_left);
+		}
+
+
+
+
+		function Header()
+		{
+			//Espacio definido para los logotipos
+			//Definimos las dimensiones del logotipo de Lacocs
+			$tam_lacocs = 15;
+			//Espacio definido para los logotipos
+			//Definimos las dimensiones del logotipo de Lacocs
+			$posicion_x = $this->GetX();
+
+
+			$this->Image('./../../disenoFormatos/lacocs.jpg',$posicion_x,$this->GetY(),$tam_lacocs + 10,$tam_lacocs);
+
+			//Información de la empresa
+			$tam_font_titulo = 8.5;
+			$this->SetFont('Arial','B',$tam_font_titulo); 
+			$titulo = 'LABORATORIO DE CONTROL DE CALIDAD Y SUPERVISIÓN S.A. DE C.V.';
+			$tam_cell = $this->GetStringWidth($titulo);
+			$this->SetX((279-$tam_cell)/2);
+			$this->Cell($tam_cell,$tam_font_titulo - 3,utf8_decode($titulo),0,'C');
+
+			$this->Ln(
+			);
+
+			$tam_font_info = 6.5;
+			//Fecha
+			$this->SetFont('Arial','B',$tam_font_info);
+			$direccion_lacocs = '35 NORTE No.3023, UNIDAD HABITACIONAL AQUILES SERDAN. TEL:. 01 222 2315836,8686973,8686974';
+			$tam_direccion = $this->GetStringWidth($direccion_lacocs)+6;
+			$this->SetX((279 - $tam_direccion)/2);
+			$this->Cell($tam_direccion,$tam_font_info - 3,$direccion_lacocs,0,'C');
+			$this->Ln(5);
+
+			$tam_font_tituloInforme = 7.5;
+			$this->SetFont('Arial','B',$tam_font_tituloInforme);
+			$titulo_informe = '"REGISTRO DEL ENSAYO A FLEXIÓN DE VIGAS DE CONCRETO CON CARGA A LOS TERCIOS DEL CLARO"';
+			$tam_tituloInforme = $this->GetStringWidth($titulo_informe)+3;
+			$this->SetX((279 - $tam_tituloInforme)/2);
+			$this->Cell($tam_tituloInforme,$tam_font_info - 3,utf8_decode($titulo_informe),0,'C');
+			$this->Ln(4);
+
+			$tam_font_tituloInforme = 7;
+			$this->SetFont('Arial','B',$tam_font_tituloInforme);
+			$tituloMetodos = 'METODOS EMPLEADOS: NMX-C-161-ONNCCE-2013,NMX-C-191-ONNCCE-1015';
+			$tam_tituloMetodos = $this->GetStringWidth($tituloMetodos)+3;
+			$this->SetX((279 - $tam_tituloMetodos)/2);
+			$this->Cell($tam_tituloMetodos,$tam_font_info - 3,utf8_decode($tituloMetodos),0,'C');
+
+			//---Divide espacios entre el titulo del formato y la información del formato
+			$this->Ln($tam_font_tituloInforme - 2);
+		}
+
+		//Funcion que coloca la informacion del informe, como: el No. de informe, Obra, etc.
+
+		function putInfo($infoFormato){
+			$tam_font_left = 7;	$this->SetFont('Arial','',$tam_font_left);
+
+			$nomCli = 'CLIENTE:';
+			$this->Cell($this->GetStringWidth($nomCli)+2,$tam_font_left - 3,utf8_decode($nomCli),0);
+
+			//Caja de texto
+			$this->SetX(50);
+			$this->Cell(170,$tam_font_left - 3,utf8_decode($infoFormato['razonSocial']),'B',0);
+
+			$this->SetX($this->GetX()+11.5);
+			$regNo = 'Registro N°:';
+			$this->Cell($this->GetStringWidth($regNo)+.5,$tam_font_left - 3,utf8_decode($regNo),0);
+			//Caja de texto
+			$this->Cell(0,$tam_font_left - 3,'PENDIENTE','B',0);
+		
+
+			$this->Ln($tam_font_left - 2);
+
+
+			//Cuadro con informacion
+			$obra = 'OBRA:';
+			$this->Cell($this->GetStringWidth($obra)+2,$tam_font_left - 3,$obra,0);
+			//Caja de texto
+			$this->SetX(50);
+			$this->Cell(170,$tam_font_left - 3,utf8_decode($infoFormato['obra']),'B',0);
+
+			$this->SetX($this->GetX()+5);
+			$tipoConcreto = 'Tipo de Concreto:';
+			$this->Cell($this->GetStringWidth($tipoConcreto)+2,$tam_font_left - 3,utf8_decode($tipoConcreto),0);
+			//Caja de texto
+			$this->Cell(0,$tam_font_left - 3,utf8_decode($infoFormato['tipoConcreto']),'B',0);
+
+			$this->Ln($tam_font_left - 2);
+
+			$locObra = 'DIRECCIÓN DE LA OBRA:';
+			$this->Cell($this->GetStringWidth($locObra)+2,$tam_font_left - 3,utf8_decode($locObra),0);
+
+			//Caja de texto
+			$this->SetX(50);
+			$this->Cell(170,$tam_font_left - 3,utf8_decode($infoFormato['obraLocalizacion']),'B',0);
+
+			$this->SetX($this->GetX()+6.5);
+			$mrProyecto = 'MR de proyecto:';
+			$this->Cell($this->GetStringWidth($mrProyecto)+2,$tam_font_left - 3,utf8_decode($mrProyecto),0);
+			//Caja de texto
+			$this->Cell(0,$tam_font_left - 3,utf8_decode($infoFormato['fprima']),'B',0);
+
+			$this->Ln($tam_font_left - 2);
+
+			
+			//Direccion del cliente
+			$eleColado = 'ELEMENTO COLADO:';
+			$this->Cell($this->GetStringWidth($nomCli)+2,$tam_font_left - 3,utf8_decode($eleColado),0);
+			//Caja de texto
+			$this->SetX(50);
+			$this->Cell(170,$tam_font_left - 3,utf8_decode($infoFormato['eleColado']),'B',0);
+
+			//Divide la informacion del formato de la Tabla (Esta en funcion del tamaño de fuente de la informacion de la derecha)
+			$this->Ln($tam_font_left);
 
 		}
 
-		function putTables(){
+		function putTables($regisFormato){
 			$tam_font_head = 6.5;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
 
 
@@ -319,23 +375,33 @@
 									$tam_realizo
 							);
 
-			$tam_font_head = 6;	$this->SetFont('Arial','',$tam_font_head);
-
-			for ($i=0; $i < 27; $i++){
-				//Definimos la posicion de X para tomarlo como referenci
-				for ($j=0; $j < 21; $j++){ 
-					//Definimos la posicion apartir de la cual vamos a insertar la celda
-					$this->cell($array_campo[$j],$tam_font_head - 2.5,'',1,0,'C');
-				}	
+			$tam_font_head = 6;	
+			$tam_cellsTablesAlto = $tam_font_head - 2.5;
+			$this->SetFont('Arial','',$tam_font_head);
+			$grupos = 27;
+			$num_rows = 0;
+			foreach ($regisFormato as $campo) {
+				$j = 0;
+				foreach ($campo as $registro) {
+					$this->cell($array_campo[$j],$tam_cellsTablesAlto,$registro,1,0,'C');
+					$j++;
+				}
+				$num_rows++;
 				$this->Ln();
 			}
-
-			
+			if($num_rows<$grupos){
+				for ($i=0; $i < ($grupos-$num_rows); $i++){
+					for ($j=0; $j < sizeof($array_campo); $j++){ 
+						$this->cell($array_campo[$j],$tam_cellsTablesAlto,'',1,0,'C');
+					}
+					$this->Ln();
+				}
+			}			
 			
 			
 		}
 
-		function Myfooter(){
+		function Myfooter($infoFormato,$infoU){
 			//Definimos la altura del footer
 			$tam_font_head =8;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
 
@@ -346,8 +412,14 @@
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY()+1;
 			$this->Cell($tam_notas,($tam_font_head),$notas,0,2);
 			
-			$tam_font_head =7;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
+			$tam_font_head =6.5;	
+			$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
 			$this->SetXY($posicion_x+$tam_notas,$posicion_y);
+
+			//Definimos el tamaño de las celdas que contiene la placa de las herramientas
+			$termo = 'Termómetro';
+			$tam_termo = $this->GetStringWidth($termo)+10;
+
 			$inventario = 'Inventario de';
 			$tam_inventario = $this->GetStringWidth($inventario)+10;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
@@ -356,19 +428,17 @@
 			
 			$this->SetXY($posicion_x+$tam_inventario,$posicion_y);
 			$prensa = 'PRENSA';
-			$tam_prensa = $this->GetStringWidth($prensa)+12;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
-			$this->Cell($tam_prensa,(($tam_font_head))/2,$prensa,1,2,'C');
-			$this->Cell($tam_prensa,(($tam_font_head))/2,'','L,B,R',2,'C');
+			$this->Cell($tam_termo,(($tam_font_head))/2,$prensa,1,2,'C');
+			$this->Cell($tam_termo,(($tam_font_head))/2,utf8_decode($infoFormato['regVerFle_id_placas']),'L,B,R',2,'C');
 
-			$this->SetXY($posicion_x+$tam_prensa,$posicion_y);
+			$this->SetXY($posicion_x+$tam_termo,$posicion_y);
 			$flexo = 'FLEXO';
-			$tam_flexo = $this->GetStringWidth($flexo)+12;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
-			$this->Cell($tam_flexo,(($tam_font_head))/2,$flexo,1,2,'C');
-			$this->Cell($tam_flexo,(($tam_font_head))/2,'','L,B,R',0,'C');
+			$this->Cell($tam_termo,(($tam_font_head))/2,$flexo,1,2,'C');
+			$this->Cell($tam_termo,(($tam_font_head))/2,utf8_decode($infoFormato['prensa_placas']),'L,B,R',0,'C');
 			//Aqui van las notas
-			$this->SetXY($posicion_x+$tam_flexo,$posicion_y);
+			$this->SetXY($posicion_x+$tam_termo,$posicion_y);
 			$this->Cell(0,(($tam_font_head)),'',1,0,'C');
 
 			$this->Ln();
@@ -384,141 +454,29 @@
 			$tam_font_head =8;	$this->SetFont('Arial','B',$tam_font_head);//Fuente para clave
 			$superviso = 'Supervisó:';
 			$this->SetX(70);
-			$this->Cell($this->GetStringWidth($superviso)+2,(($tam_font_head)),utf8_decode($superviso.$this->Image('https://upload.wikimedia.org/wikipedia/commons/a/a0/Firma_de_Morelos.png',$this->GetX()+($this->GetStringWidth($superviso)+10),$this->GetY()-2,$tam_image,$tam_image)),0,0);
-			$this->Cell($this->GetStringWidth($superviso)+20,(($tam_font_head)-2),'','B',2);
+			$this->Cell($this->GetStringWidth($superviso)+2,(($tam_font_head)),utf8_decode($superviso.$this->Image('./../../disenoFormatos/firmas/firma.png',$this->GetX()+($this->GetStringWidth($superviso)+10),$this->GetY()-3,$tam_image,$tam_image)),0,0);
+			$this->Cell($this->GetStringWidth($superviso)+20,(($tam_font_head)-2),utf8_decode($infoU['nombreRealizo']),'B',2,'C');
 			$this->Cell($this->GetStringWidth($superviso)+20,(($tam_font_head)-2),'Nombre,firma y puesto',0,0);
 
 
 
 		}
 
-		function Footer(){/*
-			$tam_footer = 28;
+		function Footer(){
 			
-			$tam_font_footer = 7;	$this->SetFont('Arial','B',$tam_font_footer);
-			
-
-			//Observaciones
-			$this->cell(0,2*($tam_font_footer - 2.5),'',1,2,'C');
-
-			//Metodos empleados
-			$metodos = 'METODOS EMPLEADOS: EL ENSAYO REALIZADO CUMPLE CON LAS NORMAS MEXICANAS NMX-C-161-ONNCCE-2013, NMX-C-156-ONNCCE-2010,'."\n".'NMX-C-159-ONNCCE-2016,NMX-C-109-ONNCCE-2013,NMX-C-083-ONNCCE-2014';
-			//$this->multicell(0,($tam_font_head - 2.5),$metodos,1,2);
-
-			//Incertidumbre
-			$incertidumbre = 'INCERTIDUMBRE';
-			$tam_incertidumbre = $this->GetStringWidth($incertidumbre)+20;
-			$this->SetX(-($tam_incertidumbre + 10));
-			//Guardamos las posiciones de esa linea
-			$posicion_x = $this->GetX();	$posicion_y = $this->GetY();
-
-			$this->multicell($tam_incertidumbre,($tam_font_footer - 3),$incertidumbre."\n".'DUMMY',1,'C');
-
-			//Metodos empleados
-			$this->SetY($posicion_y);
-			$metodos = 'METODOS EMPLEADOS: EL ENSAYO REALIZADO CUMPLE CON LAS NORMAS MEXICANAS NMX-C-161-ONNCCE-2013, NMX-C-156-ONNCCE-2010,'."\n".'NMX-C-159-ONNCCE-2016,NMX-C-109-ONNCCE-2013,NMX-C-083-ONNCCE-2014';
-			$tam_metodos = $this->GetStringWidth($metodos)+3;
-			$this->multicell($posicion_x -10,($tam_font_footer - 3),$metodos,1,2);
-
-			$this->SetY(-($tam_footer + 10)); //Defenimos el margen de abajo
-			$this->cell(0,$tam_footer,'',1,'C');
-			*/
 		}
 
 		//Funcion que crea un nuevo formato
-		function CreateNew($infoFormato,$regisFormato){
-			$pdf  = new InformeCubos('L','mm','Letter');
+		function CreateNew($infoFormato,$regisFormato,$infoU,$target_dir){
+			$pdf  = new EnsayoVigaPDF('L','mm','Letter');
 			$pdf->AddPage();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($regisFormato);
-			$pdf->Output();
+			$pdf->Myfooter($infoFormato,$infoU);
+			//$pdf->Output();
+			$pdf->Output('F',$target_dir);
 		}
-
-
-		/*
-			Funciones para alinear el texto en una columna
-			Fuente: https://huguidugui.wordpress.com/2013/11/26/fpdf-ajustar-texto-en-celdas/
-		*/
-		function CellFit($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='', $scale=false, $force=true)
-	    {
-	        //Get string width
-	        $str_width=$this->GetStringWidth($txt);
-	 
-	        //Calculate ratio to fit cell
-	        if($w==0)
-	            $w = $this->w-$this->rMargin-$this->x;
-	        $ratio = ($w-$this->cMargin*2)/$str_width;
-	 
-	        $fit = ($ratio < 1 || ($ratio > 1 && $force));
-	        if ($fit)
-	        {
-	            if ($scale)
-	            {
-	                //Calculate horizontal scaling
-	                $horiz_scale=$ratio*100.0;
-	                //Set horizontal scaling
-	                $this->_out(sprintf('BT %.2F Tz ET',$horiz_scale));
-	            }
-	            else
-	            {
-	                //Calculate character spacing in points
-	                $char_space=($w-$this->cMargin*2-$str_width)/max($this->MBGetStringLength($txt)-1,1)*$this->k;
-	                //Set character spacing
-	                $this->_out(sprintf('BT %.2F Tc ET',$char_space));
-	            }
-	            //Override user alignment (since text will fill up cell)
-	            $align='';
-	        }
-	 
-	        //Pass on to Cell method
-	        $this->Cell($w,$h,$txt,$border,$ln,$align,$fill,$link);
-	 
-	        //Reset character spacing/horizontal scaling
-	        if ($fit)
-	            $this->_out('BT '.($scale ? '100 Tz' : '0 Tc').' ET');
-	    }
-	 
-	    function CellFitSpace($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='')
-	    {
-	        $this->CellFit($w,$h,$txt,$border,$ln,$align,$fill,$link,false,false);
-	    }
-	 
-	    //Patch to also work with CJK double-byte text
-	    function MBGetStringLength($s)
-	    {
-	        if($this->CurrentFont['type']=='Type0')
-	        {
-	            $len = 0;
-	            $nbbytes = strlen($s);
-	            for ($i = 0; $i < $nbbytes; $i++)
-	            {
-	                if (ord($s[$i])<128)
-	                    $len++;
-	                else
-	                {
-	                    $len++;
-	                    $i++;
-	                }
-	            }
-	            return $len;
-	        }
-	        else
-	            return strlen($s);
-	    }
-
-
-
 
 	}
 	
-	$pdf  = new EnsayoVigaPDF('L','mm','Letter');
-	$pdf->AddPage();
-	$pdf->putInfo();
-	$pdf->putTables();
-	$pdf->Myfooter();
-	$pdf->Output();
-
-	
-
-
 ?>
