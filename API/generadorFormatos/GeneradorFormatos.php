@@ -1,4 +1,5 @@
-<?php 
+<?php
+	include_once("./../../configSystem.php"); 
 	include_once("./../../formatoCampo/formatoCampo.php");
 	include_once("./../../formatoCampo/registrosCampo.php");
 	include_once("./../../disenoFormatos/InformeCilindros.php");
@@ -10,6 +11,9 @@
 	include_once("./../../FPDF/fpdf.php");
 	include_once("./../../disenoFormatos/CCH.php");
 	include_once("./../../formatoRegistroRev/FormatoRegistroRev.php");
+	include_once("./../../disenoFormatos/EnsayoCuboPDF.php");
+	include_once("./../../disenoFormatos/EnsayoCilindroPDF.php");
+	include_once("./../../disenoFormatos/EnsayoVigaPDF.php");
 
 	class GeneradorFormatos{
 		function generateInformeCampo($token,$rol_usuario_id,$id_formatoCampo,$target_dir){
@@ -73,6 +77,52 @@
 			}
 
 		}
+
+		function getInfoUser($token,$rol_usuario_id){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				//Obtenemos el id del usuario que solicita
+				$id_usuario = substr(decurl($token),10);
+				$s= $dbS->qarrayA("
+				      	SELECT
+							usuarioRealizo.nombreRealizo,
+							CONCAT(nombre,' ',apellido) AS nombreLaboratorista
+						FROM
+							usuario,
+							(
+								SELECT
+									laboratorio_id,
+									CONCAT(nombre,' ',apellido) AS nombreRealizo
+								FROM
+									usuario
+								WHERE
+									usuario.id_usuario = 1QQ
+							) AS usuarioRealizo
+						WHERE
+							usuario.rol_usuario_id = 1002 AND
+							usuario.laboratorio_id = usuarioRealizo.laboratorio_id
+				      ",
+				      array($id_usuario),				      
+				      "SELECT -- GeneradorFormatos :: getInfoUser : 1"
+				      );
+
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('id_usuario' => $id_usuario,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+		}
+
 		function getInfoCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo){
 			global $dbS;
 			$usuario = new Usuario();
@@ -392,81 +442,509 @@
 				return json_encode($arr);
 			}			
 		}
-		
 
-		function generateEnsayoCubos($token,$rol_usuario_id,$id_ensayoCubo){
+		function generateEnsayoVigas($token,$rol_usuario_id,$id_footerEnsayo,$target_dir){
 			global $dbS;
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$formato = new FormatoCampo();	
-				$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
-				$regisFormato = $this->getRegCCH($token,$rol_usuario_id,$id_formatoCampo);
-				$pdf = new CCH();	
-				$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
+				//Obtenemos la informacion de quien esta realizando el pdf
+				$infoU = $this->getInfoUser($token,$rol_usuario_id);
+				if(!(array_key_exists('error', $infoU))){
+					$info = $this->getInfoEnsayoVigas($token,$rol_usuario_id,$id_footerEnsayo);
+					if(!(array_key_exists('error', $info))){
+						$registros = $this->getRegEnsayoVigas($token,$rol_usuario_id,$id_footerEnsayo);
+						if(!(array_key_exists('error', $registros))){
+							$pdf = new EnsayoVigaPDF();	
+							$pdf->CreateNew($info,$registros,$infoU,$target_dir);
+						}else{
+							return json_encode($registros);
+						}
+					}else{
+						return json_encode($info);
+					}
+				}else{
+					return json_encode($infoU);
+				}
 			}
+			else{
+				return json_encode($arr);
+			}
+
+
 		}
 
-
-
-		function getInfoEnsayoCubo($token,$rol_usuario_id,$id_ensayoCubo){
+		function getInfoEnsayoVigas($token,$rol_usuario_id,$id_footerEnsayo){
 			global $dbS;
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
 				$s= $dbS->qarrayA("
-				    	SELECT
-				    		registrosCampo.fecha AS fechaColado,
-				    		informeNo,
-				    		claveEspecimen,
-							l1,
-							l2,
-							carga,
-							(l1*l2)AS area,
-							carga/(l1*l2) AS resistencia,	
-							ensayoCubo.fecha AS fechaEnsayo,						
-							CASE
-								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
-								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
-								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
-								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
-								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
-								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
-								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
-								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
-								ELSE 'Error, Contacta a soporte'
-							END AS diasEnsayeFinal
-						FROM 
-							ensayoCubo,registrosCampo,formatoCampo
+				      	SELECT
+				      		cliente.razonSocial,
+							obra.obra,
+							obra.localizacion AS obraLocalizacion,
+							registrosCampo.localizacion AS eleColado,
+							formatoCampo.tipoConcreto,
+							registrosCampo.fprima,
+							regVerFle.placas AS regVerFle_id_placas,		
+							prensas.placas AS prensa_placas
+						FROM
+							formatoCampo,
+							ordenDeTrabajo,
+							obra,
+							cliente,
+							registrosCampo,
+							ensayoViga,
+							(
+						  		SELECT
+						  			id_herramienta,
+						  			placas
+						  		FROM
+						  			herramientas,footerEnsayo
+						  		WHERE
+						  			prensa_id = id_herramienta AND
+						  			id_footerEnsayo = 1QQ
+						  	)AS prensas,
+						  	(
+						  		SELECT
+						  			id_herramienta,
+						  			placas
+						  		FROM
+						  			herramientas,footerEnsayo
+						  		WHERE
+						  			regVerFle_id = id_herramienta AND
+						  			id_footerEnsayo = 1QQ
+						  	)AS regVerFle
 						WHERE
-							id_formatoCampo = ensayoCubo.formatoCampo_id AND
-							id_registrosCampo = ensayoCubo.registrosCampo_id AND
-							id_ensayoCubo = 1QQ
+							cliente.id_cliente = obra.cliente_id AND
+							obra.id_obra = ordenDeTrabajo.obra_id AND
+							ordenDeTrabajo.id_ordenDeTrabajo = formatoCampo.ordenDeTrabajo_id AND
+							registrosCampo.formatoCampo_id = formatoCampo.id_formatoCampo AND
+							ensayoViga.registrosCampo_id = registrosCampo.id_registrosCampo AND
+							ensayoViga.formatoCampo_id = formatoCampo.id_formatoCampo AND
+							ensayoViga.footerEnsayo_id = 1QQ
+
 				      ",
-				      array($id_ensayoCubo),
-				      "SELECT"
+				      array($id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo),
+				      "SELECT  --GeneradorFormatos :: getInfoEnsayoCilindros : 1"
 				      );
-				
+
 				if(!$dbS->didQuerydied){
 					if($s=="empty"){
-						$arr = array('No existen registro relacionados con el id_ensayoCubo'=>$id_ensayoCubo,'error' => 5);
+						$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
 					}
 					else{
-						return json_encode($s);
+						return $s;
 					}
 				}
 				else{
-						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 				}
 			}
-			return json_encode($arr);
+			return $arr;
 		}
 
+		function getRegEnsayoVigas($token,$rol_usuario_id,$id_footerEnsayo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				$s= $dbS->qAll("
+			      	SELECT
+			      		claveEspecimen,
+			      		registrosCampo.fecha AS fechaColado,
+			      		ensayoViga.fecha AS fechaEnsayo,
+			      		CASE
+							WHEN MOD(diasEnsaye,3) = 1 THEN prueba1  
+							WHEN MOD(diasEnsaye,3) = 2 THEN prueba2  
+							WHEN MOD(diasEnsaye,3) = 0 THEN prueba3  
+							ELSE 'Error, Contacta a soporte'
+						END AS diasEnsaye,
+						condiciones,
+						lijado,
+						cuero,						
+						ancho1,
+						ancho2,
+						per1,
+						per2,
+						l1,
+						l2,
+						l3,
+						ROUND ((l1+l2+l3)/3) prom,
+						disApoyo,
+						disCarga,
+						carga,
+						ROUND (( ((ancho1 + ancho2)/2) * ( ((per1 + per2)/2) * ((per1 + per2)/2) ) ) )AS modRuptura,
+						defectos,
+						CONCAT(nombre,' ',apellido) AS realizo
+					FROM 
+						usuario,
+						footerEnsayo,
+						formatoCampo,
+						ensayoViga,
+						registrosCampo
+					WHERE
+						footerEnsayo.encargado_id = usuario.id_usuario AND
+						formatoCampo.id_formatoCampo = registrosCampo.formatoCampo_id AND
+						id_formatoCampo = ensayoViga.formatoCampo_id AND
+						id_registrosCampo = ensayoViga.registrosCampo_id AND
+						ensayoViga.footerEnsayo_id = footerEnsayo.id_footerEnsayo AND
+						footerEnsayo.id_footerEnsayo = 1QQ
+			      ",
+			      array($id_footerEnsayo),
+			      "SELECT"
+			      );
+
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('No existen registro relacionados con el id_footerEnsayo'=>$id_footerEnsayo,'error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getRegCCH, verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+
+		}
+
+		function generateEnsayoCilindros($token,$rol_usuario_id,$id_footerEnsayo,$target_dir){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				//Obtenemos la informacion de quien esta realizando el pdf
+				$infoU = $this->getInfoUser($token,$rol_usuario_id);
+				if(!(array_key_exists('error', $infoU))){
+					$info = $this->getInfoEnsayoCilindros($token,$rol_usuario_id,$id_footerEnsayo);
+					if(!(array_key_exists('error', $info))){
+						$registros = $this->getRegEnsayoCilindros($token,$rol_usuario_id,$id_footerEnsayo);
+						if(!(array_key_exists('error', $registros))){
+							$pdf = new EnsayoCilindroPDF();	
+							$pdf->CreateNew($info,$registros,$infoU,$target_dir);
+						}else{
+							return json_encode($registros);
+						}
+					}else{
+						return json_encode($info);
+					}
+				}else{
+					return json_encode($infoU);
+				}
+			}
+			else{
+				return json_encode($arr);
+			}
+		}
 		
 
-		
-		
+		function generateEnsayoCubos($token,$rol_usuario_id,$id_footerEnsayo,$target_dir){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				//Obtenemos la informacion de quien esta realizando el pdf
+				$infoU = $this->getInfoUser($token,$rol_usuario_id);
+				if(!(array_key_exists('error', $infoU))){
+					$info = $this->getInfoEnsayoCubo($token,$rol_usuario_id,$id_footerEnsayo);
+					if(!(array_key_exists('error', $info))){
+						$registros = $this->getRegEnsayoCubo($token,$rol_usuario_id,$id_footerEnsayo);
+						if(!(array_key_exists('error', $registros))){
+							$pdf = new EnsayoCuboPDF();	
+							$pdf->CreateNew($info,$registros,$infoU,$target_dir);
+						}else{
+							return json_encode($registros);
+						}
+					}else{
+						return json_encode($info);
+					}
+				}else{
+					return json_encode($infoU);
+				}
+			}
+			else{
+				return json_encode($arr);
+			}
+		}
 
+		function getInfoEnsayoCilindros($token,$rol_usuario_id,$id_footerEnsayo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				$s= $dbS->qarrayA("
+				      	SELECT
+							ensayoCilindro.footerEnsayo_id,
+							ensayoCilindro.fecha AS fechaEnsayo,
+							basculas.placas AS buscula_placas,
+							regVerFle.placas AS regVerFle_id_placas,		
+							prensas.placas AS prensa_placas,
+							observaciones,
+							encargado_id,
+							CONCAT(nombre,' ',apellido) AS nombre
+						FROM
+							ensayoCilindro,
+							footerEnsayo,
+							usuario,
+							(
+								SELECT
+						  			id_herramienta,
+						  			placas 
+						  		FROM
+						  			herramientas,footerEnsayo
+						  		WHERE
+						  			buscula_id = id_herramienta AND
+						  			id_footerEnsayo = 1QQ 
+							)AS basculas,
+							(
+						  		SELECT
+						  			id_herramienta,
+						  			placas
+						  		FROM
+						  			herramientas,footerEnsayo
+						  		WHERE
+						  			prensa_id = id_herramienta AND
+						  			id_footerEnsayo = 1QQ
+						  	)AS prensas,
+						  	(
+						  		SELECT
+						  			id_herramienta,
+						  			placas
+						  		FROM
+						  			herramientas,footerEnsayo
+						  		WHERE
+						  			regVerFle_id = id_herramienta AND
+						  			id_footerEnsayo = 1QQ
+						  	)AS regVerFle
+						WHERE
+							encargado_id = id_usuario AND
+							footerEnsayo.active = 1 AND
+							ensayoCilindro.footerEnsayo_id = footerEnsayo.id_footerEnsayo AND
+							ensayoCilindro.footerEnsayo_id = 1QQ
+				      ",
+				      array($id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo),
+				      "SELECT  --GeneradorFormatos :: getInfoEnsayoCilindros : 1"
+				      );
+
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+		}
+
+		function getRegEnsayoCilindros($token,$rol_usuario_id,$id_footerEnsayo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				$s= $dbS->qAll("
+			      	SELECT
+			      		registrosCampo.fecha AS fechaColado,
+			      		informeNo,
+			      		claveEspecimen,
+			      		peso,
+			      		CASE
+							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
+							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
+							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
+							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
+							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
+							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
+							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
+							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
+							ELSE 'Error, Contacta a soporte'
+						END AS diasEnsayeFinal,
+						d1,
+			      		d2,
+			      		h1,
+			      		h2,
+			      		carga,
+			      		ROUND(((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4),3) AS area,
+			      		ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100),3)  AS porcentResis,
+				    	falla
+					FROM 
+						ensayoCilindro,
+						registrosCampo,
+						formatoCampo,
+						(
+								SELECT
+									ensayo_def_pi,
+									ensayo_def_kN,
+									ensayo_def_MPa,
+									ensayo_def_divisorKn
+								FROM
+									systemstatus
+								ORDER BY id_systemstatus DESC LIMIT 1
+						)AS var_system
+					WHERE
+						id_formatoCampo = ensayoCilindro.formatoCampo_id AND
+						id_registrosCampo = ensayoCilindro.registrosCampo_id AND
+						ensayoCilindro.footerEnsayo_id = 1QQ
+			      ",
+			      array($id_footerEnsayo),
+			      "SELECT"
+			      );
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('No existen registro relacionados con el id_footerEnsayo'=>$id_footerEnsayo,'error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getRegCCH, verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+
+		}
+
+
+
+		function getInfoEnsayoCubo($token,$rol_usuario_id,$id_footerEnsayo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				$s= $dbS->qarrayA("
+				      	SELECT
+							ensayoCubo.footerEnsayo_id,
+							ensayoCubo.fecha AS fechaEnsayo,
+							basculas.placas AS buscula_placas,
+							regVerFle.placas AS regVerFle_id_placas,		
+							prensas.placas AS prensa_placas,
+							observaciones,
+							encargado_id,
+							CONCAT(nombre,' ',apellido) AS nombre
+						FROM
+							ensayoCubo,
+							footerEnsayo,
+							usuario,
+							(
+								SELECT
+						  			id_herramienta,
+						  			placas 
+						  		FROM
+						  			herramientas,footerEnsayo
+						  		WHERE
+						  			buscula_id = id_herramienta AND
+						  			id_footerEnsayo = 1QQ 
+							)AS basculas,
+							(
+						  		SELECT
+						  			id_herramienta,
+						  			placas
+						  		FROM
+						  			herramientas,footerEnsayo
+						  		WHERE
+						  			prensa_id = id_herramienta AND
+						  			id_footerEnsayo = 1QQ
+						  	)AS prensas,
+						  	(
+						  		SELECT
+						  			id_herramienta,
+						  			placas
+						  		FROM
+						  			herramientas,footerEnsayo
+						  		WHERE
+						  			regVerFle_id = id_herramienta AND
+						  			id_footerEnsayo = 1QQ
+						  	)AS regVerFle
+						WHERE
+							encargado_id = id_usuario AND
+							footerEnsayo.active = 1 AND
+							ensayoCubo.footerEnsayo_id = footerEnsayo.id_footerEnsayo AND
+							ensayoCubo.footerEnsayo_id = 1QQ
+				      ",
+				      array($id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo),
+				      "SELECT  --GeneradorFormatos :: getInfoEnsayoCubo : 1"
+				      );
+
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+		}
+
+		function getRegEnsayoCubo($token,$rol_usuario_id,$id_footerEnsayo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				$s= $dbS->qAll("
+			      	SELECT
+			      		registrosCampo.fecha AS fechaColado,
+			      		informeNo,
+			      		claveEspecimen,
+			      		CASE
+							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
+							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
+							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
+							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
+							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
+							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
+							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
+							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
+							ELSE 'Error, Contacta a soporte'
+						END AS diasEnsayeFinal,
+						l1,
+						l2,
+						carga,
+						ROUND((l1*l2),3) AS area,
+						ROUND((carga/(l1*l2)),3) AS kg
+					FROM 
+						ensayoCubo,
+						registrosCampo,
+						formatoCampo
+					WHERE
+						id_formatoCampo = ensayoCubo.formatoCampo_id AND
+						id_registrosCampo = ensayoCubo.registrosCampo_id AND
+						ensayoCubo.footerEnsayo_id = 1QQ
+			      ",
+			      array($id_footerEnsayo),
+			      "SELECT"
+			      );
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('No existen registro relacionados con el id_footerEnsayo'=>$id_footerEnsayo,'error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getRegCCH, verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+
+		}
+
+
+		
 		function getRegRev($token,$rol_usuario_id,$id_formatoRegistroRev){
 			global $dbS;
 			$usuario = new Usuario();
@@ -1002,6 +1480,12 @@
 			}
 			return $arr;
 		}
+
+
+		/*
+		function generateEnsayoViga($token,$rol_usuario_id,$id_formatoCampo){
+
+		}*/
 
 
 	}

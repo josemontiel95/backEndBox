@@ -38,5 +38,17 @@
 		$generador = new GeneradorFormatos();
 		echo $generador->vistaPrevia($_GET['token'],$_GET['rol_usuario_id'],$_GET['tipo']);
 		break;
+		case 'generateEnsayoCubos':
+		$generador = new GeneradorFormatos();
+		echo $generador->generateEnsayoCubos($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_footerEnsayo'],$_GET['target_dir']);
+		break;
+		case 'generateEnsayoCilindros':
+		$generador = new GeneradorFormatos();
+		echo $generador->generateEnsayoCilindros($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_footerEnsayo'],$_GET['target_dir']);
+		break;
+		case 'generateEnsayoVigas':
+		$generador = new GeneradorFormatos();
+		echo $generador->generateEnsayoVigas($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_footerEnsayo'],$_GET['target_dir']);
+		break;
 	}
 ?>

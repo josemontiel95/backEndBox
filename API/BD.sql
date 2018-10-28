@@ -37,6 +37,7 @@ CREATE TABLE usuario (
 	email VARCHAR(30) NOT NULL,
 	fechaDeNac DATE NOT NULL,
 	foto VARCHAR(120) NULL DEFAULT "null",
+	firma VARCHAR(120) NULL DEFAULT "null",
 	rol_usuario_id INT(11),
 	contrasena VARCHAR(128) NOT NULL,
 

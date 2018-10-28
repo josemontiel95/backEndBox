@@ -959,8 +959,8 @@
 			$this->cell($this->cellsDetails['tamCelda_firmaAncho'],$this->cellsDetails['tamCelda_firmaAlto'],'','B',2);
 			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
 			$this->cell($this->cellsDetails['tam_laboratoristaAncho'],$this->cellsDetails['tam_laboratoristaAlto'],$this->cellsDetails['laboratorista'],0,0,'C');
-
-			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($this->cellsDetails['tamCelda_firmaAncho'])/2)-($tam_image/2)),($posicion_y + (($this->cellsDetails['tamCelda_firmaAlto'])/2))-($tam_image/2),$tam_image,$tam_image);
+			//PENDIENTE
+			$this->Image('./../../disenoFormatos/firmas/firma.png',(($posicion_x+($this->cellsDetails['tamCelda_firmaAncho'])/2)-($tam_image/2)),($posicion_y + (($this->cellsDetails['tamCelda_firmaAlto'])/2))-($tam_image/2),$tam_image,$tam_image);
 		}
 
 	
