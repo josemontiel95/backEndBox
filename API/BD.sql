@@ -941,6 +941,9 @@ ADD COLUMN status INT DEFAULT 0;
 ALTER TABLE footerEnsayo 
 ADD COLUMN pendingEnsayos INT DEFAULT 0;
 
+ALTER TABLE footerEnsayo 
+ADD COLUMN formatoCampo_id INT(11) NULL ;
+
 CREATE TABLE laboratorio_cliente(
 	id_laboratorio_cliente INT(11) NOT NULL AUTO_INCREMENT,
 	laboratorio_id INT(11),

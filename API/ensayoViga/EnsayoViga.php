@@ -79,88 +79,107 @@ class EnsayoViga{
 			switch ($campo) {
 				case '1':
 					$campo = 'condiciones';
+					$this->updateCampo($campo,$valor,$id_ensayoViga);
 					break;
 				case '2': // Si uso
 					$campo = 'lijado';
+					$this->updateCampo($campo,$valor,$id_ensayoViga);
 					break;
 				case '3':
 					$campo = 'posFractura';
+					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
 					break;
 				case '4':
 					$campo = 'ancho1';
+					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
 					break;
 				case '5':
 					$campo = 'ancho2';
+					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
 					break;
 				case '6':
 					$campo = 'per1';
+					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
 					break;
 				case '7':
 					$campo = 'per2';
+					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
 					break;
 				case '8':
 					$campo = 'l1';
+					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
 					break;
 				case '9':
 					$campo = 'l2';
+					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
 					break;
 				case '10':
 					$campo = 'l3';
+					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
 					break;
 				case '11':
 					$campo = 'disApoyo';
+					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
 					break;
 				case '12':
 					$campo = 'disCarga';
+					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
 					break;
 				case '13':
 					$campo = 'carga';
+					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
 					break;
 				case '14':
 					$campo = 'defectos';
+					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
 					break;
 				case '15':
 					$campo = 'velAplicacionExp';
+					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
 					break;
 				case '16':
 					$campo = 'tiempoDeCarga';
+					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
 					break;
-
-			}
-
-			$dbS->squery("
-						UPDATE
-							ensayoViga
-						SET
-							fecha = CURDATE(),
-							1QQ = '1QQ'
-						WHERE
-							id_ensayoViga = 1QQ
-				",array($campo,$valor,$id_ensayoViga),
-				"UPDATE-- EnsayoViga :: insertRegistroTecMuestra : 1");
-			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
-			if(!$dbS->didQuerydied){
-				$fechaEnsayo = $dbS->qarrayA(
-					"
-						SELECT 
-							fecha
-						FROM
-							ensayoViga
-						WHERE
-							id_ensayoViga = 1QQ
-					",
-					array($id_ensayoViga),
-					"SELECT -- EnsayoViga :: insertRegistroTecMuestra : 2"
-				);
-				$arr = array('id_ensayoViga' => $id_ensayoViga,'estatus' => '¡Exito en la inserccion de un registro!','fechaEnsayo' => $fechaEnsayo['fecha'],'error' => 0);
-				return json_encode($arr);
-			}else{
-				$arr = array('id_ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
-				return json_encode($arr);
 			}
 		}
 		return json_encode($arr);
 	}
+
+	private function updateCampo($campo,$valor,$id_ensayoViga){
+		global $dbS;
+		$dbS->squery("
+					UPDATE
+						ensayoViga
+					SET
+						fecha = CURDATE(),
+						1QQ = '1QQ'
+					WHERE
+						id_ensayoViga = 1QQ
+			",array($campo,$valor,$id_ensayoViga),
+			"UPDATE-- EnsayoViga :: insertRegistroTecMuestra : 1");
+		$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
+		if(!$dbS->didQuerydied){
+			$fechaEnsayo = $dbS->qarrayA(
+				"
+					SELECT 
+						fecha
+					FROM
+						ensayoViga
+					WHERE
+						id_ensayoViga = 1QQ
+				",
+				array($id_ensayoViga),
+				"SELECT -- EnsayoViga :: insertRegistroTecMuestra : 2"
+			);
+			$arr = array('id_ensayoViga' => $id_ensayoViga,'estatus' => '¡Exito en la inserccion de un registro!','fechaEnsayo' => $fechaEnsayo['fecha'],'error' => 0);
+		}else{
+			$arr = array('id_ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+		}
+		return json_encode($arr);
+	}
+
+
 	public function getAllRegistrosFromFooterByID($token,$rol_usuario_id,$footerEnsayo_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -228,6 +247,7 @@ class EnsayoViga{
 		}
 		return json_encode($arr);
 	}
+	
 
 	public function getOldMembers($token,$rol_usuario_id,$id_ensayoViga){
 		global $dbS;
@@ -278,7 +298,7 @@ class EnsayoViga{
 		}
 		return json_encode($arr);
 	}
-
+	
 	public function getRegistrosByID($token,$rol_usuario_id,$id_ensayoViga){
 		global $dbS;
 		$usuario = new Usuario();
@@ -515,7 +535,7 @@ class EnsayoViga{
 				}
 				else{
 					$dbS->rollbackTransaction();
-					$arr = array('estatus' => 'No se pudieron cargar las variables del registro.','error' => 6);
+					$arr = array(' ' => 'No se pudieron cargar las variables del registro.','error' => 6);
 				}	
 			}else{
 				$dbS->rollbackTransaction();
