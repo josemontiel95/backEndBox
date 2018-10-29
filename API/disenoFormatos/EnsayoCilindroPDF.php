@@ -66,9 +66,11 @@
 			$this->ln(4);
 			
 			//Put the watermark
-   			$this->SetFont('Arial','B',75);
+   			$this->SetFont('Arial','B',45);
 	    	$this->SetTextColor(192,192,192);
-    		$this->RotatedText(55.5,172,'PREELIMINAR',45);
+    		$this->RotatedText(35.5,172,"Para uso exclusivo de",45);
+    		$this->RotatedText(15.5,232,"Laboratorio de Control de Calidad y",45);
+    		$this->RotatedText(75.5,212,utf8_decode("Supervisión, S.A. de C.V."),45);
 		}
 
 		
@@ -287,9 +289,8 @@
 			$this->TextWithDirection($posicion_x+20,$this->gety() - 5,utf8_decode('____________________________'));	
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('Nombre y firma')/2),$this->gety() - 2,utf8_decode('Nombre y firma'));	
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth(utf8_decode($infoU['nombreRealizo']))/2),$this->gety() - 6,utf8_decode($infoU['nombreRealizo']));	
-			$this->Image('./../../disenoFormatos/firmas/firma.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
-
-
+			$this->Image($infoU['firmaRealizo'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+	
 			$tam_boxElaboro = (196-40)/2;	$tam_first = 7.5; $tam_second = 7.5;
 			$this->SetXY($posicion_x+$tam_boxElaboro,$posicion_y);
 			$this->cell($tam_boxElaboro,$tam_first,'Vo. Bo.','L,T,R',2,'C');
@@ -299,7 +300,7 @@
 			$this->TextWithDirection($posicion_x+20,$this->gety() - 5,utf8_decode('____________________________'));	
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('Nombre y firma')/2),$this->gety() - 2,utf8_decode('Nombre y firma'));	
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreLaboratorista'])/2),$this->gety() - 6,utf8_decode($infoU['nombreLaboratorista']));	
-			$this->Image('./../../disenoFormatos/firmas/firma.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+			$this->Image($infoU['firmaLaboratorista'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 
 
 			
@@ -308,14 +309,25 @@
 		}
 		
 		function Footer(){
-			
-			
+			$this->SetY(-15);
+		    $this->SetFont('Arial','',8);
+		    $tam_noPagina = $this->GetStringWidth('Page '.$this->PageNo().'/{nb}');
+		    $posicion_x = (216 - $tam_noPagina)/2;
+		    $this->SetX($posicion_x);
+		    $this->Cell($tam_noPagina,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+
+		    //Clave de validacion
+		    $clave = 'FI-05-LCC-03-3.1';
+		    $tam_clave = $this->GetStringWidth($clave);
+		    $this->SetX(-($tam_clave + 10));
+		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');
 		}
 		//Funcion que crea un nuevo formato
 
 		function CreateNew($infoFormato,$regisFormato,$infoU,$target_dir){
 			$pdf  = new EnsayoCilindroPDF('P','mm','Letter');
 			$pdf->AddPage();
+			$pdf->AliasNbPages();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($infoFormato,$regisFormato,$infoU);
 			//$pdf->Output();

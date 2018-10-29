@@ -773,6 +773,40 @@ class Usuario{
 		}
 	}
 
+	public function upLoadFirma($token,$rol_usuario_id,$id_usuario,$foto){
+		global $dbS;
+		if($this->getIDByTokenAndValidate($token) == 'success'){
+			if($rol_usuario_id==$this->rol_usuario_id){
+				$resultado = $dbS->squery("
+						UPDATE
+							usuario
+						SET
+							firma = '1QQ'
+						WHERE
+							id_usuario = 1QQ
+						",
+						array($foto,$id_usuario),"UPDATE"
+
+					);
+				if(!$dbS->didQuerydied){
+						$id=$dbS->lastInsertedID;
+						$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
+						return json_encode($arr);
+				}else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en subir la foto, verifica tus datos y vuelve a intentarlo','error' => 2);
+						return json_encode($arr);
+				}			
+			}else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este usuario no tiene el privilegio correcto','error' => 1);
+				return json_encode($arr);
+			}
+		}
+		else{
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Este token expiro o no existe','error' => 2);
+			return json_encode($arr);
+		}
+	}
+
 	public function getByIDAdmin($token,$rol_usuario_id,$id_usuario){
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){

@@ -418,7 +418,7 @@
 			//Definimos el las propiedades de la primera linea del titulo
 			$tam_font_titulo = 9;
 			$this->SetFont('Arial','B',$tam_font_titulo); 
-			$titulo_linea1 = 'LABORATORIO DE CONTROL DE CALIDAD Y SUPERVISIÓN S.A DE C.V';
+			$titulo_linea1 = 'LABORATORIO DE CONTROL DE CALIDAD Y SUPERVISIÓN S.A. DE C.V.';
 			$tam_cell = $this->GetStringWidth($titulo_linea1);
 			$this->SetX((279-$tam_cell)/2);
 			$this->Cell($tam_cell,$tam_font_titulo - 3,utf8_decode($titulo_linea1),0,2,'C');
@@ -426,7 +426,7 @@
 			//Definimos las propiedades de la segunda linea del titulo
 			$tam_font_titulo = 16; //Definimos el tamaño de la fuente
 			$this->SetFont('Arial','B',$tam_font_titulo);
-			$titulo_linea2 = 'LACOCS S.A DE S.V';
+			$titulo_linea2 = 'LACOCS S.A. DE C.V.';
 			$tam_cell = $this->GetStringWidth($titulo_linea2);
 			$this->SetX((279-$tam_cell)/2);
 			$this->Cell($tam_cell,$tam_font_titulo - 3,utf8_decode($titulo_linea2),0,2,'C');
@@ -956,10 +956,9 @@
 			$posicion_x = $this->GetX(); 
 			$posicion_y = $this->GetY();
 
-			$this->cell($this->cellsDetails['tamCelda_firmaAncho'],$this->cellsDetails['tamCelda_firmaAlto'],'','B',2);
+			$this->cell($this->cellsDetails['tamCelda_firmaAncho'],$this->cellsDetails['tamCelda_firmaAlto'],'NOMBRE DE QUIEN FIRMA','B',2,'C');
 			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
 			$this->cell($this->cellsDetails['tam_laboratoristaAncho'],$this->cellsDetails['tam_laboratoristaAlto'],$this->cellsDetails['laboratorista'],0,0,'C');
-			//PENDIENTE
 			$this->Image('./../../disenoFormatos/firmas/firma.png',(($posicion_x+($this->cellsDetails['tamCelda_firmaAncho'])/2)-($tam_image/2)),($posicion_y + (($this->cellsDetails['tamCelda_firmaAlto'])/2))-($tam_image/2),$tam_image,$tam_image);
 		}
 
@@ -1264,7 +1263,7 @@
 			$this->Ln(10);
 		}
 
-		function putDetails($infoFormato){
+		function putDetails($infoFormato,$infoU){
 			//Hacemos un "switch" para ver de que tipo de CCH devemos imprimi
 			$grupos = 4;
 			$bandC = 0;
@@ -1392,12 +1391,12 @@
 
 			$posicion_x = $this->GetX(); 
 			$posicion_y = $this->GetY();
-
-			$this->cell($this->cellsDetails['tamCelda_firmaAncho'],$this->cellsDetails['tamCelda_firmaAlto'],'','B',2);
 			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
+			$this->cell($this->cellsDetails['tamCelda_firmaAncho'],$this->cellsDetails['tamCelda_firmaAlto'],$infoU['nombreRealizo'],'B',2,'C');	
 			$this->cell($this->cellsDetails['tam_laboratoristaAncho'],$this->cellsDetails['tam_laboratoristaAlto'],$this->cellsDetails['laboratorista'],0,0,'C');
 
-			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($this->cellsDetails['tamCelda_firmaAncho'])/2)-($tam_image/2)),($posicion_y + (($this->cellsDetails['tamCelda_firmaAlto'])/2))-($tam_image/2),$tam_image,$tam_image);
+
+			$this->Image($infoU['firma'],(($posicion_x+($this->cellsDetails['tamCelda_firmaAncho'])/2)-($tam_image/2)),($posicion_y + (($this->cellsDetails['tamCelda_firmaAlto'])/2))-($tam_image/2),$tam_image,$tam_image);
 		}
 		
 		function Footer(){
@@ -1417,7 +1416,7 @@
 		}
 
 		//Funcion que crea un nuevo formato
-		function CreateNew($infoFormato,$regisFormato,$target_dir){
+		function CreateNew($infoFormato,$regisFormato,$infoU,$target_dir){
 			$pdf  = new CCH('L','mm','Letter');
 			$pdf->AddPage();
 			$pdf->AliasNbPages();
@@ -1426,9 +1425,9 @@
 			$pdf->generateCellsCampos();	
 			$pdf->putTables($infoFormato,$regisFormato);
 			$pdf->generateCellsDetails();
-			$pdf->putDetails($infoFormato);
-			$pdf->Output('F',$target_dir);
-			//$pdf->Output();
+			$pdf->putDetails($infoFormato,$infoU);
+			//$pdf->Output('F',$target_dir);
+			$pdf->Output();
 		}
 	
 		

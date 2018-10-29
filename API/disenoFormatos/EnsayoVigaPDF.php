@@ -91,6 +91,7 @@
 
 			//Divide la informacion del formato de la Tabla (Esta en funcion del tamaño de fuente de la informacion de la derecha)
 			$this->Ln($tam_font_left);
+
 		}
 
 
@@ -145,6 +146,13 @@
 
 			//---Divide espacios entre el titulo del formato y la información del formato
 			$this->Ln($tam_font_tituloInforme - 2);
+
+			//Put the watermark
+   			$this->SetFont('Arial','B',40);
+	    	$this->SetTextColor(192,192,192);
+    		$this->RotatedText(75.5,138,"Para uso exclusivo de",45);
+    		$this->RotatedText(55.5,197,"Laboratorio de Control de Calidad y",45);
+    		$this->RotatedText(115.5,178,utf8_decode("Supervisión, S.A. de C.V."),45);
 		}
 
 		//Funcion que coloca la informacion del informe, como: el No. de informe, Obra, etc.
@@ -454,7 +462,7 @@
 			$tam_font_head =8;	$this->SetFont('Arial','B',$tam_font_head);//Fuente para clave
 			$superviso = 'Supervisó:';
 			$this->SetX(70);
-			$this->Cell($this->GetStringWidth($superviso)+2,(($tam_font_head)),utf8_decode($superviso.$this->Image('./../../disenoFormatos/firmas/firma.png',$this->GetX()+($this->GetStringWidth($superviso)+10),$this->GetY()-3,$tam_image,$tam_image)),0,0);
+			$this->Cell($this->GetStringWidth($superviso)+2,(($tam_font_head)),utf8_decode($superviso.$this->Image($infoU['firmaRealizo'],$this->GetX()+($this->GetStringWidth($superviso)+10),$this->GetY()-3,$tam_image,$tam_image)),0,0);
 			$this->Cell($this->GetStringWidth($superviso)+20,(($tam_font_head)-2),utf8_decode($infoU['nombreRealizo']),'B',2,'C');
 			$this->Cell($this->GetStringWidth($superviso)+20,(($tam_font_head)-2),'Nombre,firma y puesto',0,0);
 
@@ -463,13 +471,25 @@
 		}
 
 		function Footer(){
-			
+			$this->SetY(-15);
+		    $this->SetFont('Arial','',8);
+		    $tam_noPagina = $this->GetStringWidth('Page '.$this->PageNo().'/{nb}');
+		    $posicion_x = (279.4 - $tam_noPagina)/2;
+		    $this->SetX($posicion_x);
+		    $this->Cell($tam_noPagina,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+
+		    //Clave de validacion
+		    $clave = 'FI-09-LCC-01-0.2';
+		    $tam_clave = $this->GetStringWidth($clave);
+		    $this->SetX(-($tam_clave + 10));
+		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');
 		}
 
 		//Funcion que crea un nuevo formato
 		function CreateNew($infoFormato,$regisFormato,$infoU,$target_dir){
 			$pdf  = new EnsayoVigaPDF('L','mm','Letter');
 			$pdf->AddPage();
+			$pdf->AliasNbPages();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($regisFormato);
 			$pdf->Myfooter($infoFormato,$infoU);

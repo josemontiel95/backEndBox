@@ -21,53 +21,74 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-					$formato = new FormatoCampo();	$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
+					$formato = new FormatoCampo();	
+					$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
+					if($infoFormato == "empty")
+						echo "No hay resultados del id solicitado";
 				switch ($infoFormato['tipo_especimen']) {
 					case 'CUBO':
-						$infoFormato = $this->getInfoCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-						if(!(array_key_exists('error', $infoFormato))){
-							$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-							if(!(array_key_exists('error', $regisFormato))){
-								$pdf = new InformeCubos();	
-								$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
-							}
-							else{
-								return json_encode($regisFormato);
-							}
+						//Obtenemos la informacion de quien esta realizando el pdf
+						$infoU = $this->getInfoUserFinal($token,$rol_usuario_id);
+						if(!(array_key_exists('error', $infoU))){
+							$infoFormato = $this->getInfoCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+							if(!(array_key_exists('error', $infoFormato))){
+								$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+								if(!(array_key_exists('error', $regisFormato))){
+									$pdf = new InformeCubos();	
+									$pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);
+								}
+								else{
+									return json_encode($regisFormato);
+								}
+							}else{
+								return json_encode($infoFormato);
+							}	
 						}else{
-							return json_encode($infoFormato);
+							return json_encode($infoU);
 						}
 						break;
 					case 'CILINDRO':
-						$infoFormato = $this->getInfoCiliByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-						if(!(array_key_exists('error', $infoFormato))){
-							$regisFormato = $this->getRegCilindroByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-							if(!(array_key_exists('error', $regisFormato))){
-								$pdf = new InformeCilindros();	
-								$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
+						//Obtenemos la informacion de quien esta realizando el pdf
+						$infoU = $this->getInfoUserFinal($token,$rol_usuario_id);
+						if(!(array_key_exists('error', $infoU))){
+							$infoFormato = $this->getInfoCiliByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+							if(!(array_key_exists('error', $infoFormato))){
+								$regisFormato = $this->getRegCilindroByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+								if(!(array_key_exists('error', $regisFormato))){
+									$pdf = new InformeCilindros();	
+									$pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);
+								}
+								else{
+									return json_encode($regisFormato);
+								}
+
 							}
 							else{
-								return json_encode($regisFormato);
+								return json_encode($infoFormato);
 							}
-
-						}
-						else{
-							return json_encode($infoFormato);
+						}else{
+							return json_encode($infoU);
 						}
 						break;
 					case 'VIGAS':
-						$infoFormato = $this->getInfoViga($token,$rol_usuario_id,$id_formatoCampo);
-						if(!(array_key_exists('error', $infoFormato))){
-							$regisFormato = $this->getRegVigaByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-							if(!(array_key_exists('error', $regisFormato))){
-								$pdf  = new InformeVigas();
-								$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);	
-							}
-							else{
-								return json_encode($regisFormato);
+						//Obtenemos la informacion de quien esta realizando el pdf
+						$infoU = $this->getInfoUserFinal($token,$rol_usuario_id);
+						if(!(array_key_exists('error', $infoU))){
+							$infoFormato = $this->getInfoViga($token,$rol_usuario_id,$id_formatoCampo);
+							if(!(array_key_exists('error', $infoFormato))){
+								$regisFormato = $this->getRegVigaByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+								if(!(array_key_exists('error', $regisFormato))){
+									$pdf  = new InformeVigas();
+									$pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);	
+								}
+								else{
+									return json_encode($regisFormato);
+								}
+							}else{
+								return json_encode($infoFormato);
 							}
 						}else{
-							return json_encode($infoFormato);
+							return json_encode($infoU);
 						}
 						break;
 				}
@@ -78,6 +99,8 @@
 
 		}
 
+				
+
 		function getInfoUser($token,$rol_usuario_id){
 			global $dbS;
 			$usuario = new Usuario();
@@ -85,24 +108,29 @@
 			if($arr['error'] == 0){
 				//Obtenemos el id del usuario que solicita
 				$id_usuario = substr(decurl($token),10);
+				
 				$s= $dbS->qarrayA("
 				      	SELECT
 							usuarioRealizo.nombreRealizo,
-							CONCAT(nombre,' ',apellido) AS nombreLaboratorista
+							usuarioRealizo.firma AS firmaRealizo,
+							CONCAT(nombre,' ',apellido) AS nombreLaboratorista,
+							usuario.firma AS firmaLaboratorista
 						FROM
 							usuario,
+							laboratorio,
 							(
 								SELECT
-									laboratorio_id,
-									CONCAT(nombre,' ',apellido) AS nombreRealizo
+									laboratorio_id,						
+									CONCAT(nombre,' ',apellido) AS nombreRealizo,
+									firma
 								FROM
 									usuario
 								WHERE
 									usuario.id_usuario = 1QQ
 							) AS usuarioRealizo
 						WHERE
-							usuario.rol_usuario_id = 1002 AND
-							usuario.laboratorio_id = usuarioRealizo.laboratorio_id
+							usuarioRealizo.laboratorio_id = laboratorio.id_laboratorio AND
+							usuario.id_usuario = laboratorio.encargado_id
 				      ",
 				      array($id_usuario),				      
 				      "SELECT -- GeneradorFormatos :: getInfoUser : 1"
@@ -122,6 +150,102 @@
 			}
 			return $arr;
 		}
+
+		function getInfoUserFinal($token,$rol_usuario_id){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				//Obtenemos el id del usuario que solicita
+				$id_usuario = substr(decurl($token),10);
+				
+				$s= $dbS->qarrayA("
+				      	SELECT
+							CONCAT(nombre,' ',apellido) AS nombreLaboratorista,
+							usuario.firma AS firmaLaboratorista,
+							gerente.nombreG,
+							gerente.firmaG
+						FROM
+							usuario,
+							laboratorio,
+							(
+								SELECT
+									laboratorio_id
+								FROM
+									usuario
+								WHERE
+									usuario.id_usuario = 1QQ
+							) AS usuarioRealizo,
+							(
+								SELECT
+									nombreG,
+									firmaG
+								FROM
+									systemstatus
+								ORDER BY id_systemstatus DESC LIMIT 1
+							)AS gerente
+						WHERE
+							usuarioRealizo.laboratorio_id = laboratorio.id_laboratorio AND
+							usuario.id_usuario = laboratorio.encargado_id
+				      ",
+				      array($id_usuario),				      
+				      "SELECT -- GeneradorFormatos :: getInfoUser : 1"
+				      );
+
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('id_usuario' => $id_usuario,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+		}
+
+		
+		/*
+		function getInfoUser($token,$rol_usuario_id){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				//Obtenemos el id del usuario que solicita
+				$id_usuario = substr(decurl($token),10);
+				
+				$s= $dbS->qarrayA("
+				      	SELECT
+							laboratorio_id,						
+							CONCAT(nombre,' ',apellido) AS nombreRealizo,
+							firma
+						FROM
+							usuario
+						WHERE
+							usuario.id_usuario = 1QQ
+				      ",
+				      array($id_usuario),				      
+				      "SELECT -- GeneradorFormatos :: getInfoUser : 1"
+				      );
+
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('id_usuario' => $id_usuario,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+		}
+		*/
 
 		function getInfoCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo){
 			global $dbS;
@@ -993,25 +1117,29 @@
 
 
 		function generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir){
-
 			global $dbS;
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$infoFormato = $this->getInfoCCH($token,$rol_usuario_id,$id_formatoCampo);
-				if(!(array_key_exists('error',$infoFormato))){
-					$regisFormato = $this->getRegCCH($token,$rol_usuario_id,$id_formatoCampo);
-					if(!(array_key_exists('error', $regisFormato))){
-						$pdf = new CCH();
-						$pdf->CreateNew($infoFormato,$regisFormato,$target_dir);
-					}
-					else{
-						return json_encode($regisFormato);
+				$infoU = $this->getInfoUser($token,$rol_usuario_id);
+				if(!(array_key_exists('error', $infoU))){
+					$infoFormato = $this->getInfoCCH($token,$rol_usuario_id,$id_formatoCampo);
+					if(!(array_key_exists('error',$infoFormato))){
+						$regisFormato = $this->getRegCCH($token,$rol_usuario_id,$id_formatoCampo);
+						if(!(array_key_exists('error', $regisFormato))){
+							$pdf = new CCH();
+							$pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);
+						}
+						else{
+							return json_encode($regisFormato);
+						}
+					}else{
+						return json_encode($infoFormato);
 					}
 				}else{
-					return json_encode($infoFormato);
-				}
-				
+
+					return json_encode($infoU);
+				}				
 			}
 			else{
 				return json_encode($arr);
@@ -1482,10 +1610,7 @@
 		}
 
 
-		/*
-		function generateEnsayoViga($token,$rol_usuario_id,$id_formatoCampo){
-
-		}*/
+		
 
 
 	}
