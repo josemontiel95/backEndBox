@@ -48,12 +48,13 @@
 					echo json_encode($arr);
 			}
 		break;
-		//Funcion para subir la firma del usuario 		PENDIENTE(Solo me quede estudiando)
+		//Funcion para subir la firma del usuario
 		case 'upLoadFirma':
+			//Extraemos la extension del archivo
 			$imageFileType = strtolower(pathinfo($_FILES["uploadFile"]["name"],PATHINFO_EXTENSION));
 			if($imageFileType == "png"){
+
 				$target_dir = "./../../disenoFormatos/firmas/";
-				$dirDatabase = "./../../disenoFormatos/firmas/";
 				if (!file_exists($target_dir)) {
 				    mkdir($target_dir, 0777, true);
 				}
@@ -62,8 +63,8 @@
 		    	$input = json_decode($postData);
 				$json['_FILES'] = $_FILES;
 				
-		    	$target_file = $target_dir . "foto_perfil.".$imageFileType;
-		    	$target_fileDB = $dirDatabase . "foto_perfil.".$imageFileType;
+		    	$target_file = $target_dir.$_POST['id_usuario'].".".$imageFileType;
+		    	$target_fileDB = "./../../disenoFormatos/firmas/".$_POST['id_usuario'].".".$imageFileType;
 				if (move_uploaded_file($_FILES["uploadFile"]["tmp_name"], $target_file))  {  
 					$json['uploadOK'] = 1;
 				}else{
@@ -71,14 +72,14 @@
 				}
 		    	if($json['uploadOK']==1){
 			    	$usuario = new Usuario();
-		    		echo $usuario->upLoadFoto($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_usuario'],$target_fileDB);
+		    		echo $usuario->upLoadFirma($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_usuario'],$target_fileDB);
 		    	}else{
 			    	$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Error al subir la foto','error' => 3);
 					echo json_encode($arr);
 		    	}	
 			}
 			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Error invalido, solo aceptamos jpg y png y tu ingresaste un:'.$imageFileType,'error' => 4);
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => 'NULL','estatus' => 'Error invalido, solo aceptamos png y tu ingresaste un:'.$imageFileType,'error' => 4);
 					echo json_encode($arr);
 			}
 		break;
@@ -104,23 +105,5 @@
 		break;
 	}
 
-	
-
-	/*
-	if(!empty($_GET)){
-		$function= $_GET['function'];
-	}else{
-		return -2;
-	}
-	include_once("./../Usuario.php");
-
-	switch ($function){
-		case 'upLoadFoto':
-			$usuario = new Usuario();
-			echo $usuario->upLoadFoto($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_usuario']);
-		break;
-
-	}
-	*/
 ?>
 

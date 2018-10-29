@@ -36,9 +36,11 @@
 			$this->ln(4);
 			
 			//Put the watermark
-   			$this->SetFont('Arial','B',75);
+   			$this->SetFont('Arial','B',45);
 	    	$this->SetTextColor(192,192,192);
-    		$this->RotatedText(55.5,172,'PREELIMINAR',45);
+    		$this->RotatedText(35.5,172,"Para uso exclusivo de",45);
+    		$this->RotatedText(15.5,232,"Laboratorio de Control de Calidad y",45);
+    		$this->RotatedText(75.5,212,utf8_decode("Supervisión, S.A. de C.V."),45);
 		}
 
 		
@@ -79,7 +81,7 @@
 			$this->Cell($tam_infoNumero,$tam_font_head+3,$infoNumero,1,0,'C');
 
 			$clave = 'CLAVE';
-			$tam_clave = $this->GetStringWidth($clave)+14;
+			$tam_clave = $this->GetStringWidth($clave)+18;
 			$this->Cell($tam_clave,$tam_font_head+3,$clave,1,0,'C');
 
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
@@ -102,7 +104,7 @@
 			$this->SetXY($posicion_x + $tam_lado,$posicion_y);
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 			$resisCompresion = 'RESISTENCIA A';
-			$tam_resisCompresion = $this->GetStringWidth($resisCompresion)+8;
+			$tam_resisCompresion = $this->GetStringWidth($resisCompresion)+3;
 			$this->Cell($tam_resisCompresion,($tam_font_head+3)/2,$resisCompresion,'L,T,R',2,'C');
 			$this->cell($tam_resisCompresion,($tam_font_head+3)/6,utf8_decode('COMPRESIÓN'),'L,R',2,'C');
 			$this->cell($tam_resisCompresion,($tam_font_head+3)/3,'kg','L,B,R',0,'C');
@@ -240,7 +242,7 @@
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('Nombre y firma')/2),$this->gety() - 2,utf8_decode('Nombre y firma'));	
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth(utf8_decode($infoU['nombreRealizo']))/2),$this->gety() - 7,utf8_decode($infoU['nombreRealizo']));	
 	
-			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+			$this->Image($infoU['firmaRealizo'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 
 
 			$tam_boxElaboro = (196-40)/2;	$tam_first = 7.5; $tam_second = 7.5;
@@ -251,8 +253,8 @@
 
 			$this->TextWithDirection($posicion_x+20,$this->gety() - 5,utf8_decode('____________________________'));	
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('Nombre y firma')/2),$this->gety() - 2,utf8_decode('Nombre y firma'));	
-			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth(utf8_decode($infoU['nombreLaboratorista']))/2),$this->gety() - 7,utf8_decode($infoU['nombreLaboratorista']));	
-			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth(utf8_decode($infoU['nombreLaboratorista']))/2),$this->gety() - 7,utf8_decode(utf8_decode($infoU['nombreLaboratorista'])));	
+			$this->Image($infoU['firmaLaboratorista'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 			
 			$this->Ln(4);
 			
@@ -260,13 +262,25 @@
 		}
 		
 		function Footer(){
-		
+			$this->SetY(-15);
+		    $this->SetFont('Arial','',8);
+		    $tam_noPagina = $this->GetStringWidth('Page '.$this->PageNo().'/{nb}');
+		    $posicion_x = (216 - $tam_noPagina)/2;
+		    $this->SetX($posicion_x);
+		    $this->Cell($tam_noPagina,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+
+		    //Clave de validacion
+		    $clave = 'PENDIENTE';
+		    $tam_clave = $this->GetStringWidth($clave);
+		    $this->SetX(-($tam_clave + 10));
+		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');
 		}
 		//Funcion que crea un nuevo formato
 
 		function CreateNew($infoFormato,$regisFormato,$infoU,$target_dir){
 			$pdf  = new EnsayoCuboPDF('P','mm','Letter');
 			$pdf->AddPage();
+			$pdf->AliasNbPages();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($infoFormato,$regisFormato,$infoU);
 			//$pdf->Output();

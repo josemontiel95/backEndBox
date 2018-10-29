@@ -18,12 +18,18 @@ CREATE TABLE laboratorio(
 	laboratorio VARCHAR(40) NOT NULL,
 	estado VARCHAR(30) NOT NULL,
 	municipio VARCHAR(30)NOT NULL,
+	encargado_id INT(11),
+
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	active INT NOT NULL DEFAULT 1,
 
-	PRIMARY KEY(id_laboratorio)
+	PRIMARY KEY(id_laboratorio),
+
+	FOREIGN KEY(encargado_id)
+	REFERENCES usuario(id_usuario)
+	ON DELETE SET NULL ON UPDATE CASCADE
 )ENGINE=INNODB;
 
 ALTER TABLE laboratorio AUTO_INCREMENT=1001;
@@ -1041,6 +1047,8 @@ CREATE TABLE systemstatus(
 	maxNoOfRegistrosRev INT NOT NULL,
 
 	ensayo_def_MPa INT NOT NULL,
+	nombreG VARCHAR(30) NOT NULL,
+	firmaG VARCHAR(120) NULL DEFAULT "null",
 
 	apiRoot VARCHAR(100) NOT NULL,
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -1074,6 +1082,9 @@ ALTER TABLE systemstatus ADD multiplosNoOfRegistrosCCH_VIGAS INT NOT NULL;
 
 ALTER TABLE systemstatus MODIFY ensayo_def_pi DOUBLE;
 
+ALTER TABLE systemstatus ADD nombreG VARCHAR(30) NOT NULL;
+ALTER TABLE systemstatus ADD firmaG VARCHAR(120) NULL DEFAULT "null";
+
 INSERT INTO 
 
 	systemstatus(
@@ -1089,7 +1100,9 @@ INSERT INTO
 			ensayo_def_distanciaApoyos,
 			ensayo_def_kN,
 			ensayo_def_MPa,
-			ensayo_def_divisorKn
+			ensayo_def_divisorKn,
+			nombreG,
+			firmaG
 		)
 
 VALUES(
@@ -1105,7 +1118,9 @@ VALUES(
 	'45',
 	101.971,
 	10.2,
-	1000
+	1000,
+	"M en I. MARCO ANTONIO CERVANTES M.",
+	"./../../disenoFormatos/firmas/firma.png"
 )
 
 

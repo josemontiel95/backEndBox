@@ -899,7 +899,7 @@
 			$this->Ln($this->cellsInfo['tam_font_left']);
 		}
 
-		function putTables($infoFormato,$regisFormato){
+		function putTables($infoFormato,$regisFormato,$infoU){
 			$posicion_y = $this->GetY();
 
 			$this->SetFont('Arial','B',$this->cellsTables['tam_font_Cells']);
@@ -1184,8 +1184,8 @@
 			$this->SetFont('Arial','',$this->cellsDetails['tam_font_details']);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('SIGNATARIO/JEFE DE LABORATORIO')/2),$this->gety() - 3,utf8_decode('SIGNATARIO/JEFE DE LABORATORIO'));	
 			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
-			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('LAURA CASTILLO DE LA ROSA')/2),$this->gety() - 12,utf8_decode('LAURA CASTILLO DE LA ROSA'));	
-			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreLaboratorista'])/2),$this->gety() - 12,utf8_decode($infoU['nombreLaboratorista']));	
+			$this->Image($infoU['firmaLaboratorista'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 
 			
 
@@ -1200,22 +1200,13 @@
 			$this->SetFont('Arial','',$this->cellsDetails['tam_font_details']);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('DIRECTOR GENERAL/GERENTE GENERAL')/2),$this->gety() - 3,utf8_decode('DIRECTOR GENERAL/GERENTE GENERAL'));	
 			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
-			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('M en I. MARCO ANTONIO CERVANTES M.')/2),$this->gety() - 12,utf8_decode('M en I. MARCO ANTONIO CERVANTES M.'));	
-			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreG'])/2),$this->gety() - 12,utf8_decode($infoU['nombreG']));	
+						$this->Image($infoU['firmaG'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 			$this->SetFont('Arial','',$this->cellsDetails['tam_font_details']);
 
 
 
-			$this->SetXY($posicion_x+$tam_boxElaboro,$posicion_y);
-
-			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
-			$this->cell($tam_boxElaboro,$tam_first,'Recibe','L,T,R',2,'C');
-			$this->cell($tam_boxElaboro,$tam_second,'','L,B,R',2,'C');
-			$posicion_x = $this->GetX();
-			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('___________________________________________'));	
-			$this->SetFont('Arial','',$this->cellsDetails['tam_font_details']);
-			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NOMBRE DE QUIEN RECIBE')/2),$this->gety() - 3,utf8_decode('NOMBRE DE QUIEN RECIBE'));	
-			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+			
 			$this->Ln(0);
 
 			$this->SetFont('Arial','',$this->cellsDetails['tam_font_details'] - 1);
@@ -1242,7 +1233,7 @@
 		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');
 		}
 		//Funcion que crea un nuevo formato
-		function CreateNew($infoFormato,$regisFormato,$target_dir){			
+		function CreateNew($infoFormato,$regisFormato,$infoU,$target_dir){			
 			$pdf  = new InformeCilindros('L','mm','Letter');
 			$pdf->AddPage();
 			$pdf->AliasNbPages();
@@ -1250,7 +1241,7 @@
 			$pdf->putInfo($infoFormato);
 			$pdf->generateCellsCampos();
 			$pdf->generateCellsDetails();
-			$pdf->putTables($infoFormato,$regisFormato);
+			$pdf->putTables($infoFormato,$regisFormato,$infoU);
 			$pdf->Output('F',$target_dir);
 			//$pdf->Output();
 		}

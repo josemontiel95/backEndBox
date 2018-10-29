@@ -628,7 +628,8 @@
 			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('___________________________________________'));	
 			$this->SetFont('Arial','',$tam_font_footer);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('SIGNATARIO/JEFE DE LABORATORIO')/2),$this->gety() - 3,utf8_decode('SIGNATARIO/JEFE DE LABORATORIO'));	
-			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreLaboratorista'])/2),$this->gety() - 12,utf8_decode($infoU['nombreLaboratorista']));	
+			$this->Image($infoU['firmaLaboratorista'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 
 			$this->SetXY($posicion_x+$tam_boxElaboro,$posicion_y);
 			$this->SetFont('Arial','B',$tam_font_footer);
@@ -647,19 +648,6 @@
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('M en I. MARCO ANTONIO CERVANTES M.')/2),$this->gety() - 12,utf8_decode('M en I. MARCO ANTONIO CERVANTES M.'));	
 			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 
-
-
-			$this->SetXY($posicion_x+$tam_boxElaboro,$posicion_y);
-
-			$this->SetFont('Arial','B',$tam_font_footer);
-			$this->cell($tam_boxElaboro,$tam_first,'Recibe','L,T,R',2,'C');
-			$this->cell($tam_boxElaboro,$tam_second,'','L,B,R',2,'C');
-			$posicion_x = $this->GetX();
-
-			$this->SetFont('Arial','',$tam_font_footer);
-			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('___________________________________________'));	
-			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NOMBRE DE QUIEN RECIBE')/2),$this->gety() - 3,utf8_decode('NOMBRE DE QUIEN RECIBE'));	
-			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 		}
 
 
@@ -820,7 +808,7 @@
 			}
 		}
 
-		function putDetails($infoFormato){
+		function putDetails($infoFormato,$infoU){
 			$tam_font_details = 7;
 			$this->SetFont('Arial','B',$tam_font_details);
 
@@ -881,7 +869,9 @@
 			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('___________________________________________'));	
 			$this->SetFont('Arial','',$tam_font_footer);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('SIGNATARIO/JEFE DE LABORATORIO')/2),$this->gety() - 3,utf8_decode('SIGNATARIO/JEFE DE LABORATORIO'));	
-			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+			$this->SetFont('Arial','B',$tam_font_footer);
+			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreLaboratorista'])/2),$this->gety() - 12,utf8_decode($infoU['nombreLaboratorista']));	
+			$this->Image($infoU['firmaLaboratorista'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 
 			$this->SetXY($posicion_x+$tam_boxElaboro,$posicion_y);
 			$this->SetFont('Arial','B',$tam_font_footer);
@@ -897,22 +887,9 @@
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('DIRECTOR GENERAL/GERENTE GENERAL')/2),$this->gety() - 3,utf8_decode('DIRECTOR GENERAL/GERENTE GENERAL'));	
 
 			$this->SetFont('Arial','B',$tam_font_footer);
-			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('M en I. MARCO ANTONIO CERVANTES M.')/2),$this->gety() - 12,utf8_decode('M en I. MARCO ANTONIO CERVANTES M.'));	
-			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreG'])/2),$this->gety() - 12,utf8_decode($infoU['nombreG']));	
+			$this->Image($infoU['firmaG'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 
-
-
-			$this->SetXY($posicion_x+$tam_boxElaboro,$posicion_y);
-
-			$this->SetFont('Arial','B',$tam_font_footer);
-			$this->cell($tam_boxElaboro,$tam_first,'Recibe','L,T,R',2,'C');
-			$this->cell($tam_boxElaboro,$tam_second,'','L,B,R',2,'C');
-			$posicion_x = $this->GetX();
-
-			$this->SetFont('Arial','',$tam_font_footer);
-			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('___________________________________________'));	
-			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NOMBRE DE QUIEN RECIBE')/2),$this->gety() - 3,utf8_decode('NOMBRE DE QUIEN RECIBE'));	
-			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 		}
 		
 		function Footer(){
@@ -931,7 +908,7 @@
 		}
 		//Funcion que crea un nuevo formato
 
-		function CreateNew($infoFormato,$regisFormato,$target_dir){
+		function CreateNew($infoFormato,$regisFormato,$infoU,$target_dir){
 
 			$pdf  = new InformeVigas('L','mm','Letter');
 			$pdf->AddPage();
@@ -939,7 +916,7 @@
 			$pdf->generateCellsInfo();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($infoFormato,$regisFormato);
-			$pdf->putDetails($infoFormato);
+			$pdf->putDetails($infoFormato,$infoU);
 			$pdf->Output('F',$target_dir);
 			//$pdf->Output();
 		}
