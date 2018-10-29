@@ -10,6 +10,21 @@ class footerEnsayo{
 		echo $data;
 	}
 
+	public function generaPDFEnsayo($token,$rol_usuario_id,$id_footerEnsayo){
+		global $dbS;
+
+		$usuario = new Usuario();
+		$mailer = new Mailer();
+
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
+		if($arr['error'] == 0){
+
+		}
+		$dbS->commitTransaction();
+		return json_encode($arr);
+	}
+
 	public function completeFormato($token,$rol_usuario_id,$id_footerEnsayo){
 		global $dbS;
 
@@ -19,17 +34,18 @@ class footerEnsayo{
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$dbS->beginTransaction();
 		if($arr['error'] == 0){
-			$dbS->squery("	
-							UPDATE
-								footerEnsayo
-							SET
-								status = 1
-							WHERE
-								active = 1 AND
-								id_footerEnsayo = 1QQ
-					 "
-					,array($id_footerEnsayo),"UPDATE"
-			      	);
+			$dbS->squery(
+				"UPDATE
+					footerEnsayo
+				SET
+					status = 1
+				WHERE
+					active = 1 AND
+					id_footerEnsayo = 1QQ
+				"
+				,array($id_footerEnsayo),
+				"UPDATE -- FooterEnsayo :: completeFormato : 1"
+			);
 			if(!$dbS->didQuerydied){
 				$a = $dbS->qarrayA(
 					"	SELECT
@@ -38,11 +54,8 @@ class footerEnsayo{
 							footerEnsayo
 						WHERE
 							id_footerEnsayo =1QQ
-					"
-					,
-					array($id_footerEnsayo)
-					,
-					"SELECT"
+					",array($id_footerEnsayo),
+					"SELECT -- FooterEnsayo :: completeFormato : 1"
 				);
 				if(!$dbS->didQuerydied && !($a=="empty")){
 					$table = "";
@@ -65,47 +78,47 @@ class footerEnsayo{
 								1QQ
 							WHERE
 								footerEnsayo_id =1QQ
-						"
-						,
-						array($table,$id_footerEnsayo)
-						,
-						"SELECT"
+						",array($table,$id_footerEnsayo),
+						"SELECT-- FooterEnsayo :: completeFormato : 3"
 					);
 					if(!$dbS->didQuerydied && !($b=="empty")){
 						foreach ($b as $value) {
-							$dbS->squery("	
-								UPDATE
+							$dbS->squery(
+								"UPDATE
 									formatoCampo
 								SET
 									ensayadoFin = ensayadoFin -1
 								WHERE
 									id_formatoCampo = 1QQ
 								"
-								,array($value['formatoCampo_id']),"UPDATE"
+								,array($value['formatoCampo_id']),
+								"UPDATE -- FooterEnsayo :: completeFormato : 4"
 						    );
 						}
 						if(!$dbS->didQuerydied ){
-							$dbS->squery("	
-									UPDATE
-										1QQ
-									SET
-										status = 2
-									WHERE
-										active = 1 AND
-										footerEnsayo_id = 1QQ
-							"
-							,array($table,$id_footerEnsayo),"UPDATE"
+							$dbS->squery(
+								"UPDATE
+									1QQ
+								SET
+									status = 2
+								WHERE
+									active = 1 AND
+									footerEnsayo_id = 1QQ
+								"
+								,array($table,$id_footerEnsayo),
+								"UPDATE-- FooterEnsayo :: completeFormato : 5"
 					      	);
 							if(!$dbS->didQuerydied){
 								$correo= "josemontiel@me.com";
 								$pdf= "https://www.facebook.com/tech4umexico/";
 								$var_system = $dbS->qarrayA(
-								"	SELECT
-										apiRoot
-									FROM
-										systemstatus
-									ORDER BY id_systemstatus DESC;
-								",array(),"SELECT"
+									"	SELECT
+											apiRoot
+										FROM
+											systemstatus
+										ORDER BY id_systemstatus DESC;
+									",array(),
+									"SELECT -- FooterEnsayo :: completeFormato : 6"
 								);
 								if(!$dbS->didQuerydied && ($var_system != "empty")){
 									
@@ -217,10 +230,10 @@ class footerEnsayo{
 
 				$dbS->squery(
 					"   INSERT INTO
-							footerEnsayo(buscula_id,regVerFle_id,prensa_id,tipo,observaciones,encargado_id)
+							footerEnsayo(buscula_id,regVerFle_id,prensa_id,tipo,observaciones,encargado_id, formatoCampo_id)
 						VALUES
-							(1QQ,1QQ,1QQ,'1QQ','1QQ',1QQ)
-				",array($var_system['ensayo_def_buscula_id'],$var_system['ensayo_def_regVerFle_id'],$var_system['ensayo_def_prensa_id'],$tipo,$var_system['observaciones'],$usuario->id_usuario),
+							(1QQ,1QQ,1QQ,'1QQ','1QQ',1QQ,1QQ)
+				",array($var_system['ensayo_def_buscula_id'],$var_system['ensayo_def_regVerFle_id'],$var_system['ensayo_def_prensa_id'],$tipo,$var_system['observaciones'],$usuario->id_usuario,$formatoCampo_id),
 				"INSERT -- FooterEnsayo :: initInsert : 4");
 				if(!$dbS->didQuerydied){
 					$id=$dbS->lastInsertedID;
@@ -811,22 +824,24 @@ class footerEnsayo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$s= $dbS->qarrayA("
-		      	SELECT
+			$s= $dbS->qarrayA(
+				"SELECT
 					id_footerEnsayo,
 					buscula_id,
 					basculas.placas AS buscula_placas,
 					regVerFle_id,
 					regVerFle.placas AS regVerFle_id_placas,		
 					prensa_id,
-					observaciones,
+					footerEnsayo.observaciones,
 					prensas.placas AS prensa_placas,
 					encargado_id,
 					CONCAT(nombre,' ',apellido) AS nombre,
 					DATE(footerEnsayo.createdON) AS fecha,
-					footerEnsayo.status AS status
+					footerEnsayo.status AS status,
+					formatoCampo.preliminar AS preliminar
 				FROM
 					footerEnsayo,
+					formatoCampo,
 					usuario,
 					(
 						SELECT
@@ -859,6 +874,7 @@ class footerEnsayo{
 				  			id_footerEnsayo = 1QQ
 				  	)AS regVerFle
 				WHERE
+					formatoCampo.id_formatoCampo = footerEnsayo.formatoCampo_id AND
 					encargado_id = id_usuario AND
 					footerEnsayo.active = 1 AND
 					buscula_id = basculas.id_herramienta AND
@@ -867,7 +883,7 @@ class footerEnsayo{
 					id_footerEnsayo = 1QQ
 			      ",
 			      array($id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo),
-			      "SELECT"
+			      "SELECT -- FooterEnsayo :: getFooterByID : 1"
 			      );
 			
 			if(!$dbS->didQuerydied){
