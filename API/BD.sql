@@ -18,21 +18,23 @@ CREATE TABLE laboratorio(
 	laboratorio VARCHAR(40) NOT NULL,
 	estado VARCHAR(30) NOT NULL,
 	municipio VARCHAR(30)NOT NULL,
-	encargado_id INT(11),
-
+	nombreG VARCHAR(30) NOT NULL,
+	firmaG VARCHAR(120) NULL DEFAULT "null",
 
 	createdON TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	lastEditedON TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	active INT NOT NULL DEFAULT 1,
 
-	PRIMARY KEY(id_laboratorio),
-
-	FOREIGN KEY(encargado_id)
-	REFERENCES usuario(id_usuario)
-	ON DELETE SET NULL ON UPDATE CASCADE
+	PRIMARY KEY(id_laboratorio)
 )ENGINE=INNODB;
 
 ALTER TABLE laboratorio AUTO_INCREMENT=1001;
+
+UPDATE
+	laboratorio
+SET
+	nombreG = "M en I. MARCO ANTONIO CERVANTES M.",
+	firmaG = "./../../disenoFormatos/firmas/firma.png"
 
 CREATE TABLE usuario (
 	id_usuario INT(11) NOT NULL AUTO_INCREMENT,
