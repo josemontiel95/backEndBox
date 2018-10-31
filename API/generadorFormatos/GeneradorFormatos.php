@@ -28,7 +28,7 @@
 				switch ($infoFormato['tipo_especimen']) {
 					case 'CUBO':
 						//Obtenemos la informacion de quien esta realizando el pdf
-						$infoU = $this->getInfoUserFinal($token,$rol_usuario_id);
+						$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
 						if(!(array_key_exists('error', $infoU))){
 							$infoFormato = $this->getInfoCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
 							if(!(array_key_exists('error', $infoFormato))){
@@ -49,7 +49,7 @@
 						break;
 					case 'CILINDRO':
 						//Obtenemos la informacion de quien esta realizando el pdf
-						$infoU = $this->getInfoUserFinal($token,$rol_usuario_id);
+						$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
 						if(!(array_key_exists('error', $infoU))){
 							$infoFormato = $this->getInfoCiliByFCCH($token,$rol_usuario_id,$id_formatoCampo);
 							if(!(array_key_exists('error', $infoFormato))){
@@ -72,7 +72,7 @@
 						break;
 					case 'VIGAS':
 						//Obtenemos la informacion de quien esta realizando el pdf
-						$infoU = $this->getInfoUserFinal($token,$rol_usuario_id);
+						$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
 						if(!(array_key_exists('error', $infoU))){
 							$infoFormato = $this->getInfoViga($token,$rol_usuario_id,$id_formatoCampo);
 							if(!(array_key_exists('error', $infoFormato))){
@@ -151,7 +151,7 @@
 			return $arr;
 		}
 
-		function getInfoUserFinal($token,$rol_usuario_id){
+		function getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo){
 			global $dbS;
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -161,40 +161,36 @@
 				
 				$s= $dbS->qarrayA("
 				      	SELECT
-							CONCAT(nombre,' ',apellido) AS nombreLaboratorista,
-							usuario.firma AS firmaLaboratorista,
-							gerente.nombreG,
-							gerente.firmaG
+							nombreLaboratorista,
+							firmaLaboratorista,
+							nombreG,
+							firmaG
 						FROM
-							usuario,
 							laboratorio,
 							(
 								SELECT
-									laboratorio_id
+									CONCAT(nombre,' ',apellido) AS nombreLaboratorista,
+									firma AS firmaLaboratorista,
+									ordenDeTrabajo.laboratorio_id AS id_laboratorio
 								FROM
+									ordenDeTrabajo,
+									formatoCampo,
 									usuario
 								WHERE
-									usuario.id_usuario = 1QQ
-							) AS usuarioRealizo,
-							(
-								SELECT
-									nombreG,
-									firmaG
-								FROM
-									systemstatus
-								ORDER BY id_systemstatus DESC LIMIT 1
-							)AS gerente
+									ordenDeTrabajo.jefa_lab_id = usuario.id_usuario AND
+									formatoCampo.ordenDeTrabajo_id =  ordenDeTrabajo.id_ordenDeTrabajo AND
+									formatoCampo.id_formatoCampo = 1107
+							)AS laboratorista
 						WHERE
-							usuarioRealizo.laboratorio_id = laboratorio.id_laboratorio AND
-							usuario.id_usuario = laboratorio.encargado_id
+							laboratorio.id_laboratorio = laboratorista.id_laboratorio
 				      ",
-				      array($id_usuario),				      
+				      array($id_formatoCampo),				      
 				      "SELECT -- GeneradorFormatos :: getInfoUser : 1"
 				      );
 
 				if(!$dbS->didQuerydied){
 					if($s=="empty"){
-						$arr = array('id_usuario' => $id_usuario,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
+						$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
 					}
 					else{
 						return $s;

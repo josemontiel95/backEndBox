@@ -454,7 +454,7 @@
 			$aviso = 'ESTE DOCUMENTO SE REFIERE EXCLUSIVAMENTE AL CONCRETO ENSAYADO Y NO DEBE SER REPRODUCIDO EN FORMA PARCIAL SIN LA AUTORIZACIÓN POR ESCRITO DEL LABORATORIO LACOCS';
 			$tam_aviso = $this->GetStringWidth($aviso);
 			$tam_font_head =5;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
-			$this->Cell($tam_aviso,(($tam_font_head)),$aviso,'T',2);
+			$this->Cell($tam_aviso,(($tam_font_head)),utf8_decode($aviso),'T',2);
 
 			$this->Ln(4);
 
