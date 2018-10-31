@@ -1,27 +1,116 @@
 <?php 
 include_once("./../../configSystem.php");
 include_once("./../../usuario/Usuario.php");
+include_once("./../../generadorFormatos/GeneradorFormatos.php");
+
 class footerEnsayo{
 	
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 	
 	public function ping2($data){
+		$generador = new GeneradorFormatos();
+
 		echo $data;
 	}
 
-	public function generaPDFEnsayo($token,$rol_usuario_id,$id_footerEnsayo){
+	public function generatePDFEnsayo($token,$rol_usuario_id,$id_footerEnsayo){
 		global $dbS;
 
 		$usuario = new Usuario();
 		$mailer = new Mailer();
+		$generador = new GeneradorFormatos();
 
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$dbS->beginTransaction();
 		if($arr['error'] == 0){
+			$a = $dbS->qarrayA(
+				"	SELECT
+						tipo
+					FROM
+						footerEnsayo
+					WHERE
+						id_footerEnsayo =1QQ
+				",array($id_footerEnsayo),
+				"SELECT -- FooterEnsayo :: generatePDFEnsayo : 1"
+			);
+			if(!$dbS->didQuerydied && !($a=="empty")){
+				$table = "";
+				switch($a['tipo']){
+					case "CILINDRO":
+						$table="ensayoCilindro";
+					break;
+					case "CUBO":
+						$table="ensayoCubo";
+					break;
+					case "VIGAS":
+						$table="ensayoViga";
+					break;
+				}
+				$var_system = $dbS->qarrayA(
+					"	SELECT
+							apiRoot
+						FROM
+							systemstatus
+						ORDER BY id_systemstatus DESC;
+					",array(),
+					"SELECT -- FooterEnsayo :: generatePDFEnsayo : 2"
+				);
+				if($dbS->didQuerydied || ($var_system == "empty")){
+					$dbS->rollbackTransaction();
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato','error' => 20);
+					return json_encode($arr);
+				}
+				
+				$hora_de_creacion = getdate();
+				$target_dir = "./../../../SystemData/FormatosGabsData/".$a['tipo']."/".$id_footerEnsayo."/";
+				$dirDatabase = $var_system['apiRoot']."SystemData/FormatosGabsData/".$a['tipo']."/".$id_footerEnsayo."/"."ensayos".$a['tipo']."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+				if (!file_exists($target_dir)) {
+					mkdir($target_dir, 0777, true);
+				}
+				$target_dir=$target_dir."ensayos".$a['tipo']."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+				//Cachamos la excepcion
+				try{
+					switch($a['tipo']){
+						case "CILINDRO":
+							$arr=json_decode( $generador->generateEnsayoCilindros($token,$rol_usuario_id,$id_footerEnsayo,$target_dir),true);
+						break;
+						case "CUBO":
+							$arr=json_decode( $generador->generateEnsayoCubos($token,$rol_usuario_id,$id_footerEnsayo,$target_dir),true);
+						break;
+						case "VIGAS":
+							$arr=json_decode( $generador->generateEnsayoVigas($token,$rol_usuario_id,$id_footerEnsayo,$target_dir),true);
+						break;
+					}
 
+					if($arr['error'] > 0){
+						$dbS->rollbackTransaction();
+						return json_encode($arr);
+					}
+
+					$dbS->squery(
+						"UPDATE
+							footerEnsayo
+						SET
+							preliminarGabs = '1QQ'
+						WHERE
+							id_footerEnsayo = 1QQ
+						"
+						,array($dirDatabase,$id_footerEnsayo),
+						"UPDATE -- FooterEnsayo :: generatePDFEnsayo : 3 var_system[apiRoot]:".$var_system[0]
+					);
+				}catch(Exception $e){
+					$dbS->rollbackTransaction();
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 7);
+					return json_encode($arr);
+				}
+				$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Exito Formato generado','error' => 0);	
+				$dbS->commitTransaction();
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en generar formato , verifica tus datos y vuelve a intentarlo','error' => 11);
+			}
 		}
-		$dbS->commitTransaction();
 		return json_encode($arr);
 	}
 
@@ -93,7 +182,12 @@ class footerEnsayo{
 								"
 								,array($value['formatoCampo_id']),
 								"UPDATE -- FooterEnsayo :: completeFormato : 4"
-						    );
+							);
+							if($dbS->didQuerydied){
+								$dbS->rollbackTransaction();
+								$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar del formato','error' => 50);
+								return json_encode($arr);
+							}
 						}
 						if(!$dbS->didQuerydied ){
 							$dbS->squery(
@@ -109,49 +203,7 @@ class footerEnsayo{
 								"UPDATE-- FooterEnsayo :: completeFormato : 5"
 					      	);
 							if(!$dbS->didQuerydied){
-								$correo= "josemontiel@me.com";
-								$pdf= "https://www.facebook.com/tech4umexico/";
-								$var_system = $dbS->qarrayA(
-									"	SELECT
-											apiRoot
-										FROM
-											systemstatus
-										ORDER BY id_systemstatus DESC;
-									",array(),
-									"SELECT -- FooterEnsayo :: completeFormato : 6"
-								);
-								if(!$dbS->didQuerydied && ($var_system != "empty")){
-									
-									//Obtenemos la hora para que no se repitan en caso de crear un nuevo formato
-									$hora_de_creacion = getdate();
-									$target_dir = "./../../../SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/";
-									$dirDatabase = $var_system['apiRoot']."SystemData/FormatosData/".$info['id_cliente']."/".$info['id_obra']."/".$info['id_ordenDeTrabajo']."/".$id_formatoCampo."/"."preliminarCCH"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
-									if (!file_exists($target_dir)) {
-									    //mkdir($target_dir, 0777, true);
-									}
-									$target_dir=$target_dir."preliminarCCH"."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
-									//Llamada a el generador de formatos
-									//$generador = new GeneradorFormatos();
-									//Cachamos la excepcion
-									try{
-										//$generador->generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir);
-										//$mailer->sendMailBasic($correo, $info['nombre'], $dirDatabase)
-										if(202==202){
-											$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
-										}else{
-											$dbS->rollbackTransaction();
-											$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 6);
-										}
-									}catch(Exception $e){
-										$dbS->rollbackTransaction();
-										$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 7);
-										return json_encode($arr);
-									}
-								}else{
-									$dbS->rollbackTransaction();
-									$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la consulta del apiRoot','error' =>8);
-								}
-								
+								$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
 							}else{
 								$dbS->rollbackTransaction();
 								$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 10);
@@ -651,8 +703,8 @@ class footerEnsayo{
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
-			$s= $dbS->qAll("
-		      	SELECT
+			$s= $dbS->qAll(
+				"SELECT
 					footerEnsayo.id_footerEnsayo AS id_footerEnsayo,
 					buscula_id,
 					basculas.placas AS buscula_placas,
@@ -747,76 +799,9 @@ class footerEnsayo{
 		}
 		return json_encode($arr);
 	}
-	public function ping(){
+	public function ping($data){
 		global $dbS;
-		$laboratorio_id=1003;
-		$arr =$dbS->qarrayA("
-		      	SELECT
-					footerEnsayo.id_footerEnsayo,
-					buscula_id,
-					basculas.placas AS buscula_placas,
-					regVerFle_id,
-					regVerFle.placas AS regVerFle_id_placas,		
-					prensa_id,
-					observaciones,
-					prensas.placas AS prensa_placas,
-					encargado_id,
-					CONCAT(nombre,' ',apellido) AS nombre,
-					CASE
-						WHEN DATE(footerEnsayo.createdON) = CURDATE() THEN 'Hoy'
-						WHEN DATE(footerEnsayo.createdON) = DATE_SUB(CURDATE(), INTERVAL 1 DAY) THEN 'Ayer'
-						ELSE DATE(footerEnsayo.createdON)
-					END AS fecha
-				FROM
-					footerEnsayo,
-					usuario,
-					(
-						SELECT
-				  			id_herramienta,
-				  			placas,
-				  			id_footerEnsayo
-				  		FROM
-				  			herramientas,footerEnsayo
-				  		WHERE
-				  			buscula_id = id_herramienta
-					)AS basculas,
-					(
-				  		SELECT
-				  			id_herramienta,
-				  			placas,
-				  			id_footerEnsayo
-				  		FROM
-				  			herramientas,footerEnsayo
-				  		WHERE
-				  			prensa_id = id_herramienta 
-				  	)AS prensas,
-				  	(
-				  		SELECT
-				  			id_herramienta,
-				  			placas,
-				  			id_footerEnsayo
-				  		FROM
-				  			herramientas,footerEnsayo
-				  		WHERE
-				  			regVerFle_id = id_herramienta
-				  	)AS regVerFle
-				WHEREA
-					basculas.id_footerEnsayo = footerEnsayo.id_footerEnsayo AND
-					prensas.id_footerEnsayo = footerEnsayo.id_footerEnsayo AND
-					regVerFle.id_footerEnsayo = footerEnsayo.id_footerEnsayo AND
-					encargado_id = id_usuario AND
-					footerEnsayo.active = 1 AND
-					footerEnsayo.status = 0 AND
-					buscula_id = basculas.id_herramienta AND
-					prensa_id = prensas.id_herramienta AND
-					regVerFle_id = regVerFle.id_herramienta AND
-					usuario.laboratorio_id = 1QQ
-			      ",
-			      array($laboratorio_id),
-			      "SELECT-footerEnsayo :: ping"
-			      );
-		return json_encode($arr);
-
+		return $data;
 	}
 
 	public function getFooterByID($token,$rol_usuario_id,$id_footerEnsayo){
@@ -838,7 +823,8 @@ class footerEnsayo{
 					CONCAT(nombre,' ',apellido) AS nombre,
 					DATE(footerEnsayo.createdON) AS fecha,
 					footerEnsayo.status AS status,
-					formatoCampo.preliminar AS preliminar
+					formatoCampo.preliminar AS preliminar,
+					preliminarGabs
 				FROM
 					footerEnsayo,
 					formatoCampo,

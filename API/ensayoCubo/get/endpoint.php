@@ -21,6 +21,11 @@
 			$ensayo = new EnsayoCubo();
 			echo $ensayo->getRegistrosByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ensayoCubo']);
 			break;
+			
+		case 'getOldMembers':
+			$ensayo = new EnsayoCubo();
+			echo $ensayo->getOldMembers($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ensayoCubo']);
+			break;
 		case 'getAllRegistrosFromFooterByID':
 			$ensayo = new EnsayoCubo();
 			echo $ensayo->getAllRegistrosFromFooterByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['footerEnsayo_id']);

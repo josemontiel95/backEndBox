@@ -803,8 +803,8 @@ ALTER TABLE ensayoCilindro ADD tiempoDeCarga INT NULL;
 
 ALTER TABLE ensayoCilindro ADD area DOUBLE NULL;
 ALTER TABLE ensayoCilindro ADD resistencia DOUBLE NULL;
-area
-resistencia
+
+
 
 CREATE TABLE ensayoCubo(
 	id_ensayoCubo INT(11) NOT NULL AUTO_INCREMENT,
@@ -844,6 +844,8 @@ ALTER TABLE ensayoCubo ADD falla INT(11) NOT NULL;
 
 ALTER TABLE ensayoCubo ADD status INT NOT NULL DEFAULT 0;
 
+ALTER TABLE ensayoCubo ADD area DOUBLE NULL;
+ALTER TABLE ensayoCubo ADD resistencia DOUBLE NULL;
 
 CREATE TABLE ensayoViga(
 	id_ensayoViga INT(11) NOT NULL AUTO_INCREMENT,
@@ -950,6 +952,10 @@ ADD COLUMN pendingEnsayos INT DEFAULT 0;
 
 ALTER TABLE footerEnsayo 
 ADD COLUMN formatoCampo_id INT(11) NULL ;
+
+ALTER TABLE footerEnsayo ADD COLUMN preliminarGabs VARCHAR(200);
+
+
 
 CREATE TABLE laboratorio_cliente(
 	id_laboratorio_cliente INT(11) NOT NULL AUTO_INCREMENT,
@@ -1088,44 +1094,6 @@ ALTER TABLE systemstatus MODIFY ensayo_def_pi DOUBLE;
 ALTER TABLE systemstatus ADD nombreG VARCHAR(30) NOT NULL;
 ALTER TABLE systemstatus ADD firmaG VARCHAR(120) NULL DEFAULT "null";
 
-INSERT INTO 
-
-	systemstatus(
-			cch_def_prueba1,
-			cch_def_prueba2,
-			cch_def_prueba3,
-			cch_def_prueba4,
-			ensayo_def_buscula_id,
-			ensayo_def_regVerFle_id,
-			ensayo_def_prensa_id,
-			ensayo_def_observaciones,
-			ensayo_def_pi,
-			ensayo_def_distanciaApoyos,
-			ensayo_def_kN,
-			ensayo_def_MPa,
-			ensayo_def_divisorKn,
-			nombreG,
-			firmaG
-		)
-
-VALUES(
-	7,
-	14,
-	28,
-	28,
-	1005,
-	1006,
-	1008,
-	"NO HAY OBSERVACIONES",
-	3.1416,
-	'45',
-	101.971,
-	10.2,
-	1000,
-	"M en I. MARCO ANTONIO CERVANTES M.",
-	"./../../disenoFormatos/firmas/firma.png"
-)
-
 
 ================
 
@@ -1185,7 +1153,6 @@ select id_usuario,nombre,rol,laboratorio from usuario,laboratorio,rol_usuario wh
 
 ./mysqldump -t --complete-insert -h 160.153.46.5  -u lacocsAdmin -pJulio2018% boxLacocs systemstatus --where="id_systemstatus = 1010"
 
-INSERT INTO `systemstatus` (`id_systemstatus`, `cch_def_prueba1`, `cch_def_prueba2`, `cch_def_prueba3`, `createdON`, `lastEditedON`, `active`, `ensayo_def_buscula_id`, `ensayo_def_prensa_id`, `ensayo_def_regVerFle_id`, `cch_def_prueba4`, `ensayo_def_observaciones`, `ensayo_def_pi`, `ensayo_def_distanciaApoyos`, `ensayo_def_kN`, `ensayo_def_MPa`, `ensayo_def_divisorKn`, `maxNoOfRegistrosCCH`, `multiplosNoOfRegistrosCCH`) VALUES (1010,7,14,28,'2018-09-08 16:54:31','2018-09-08 16:54:31',1,1005,1008,1006,28,'NO HAY OBSERVACIONES',3,45,102,10,1000,0,0);
 
 INSERT INTO `systemstatus` (
 	`cch_def_prueba1`, 
@@ -1241,14 +1208,3 @@ VALUES (
 	9,
 	3
 	);
-
-
-
-
-
-
-
-
-
-
-
