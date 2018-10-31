@@ -29,6 +29,9 @@ class EnsayoCubo{
 				case '4':
 					$campo = 'falla';
 					break;
+				case '5':
+					$campo = 'tiempoDeCarga';
+					break;
 			}
 
 			$dbS->squery("
@@ -69,35 +72,66 @@ class EnsayoCubo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
 		if($arr['error'] == 0){
-			$dbS->beginTransaction();
 				$variables = $dbS->qarrayA(
 					"
 						SELECT
 							l1,
 							l2,
-							carga
+							carga,
+							tiempoDeCarga
 						FROM
 							ensayoCubo
 						WHERE 
 							id_ensayoCubo  = 1QQ
-					",array($id_ensayoCubo),"SELECT"
+					",array($id_ensayoCubo),
+					"SELECT -- EnsayoCubo :: calcularAreaResis : 1"
 					);
 
 			if(!$dbS->didQuerydied){
-				$dbS->commitTransaction();
-				$area = ($variables['l1']*$variables['l2']);
+				
+				$area = number_format(($variables['l1']*$variables['l2']),2);
 				if($area == 0){
 					$area = 'Error: Verifique sus datos, el area debe ser distinta de 0';
 					$resistencia = 'Error: No se puede realizar una division entre 0';
+					$velAplicacionExp = 'Error: No se puede realizar una division entre 0';
+					$estatus='Error: No se puede realizar una division entre 0';
 					$error = 5;
 				} 	
 				else{
-					$resistencia = $variables['carga']/$area;
+					$resistencia = number_format($variables['carga']/$area,2);
+					if($variables['tiempoDeCarga']!=0){
+						$velAplicacionExp = number_format($resistencia / $variables['tiempoDeCarga'],2);
+					}else{
+						$velAplicacionExp = 'Error: No se puede realizar una division entre 0';
+					}
 					$error = 0;
+					$estatus='Exito';
 				}
-				$arr = array('area' => $area,'resistencia' => $resistencia, 'error'=> $error);
-				return json_encode($arr);
+				if($error == 0){
+					$dbS->squery(
+						"UPDATE
+							ensayoCubo
+						SET
+							area = '1QQ',
+							resistencia = '1QQ',
+							velAplicacionExp = '1QQ'
+						WHERE
+							id_ensayoCubo = 1QQ
+						",array($area,$resistencia,$velAplicacionExp,$id_ensayoCubo),
+						"UPDATE -- EnsayoCubo :: calcularAreaResis : 2"
+					);
+				}
+				if(!$dbS->didQuerydied){
+					$dbS->commitTransaction();
+					$arr = array('area' => $area,'resistencia' => $resistencia,'velAplicacionExp' =>$velAplicacionExp, 'error'=> $error,'estatus' => $estatus);
+					return json_encode($arr);
+				}else{
+					$dbS->rollbackTransaction();
+					$arr = array('estatus' => 'No se pudieron cargar las variables del registro.','error' => 7);
+					return json_encode($arr);
+				}
 			}else{
 				$dbS->rollbackTransaction();
 				$arr = array('estatus' => 'No se pudieron cargar las variables del registro.','error' => 6);
@@ -130,16 +164,16 @@ class EnsayoCubo{
 						informeNo,
 						ensayoCubo.status AS status,
 						CASE
-							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
-							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
 							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
 							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
-							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
-							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
 							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
 							ELSE 'Error, Contacta a soporte'
-						END AS diasEnsayeFinal
+						END AS diasEnsayeFinal,
+						velAplicacionExp,
+						tiempoDeCarga,
+						area,
+						resistencia
 					FROM 
 						ensayoCubo,registrosCampo,formatoCampo
 					WHERE
@@ -190,12 +224,8 @@ class EnsayoCubo{
 						ensayoCubo.status AS status,
 						CASE
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
-							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
-							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
 							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
-							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
 							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
-							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
 							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
 							ELSE 'Error, Contacta a soporte'
 						END AS diasEnsayeFinal
@@ -303,6 +333,55 @@ class EnsayoCubo{
 					$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
 					return json_encode($arr);
 				}		
+		}
+		return json_encode($arr);
+	}
+	public function getOldMembers($token,$rol_usuario_id,$id_ensayoCubo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$info = $dbS->qarrayA(
+				"   SELECT 
+						grupo,
+						registrosCampo.formatoCampo_id AS formatoCampo_id,
+						id_registrosCampo
+					FROM
+						registrosCampo, ensayoCubo
+					WHERE
+						id_registrosCampo = registrosCampo_id AND
+						id_ensayoCubo = 1QQ
+				",
+				array($id_ensayoCubo),
+				"SELECT -- EnsayoCubo :: getOldMembers : 1"
+			);
+			if($dbS->didQuerydied || $info=="empty"){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getOldMembers , verifica tus datos y vuelve a intentarlo','error' => 10);
+				return json_encode($arr);
+			}
+			$arr = $dbS->qAll(
+				"   SELECT 
+						id_ensayoCubo
+					FROM
+						registrosCampo, ensayoCubo
+					WHERE
+						id_registrosCampo = registrosCampo_id AND
+						registrosCampo.formatoCampo_id = 1QQ AND
+						grupo = '1QQ' AND
+						id_ensayoCubo < 1QQ
+					ORDER BY id_registrosCampo DESC
+				",
+				array($info['formatoCampo_id'],$info['grupo'],$id_ensayoCubo),
+				"SELECT -- EnsayoCubo :: getOldMembers : 2"
+			);
+			if($dbS->didQuerydied){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getOldMembers , verifica tus datos y vuelve a intentarlo','error' => 11);
+				return json_encode($arr);
+			}else if($arr=="empty"){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getOldMembers , verifica tus datos y vuelve a intentarlo','error' => 12);
+				return json_encode($arr);
+			}
+
 		}
 		return json_encode($arr);
 	}

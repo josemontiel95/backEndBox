@@ -79,67 +79,67 @@ class EnsayoViga{
 			switch ($campo) {
 				case '1':
 					$campo = 'condiciones';
-					$this->updateCampo($campo,$valor,$id_ensayoViga);
+					$arr = json_decode($this->updateCampo($campo,$valor,$id_ensayoViga),true);
 					break;
 				case '2': // Si uso
 					$campo = 'lijado';
-					$this->updateCampo($campo,$valor,$id_ensayoViga);
+					$arr = json_decode($this->updateCampo($campo,$valor,$id_ensayoViga),true);
 					break;
 				case '3':
 					$campo = 'posFractura';
-					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
+					$arr = json_decode($this->updateCampo($campo,$valor,$id_ensayoViga),true);
 					break;
 				case '4':
 					$campo = 'ancho1';
-					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
+					$arr = json_decode($this->updateCampo($campo,$valor,$id_ensayoViga),true);
 					break;
 				case '5':
 					$campo = 'ancho2';
-					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
+					$arr = json_decode($this->updateCampo($campo,$valor,$id_ensayoViga),true);
 					break;
 				case '6':
 					$campo = 'per1';
-					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
+					$arr = json_decode($this->updateCampo($campo,$valor,$id_ensayoViga),true);
 					break;
 				case '7':
 					$campo = 'per2';
-					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
+					$arr = json_decode($this->updateCampo($campo,$valor,$id_ensayoViga),true);
 					break;
 				case '8':
 					$campo = 'l1';
-					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
+					$arr = json_decode($this->updateCampo($campo,$valor,$id_ensayoViga),true);
 					break;
 				case '9':
 					$campo = 'l2';
-					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
+					$arr = json_decode($this->updateCampo($campo,$valor,$id_ensayoViga),true);
 					break;
 				case '10':
 					$campo = 'l3';
-					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
+					$arr = json_decode($this->updateCampo($campo,$valor,$id_ensayoViga),true);
 					break;
 				case '11':
 					$campo = 'disApoyo';
-					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
+					$arr = json_decode($this->updateCampo($campo,$valor,$id_ensayoViga),true);
 					break;
 				case '12':
 					$campo = 'disCarga';
-					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
+					$arr = json_decode($this->updateCampo($campo,$valor,$id_ensayoViga),true);
 					break;
 				case '13':
 					$campo = 'carga';
-					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
+					$arr = json_decode($this->updateCampo($campo,$valor,$id_ensayoViga),true);
 					break;
 				case '14':
 					$campo = 'defectos';
-					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
+					$arr = json_decode($this->updateCampo($campo,$valor,$id_ensayoViga),true);
 					break;
 				case '15':
 					$campo = 'velAplicacionExp';
-					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
+					$arr = json_decode($this->updateCampo($campo,$valor,$id_ensayoViga),true);
 					break;
 				case '16':
 					$campo = 'tiempoDeCarga';
-					$arr = $this->updateCampo($campo,$valor,$id_ensayoViga);
+					$arr = json_decode($this->updateCampo($campo,$valor,$id_ensayoViga),true);
 					break;
 			}
 		}
@@ -158,7 +158,6 @@ class EnsayoViga{
 						id_ensayoViga = 1QQ
 			",array($campo,$valor,$id_ensayoViga),
 			"UPDATE-- EnsayoViga :: insertRegistroTecMuestra : 1");
-		$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
 		if(!$dbS->didQuerydied){
 			$fechaEnsayo = $dbS->qarrayA(
 				"
@@ -172,7 +171,7 @@ class EnsayoViga{
 				array($id_ensayoViga),
 				"SELECT -- EnsayoViga :: insertRegistroTecMuestra : 2"
 			);
-			$arr = array('id_ensayoViga' => $id_ensayoViga,'estatus' => '¡Exito en la inserccion de un registro!','fechaEnsayo' => $fechaEnsayo['fecha'],'error' => 0);
+			$arr = array('id_ensayoViga' => $id_ensayoViga,'estatus' => 'Exito en la inserccion de un registro!','fechaEnsayo' => $fechaEnsayo['fecha'],'error' => 0);
 		}else{
 			$arr = array('id_ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
 		}
@@ -483,7 +482,8 @@ class EnsayoViga{
 							posFractura,
 							l1,
 							l2,
-							l3
+							l3,
+							tiempoDeCarga
 						FROM
 							ensayoViga
 						WHERE 
@@ -500,14 +500,21 @@ class EnsayoViga{
 					if($area != 0){
 						if($variables['posFractura'] == 1){ // Dentro del Claro
 							$modulo = number_format(($variables['carga']*$variables['disApoyo'])/$area,2);
-							$error = 0;
 						}else if($variables['posFractura'] == 2){  // Fuera del Claro
 							$modulo = number_format((3*$variables['carga']*$prom)/$area,2);
-							$error = 0;
 						}
+						if($variables['tiempoDeCarga']!=0){
+							$velAplicacionExp = number_format($modulo / $variables['tiempoDeCarga'],2);
+						}else{
+							$velAplicacionExp = 'Error: No se puede realizar una division entre 0';
+						}
+						$estatus='Exito';
+						$error = 0;
 					}else{
 						$modulo = "Error: division entre cero." ;
-						$error = 0;
+						$velAplicacionExp = 'Error: No se puede realizar una division entre 0';
+						$estatus='Error: No se puede realizar una division entre 0';
+						$error = 5;
 					}
 					if($error == 0){
 						$dbS->squery(
@@ -515,22 +522,24 @@ class EnsayoViga{
 								ensayoViga
 							SET
 								fecha = CURDATE(),
-								mr = '1QQ'
+								mr = '1QQ',
+								velAplicacionExp = '1QQ',
+								prom = '1QQ'
 							WHERE
 								id_ensayoViga = 1QQ
-							",array($modulo,$id_ensayoViga),
+							",array($modulo,$velAplicacionExp,$prom,$id_ensayoViga),
 							"UPDATE -- EnsayoViga ::  calcularModulo : 3"
 						);
 						if($dbS->didQuerydied){
 							$dbS->rollbackTransaction();
 							$arr = array('estatus' => 'No se pudieron cargar las variables del registro.','error' => 40);
 						}else{
-							$arr = array('area' => $area,'modulo' => $modulo, 'error'=> $error);
+							$arr = array('area' => $area,'modulo' => $modulo,'velAplicacionExp' => $velAplicacionExp,'prom' => $prom,'estatus' => $estatus, 'error'=> $error);
 							$dbS->commitTransaction();
 						}
 					}else{
 						$dbS->rollbackTransaction();
-						$arr = array('area' => $area,'modulo' => $modulo, 'error'=> $error);
+						$arr = array('area' => $area,'modulo' => $modulo, 'error'=> $error,'estatus' => $estatus);
 					}
 				}
 				else{
@@ -591,48 +600,9 @@ class EnsayoViga{
 		return json_encode($arr);
 	}
 	public function calcularVelocidad($token,$rol_usuario_id,$id_ensayoViga){
-		global $dbS;
-		$usuario = new Usuario();
-		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		if($arr['error'] == 0){
-			$dbS->beginTransaction();
-			$variables = $dbS->qarrayA(
-				"	SELECT
-						mr,
-						tiempoDeCarga
-					FROM
-						ensayoViga
-					WHERE 
-						id_ensayoViga  = 1QQ
-				",array($id_ensayoViga),"SELECT -- EnsayoViga :: calcularVelocidad : 1"
-			);
-			if(!$dbS->didQuerydied){
+		
+		$arr = array('estatus' => 'Esta funcion ya no esta disponible. Actualiza a la nueva version','error' => 404);
 			
-				$velAplicacionExp = ($variables['mr'])/$variables['tiempoDeCarga'];
-				
-				$dbS->squery(
-					"UPDATE
-						ensayoViga
-					SET
-						fecha = CURDATE(),
-						velAplicacionExp = '1QQ'
-					WHERE
-						id_ensayoViga = 1QQ
-					",array($velAplicacionExp,$id_ensayoViga),
-					"UPDATE -- EnsayoViga ::  calcularVelocidad : 2"
-				);
-				if($dbS->didQuerydied){
-					$dbS->rollbackTransaction();
-					$arr = array('estatus' => 'No se pudieron cargar las variables del registro.','error' => 40);
-				}else{
-					$dbS->commitTransaction();
-					$arr = array('velAplicacionExp' => $velAplicacionExp,'error' => 0);
-				}
-			}else{
-				$dbS->rollbackTransaction();
-				$arr = array('estatus' => 'No se pudieron cargar las variables del registro.','error' => 6);
-			}
-		}
 		return json_encode($arr);
 	}
 }

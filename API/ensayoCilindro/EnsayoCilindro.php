@@ -120,55 +120,64 @@ class EnsayoCilindro{
 		if($arr['error'] == 0){
 			$dbS->beginTransaction();
 			$var_system = $dbS->qarrayA(
-					"
-						SELECT
-							ensayo_def_pi
-						FROM
-							systemstatus
-						ORDER BY id_systemstatus DESC;
-					",array(),"SELECT  -- EnsayoCilindro :: calcularAreaResis : 1"
-					);
+				"SELECT
+					ensayo_def_pi
+				FROM
+					systemstatus
+				ORDER BY id_systemstatus DESC;
+				",array(),"SELECT  -- EnsayoCilindro :: calcularAreaResis : 1"
+			);
 			if(!$dbS->didQuerydied){
 				$variables = $dbS->qarrayA(
-					"
-						SELECT
-							d1,
-							d2,
-							carga
-						FROM
-							ensayoCilindro
-						WHERE 
-							id_ensayoCilindro  = 1QQ
-					",array($id_ensayoCilindro),
-					"SELECT -- EnsayoCilindro :: calcularAreaResis : 2"
-					);
+					"SELECT
+						d1,
+						d2,
+						carga,
+						tiempoDeCarga
+					FROM
+						ensayoCilindro
+					WHERE 
+						id_ensayoCilindro  = 1QQ
+				",array($id_ensayoCilindro),
+				"SELECT -- EnsayoCilindro :: calcularAreaResis : 2"
+				);
 				if(!$dbS->didQuerydied){
 					$dbS->commitTransaction();
 					$promedio = ($variables['d1'] + $variables['d2'])/2;
-					$area = ((($promedio * $promedio) * $var_system['ensayo_def_pi'])/4);
+					$area = number_format(((($promedio * $promedio) * $var_system['ensayo_def_pi'])/4),2);
 					if($area == 0){
 						$area = 'Error: Verifique sus datos, el area debe ser distinta de 0';
 						$resistencia = 'Error: No se puede realizar una division entre 0';
+						$velAplicacionExp = 'Error: No se puede realizar una division entre 0';
+						$estatus='Error: No se puede realizar una division entre 0';
 						$error = 5;
 					} 	
 					else{
-						$resistencia = $variables['carga']/$area;
+						$resistencia = number_format($variables['carga']/$area,2);
+						if($variables['tiempoDeCarga']!=0){
+							$velAplicacionExp = number_format($resistencia / $variables['tiempoDeCarga'],2);
+						}else{
+							$velAplicacionExp = 'Error: No se puede realizar una division entre 0';
+						}
 						$error = 0;
+						$estatus='Exito';
 					}
 					if($error == 0){
-						$dbS->squery("
-						UPDATE
-							ensayoCilindro
-						SET
-							fecha = CURDATE(),
-							area = '1QQ',
-							resistencia = '1QQ'
-						WHERE
-							id_ensayoCilindro = 1QQ
-						",array($area,$resistencia,$id_ensayoCilindro),
-						"UPDATE -- EnsayoCilindro :: calcularAreaResis : 3");
+						$dbS->squery(
+							"UPDATE
+								ensayoCilindro
+							SET
+								fecha = CURDATE(),
+								area = '1QQ',
+								resistencia = '1QQ',
+								velAplicacionExp = '1QQ'
+							WHERE
+								id_ensayoCilindro = 1QQ
+							",array($area,$resistencia,$velAplicacionExp,$id_ensayoCilindro),
+							"UPDATE -- EnsayoCilindro :: calcularAreaResis : 3"
+						);
 					}
-					$arr = array('area' => $area,'resistencia' => $resistencia, 'error'=> $error);
+					$arr = array('area' => $area,'velAplicacionExp' => $velAplicacionExp, 'resistencia' => $resistencia, 'error'=> $error,'estatus' => $estatus);
 					return json_encode($arr);
 				}
 				else{
@@ -437,50 +446,6 @@ class EnsayoCilindro{
 		}
 		return json_encode($arr);
 	}
-	public function calcularVelocidad($token,$rol_usuario_id,$id_ensayoCilindro){
-		global $dbS;
-		$usuario = new Usuario();
-		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		if($arr['error'] == 0){
-			$dbS->beginTransaction();
-			$variables = $dbS->qarrayA(
-				"	SELECT
-						resistencia,
-						tiempoDeCarga
-					FROM
-						ensayoCilindro
-					WHERE 
-						id_ensayoCilindro  = 1QQ
-				",array($id_ensayoCilindro),"SELECT -- EnsayoCilindro :: calcularVelocidad : 1"
-			);
-			if(!$dbS->didQuerydied){
-			
-				$velAplicacionExp = ($variables['resistencia'])/$variables['tiempoDeCarga'];
-				
-				$dbS->squery(
-					"UPDATE
-						ensayoCilindro
-					SET
-						fecha = CURDATE(),
-						velAplicacionExp = '1QQ'
-					WHERE
-						id_ensayoCilindro = 1QQ
-					",array($velAplicacionExp,$id_ensayoCilindro),
-					"UPDATE -- EnsayoCilindro ::  calcularVelocidad : 2"
-				);
-				if($dbS->didQuerydied){
-					$dbS->rollbackTransaction();
-					$arr = array('estatus' => 'No se pudieron cargar las variables del registro.','error' => 40);
-				}else{
-					$dbS->commitTransaction();
-					$arr = array('velAplicacionExp' => $velAplicacionExp,'error' => 0);
-				}
-			}else{
-				$dbS->rollbackTransaction();
-				$arr = array('estatus' => 'No se pudieron cargar las variables del registro.','error' => 6);
-			}
-		}
-		return json_encode($arr);
-	}
+
 }
 ?>
