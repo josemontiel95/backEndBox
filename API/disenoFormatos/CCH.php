@@ -1426,8 +1426,8 @@
 			$pdf->putTables($infoFormato,$regisFormato);
 			$pdf->generateCellsDetails();
 			$pdf->putDetails($infoFormato,$infoU);
-			//$pdf->Output('F',$target_dir);
-			$pdf->Output();
+			$pdf->Output('F',$target_dir);
+			//$pdf->Output();
 		}
 	
 		
