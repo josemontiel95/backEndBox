@@ -36,11 +36,9 @@
 			$this->ln(4);
 			
 			//Put the watermark
-   			$this->SetFont('Arial','B',45);
+   			$this->SetFont('Arial','B',75);
 	    	$this->SetTextColor(192,192,192);
-    		$this->RotatedText(35.5,172,"Para uso exclusivo de",45);
-    		$this->RotatedText(15.5,232,"Laboratorio de Control de Calidad y",45);
-    		$this->RotatedText(75.5,212,utf8_decode("Supervisión, S.A. de C.V."),45);
+    		$this->RotatedText(55.5,172,'PREELIMINAR',45);
 		}
 
 		
@@ -69,7 +67,7 @@
 
 		function putTables($infoFormato,$regisFormato,$infoU){
 
-			$tam_font_head = 6.5;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
+			$tam_font_head = 5;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
 
 
 			$fechaColado = 'FECHA DE COLADO';
@@ -81,7 +79,7 @@
 			$this->Cell($tam_infoNumero,$tam_font_head+3,$infoNumero,1,0,'C');
 
 			$clave = 'CLAVE';
-			$tam_clave = $this->GetStringWidth($clave)+18;
+			$tam_clave = $this->GetStringWidth($clave)+25;
 			$this->Cell($tam_clave,$tam_font_head+3,$clave,1,0,'C');
 
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
@@ -120,6 +118,17 @@
 			$this->SetXY($posicion_x + $tam_area,$posicion_y);
 
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+
+			$velocidad = 'Vel. Aplicación';
+			$tam_velocidad = $this->GetStringWidth($velocidad)+2;
+			$posicion_x = $this->GetX();
+			$this->Cell($tam_velocidad,($tam_font_head+3)/2,utf8_decode($velocidad),'L,T,R',2,'C');
+			$this->cell($tam_velocidad,($tam_font_head+3)/2,utf8_decode('Experimental'),'L,B,R',2,'C');
+
+			$this->SetXY($posicion_x + $tam_velocidad,$posicion_y);
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+
 			$resis = 'COMPRESIÓN kg/cm²';
 			$posicion_x = $this->GetX();
 			
@@ -141,6 +150,7 @@
 									$tam_l2,
 									$tam_resisCompresion,
 									$tam_area,
+									$tam_velocidad,
 									$tam_resis
 							);
 
@@ -242,23 +252,7 @@
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('Nombre y firma')/2),$this->gety() - 2,utf8_decode('Nombre y firma'));	
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth(utf8_decode($infoU['nombreRealizo']))/2),$this->gety() - 7,utf8_decode($infoU['nombreRealizo']));	
 	
-			$this->Image($infoU['firmaRealizo'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
-
-
-			$tam_boxElaboro = (196-40)/2;	$tam_first = 7.5; $tam_second = 7.5;
-			$this->SetXY($posicion_x+$tam_boxElaboro,$posicion_y);
-			$this->cell($tam_boxElaboro,$tam_first,'Vo. Bo.','L,T,R',2,'C');
-			$posicion_x = $this->GetX();
-			$this->cell($tam_boxElaboro,$tam_second,'','L,B,R',2,'C');
-
-			$this->TextWithDirection($posicion_x+20,$this->gety() - 5,utf8_decode('____________________________'));	
-			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('Nombre y firma')/2),$this->gety() - 2,utf8_decode('Nombre y firma'));	
-			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth(utf8_decode($infoU['nombreLaboratorista']))/2),$this->gety() - 7,utf8_decode(utf8_decode($infoU['nombreLaboratorista'])));	
-			$this->Image($infoU['firmaLaboratorista'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
-			
-			$this->Ln(4);
-			
-					
+			$this->Image($infoU['firmaRealizo'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);		
 		}
 		
 		function Footer(){

@@ -148,11 +148,9 @@
 			$this->Ln($tam_font_tituloInforme - 2);
 
 			//Put the watermark
-   			$this->SetFont('Arial','B',40);
+   			$this->SetFont('Arial','B',50);
 	    	$this->SetTextColor(192,192,192);
-    		$this->RotatedText(75.5,138,"Para uso exclusivo de",45);
-    		$this->RotatedText(55.5,197,"Laboratorio de Control de Calidad y",45);
-    		$this->RotatedText(115.5,178,utf8_decode("Supervisión, S.A. de C.V."),45);
+    		$this->RotatedText(100,130,'PREELIMINAR',45);
 		}
 
 		//Funcion que coloca la informacion del informe, como: el No. de informe, Obra, etc.
@@ -221,11 +219,11 @@
 		}
 
 		function putTables($regisFormato){
-			$tam_font_head = 6.5;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
+			$tam_font_head = 5;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
 
 
 			$iden = 'Identificacion de la ';
-			$tam_iden = $this->GetStringWidth($iden)+4;
+			$tam_iden = $this->GetStringWidth($iden)+16;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 			$this->Cell($tam_iden,($tam_font_head+5)/2,$iden,'L,T,R',2,'C');
 			$this->Cell($tam_iden,($tam_font_head+5)/2,'muestra','L,B,R',0,'C');
@@ -298,7 +296,7 @@
 
 			$this->SetXY($posicion_x+$tam_peralte,$posicion_y);
 			$locFalla = 'Localizacion de la falla en mm';
-			$tam_locFalla = $this->GetStringWidth($locFalla)+6;
+			$tam_locFalla = $this->GetStringWidth($locFalla)+3;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 			$this->Cell($tam_locFalla,(($tam_font_head+5)/2),$locFalla,'L,T,R',2,'C');
 			
@@ -311,7 +309,7 @@
 
 			$this->SetXY($posicion_x+$tam_locFalla,$posicion_y);
 			$distanciaApoyos = 'entre apoyos';
-			$tam_distanciaApoyos = $this->GetStringWidth($distanciaApoyos)+6;
+			$tam_distanciaApoyos = $this->GetStringWidth($distanciaApoyos)+3;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 			$this->Cell($tam_distanciaApoyos,(($tam_font_head+5))/3,'Distancia','L,T,R',2,'C');
 			$this->Cell($tam_distanciaApoyos,(($tam_font_head+5))/3,$distanciaApoyos,'L,R',2,'C');
@@ -320,7 +318,7 @@
 
 			$this->SetXY($posicion_x+$tam_distanciaApoyos,$posicion_y);
 			$distanciaPuntos = 'de carga(cm)';
-			$tam_distanciaPuntos = $this->GetStringWidth($distanciaPuntos)+4;
+			$tam_distanciaPuntos = $this->GetStringWidth($distanciaPuntos)+3;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 			$this->Cell($tam_distanciaPuntos,(($tam_font_head+5))/3,'Distancia','L,T,R',2,'C');
 			$this->Cell($tam_distanciaPuntos,(($tam_font_head+5))/3,'entre puntos','L,R',2,'C');
@@ -336,7 +334,7 @@
 			
 			$this->SetXY($posicion_x+$tam_carga,$posicion_y);
 			$modulo = 'Modulo de';
-			$tam_modulo = $this->GetStringWidth($modulo)+4;
+			$tam_modulo = $this->GetStringWidth($modulo)+3;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 			$this->Cell($tam_modulo,(($tam_font_head+5))/3,$modulo,'L,T,R',2,'C');
 			$this->Cell($tam_modulo,(($tam_font_head+5))/3,'ruptura','L,R',2,'C');
@@ -344,12 +342,19 @@
 			
 			$this->SetXY($posicion_x+$tam_modulo,$posicion_y);
 			$defEscpecimen = 'escpecimen';
-			$tam_defEscpecimen = $this->GetStringWidth($defEscpecimen)+10;
+			$tam_defEscpecimen = $this->GetStringWidth($defEscpecimen)+3;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 			$this->Cell($tam_defEscpecimen,(($tam_font_head+5))/2,'Defectos','L,T,R',2,'C');
 			$this->Cell($tam_defEscpecimen,(($tam_font_head+5))/2,$defEscpecimen,'L,B,R',2,'C');
 			
 			$this->SetXY($posicion_x+$tam_defEscpecimen,$posicion_y);
+			$velocidad = 'Vel. Aplicación';
+			$tam_velocidad = $this->GetStringWidth($velocidad)+2;
+			$posicion_x = $this->GetX();
+			$this->Cell($tam_velocidad,(($tam_font_head+5))/2,utf8_decode($velocidad),'L,T,R',2,'C');
+			$this->cell($tam_velocidad,(($tam_font_head+5))/2,utf8_decode('Experimental'),'L,B,R',2,'C');
+
+			$this->SetXY($posicion_x+$tam_velocidad,$posicion_y);
 			$realizo = 'Realizó';
 			//$tam_realizo = $this->GetStringWidth($realizo)+8;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
@@ -380,10 +385,11 @@
 									$tam_carga,
 									$tam_modulo,
 									$tam_defEscpecimen,
+									$tam_velocidad,
 									$tam_realizo
 							);
 
-			$tam_font_head = 6;	
+			$tam_font_head = 5.5;	
 			$tam_cellsTablesAlto = $tam_font_head - 2.5;
 			$this->SetFont('Arial','',$tam_font_head);
 			$grupos = 27;

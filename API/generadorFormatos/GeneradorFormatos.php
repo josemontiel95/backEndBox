@@ -99,7 +99,50 @@
 
 		}
 
+		function getInfoUser($token,$rol_usuario_id){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				//Obtenemos el id del usuario que solicita
+				$id_usuario = substr(decurl($token),10);
 				
+				$s= $dbS->qarrayA("
+				      	SELECT
+							laboratorio_id,						
+							CONCAT(nombre,' ',apellido) AS nombreRealizo,
+							firma AS firmaRealizo
+						FROM
+							usuario
+						WHERE
+							usuario.id_usuario = 1QQ
+				      ",
+				      array($id_usuario),				      
+				      "SELECT -- GeneradorFormatos :: getInfoUser : 1"
+				      );
+
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('id_usuario' => $id_usuario,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+		}
+
+				
+		/*
+				FUNCION QUE EXTRAE AL USUARIO QUE REALIZO Y AL JEFE DE LABORATORIO ENCARGADO DEL RESPECTIVO LABORATORIO
+
+
+					ESPERANDO MODIFICACION PARA OBTENER LA INFORMACION 
+
 
 		function getInfoUser($token,$rol_usuario_id){
 			global $dbS;
@@ -150,7 +193,7 @@
 			}
 			return $arr;
 		}
-
+		*/
 		function getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo){
 			global $dbS;
 			$usuario = new Usuario();
@@ -185,7 +228,7 @@
 							laboratorio.id_laboratorio = laboratorista.id_laboratorio
 				      ",
 				      array($id_formatoCampo),				      
-				      "SELECT -- GeneradorFormatos :: getInfoUser : 1"
+				      "SELECT -- GeneradorFormatos :: getInfoUserFinal : 1"
 				      );
 
 				if(!$dbS->didQuerydied){
@@ -204,44 +247,7 @@
 		}
 
 		
-		/*
-		function getInfoUser($token,$rol_usuario_id){
-			global $dbS;
-			$usuario = new Usuario();
-			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-			if($arr['error'] == 0){
-				//Obtenemos el id del usuario que solicita
-				$id_usuario = substr(decurl($token),10);
-				
-				$s= $dbS->qarrayA("
-				      	SELECT
-							laboratorio_id,						
-							CONCAT(nombre,' ',apellido) AS nombreRealizo,
-							firma
-						FROM
-							usuario
-						WHERE
-							usuario.id_usuario = 1QQ
-				      ",
-				      array($id_usuario),				      
-				      "SELECT -- GeneradorFormatos :: getInfoUser : 1"
-				      );
-
-				if(!$dbS->didQuerydied){
-					if($s=="empty"){
-						$arr = array('id_usuario' => $id_usuario,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
-					}
-					else{
-						return $s;
-					}
-				}
-				else{
-						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
-				}
-			}
-			return $arr;
-		}
-		*/
+		
 
 		function getInfoCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo){
 			global $dbS;
@@ -267,7 +273,7 @@
 				      	formatoCampo.id_formatoCampo = 1QQ
 				      ",
 				      array($id_formatoCampo),
-				      "SELECT"
+				      "SELECT -- GeneradorFormatos :: getInfoCuboByFCCH : 1"
 				      );
 
 				if(!$dbS->didQuerydied){
@@ -309,7 +315,7 @@
 				      	formatoCampo.id_formatoCampo = 1QQ
 				      ",
 				      array($id_formatoCampo),
-				      "SELECT"
+				      "SELECT -- GeneradorFormatos :: getInfoCiliByFCCH : 1"
 				      );
 
 				if(!$dbS->didQuerydied){
@@ -522,7 +528,7 @@
 				      	formatoRegistroRev.id_formatoRegistroRev = 1QQ
 				      ",
 				      array($id_formatoRegistroRev),
-				      "SELECT"
+				      "SELECT -- GeneradorFormatos :: getInfoRev : 1 "
 				      );
 
 				if(!$dbS->didQuerydied){
@@ -647,7 +653,7 @@
 
 				      ",
 				      array($id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo),
-				      "SELECT  --GeneradorFormatos :: getInfoEnsayoCilindros : 1"
+				      "SELECT  --GeneradorFormatos :: getInfoEnsayoVigas : 1"
 				      );
 
 				if(!$dbS->didQuerydied){
@@ -697,6 +703,7 @@
 						carga,
 						ROUND (( ((ancho1 + ancho2)/2) * ( ((per1 + per2)/2) * ((per1 + per2)/2) ) ) )AS modRuptura,
 						defectos,
+						ROUND(velAplicacionExp,6),
 						CONCAT(nombre,' ',apellido) AS realizo
 					FROM 
 						usuario,
@@ -713,7 +720,7 @@
 						footerEnsayo.id_footerEnsayo = 1QQ
 			      ",
 			      array($id_footerEnsayo),
-			      "SELECT"
+			      "SELECT -- GeneradorFormatos :: getRegEnsayoVigas : 1 "
 			      );
 
 				if(!$dbS->didQuerydied){
@@ -894,6 +901,7 @@
 			      		carga,
 			      		ROUND(((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4),3) AS area,
 			      		ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100),3)  AS porcentResis,
+			      		ROUND(velAplicacionExp,6),
 				    	falla
 					FROM 
 						ensayoCilindro,
@@ -915,7 +923,7 @@
 						ensayoCilindro.footerEnsayo_id = 1QQ
 			      ",
 			      array($id_footerEnsayo),
-			      "SELECT"
+			      "SELECT -- GeneradorFormatos :: getRegEnsayoCilindros : 1 "
 			      );
 				if(!$dbS->didQuerydied){
 					if($s=="empty"){
@@ -1034,6 +1042,7 @@
 						l2,
 						carga,
 						ROUND((l1*l2),3) AS area,
+						ROUND(velAplicacionExp,6),
 						ROUND((carga/(l1*l2)),3) AS kg
 					FROM 
 						ensayoCubo,
@@ -1045,7 +1054,7 @@
 						ensayoCubo.footerEnsayo_id = 1QQ
 			      ",
 			      array($id_footerEnsayo),
-			      "SELECT"
+			      "SELECT -- GeneradorFormatos :: getRegEnsayoCubo : 1 "
 			      );
 				if(!$dbS->didQuerydied){
 					if($s=="empty"){
@@ -1093,7 +1102,7 @@
 			      	formatoRegistroRev_id = 1QQ
 			      ",
 			      array($id_formatoRegistroRev),
-			      "SELECT"
+			      "SELECT -- GeneradorFormatos :: getRegRev : 1 "
 			      );
 				if(!$dbS->didQuerydied){
 					if($s=="empty"){
@@ -1223,7 +1232,7 @@
 				      	formatoCampo.id_formatoCampo = 1QQ
 				      ",
 				      array($id_formatoCampo),
-				      "SELECT"
+				      "SELECT -- GeneradorFormatos :: getInfoCCH : 1 "
 				      );
 
 				if(!$dbS->didQuerydied){
@@ -1270,7 +1279,7 @@
 							formatoCampo_id = 1QQ
 				      ",
 				      array($id_formatoCampo),
-				      "SELECT"
+				      "SELECT -- GeneradorFormatos :: getRegCCH : 1 "
 				      );
 				
 				if(!$dbS->didQuerydied){
@@ -1342,7 +1351,7 @@
 							ensayoCubo.formatoCampo_id = 1QQ
 				      ",
 				      array($id_formatoCampo),
-				      "SELECT"
+				      "SELECT -- GeneradorFormatos :: getRegCuboByFCCH : 1 "
 				      );
 				
 				if(!$dbS->didQuerydied){
@@ -1417,7 +1426,7 @@
 							ensayoCilindro.formatoCampo_id = 1QQ
 				      ",
 				      array($id_formatoCampo),
-				      "SELECT"
+				      "SELECT -- GeneradorFormatos :: getRegCilindroByFCCH : 1 "
 				      );
 				
 				if(!$dbS->didQuerydied){
@@ -1489,7 +1498,7 @@
 							ensayoViga.formatoCampo_id = 1QQ 
 				      ",
 				      array($id_formatoCampo),
-				      "SELECT"
+				      "SELECT -- GeneradorFormatos :: getRegVigaByFCCH : 1 "
 				      );
 				
 				if(!$dbS->didQuerydied){
@@ -1533,7 +1542,7 @@
 									formatoCampo.id_formatoCampo = 1QQ
 			      ",
 			      array($id_formatoCampo),
-			      "SELECT"
+			      "SELECT -- GeneradorFormatos :: getInfoCilindro : 1 "
 			      );
 
 				
@@ -1586,7 +1595,7 @@
 									formatoCampo.id_formatoCampo = 1QQ
 			      ",
 			      array($id_formatoCampo),
-			      "SELECT"
+			      "SELECT -- GeneradorFormatos :: getInfoViga : 1 "
 			      );
 
 				
