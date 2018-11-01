@@ -1395,8 +1395,7 @@
 			$this->cell($this->cellsDetails['tamCelda_firmaAncho'],$this->cellsDetails['tamCelda_firmaAlto'],$infoU['nombreRealizo'],'B',2,'C');	
 			$this->cell($this->cellsDetails['tam_laboratoristaAncho'],$this->cellsDetails['tam_laboratoristaAlto'],$this->cellsDetails['laboratorista'],0,0,'C');
 
-
-			$this->Image($infoU['firma'],(($posicion_x+($this->cellsDetails['tamCelda_firmaAncho'])/2)-($tam_image/2)),($posicion_y + (($this->cellsDetails['tamCelda_firmaAlto'])/2))-($tam_image/2),$tam_image,$tam_image);
+			$this->Image($infoU['firmaRealizo'],(($posicion_x+($this->cellsDetails['tamCelda_firmaAncho'])/2)-($tam_image/2)),($posicion_y + (($this->cellsDetails['tamCelda_firmaAlto'])/2))-($tam_image/2),$tam_image,$tam_image);
 		}
 		
 		function Footer(){
@@ -1426,8 +1425,8 @@
 			$pdf->putTables($infoFormato,$regisFormato);
 			$pdf->generateCellsDetails();
 			$pdf->putDetails($infoFormato,$infoU);
-			//$pdf->Output('F',$target_dir);
-			$pdf->Output();
+			$pdf->Output('F',$target_dir);
+			//$pdf->Output();
 		}
 	
 		

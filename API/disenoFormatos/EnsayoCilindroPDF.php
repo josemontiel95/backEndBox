@@ -296,7 +296,19 @@
 			$this->TextWithDirection($posicion_x+20,$this->gety() - 5,utf8_decode('____________________________'));	
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('Nombre y firma')/2),$this->gety() - 2,utf8_decode('Nombre y firma'));	
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth(utf8_decode($infoU['nombreRealizo']))/2),$this->gety() - 6,utf8_decode($infoU['nombreRealizo']));	
-			$this->Image($infoU['firmaRealizo'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+
+
+			if(!(empty($infoU['firmaRealizo']))){
+				
+				$this->Image($infoU['firmaRealizo'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+			}
+			else{
+
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 12,utf8_decode('NO HAY FIRMA'))	;	
+
+			}
+
+			
 					
 		}
 		
