@@ -282,10 +282,10 @@ class footerEnsayo{
 
 				$dbS->squery(
 					"   INSERT INTO
-							footerEnsayo(buscula_id,regVerFle_id,prensa_id,tipo,observaciones,encargado_id, formatoCampo_id)
+							footerEnsayo(tipo,observaciones,encargado_id, formatoCampo_id)
 						VALUES
-							(1QQ,1QQ,1QQ,'1QQ','1QQ',1QQ,1QQ)
-				",array($var_system['ensayo_def_buscula_id'],$var_system['ensayo_def_regVerFle_id'],$var_system['ensayo_def_prensa_id'],$tipo,$var_system['observaciones'],$usuario->id_usuario,$formatoCampo_id),
+							('1QQ','1QQ',1QQ,1QQ)
+				",array($tipo,$var_system['observaciones'],$usuario->id_usuario,$formatoCampo_id),
 				"INSERT -- FooterEnsayo :: initInsert : 4");
 				if(!$dbS->didQuerydied){
 					$id=$dbS->lastInsertedID;
