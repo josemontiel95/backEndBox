@@ -298,13 +298,13 @@
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth(utf8_decode($infoU['nombreRealizo']))/2),$this->gety() - 6,utf8_decode($infoU['nombreRealizo']));	
 
 
-			if(!(empty($infoU['firmaRealizo']))){
+			if($infoU['firmaRealizo'] != "null"){
 				
 				$this->Image($infoU['firmaRealizo'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 			}
 			else{
 
-				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 12,utf8_decode('NO HAY FIRMA'))	;	
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 9,utf8_decode('NO HAY FIRMA'))	;	
 
 			}
 

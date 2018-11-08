@@ -14,13 +14,19 @@
 		public $arrayInfo;
 		
 		//Array que contiene los letreros de la información
-		private $cellsInfo;
+		public $cellsInfo;
 
 		//Array que contiene los letreso de las tablas
 		private $cellsTables;
 
 		//Array que contiene los letreros de los detalles
 		private $cellsDetails;
+		
+		function generateCellsInfoForvalidation(){
+			$pdf  = new InformeCubos('L','mm','Letter');
+			$pdf->AddPage();
+			return $pdf->generateCellsInfo();
+		}
 		
 
 		function generateCellsInfo(){
@@ -116,7 +122,7 @@
 											'tam_dirClienteText'		=>	$tam_dirClienteText
 									);
 			
-
+			return $this->cellsInfo;
 		}
 
 		function generateCellsCampos(){

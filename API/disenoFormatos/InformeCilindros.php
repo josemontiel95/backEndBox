@@ -34,6 +34,12 @@
 			$pdf->Output();
 		}
 
+		function generateCellsInfoForvalidation(){
+			$pdf  = new InformeCilindros('L','mm','Letter');
+			$pdf->AddPage();
+			return $pdf->generateCellsInfo();
+		}
+
 		function generateCellsInfo(){
 			/*
 			Lado derecho:
@@ -122,7 +128,7 @@
 											'tam_razonText'				=>	$tam_razonText,
 											'tam_dirClienteText'		=>	$tam_dirClienteText
 									);
-
+			return $this->cellsInfo;
 		}
 
 		function generateCellsCampos(){

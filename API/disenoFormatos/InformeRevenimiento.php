@@ -31,6 +31,118 @@
 			$pdf->Output();
 		}
 
+		function generateCellsInfoForvalidation(){
+			$pdf  = new InformeRevenimiento('P','mm','Letter');
+			$pdf->AddPage();
+			return $pdf->generateCellsInfo();
+		}
+
+		function generateCellsInfo(){
+			
+
+
+			$tam_font_right = 7.5;	
+			$this->SetFont('Arial','B',$tam_font_right);
+			$separacion = 50; //Separacion que vaa tener el Registro numero del margen
+
+			//Registro Numero
+			$regNo = 'REG. No.';
+			$tam_regNo = $this->GetStringWidth($regNo)+3;
+			$tam_regNoText = $separacion - 10;
+
+
+
+			//Incertidumbre
+			$this->SetFont('Arial','B',$tam_font_right);
+			$incertidumbre = 'INCERTIDUMBRE:';
+			$tam_incertidumbre = $this->GetStringWidth($incertidumbre)+3;
+			$tam_incertidumbreText = $separacion - 10;
+
+
+			//PARTE IZQUIERDA DEL FORMATO
+			$posicionCellsText  = 50;
+			$linea_Text = 216 - ($posicionCellsText+10);
+
+			$tam_font_left = 7;	
+			$this->SetFont('Arial','B',$tam_font_left);
+			
+			$obra = 'NOMBRE DE LA OBRA:';
+			$tam_obra = $this->GetStringWidth($obra)+2;
+
+			$locObra = 'LOCALIZACIÓN DE LA OBRA:';
+			$tam_locObra = $this->GetStringWidth($locObra)+2;
+
+			$nomCli = 'NOMBRE DEL CLIENTE:';
+			$tam_nomCli = $this->GetStringWidth($nomCli)+2;
+		
+			$dirCliente = 'DIRECCIÓN DEL CLIENTE:';
+			$tam_dirCliente = $this->GetStringWidth($nomCli)+2;
+
+			$tam_nomObraText = $tam_localizacionText = $tam_razonText = $tam_dirClienteText = $tam_eleColadoText = $linea_Text;
+
+			$tam_font_left = 8;	
+			$this->SetFont('Arial','',$tam_font_left);
+			//Texto Adicional
+			$texto_adicional = 'SE DETERMINA EL REVENIMIENTO EN CONCRETO FRESCO TOMANDO COMO BASE LA NORMA MEXICANA NMX-C-156-ONNCCE-2010';
+			$tam_texto_adicional = $this->GetStringWidth($texto_adicional)+3;
+
+
+			$this->SetFont('Arial','B',$tam_font_left);
+			
+			$localizacion = 'LOCALIZACIÓN:';
+			$tam_localizacion = $this->GetStringWidth($localizacion)+3;
+
+			//Caja de texto
+			$tam_localizacionText = 196 - $tam_localizacion;
+
+			$tam_CellsRightAlto = $tam_font_right - 4;
+			$tam_CellsLeftAlto = $tam_font_left - 3;
+
+			$this->cellsInfo 	= 	array(
+
+											'separacion'		=>	$separacion,
+											'posicionCellsText'	=>	$posicionCellsText,
+
+
+											'tam_font_right'				=>	$tam_font_right,
+											'tam_font_left'					=>	$tam_font_left,
+
+											'tam_CellsRightAlto'			=>	$tam_CellsRightAlto,
+
+											'tam_CellsLeftAlto'				=>	$tam_CellsLeftAlto,
+
+
+											'regNo'							=>	$regNo,
+											'tam_regNo'						=>	$tam_regNo,
+											'tam_regNoText'					=>	$tam_regNoText,
+
+											'incertidumbre'					=>	$incertidumbre,
+											'tam_incertidumbre'				=>	$tam_incertidumbre,
+											'tam_incertidumbreText'			=>	$tam_incertidumbreText,
+
+
+											'obra'					=> $obra,
+											'tam_obra'				=> $tam_obra,
+
+											'locObra'				=> $locObra,
+											'tam_locObra'			=> $tam_locObra,
+
+											'nomCli'				=> $nomCli,
+											'tam_nomCli'			=> $tam_nomCli,
+
+											'dirCliente'			=> $dirCliente,
+											'tam_dirCliente'		=> $tam_dirCliente,
+
+
+											'tam_nomObraText'			=>	$tam_nomObraText,
+											'tam_localizacionText'		=>	$tam_localizacionText,
+											'tam_razonText'				=>	$tam_razonText,
+											'tam_dirClienteText'		=>	$tam_dirClienteText
+									);
+
+			return $this->cellsInfo;
+		}
+
 		
 		function Header(){
 			$ancho_ema = 50;	$alto_ema = 20;
@@ -136,6 +248,8 @@
 			$this->SetX(-($tam_incertidumbre + $separacion));
 
 			$this->cell($tam_incertidumbre,$tam_font_right - 4,utf8_decode($incertidumbre));
+
+
 
 			//Caja de texto
 			$this->SetFont('Arial','',$tam_font_right);
