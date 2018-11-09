@@ -556,6 +556,8 @@ ALTER TABLE formatoCampo ALTER loteStatus SET DEFAULT 0;
 ALTER TABLE formatoCampo 
 ADD COLUMN preliminar VARCHAR(200);
 
+ALTER TABLE formatoCampo ADD COLUMN registrosNo INT NOT NULL DEFAULT 0;
+
 
 CREATE TABLE registrosCampo(
 	id_registrosCampo INT(11) NOT NULL AUTO_INCREMENT,
@@ -650,6 +652,14 @@ CREATE TABLE formatoRegistroRev(
 
 )ENGINE=INNODB;
 ALTER TABLE formatoRegistroRev AUTO_INCREMENT=1001;
+
+ALTER TABLE formatoRegistroRev 
+ADD COLUMN preliminar VARCHAR(200);
+
+ALTER TABLE formatoRegistroRev ADD jefaLabApproval_id INT(11) DEFAULT NULL;
+
+ALTER TABLE formatoRegistroRev ADD CONSTRAINT revJefaLabApproval_id FOREIGN KEY (jefaLabApproval_id) REFERENCES usuario(id_usuario) ON DELETE SET NULL ON UPDATE CASCADE;
+
 
 ALTER TABLE formatoRegistroRev 
 ADD COLUMN preliminar VARCHAR(200);
@@ -806,6 +816,11 @@ ALTER TABLE ensayoCilindro ADD tiempoDeCarga INT NULL;
 ALTER TABLE ensayoCilindro ADD area DOUBLE NULL;
 ALTER TABLE ensayoCilindro ADD resistencia DOUBLE NULL;
 
+ALTER TABLE ensayoCilindro ADD jefaLabApproval_id INT(11) DEFAULT NULL;
+
+
+ALTER TABLE ensayoCilindro ADD CONSTRAINT cilindroJefaLabApproval_id FOREIGN KEY (jefaLabApproval_id) REFERENCES usuario(id_usuario) ON DELETE SET NULL ON UPDATE CASCADE;
+
 
 
 CREATE TABLE ensayoCubo(
@@ -848,6 +863,13 @@ ALTER TABLE ensayoCubo ADD status INT NOT NULL DEFAULT 0;
 
 ALTER TABLE ensayoCubo ADD area DOUBLE NULL;
 ALTER TABLE ensayoCubo ADD resistencia DOUBLE NULL;
+
+
+ALTER TABLE ensayoCubo ADD jefaLabApproval_id INT(11) DEFAULT NULL;
+
+ALTER TABLE ensayoCubo ADD CONSTRAINT cuboJefaLabApproval_id FOREIGN KEY (jefaLabApproval_id) REFERENCES usuario(id_usuario) ON DELETE SET NULL ON UPDATE CASCADE;
+
+
 
 CREATE TABLE ensayoViga(
 	id_ensayoViga INT(11) NOT NULL AUTO_INCREMENT,
@@ -908,6 +930,13 @@ ALTER TABLE ensayoViga ADD mr DOUBLE NULL;
 ALTER TABLE ensayoViga ADD prom DOUBLE NULL;
 
 
+ALTER TABLE ensayoViga ADD jefaLabApproval_id INT(11) DEFAULT NULL;
+
+ALTER TABLE ensayoViga ADD CONSTRAINT jefaLabApproval_id FOREIGN KEY (jefaLabApproval_id) REFERENCES usuario(id_usuario) ON DELETE SET NULL ON UPDATE CASCADE;
+
+
+
+
 CREATE TABLE footerEnsayo(
 	id_footerEnsayo INT(11) NOT NULL AUTO_INCREMENT,
 	encargado_id INT(11),
@@ -956,6 +985,11 @@ ALTER TABLE footerEnsayo
 ADD COLUMN formatoCampo_id INT(11) NULL ;
 
 ALTER TABLE footerEnsayo ADD COLUMN preliminarGabs VARCHAR(200);
+
+ALTER TABLE footerEnsayo ADD COLUMN ensayosAwaitingApproval INT DEFAULT 0;
+
+ALTER TABLE footerEnsayo ADD COLUMN notVistoJLForEnsayoApproval INT DEFAULT 0;
+ALTER TABLE footerEnsayo ADD COLUMN notVistoJLForBrigadaApproval INT DEFAULT 0;
 
 
 

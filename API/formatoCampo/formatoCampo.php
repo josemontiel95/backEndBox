@@ -31,8 +31,8 @@ class formatoCampo{
 		$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			//Informacion para crear el "Informe No."
-			$a= $dbS->qarrayA("
-		      	SELECT 
+			$a= $dbS->qarrayA(
+				"SELECT 
 		      		id_obra,
 					cotizacion,
 					consecutivoDocumentos,
@@ -60,27 +60,26 @@ class formatoCampo{
 				$año = $a['anio'] - 2000;
 				$infoNo = $a['prefijo']."/".$a['cotizacion']."/".$año."/".$a['consecutivoDocumentos'];
 				$dbS->squery(
-								"
-									INSERT INTO
-										formatoCampo
-										(
-											informeNo,
-											observaciones,
-											ordenDeTrabajo_id
-										)
-									VALUES
-										(
-											'1QQ',
-											'NO HAY OBSERVACIONES',
-											1QQ
-										)
+					"INSERT INTO
+							formatoCampo
+							(
+								informeNo,
+								observaciones,
+								ordenDeTrabajo_id
+							)
+						VALUES
+							(
+							'1QQ',
+							'NO HAY OBSERVACIONES',
+							1QQ
+							)
 
-								"
-								,
-								array($infoNo,$id_ordenDeTrabajo)
-								,
-								"INSERT"
-							);
+					"
+					,
+					array($infoNo,$id_ordenDeTrabajo)
+					,
+					"INSERT"
+				);
 				if(!$dbS->didQuerydied){
 					$id = $dbS->lastInsertedID;
 					$dbS->squery(
@@ -170,8 +169,8 @@ class formatoCampo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$arr= $dbS->qAll("
-			     	SELECT
+			$arr= $dbS->qAll(
+					"SELECT
 						formatoCampo.id_formatoCampo,
 						informeNo,
 						observaciones,
@@ -253,30 +252,6 @@ class formatoCampo{
 		}
 		return json_encode($arr);	
 	}
-	
-	/*
-	public function insertJefeBrigada($token,$rol_usuario_id,$informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud,$tipoConcreto,$prueba1,$prueba2,$prueba3,$prueba4){
-		global $dbS;
-		$usuario = new Usuario();
-		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		if($arr['error'] == 0){
-			$dbS->squery("
-						INSERT INTO
-						formatoCampo(informeNo,ordenDeTrabajo_id,tipo,cono_id,varilla_id,flexometro_id,termometro_id,posInicial,observaciones,tipoConcreto,prueba1,prueba2,prueba3,prueba4)
-						VALUES
-						('1QQ',1QQ,'1QQ',1QQ,1QQ,1QQ,1QQ,PointFromText('POINT(1QQ 1QQ)'),'NO HAY OBSERVACIONES','1QQ',1QQ,1QQ,1QQ,1QQ)
-				",array($informeNo,$ordenDeTrabajo_id,$tipo,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$longitud,$latitud,$tipoConcreto,$prueba1,$prueba2,$prueba3,$prueba4),"INSERT");
-			if(!$dbS->didQuerydied){
-				$id=$dbS->lastInsertedID;
-				$arr = array('id_formatoCampo' =>$id,'estatus' => 'Exito en insercion', 'error' => 0);
-			}
-			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
-			}
-		}
-		return json_encode($arr);
-
-	}*/
 
 	public function insertJefeBrigada($token,$rol_usuario_id,$campo,$valor,$id_formatoCampo){
 		global $dbS;
@@ -325,15 +300,17 @@ class formatoCampo{
 					break;
 			}
 
-			$dbS->squery("
-						UPDATE
+			$dbS->squery(
+				"UPDATE
 							formatoCampo
 						SET
 							1QQ = '1QQ'
 						WHERE
 							id_formatoCampo = 1QQ
 
-				",array($campo,$valor,$id_formatoCampo),"UPDATE");
+				",array($campo,$valor,$id_formatoCampo),
+				"UPDATE -- FormatoCampo :: insertJefeBrigada : 1"
+			);
 			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
 			if(!$dbS->didQuerydied){
 				$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => '¡Exito en la inserccion de informacion!','error' => 0);
@@ -365,7 +342,8 @@ class formatoCampo{
 						FROM
 							systemstatus
 						ORDER BY id_systemstatus DESC;
-					",array(),"SELECT"
+					",array(),
+					"SELECT -- FormatoCampo :: getformatoDefoults : 1"
 				);
 			}else{
 				$arr = $dbS->qarrayA(
@@ -380,7 +358,8 @@ class formatoCampo{
 						FROM
 							systemstatus
 						ORDER BY id_systemstatus DESC;
-					",array(),"SELECT"
+					",array(),
+					"SELECT -- FormatoCampo :: getformatoDefoults : 2"
 				);
 			}
 			if(!$dbS->didQuerydied && !($arr == "empty")){
@@ -404,32 +383,32 @@ class formatoCampo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$s= $dbS->qarrayA("
-			      SELECT 
-			      	COUNT(*) As No
-			      FROM 
-			      	registrosCampo
-			      WHERE
-			      	active=1 AND 
-			      	formatoCampo_id=1QQ
-			      ",
-			      array($id_formatoCampo),
-			      "SELECT"
-			      );
+			$s= $dbS->qarrayA(
+				"SELECT 
+					COUNT(*) As No
+				FROM 
+					registrosCampo
+				WHERE
+					active=1 AND 
+					formatoCampo_id=1QQ
+					",
+					array($id_formatoCampo),
+				"SELECT  -- FormatoCampo :: getNumberOfRegistrosByID : 1"
+			);
 
 			if(!$dbS->didQuerydied && $s!="empty" ){
-				$a= $dbS->qarrayA("
-			      SELECT 
-			      	COUNT(*) As No
-			      FROM 
-			      	registrosCampo 
-			      WHERE 
-			      	herramienta_id IS NULL AND
-			      	formatoCampo_id= 1QQ;
-			      ",
-			      array($id_formatoCampo),
-			      "SELECT"
-			      );
+				$a= $dbS->qarrayA(
+					"SELECT 
+						COUNT(*) As No
+					FROM 
+						registrosCampo 
+					WHERE 
+						herramienta_id IS NULL AND
+						formatoCampo_id= 1QQ;
+					",
+					array($id_formatoCampo),
+					"SELECT  -- FormatoCampo :: getNumberOfRegistrosByID : 2"
+			    );
 				if(!$dbS->didQuerydied && $a!="empty" ){
 					$tipoModificable;
 					if($a['No']==$s['No']){
@@ -463,8 +442,8 @@ class formatoCampo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$s= $dbS->qarrayA("
-			      SELECT
+			$s= $dbS->qarrayA(
+				"SELECT
 			      	informeNo,
 			        obra,
 					localizacion,
@@ -545,7 +524,7 @@ class formatoCampo{
 			      	formatoCampo.id_formatoCampo = 1QQ
 			      ",
 			      array($id_formatoCampo),
-			      "SELECT"
+			      "SELECT -- FormatoCampo :: getInfoByID : 1"
 			      );
 
 			if(!$dbS->didQuerydied){
@@ -570,8 +549,8 @@ class formatoCampo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$s= $dbS->qarrayA("
-			      SELECT
+			$s= $dbS->qarrayA(
+				"SELECT
 			      	informeNo,
 			        obra,
 					localizacion,
@@ -592,7 +571,7 @@ class formatoCampo{
 			      	id_ordenDeTrabajo = 1QQ  
 			      ",
 			      array($id_ordenDeTrabajo),
-			      "SELECT"
+			      "SELECT -- FormatoCampo :: getHeader : 1"
 			      );
 
 			if(!$dbS->didQuerydied){
@@ -604,7 +583,7 @@ class formatoCampo{
 				}
 			}
 			else{
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getClienteByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getClienteByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 			}
 		}
 		return json_encode($arr);
@@ -615,26 +594,28 @@ class formatoCampo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$dbS->squery("	UPDATE
-								formatoCampo
-							SET
-								observaciones ='1QQ',
-								cono_id = 1QQ,
-								varilla_id = 1QQ,
-								flexometro_id = 1QQ,
-								termometro_id = 1QQ,
-								tipo ='1QQ',
-								tipoConcreto ='1QQ',
-								prueba1 ='1QQ',
-								prueba2 ='1QQ',
-								prueba3 ='1QQ',
-								prueba4 ='1QQ'
-							WHERE
-								active=1 AND
-								id_formatoCampo = 1QQ
-					 "
-					,array($observaciones,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$tipo,$tipoConcreto,$prueba1,$prueba2,$prueba3,$prueba4,$id_formatoCampo),"UPDATE"
-			      	);
+			$dbS->squery(
+				"	UPDATE
+						formatoCampo
+					SET
+						observaciones ='1QQ',
+						cono_id = 1QQ,
+						varilla_id = 1QQ,
+						flexometro_id = 1QQ,
+						termometro_id = 1QQ,
+						tipo ='1QQ',
+						tipoConcreto ='1QQ',
+						prueba1 ='1QQ',
+						prueba2 ='1QQ',
+						prueba3 ='1QQ',
+						prueba4 ='1QQ'
+					WHERE
+						active=1 AND
+						id_formatoCampo = 1QQ
+				"
+				,array($observaciones,$cono_id,$varilla_id,$flexometro_id,$termometro_id,$tipo,$tipoConcreto,$prueba1,$prueba2,$prueba3,$prueba4,$id_formatoCampo),
+				"UPDATE  -- FormatoCampo :: updateHeader : 1"
+			);
 			$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito de actualizacion de footer','error' => 0);	
 			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 5);
@@ -648,16 +629,18 @@ class formatoCampo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$dbS->squery("	UPDATE
-								formatoCampo
-							SET
-								informeNo ='1QQ'
-							WHERE
-								active=1 AND
-								id_formatoCampo = 1QQ
-					 "
-					,array($informeNo,$id_formatoCampo),"UPDATE"
-			      	);
+			$dbS->squery(
+				"	UPDATE
+						formatoCampo
+					SET
+						informeNo ='1QQ'
+					WHERE
+						active=1 AND
+						id_formatoCampo = 1QQ
+				"
+				,array($informeNo,$id_formatoCampo),
+				"UPDATE  -- FormatoCampo :: updateHeader : 1"
+			);
 			$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito de actualizacion de header','error' => 0);	
 			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la actualizacion , verifica tus datos y vuelve a intentarlo','error' => 5);
@@ -741,8 +724,8 @@ class formatoCampo{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 8);
 				return json_encode($arr);
 			}
-			$dbS->squery("	
-				UPDATE
+			$dbS->squery(
+				"UPDATE
 					formatoCampo
 				SET
 					preliminar = '1QQ'
@@ -775,78 +758,82 @@ class formatoCampo{
 		$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			$a = $dbS->qarrayA(
-				"
-					 SELECT 
-					 	COUNT(*) AS No
-					 FROM 
+				"   SELECT 
+						COUNT(*) AS No
+					FROM 
 					 	registrosCampo 
-					 WHERE 
+					WHERE 
 					 	formatoCampo_id= 1QQ
 				"
 				,
 				array($id_formatoCampo)
 				,
-				"SELECT"
+				"SELECT -- FormatoCampo :: completeFormato : 1"
 			);
 			if(!$dbS->didQuerydied && !($a=="empty")){
-				$dbS->squery("	UPDATE
+				$dbS->squery(
+					"UPDATE
 						formatoCampo
 					SET
 						status = 1,
-						ensayadoFin =1QQ
+						ensayadoFin = 1QQ,
+						registrosNo = 1QQ,
+						notVistoJLForBrigadaApproval = 1
 					WHERE
 						active = 1 AND
 						id_formatoCampo = 1QQ
 				 "
-				,array($a['No'],$id_formatoCampo),"UPDATE"
+				,array($a['No'],$a['No'],$id_formatoCampo),
+				"UPDATE -- FormatoCampo :: completeFormato : 2"
 		      	);
 
 				if(!$dbS->didQuerydied){
-					$dbS->squery("	UPDATE
-									registrosCampo
-								SET
-									status = 2
-								WHERE
-									active = 1 AND
-									formatoCampo_id = 1QQ
+					$dbS->squery(
+						"	UPDATE
+								registrosCampo
+							SET
+								status = 2
+							WHERE
+								active = 1 AND
+								formatoCampo_id = 1QQ
 						 "
-						,array($id_formatoCampo),"UPDATE"
-				      	);
+						,array($id_formatoCampo),
+						"UPDATE -- FormatoCampo :: completeFormato : 3"
+				    );
 					if(!$dbS->didQuerydied){
 						$info = $dbS->qarrayA(
-												"
-													SELECT
-														id_cliente,
-														id_obra,
-														id_ordenDeTrabajo,
-														cliente.email AS emailCliente,
-														obra.correo_residente AS emailResidente,
-														obra.correo_alterno AS correo_alterno,
-														CONCAT(nombre,'(',razonSocial,')') AS nombre,
-														email
-													FROM
-														cliente,
-														obra,
-														ordenDeTrabajo,
-														formatoCampo
-													WHERE
-														formatoCampo.ordenDeTrabajo_id = ordenDeTrabajo.id_ordenDeTrabajo AND
-														ordenDeTrabajo.obra_id = obra.id_obra AND
-														obra.cliente_id = cliente.id_cliente AND
-														id_formatoCampo = 1QQ
+						"   SELECT
+								id_cliente,
+								id_obra,
+								id_ordenDeTrabajo,
+								cliente.email AS emailCliente,
+								obra.correo_residente AS emailResidente,
+								obra.correo_alterno AS correo_alterno,
+								CONCAT(nombre,'(',razonSocial,')') AS nombre,
+								email
+							FROM
+								cliente,
+								obra,
+								ordenDeTrabajo,
+								formatoCampo
+							WHERE
+								formatoCampo.ordenDeTrabajo_id = ordenDeTrabajo.id_ordenDeTrabajo AND
+								ordenDeTrabajo.obra_id = obra.id_obra AND
+								obra.cliente_id = cliente.id_cliente AND
+								id_formatoCampo = 1QQ
 
-												"
-												,
-												array($id_formatoCampo)
-												,
-												"SELECT -- formatoCampo :: completeFormato"
-											);
+						"
+						,
+						array($id_formatoCampo)
+						,
+						"SELECT  -- FormatoCampo :: completeFormato : 4"
+						);
 						if(!$dbS->didQuerydied && ($info != "empty")){
 							try{
 								
 								$dirDatabase = $dbS->qvalue(
 									"   SELECT preliminar FROM formatoCampo WHERE id_formatoCampo=1QQ",
-									array($id_formatoCampo),"SELECT -- formatoCampo :: completeFormato"
+									array($id_formatoCampo),"SELECT  -- FormatoCampo :: completeFormato : 5"
 								);
 
 								if($dbS->didQuerydied){ // Si no murio la query de guardar el preliminar en BD

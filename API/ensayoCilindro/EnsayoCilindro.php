@@ -155,7 +155,7 @@ class EnsayoCilindro{
 					else{
 						$resistencia = number_format($variables['carga']/$area,2);
 						if($variables['tiempoDeCarga']!=0){
-							$velAplicacionExp = number_format($resistencia / $variables['tiempoDeCarga'],2);
+							$velAplicacionExp = number_format(($resistencia / $variables['tiempoDeCarga'])*60,2);
 						}else{
 							$velAplicacionExp = 'Error: No se puede realizar una division entre 0';
 						}
@@ -199,8 +199,8 @@ class EnsayoCilindro{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$s= $dbS->qarrayA("
-			    	SELECT
+			$s= $dbS->qarrayA(
+				"	SELECT
 						id_ensayoCilindro,
 						ensayoCilindro.formatoCampo_id AS formatoCampo_id,
 						IF(registrosCampo.status = 3,'SI','NO') AS completado,
@@ -388,7 +388,9 @@ class EnsayoCilindro{
 						"UPDATE
 							footerEnsayo
 						SET
-							pendingEnsayos = pendingEnsayos -1
+							pendingEnsayos = pendingEnsayos -1,
+							ensayosAwaitingApproval = ensayosAwaitingApproval +1,
+							notVistoJLForEnsayoApproval = ensayosAwaitingApproval +1
 						WHERE
 							id_footerEnsayo = 1QQ
 						",array($a['footerEnsayo_id']),
@@ -411,8 +413,8 @@ class EnsayoCilindro{
 						"UPDATE-- EnsayoCilindro ::  completeEnsayo : 3"
 					);
 					if(!$dbS->didQuerydied){
-						$dbS->squery("
-							UPDATE
+						$dbS->squery(
+							"UPDATE
 								ensayoCilindro
 							SET
 								fecha = CURDATE(),

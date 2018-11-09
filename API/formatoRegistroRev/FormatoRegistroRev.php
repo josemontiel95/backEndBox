@@ -557,7 +557,8 @@ class FormatoRegistroRev{
 				"	UPDATE
 						formatoRegistroRev
 					SET
-						status = 1
+						status = 1,
+						notVistoJLForBrigadaApproval = 1
 					WHERE
 						active = 1 AND
 						id_formatoRegistroRev = 1QQ
@@ -578,8 +579,7 @@ class FormatoRegistroRev{
 			      	);
 				if(!$dbS->didQuerydied){
 					$info = $dbS->qarrayA(
-						"
-							SELECT
+						"   SELECT
 								id_cliente,
 								id_obra,
 								id_ordenDeTrabajo,

@@ -559,8 +559,8 @@ class loteCorreos{
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
-			$arr= $dbS->qAll("
-			     	SELECT
+			$arr= $dbS->qAll(
+				"	SELECT
 						fc.id_formatoCampo,
 						fc.informeNo,
 						fc.observaciones,
@@ -582,8 +582,7 @@ class loteCorreos{
 						fc.loteStatus = 0 AND 
 						ot.laboratorio_id = 1QQ
 					ORDER BY 
-						fc.lastEditedON DESC	        
-
+						fc.lastEditedON DESC
 			      ",
 			      array($laboratorio_id),
 			      "SELECT"
