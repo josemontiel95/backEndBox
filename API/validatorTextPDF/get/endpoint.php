@@ -15,7 +15,7 @@
 	switch ($function) {
 		case 'validatedInfo':
 			$validator = new ValidatorTextPDF();
-			echo $validator->validatedInfo($_GET['token'],$_GET['rol_usuario_id'],$_GET['numCampo']);
+			echo $validator->validatedInfo($_GET['campo'],$_GET['string']);
 			break;
 		
 	}

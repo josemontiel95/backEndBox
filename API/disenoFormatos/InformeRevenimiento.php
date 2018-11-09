@@ -1,4 +1,10 @@
 <?php 
+
+	/*
+		PENDIENTE1:
+						EL TEXTO QUE APARECE DEBAJO DE LA INFORMACION GENERAL DE L FORMATO ESTA A UNA MEDIDA DE 8, PERO DEBE DE SER UNA MEDIDA DE 7 SIGUIENDO LA ESTANDARIZACION DE TODOS LOS FORMATOS
+	*/
+
 	
 	include_once("./../../FPDF/MyPDF.php");
 
@@ -80,7 +86,7 @@
 
 			$tam_nomObraText = $tam_localizacionText = $tam_razonText = $tam_dirClienteText = $tam_eleColadoText = $linea_Text;
 
-			$tam_font_left = 8;	
+			//$tam_font_left = 8; PENDIENTE1	
 			$this->SetFont('Arial','',$tam_font_left);
 			//Texto Adicional
 			$texto_adicional = 'SE DETERMINA EL REVENIMIENTO EN CONCRETO FRESCO TOMANDO COMO BASE LA NORMA MEXICANA NMX-C-156-ONNCCE-2010';
