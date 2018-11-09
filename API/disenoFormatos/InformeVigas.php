@@ -35,6 +35,12 @@
 			$pdf->Output();
 		}
 
+		function generateCellsInfoForvalidation(){
+			$pdf  = new InformeVigas('L','mm','Letter');
+			$pdf->AddPage();
+			return $pdf->generateCellsInfo();
+		}
+
 		function generateCellsInfo(){
 			/*
 			Lado derecho:
@@ -151,6 +157,7 @@
 											'tam_mrProyectoText'				=>	$tam_mrProyectoText,
 											'tam_eleColadoText'					=>	$tam_eleColadoText
 									);
+			return $this->cellsInfo;
 		}
 
 		function putCaracInfo(){
@@ -628,8 +635,8 @@
 			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('___________________________________________'));	
 			$this->SetFont('Arial','',$tam_font_footer);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('SIGNATARIO/JEFE DE LABORATORIO')/2),$this->gety() - 3,utf8_decode('SIGNATARIO/JEFE DE LABORATORIO'));	
-			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreLaboratorista'])/2),$this->gety() - 12,utf8_decode($infoU['nombreLaboratorista']));	
-			$this->Image($infoU['firmaLaboratorista'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+			//$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreLaboratorista'])/2),$this->gety() - 12,utf8_decode($infoU['nombreLaboratorista']));	
+			//$this->Image($infoU['firmaLaboratorista'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 
 			$this->SetXY($posicion_x+$tam_boxElaboro,$posicion_y);
 			$this->SetFont('Arial','B',$tam_font_footer);
