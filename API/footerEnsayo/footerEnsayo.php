@@ -228,12 +228,182 @@ class footerEnsayo{
 		$dbS->commitTransaction();
 		return json_encode($arr);
 	}
+	public function isTheWholeFamilyHereAndComplete($token,$rol_usuario_id,$id_footerEnsayo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
+		if($arr['error'] == 0){
+			$footerEnsayoInfo = $dbS->qarrayA(
+				"	SELECT
+						formatoCampo_id,
+						tipo
+					FROM
+						footerEnsayo
+					WHERE
+						id_footerEnsayo =1QQ
+				",array($id_footerEnsayo),
+				"SELECT-- FooterEnsayo :: isTheWholeFamilyHereAndComplete : 1"
+			);
+			if($dbS->didQuerydied || ($footerEnsayoInfo=="empty") ){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en verificar la integridad del formato, verifica tus datos y vuelve a intentarlo','error' => 10);
+				return json_encode($arr);
+			}
+			$table = "";
+			switch($footerEnsayoInfo['tipo']){
+				case "CILINDRO":
+					$table="ensayoCilindro";
+					$id="id_ensayoCilindro";
+				break;
+				case "CUBO":
+					$table="ensayoCubo";
+					$id="id_ensayoCubo";
+				break;
+				case "VIGAS":
+					$table="ensayoViga";
+					$id="id_ensayoViga";
+				break;
+			}
+			$homeAloneClubMembers = $dbS->qvalue(
+					"SELECT
+						COUNT(*) AS No
+					FROM
+						registrosCampo LEFT JOIN 
+						1QQ AS ensayo ON registrosCampo_id = id_registrosCampo
+					WHERE
+						registrosCampo.formatoCampo_id =1QQ
+						AND ensayo.active IS NULL
+					
+				",array($table,$footerEnsayoInfo['formatoCampo_id']),
+				"SELECT -- FooterEnsayo :: isTheWholeFamilyHereAndComplete : 2"
+			);
+			
+			if($dbS->didQuerydied || ($homeAloneClubMembers=="empty") ){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en verificar la integridad del formato, verifica tus datos y vuelve a intentarlo','error' => 12);
+				return json_encode($arr);
+			}
+			if($homeAloneClubMembers != 0){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error: Solo puedes completar cuando hayas ensayado TODOS los especimenes que el jefe de brigada tomo en obra','error' => 20);
+				return json_encode($arr);
+			}
+			$underAgeMemebrsClub = $dbS->qvalue(
+					"SELECT
+						COUNT(*) AS No
+					FROM
+						1QQ 
+					WHERE
+						status = 0
+						AND formatoCampo_id =1QQ
+					
+				",array($table,$footerEnsayoInfo['formatoCampo_id']),
+				"SELECT -- FooterEnsayo :: isTheWholeFamilyHereAndComplete : 3"
+			);
+			
+			if($dbS->didQuerydied || ($underAgeMemebrsClub=="empty") ){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en verificar la integridad del formato, verifica tus datos y vuelve a intentarlo','error' => 13);
+				return json_encode($arr);
+			}
+			if($homeAloneClubMembers != 0){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error: Todos los ensayos deben estar marcados como completados para poder continuar','error' => 30);
+				return json_encode($arr);
+			}
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Exito','error' => 0);
+		}
+		$dbS->commitTransaction();
+		return json_encode($arr);
+	}
+	public function getAwaitingApproval($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id = $usuario->laboratorio_id;
+		$dbS->beginTransaction();
+		if($arr['error'] == 0){
+			$s= $dbS->qAll(
+				"SELECT
+					id_formatoCampo AS id,
+					footerEnsayo.id_footerEnsayo AS id_footerEnsayo,
+					CONCAT(nombre,' ',apellido) AS nombre,
+					footerEnsayo.tipo AS tipo,
+					ensayosAwaitingApproval,
+					notVistoJLForBrigadaApproval,
+					CASE
+						WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval = 0      THEN 'Revisar cambios JB'
+						WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval IS NULL  THEN 'Revisar cambios JB'
+						WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval > 0      THEN 'Autorizar y generar PDF'
+						WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval > 0      THEN 'Autorizar y generar PDF'
+					END AS accReq,
+					informeNo AS informeNo,
+					ordenDeTrabajo_id,
+					CASE
+						WHEN footerEnsayo.tipo = 'CILINDRO' THEN 2
+						WHEN footerEnsayo.tipo = 'CUBO' THEN 3
+						WHEN footerEnsayo.tipo = 'VIGAS' THEN 4
+						ELSE 0
+					END AS tipoNo
+				FROM
+					formatoCampo LEFT JOIN 
+					footerEnsayo ON formatoCampo_id = id_formatoCampo,
+					usuario
+				WHERE
+					encargado_id = id_usuario AND
+					footerEnsayo.active = 1 AND 
+					formatoCampo.status > 0 AND
+					(
+					(footerEnsayo.ensayosAwaitingApproval > 0 AND
+					notVistoJLForEnsayoApproval > 0) OR
+					notVistoJLForBrigadaApproval > 0
+					) AND
+					usuario.laboratorio_id = 1QQ
+				UNION
+				SELECT 
+					id_formatoRegistroRev AS id,
+					'N.A.' AS id_footerEnsayo,
+					'N.A.' AS nombre,
+					'REVENIMIENTO' AS tipo,
+					'N.A.' AS ensayosAwaitingApproval,
+					notVistoJLForBrigadaApproval,
+					IF(jefaLabApproval_id IS NOT NULL, 'Completado', 'Autorizar y generar PDF') AS accReq,
+					regNo AS informeNo,
+					ordenDeTrabajo_id,
+					'1' AS tipoNo
+				FROM
+					formatoRegistroRev,
+					ordenDeTrabajo
+				WHERE
+					id_ordenDeTrabajo = ordenDeTrabajo_id
+					AND laboratorio_id = 1QQ
+					AND notVistoJLForBrigadaApproval > 0
+				",
+				array($laboratorio_id,$laboratorio_id),
+				"SELECT -- FooterEnsayo :: getAwaitingApproval : 1"
+			);
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('No existen footer relacionados con el id_footerEnsayo'=>$id_footerEnsayo,'error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		$dbS->commitTransaction();
+		return json_encode($arr);
+	}
 
 	public function initInsert($token,$rol_usuario_id,$tipo,$id_RegistroCCH){
 		global $dbS;
 		$usuario = new Usuario();
-		$arr = json_decode
-		($usuario->validateSesion($token, $rol_usuario_id),true);
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			//Cargamos las variables del sistema
@@ -782,7 +952,7 @@ class footerEnsayo{
 					usuario.laboratorio_id = 1QQ
 			      ",
 			      array($laboratorio_id),
-			      "SELECT"
+			      "SELECT -- FooterEnsayo :: getAllFooterPendientes"
 			      );
 			
 			if(!$dbS->didQuerydied){
@@ -802,6 +972,88 @@ class footerEnsayo{
 	public function ping($data){
 		global $dbS;
 		return $data;
+	}
+	public function getFooterByFormatoCampoID($token,$rol_usuario_id,$id_formatoCampo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$s= $dbS->qarrayA(
+				"SELECT
+					id_footerEnsayo,
+					buscula_id,
+					basculas.placas AS buscula_placas,
+					regVerFle_id,
+					regVerFle.placas AS regVerFle_id_placas,		
+					prensa_id,
+					footerEnsayo.observaciones,
+					prensas.placas AS prensa_placas,
+					encargado_id,
+					CONCAT(nombre,' ',apellido) AS nombre,
+					DATE(footerEnsayo.createdON) AS fecha,
+					footerEnsayo.status AS status,
+					formatoCampo.preliminar AS preliminar,
+					preliminarGabs
+				FROM
+					footerEnsayo,
+					formatoCampo,
+					usuario,
+					(
+						SELECT
+				  			id_herramienta,
+				  			placas 
+				  		FROM
+				  			herramientas,footerEnsayo
+				  		WHERE
+				  			buscula_id = id_herramienta AND
+				  			formatoCampo_id = 1QQ 
+					)AS basculas,
+					(
+				  		SELECT
+				  			id_herramienta,
+				  			placas
+				  		FROM
+				  			herramientas,footerEnsayo
+				  		WHERE
+				  			prensa_id = id_herramienta AND
+				  			formatoCampo_id = 1QQ
+				  	)AS prensas,
+				  	(
+				  		SELECT
+				  			id_herramienta,
+				  			placas
+				  		FROM
+				  			herramientas,footerEnsayo
+				  		WHERE
+				  			regVerFle_id = id_herramienta AND
+				  			formatoCampo_id = 1QQ
+				  	)AS regVerFle
+				WHERE
+					formatoCampo.id_formatoCampo = footerEnsayo.formatoCampo_id AND
+					encargado_id = id_usuario AND
+					footerEnsayo.active = 1 AND
+					buscula_id = basculas.id_herramienta AND
+					prensa_id = prensas.id_herramienta AND
+					regVerFle_id = regVerFle.id_herramienta AND
+					formatoCampo_id = 1QQ
+			      ",
+			      array($id_formatoCampo,$id_formatoCampo,$id_formatoCampo,$id_formatoCampo),
+			      "SELECT -- FooterEnsayo :: getFooterByID : 1"
+			      );
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('No existen footer relacionados con el id_footerEnsayo'=>$id_formatoCampo,'error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		return json_encode($arr);
 	}
 
 	public function getFooterByID($token,$rol_usuario_id,$id_footerEnsayo){

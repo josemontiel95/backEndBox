@@ -17,6 +17,20 @@
 			$footer = new footerEnsayo();
 			echo $footer->getFooterByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_footerEnsayo']);
 			break;
+			
+		case 'getFooterByFormatoCampoID':
+			$footer = new footerEnsayo();
+			echo $footer->getFooterByFormatoCampoID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
+			break;
+		case 'isTheWholeFamilyHereAndComplete':
+			$footer = new footerEnsayo();
+			echo $footer->isTheWholeFamilyHereAndComplete($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_footerEnsayo']);
+			break;
+		
+		case 'getAwaitingApproval':
+			$footer = new footerEnsayo();
+			echo $footer->getAwaitingApproval($_GET['token'],$_GET['rol_usuario_id']);
+			break;
 		case 'getAllFooterPendientes':
 			$footer = new footerEnsayo();
 			echo $footer->getAllFooterPendientes($_GET['token'],$_GET['rol_usuario_id']);

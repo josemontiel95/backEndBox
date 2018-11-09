@@ -19,7 +19,7 @@
 		break;
 		case 'getAllJefaLab':
 			$orden = new ordenDeTrabajo();
-			echo $orden->getAllJefaLab($_GET['token'],$_GET['rol_usuario_id']);
+			echo $orden->getAllJefaLab($_GET['token'],$_GET['rol_usuario_id'],$_GET['status']);
 		break;
 		case 'getAllFormatos':
 			$orden = new ordenDeTrabajo();

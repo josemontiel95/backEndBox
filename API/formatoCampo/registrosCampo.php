@@ -99,9 +99,13 @@ class registrosCampo{
 				if($tipo['tipo'] == "VIGAS"){
 					$NoDeRegistros = $var_system['multiplosNoOfRegistrosCCH_VIGAS'];
 					$maxNoOfRegistrosCCH=(int)($var_system['maxNoOfRegistrosCCH_VIGAS']);
-				}else{
+				}else if($tipo['tipo'] == "CILINDRO" || $tipo['tipo'] == "CUBO"){
 					$NoDeRegistros = $var_system['multiplosNoOfRegistrosCCH'];
 					$maxNoOfRegistrosCCH=(int)($var_system['maxNoOfRegistrosCCH']);
+				}else{
+					$dbS->rollbackTransaction();
+					$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, no se encontro el tipo de formato. Verifica que hayas seleccionado el tipo.','error' => 80);
+					return json_encode($arr);
 				}
 				/*Calculamos cuantos habria si incertamos los proximos n registros y el asignamos el grupo para modificaciones colectivas*/
 				$numRows=$rows['numRows']+$NoDeRegistros;

@@ -102,7 +102,7 @@ class EnsayoCubo{
 				else{
 					$resistencia = number_format($variables['carga']/$area,2);
 					if($variables['tiempoDeCarga']!=0){
-						$velAplicacionExp = number_format($resistencia / $variables['tiempoDeCarga'],2);
+						$velAplicacionExp = number_format(($resistencia / $variables['tiempoDeCarga'])*60,2);
 					}else{
 						$velAplicacionExp = 'Error: No se puede realizar una division entre 0';
 					}
@@ -278,7 +278,9 @@ class EnsayoCubo{
 						"UPDATE
 							footerEnsayo
 						SET
-							pendingEnsayos = pendingEnsayos -1
+							pendingEnsayos = pendingEnsayos -1,
+							ensayosAwaitingApproval = ensayosAwaitingApproval +1,
+							notVistoJLForEnsayoApproval = ensayosAwaitingApproval +1
 						WHERE
 							id_footerEnsayo = 1QQ
 						",array($a['footerEnsayo_id']),

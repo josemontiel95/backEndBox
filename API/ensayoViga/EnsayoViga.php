@@ -241,7 +241,7 @@ class EnsayoViga{
 				}
 			}
 			else{
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 			}
 		}
 		return json_encode($arr);
@@ -398,7 +398,9 @@ class EnsayoViga{
 						"UPDATE
 							footerEnsayo
 						SET
-							pendingEnsayos = pendingEnsayos -1
+							pendingEnsayos = pendingEnsayos -1,
+							ensayosAwaitingApproval = ensayosAwaitingApproval +1,
+							notVistoJLForEnsayoApproval = ensayosAwaitingApproval +1
 						WHERE
 							id_footerEnsayo = 1QQ
 						",array($a['footerEnsayo_id']),
@@ -504,7 +506,7 @@ class EnsayoViga{
 							$modulo = number_format((3*$variables['carga']*$prom)/$area,2);
 						}
 						if($variables['tiempoDeCarga']!=0){
-							$velAplicacionExp = number_format($modulo / $variables['tiempoDeCarga'],2);
+							$velAplicacionExp = number_format(($modulo / $variables['tiempoDeCarga'])*60,2);
 						}else{
 							$velAplicacionExp = 'Error: No se puede realizar una division entre 0';
 						}
