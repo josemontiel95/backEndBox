@@ -32,6 +32,11 @@
 			$footer = new footerEnsayo();
 			echo $footer->generatePDFEnsayo($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_footerEnsayo']);		
 		break;
+		case 'generatePDFFinal':
+			$footer = new footerEnsayo();
+			echo $footer->generatePDFFinal($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoCampo'],$_POST['id_ensayo']);		
+		break;
+		
 	}
 	
 ?>

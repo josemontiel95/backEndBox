@@ -14,7 +14,7 @@ class ordenDeTrabajo{
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
-	public function getAllFormatos($token,$rol_usuario_id,$id_ordenDeTrabajo){
+	public function getAllFormatosOLD($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -81,7 +81,75 @@ class ordenDeTrabajo{
 		}
 		return json_encode($arr);
 
+	}
+	public function getAllFormatos($token,$rol_usuario_id,$id_ordenDeTrabajo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arrayCCH = $dbS->qAll(
+				"SELECT
+					id_formatoCampo AS id,
+					footerEnsayo.id_footerEnsayo AS id_footerEnsayo,
+					CONCAT(nombre,' ',apellido) AS nombre,
+					footerEnsayo.tipo AS tipo,
+					ensayosAwaitingApproval,
+					notVistoJLForBrigadaApproval,
+					CASE
+						WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval = 0      THEN 'Revisar cambios JB'
+						WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval IS NULL  THEN 'Revisar cambios JB'
+						WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval > 0      THEN 'Autorizar y generar PDF'
+						WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval > 0      THEN 'Autorizar y generar PDF'
+						WHEN formatoCampo.status = 0       THEN 'En edicion JB'
+						ELSE 'Error, contacte a soporte'
+					END AS accReq,
+					informeNo AS informeNo,
+					ordenDeTrabajo_id,
+					CASE
+						WHEN formatoCampo.tipo = 'CILINDRO' THEN 2
+						WHEN formatoCampo.tipo = 'CUBO' THEN 3
+						WHEN formatoCampo.tipo = 'VIGAS' THEN 4
+						ELSE 0
+					END AS tipoNo,
+					formatoCampo.status 
+				FROM
+					formatoCampo LEFT JOIN 
+					footerEnsayo ON formatoCampo_id = id_formatoCampo LEFT JOIN 
+					usuario ON encargado_id = id_usuario
+				WHERE
+					ordenDeTrabajo_id = 1QQ
+				UNION
+				SELECT 
+					id_formatoRegistroRev AS id,
+					'N.A.' AS id_footerEnsayo,
+					'N.A.' AS nombre,
+					'REVENIMIENTO' AS tipo,
+					'N.A.' AS ensayosAwaitingApproval,
+					notVistoJLForBrigadaApproval,
+					IF(jefaLabApproval_id IS NOT NULL, 'Completado', 'Autorizar y generar PDF') AS accReq,
+					regNo AS informeNo,
+					ordenDeTrabajo_id,
+					'1' AS tipoNo,
+					formatoRegistroRev.status
+				FROM
+					formatoRegistroRev,
+					ordenDeTrabajo
+				WHERE
+					id_ordenDeTrabajo = ordenDeTrabajo_id
+					AND ordenDeTrabajo_id = 1QQ
+					",
+					array($id_ordenDeTrabajo,$id_ordenDeTrabajo),
+					"SELECT -- ordenDeTrabajo :: getAllFormatos : 1"
+				);
 
+			if(!$dbS->didQuerydied){
+				return json_encode($arrayCCH);
+			}
+			else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query de CCH, verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}		
+		}
+		return json_encode($arr);
 	}
 	
 	

@@ -205,8 +205,8 @@ class EnsayoCubo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$s= $dbS->qAll("
-			    	SELECT
+			$s= $dbS->qAll(
+				"   SELECT
 						id_ensayoCubo,
 						ensayoCubo.formatoCampo_id AS formatoCampo_id,
 						IF(registrosCampo.status = 3,'SI','NO') AS completado,
@@ -243,13 +243,116 @@ class EnsayoCubo{
 			if(!$dbS->didQuerydied){
 				if($s=="empty"){
 					$arr = array('No existen registro relacionados con el id_ensayoCubo'=>$id_ensayoCubo,'error' => 5);
-				}
-				else{
+				}else{
 					return json_encode($s);
 				}
+			}else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 			}
-			else{
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+		}
+		return json_encode($arr);
+	}
+
+	public function completeEnsayoJL($token,$rol_usuario_id,$id_ensayoCubo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->beginTransaction();
+			$a = $dbS->qarrayA(
+				"	SELECT
+						registrosCampo_id,
+						footerEnsayo_id,
+						status
+					FROM
+						ensayoCubo
+					WHERE
+						id_ensayoCubo = 1QQ
+				",
+				array($id_ensayoCubo),
+				"SELECT -- EnsayoCubo ::  completeEnsayoJL : 1"
+			);
+			if(!$dbS->didQuerydied){
+				if($a['status']==0){
+					$dbS->rollbackTransaction();
+					$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, el TMU mantiene los permisos de escritura','error' => 50);
+					return json_encode($arr);
+				}
+				$dbS->squery(
+					"UPDATE
+						ensayoCubo
+					SET
+						status = 3
+					WHERE
+						id_ensayoCubo = 1QQ
+					",array($id_ensayoCubo),
+					"UPDATE -- EnsayoCubo ::  completeEnsayoJL : 2"
+				);
+				if(!$dbS->didQuerydied){
+					$dbS->commitTransaction();
+					$arr = array('registroCubo' => $id_ensayoCilindro,'estatus' => '¡Ensayo completado!','error' => 0);
+					return json_encode($arr);
+				}else{
+					$dbS->rollbackTransaction();
+					$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCubo, verifica tus datos y vuelve a intentarlo','error' => 5);
+					return json_encode($arr);	
+				}
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
+				return json_encode($arr);
+			}
+		}
+		return json_encode($arr);
+	}
+	public function editEnsayoJL($token,$rol_usuario_id,$id_ensayoCubo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->beginTransaction();
+			$a = $dbS->qarrayA(
+				"	SELECT
+						registrosCampo_id,
+						footerEnsayo_id,
+						status
+					FROM
+						ensayoCubo
+					WHERE
+						id_ensayoCubo = 1QQ
+				",
+				array($id_ensayoCubo),
+				"SELECT -- EnsayoCubo ::  editEnsayoJL : 1"
+			);
+			if(!$dbS->didQuerydied){
+				if($a['status'] == 0){
+					$dbS->rollbackTransaction();
+					$arr = array('registroCubo' => 'NULL','token' => $token, 'estatus' => 'Error en la actualizacion del TMU, el TMU mantiene los permisos de escritura','error' => 50);
+					return json_encode($arr);
+				}
+				$dbS->squery(
+					"UPDATE
+						ensayoCubo
+					SET
+						status = 2
+					WHERE
+						id_ensayoCubo = 1QQ
+					",array($id_ensayoCubo),
+					"UPDATE -- EnsayoCubo ::  editEnsayoJL : 2"
+				);
+				if(!$dbS->didQuerydied){
+					$dbS->commitTransaction();
+					$arr = array('registroCubo' => $id_ensayoCilindro,'estatus' => '¡Ensayo completado!','error' => 0);
+					return json_encode($arr);
+				}else{
+					$dbS->rollbackTransaction();
+					$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCubo, verifica tus datos y vuelve a intentarlo','error' => 5);
+					return json_encode($arr);	
+				}
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
+				return json_encode($arr);
 			}
 		}
 		return json_encode($arr);
@@ -272,7 +375,7 @@ class EnsayoCubo{
 					",
 					array($id_ensayoCubo),
 					"SELECT -- EnsayoCubo ::  completeEnsayo : 1"
-									 );
+				);
 				if(!$dbS->didQuerydied){
 					$dbS->squery(
 						"UPDATE
@@ -280,7 +383,7 @@ class EnsayoCubo{
 						SET
 							pendingEnsayos = pendingEnsayos -1,
 							ensayosAwaitingApproval = ensayosAwaitingApproval +1,
-							notVistoJLForEnsayoApproval = ensayosAwaitingApproval +1
+							notVistoJLForEnsayoApproval = notVistoJLForEnsayoApproval +1
 						WHERE
 							id_footerEnsayo = 1QQ
 						",array($a['footerEnsayo_id']),
@@ -318,14 +421,12 @@ class EnsayoCubo{
 							$dbS->commitTransaction();
 							$arr = array('registroCubo' => $id_ensayoCilindro,'estatus' => '¡Ensayo completado!','error' => 0);
 							return json_encode($arr);
-						}
-						else{
+						}else{
 							$dbS->rollbackTransaction();
 							$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCubo, verifica tus datos y vuelve a intentarlo','error' => 5);
 							return json_encode($arr);	
 						}
-					}
-					else{
+					}else{
 						$dbS->rollbackTransaction();
 						$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCCH, verifica tus datos y vuelve a intentarlo','error' => 5);
 						return json_encode($arr);
@@ -338,6 +439,92 @@ class EnsayoCubo{
 		}
 		return json_encode($arr);
 	}
+
+	public function editEnsayo($token,$rol_usuario_id,$id_ensayoCubo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->beginTransaction();
+			$a = $dbS->qarrayA(
+				"	SELECT
+						registrosCampo_id,
+						footerEnsayo_id,
+						status
+					FROM
+						ensayoCubo
+					WHERE
+						id_ensayoCubo = 1QQ
+				",
+				array($id_ensayoCubo),
+				"SELECT -- EnsayoCubo ::  editEnsayo : 1"
+			);
+			if(!$dbS->didQuerydied){
+				if($a['status']>1){
+					$dbS->rollbackTransaction();
+					$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, el jefe de laboratorio ha revocado tus permisos de escritura','error' => 50);
+					return json_encode($arr);
+				}
+				$dbS->squery(
+					"UPDATE
+						footerEnsayo
+					SET
+						pendingEnsayos = pendingEnsayos +1,
+						ensayosAwaitingApproval = ensayosAwaitingApproval -1
+					WHERE
+						id_footerEnsayo = 1QQ
+					",array($a['footerEnsayo_id']),
+					"UPDATE -- EnsayoCubo ::  editEnsayo : 2"
+				);
+				if($dbS->didQuerydied){
+					$dbS->rollbackTransaction();
+					$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, verifica tus datos y vuelve a intentarlo','error' => 40);
+					return json_encode($arr);
+				}
+				$dbS->squery(
+					"UPDATE
+						registrosCampo
+					SET
+						statusEnsayo = 0
+					WHERE
+						id_registrosCampo = 1QQ
+					",array($a['registrosCampo_id']),
+					"UPDATE -- EnsayoCubo ::  editEnsayo : 3"
+				);
+				if(!$dbS->didQuerydied){
+					$dbS->squery(
+						"UPDATE
+							ensayoCubo
+						SET
+							status = 0
+						WHERE
+							id_ensayoCubo = 1QQ
+						",array($id_ensayoCubo),
+						"UPDATE -- EnsayoCubo ::  editEnsayo : 4"
+					);
+					if(!$dbS->didQuerydied){
+						$dbS->commitTransaction();
+						$arr = array('registroCubo' => $id_ensayoCilindro,'estatus' => '¡Ensayo completado!','error' => 0);
+						return json_encode($arr);
+					}else{
+						$dbS->rollbackTransaction();
+						$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCubo, verifica tus datos y vuelve a intentarlo','error' => 5);
+						return json_encode($arr);	
+					}
+				}else{
+					$dbS->rollbackTransaction();
+					$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, verifica tus datos y vuelve a intentarlo','error' => 5);
+					return json_encode($arr);
+				}
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
+				return json_encode($arr);
+			}
+		}
+		return json_encode($arr);
+	}
+
 	public function getOldMembers($token,$rol_usuario_id,$id_ensayoCubo){
 		global $dbS;
 		$usuario = new Usuario();

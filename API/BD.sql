@@ -103,6 +103,8 @@ CREATE TABLE cliente(
 )ENGINE=INNODB;
 ALTER TABLE cliente AUTO_INCREMENT=1001;
 
+ALTER TABLE cliente MODIFY email VARCHAR(100);
+
 CREATE TABLE concretera(
 	id_concretera INT(11) NOT NULL AUTO_INCREMENT,
 	concretera VARCHAR(40) NOT NULL,
@@ -178,6 +180,8 @@ ADD COLUMN incertidumbreVigas DOUBLE;
 
 ALTER TABLE obra
 ADD COLUMN correo_alterno VARCHAR(100) NOT NULL;
+
+ALTER TABLE obra MODIFY correo_residente VARCHAR(100);
 
 
 INSERT INTO obra(obra,prefijo,fechaDeCreacion,descripcion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento,incertidumbre) 
@@ -558,6 +562,8 @@ ADD COLUMN preliminar VARCHAR(200);
 
 ALTER TABLE formatoCampo ADD COLUMN registrosNo INT NOT NULL DEFAULT 0;
 
+ALTER TABLE formatoCampo ADD COLUMN notVistoJLForBrigadaApproval INT DEFAULT 0;
+
 
 CREATE TABLE registrosCampo(
 	id_registrosCampo INT(11) NOT NULL AUTO_INCREMENT,
@@ -659,6 +665,7 @@ ADD COLUMN preliminar VARCHAR(200);
 ALTER TABLE formatoRegistroRev ADD jefaLabApproval_id INT(11) DEFAULT NULL;
 
 ALTER TABLE formatoRegistroRev ADD CONSTRAINT revJefaLabApproval_id FOREIGN KEY (jefaLabApproval_id) REFERENCES usuario(id_usuario) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE formatoRegistroRev ADD COLUMN notVistoJLForBrigadaApproval INT DEFAULT 0;
 
 
 ALTER TABLE formatoRegistroRev 
@@ -989,7 +996,6 @@ ALTER TABLE footerEnsayo ADD COLUMN preliminarGabs VARCHAR(200);
 ALTER TABLE footerEnsayo ADD COLUMN ensayosAwaitingApproval INT DEFAULT 0;
 
 ALTER TABLE footerEnsayo ADD COLUMN notVistoJLForEnsayoApproval INT DEFAULT 0;
-ALTER TABLE footerEnsayo ADD COLUMN notVistoJLForBrigadaApproval INT DEFAULT 0;
 
 
 

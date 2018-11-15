@@ -29,8 +29,18 @@
 			$footer = new EnsayoViga();
 			echo $footer->completeEnsayo($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ensayoViga']);		
 		break;
-		
+		case 'completeEnsayoJL':
+			$footer = new EnsayoViga();
+			echo $footer->completeEnsayoJL($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ensayoViga']);		
+		break;
+		case 'editEnsayoJL':
+			$footer = new EnsayoViga();
+			echo $footer->editEnsayoJL($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ensayoViga']);
+		break;
+		case 'editEnsayo':
+			$footer = new EnsayoViga();
+			echo $footer->editEnsayo($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ensayoViga']);
+		break;
 	}
-	
 ?>
 	
