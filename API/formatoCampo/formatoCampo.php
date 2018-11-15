@@ -898,10 +898,121 @@ class formatoCampo{
 		return json_encode($arr);
 	}
 
-	
+	public function sentMail($token,$rol_usuario_id,$id_formatoCampo){
+		global $dbS;
 
+		$usuario = new Usuario();
+		$mailer = new Mailer();
 
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
+		if($arr['error'] == 0){
+			$a = $dbS->qarrayA(
+				"   SELECT 
+						COUNT(*) AS No
+					FROM 
+					 	registrosCampo 
+					WHERE 
+					 	formatoCampo_id= 1QQ
+				"
+				,
+				array($id_formatoCampo)
+				,
+				"SELECT -- FormatoCampo :: completeFormato : 1"
+			);
+			if(!$dbS->didQuerydied && !($a=="empty")){
+				if(!$dbS->didQuerydied){
+					if(!$dbS->didQuerydied){
+						$info = $dbS->qarrayA(
+						"   SELECT
+								id_cliente,
+								id_obra,
+								id_ordenDeTrabajo,
+								cliente.email AS emailCliente,
+								obra.correo_residente AS emailResidente,
+								obra.correo_alterno AS correo_alterno,
+								CONCAT(nombre,'(',razonSocial,')') AS nombre,
+								email
+							FROM
+								cliente,
+								obra,
+								ordenDeTrabajo,
+								formatoCampo
+							WHERE
+								formatoCampo.ordenDeTrabajo_id = ordenDeTrabajo.id_ordenDeTrabajo AND
+								ordenDeTrabajo.obra_id = obra.id_obra AND
+								obra.cliente_id = cliente.id_cliente AND
+								id_formatoCampo = 1QQ
+						",
+						array($id_formatoCampo),
+						"SELECT  -- FormatoCampo :: completeFormato : 4"
+						);
+						if(!$dbS->didQuerydied && ($info != "empty")){
+							try{
+								$dirDatabase = $dbS->qvalue(
+									"   SELECT preliminar FROM formatoCampo WHERE id_formatoCampo=1QQ",
+									array($id_formatoCampo),"SELECT  -- FormatoCampo :: completeFormato : 5"
+								);
+								if($dbS->didQuerydied){ // Si no murio la query de guardar el preliminar en BD
+									$dbS->rollbackTransaction();
+									$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 40);
+									return json_encode($arr);
+								}
+								//  Envio del primer correo
+								$resp=$mailer->sendMailBasic($info['emailCliente'], $info['nombre'], $dirDatabase);
+								if($resp==202){
+									$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato enviado','error' => 0);	
+								}else{
+									$dbS->rollbackTransaction();
+									$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 106, 'sendGridError'=>$resp);
+									return json_encode($arr);
+								}
+								//  Envio del segundo correo
+								$resp=$mailer->sendMailBasic($info['emailResidente'], $info['nombre'], $dirDatabase);
+								if($resp==202){
+									$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato enviado','error' => 0);	
+								}else{
+									$dbS->rollbackTransaction();
+									$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 107, 'sendGridError'=>$resp);
+									return json_encode($arr);
+								}
+								//  Envio del tercer correo
+								$resp=$mailer->sendMailBasic($info['correo_alterno'], $info['nombre'], $dirDatabase);
+								if($resp==202){
+									$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato enviado','error' => 0);	
+								}else{
+									$dbS->rollbackTransaction();
+									$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 108, 'sendGridError'=>$resp);
+									return json_encode($arr);
+								}
+								
+								$dbS->commitTransaction();
+								return json_encode($arr);
 
-
+							}catch(Exception $e){
+								$dbS->rollbackTransaction();
+								$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 7);
+								return json_encode($arr);
+							}
+						}else{
+							$dbS->rollbackTransaction();
+							$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la consulta de la informacion para la carpeta','error' => 9);
+						}
+					}else{
+						$dbS->rollbackTransaction();
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 10);
+					}
+				}else{
+					$dbS->rollbackTransaction();
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 11);
+				}
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 12);
+			}			
+		}
+		$dbS->rollbackTransaction();
+		return json_encode($arr);
+	}
 }
 ?>

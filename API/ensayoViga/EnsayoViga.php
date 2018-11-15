@@ -303,8 +303,8 @@ class EnsayoViga{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$s= $dbS->qarrayA("
-			    	SELECT
+			$s= $dbS->qarrayA(
+				"   SELECT
 						id_ensayoViga,
 						ensayoViga.formatoCampo_id AS formatoCampo_id,
 						IF(registrosCampo.status = 3,'SI','NO') AS completado,
@@ -363,17 +363,124 @@ class EnsayoViga{
 			if(!$dbS->didQuerydied){
 				if($s=="empty"){
 					$arr = array('No existen registro relacionados con el id_ensayoViga'=>$id_ensayoViga,'error' => 5);
-				}
-				else{
+				}else{
 					return json_encode($s);
 				}
-			}
-			else{
-					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 			}
 		}
 		return json_encode($arr);
 	}
+
+	public function completeEnsayoJL($token,$rol_usuario_id,$id_ensayoViga){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->beginTransaction();
+			$a = $dbS->qarrayA(
+				"	SELECT
+						registrosCampo_id,
+						footerEnsayo_id,
+						status
+					FROM
+						ensayoViga
+					WHERE
+						id_ensayoViga = 1QQ
+				",
+				array($id_ensayoViga),
+				"SELECT -- EnsayoViga ::  completeEnsayo : 1"
+				);
+			if(!$dbS->didQuerydied){
+				if($a['status']==0){
+					$dbS->rollbackTransaction();
+					$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, el TMU mantiene los permisos de escritura','error' => 50);
+					return json_encode($arr);
+				}
+				$dbS->squery(
+					"UPDATE
+						ensayoViga
+					SET
+						status = 3
+					WHERE
+						id_ensayoViga = 1QQ
+					",array($id_ensayoViga),
+					"UPDATE -- EnsayoViga ::  completeEnsayo : 2"
+				);
+				if(!$dbS->didQuerydied){
+					$dbS->commitTransaction();
+					$arr = array('ensayoViga' => $id_ensayoCilindro,'estatus' => '¡Ensayo completado!','error' => 0);
+					return json_encode($arr);
+				}
+				else{
+					$dbS->rollbackTransaction();
+					$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del ensayoViga, verifica tus datos y vuelve a intentarlo','error' => 13);
+					return json_encode($arr);	
+				}
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 10);
+				return json_encode($arr);
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function editEnsayoJL($token,$rol_usuario_id,$id_ensayoViga){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->beginTransaction();
+			$a = $dbS->qarrayA(
+				"	SELECT
+						registrosCampo_id,
+						footerEnsayo_id,
+						status
+					FROM
+						ensayoViga
+					WHERE
+						id_ensayoViga = 1QQ
+				",
+				array($id_ensayoViga),
+				"SELECT -- EnsayoViga ::  editEnsayoJL : 1"
+				);
+			if(!$dbS->didQuerydied){
+				if($a['status'] == 0){
+					$dbS->rollbackTransaction();
+					$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, el TMU mantiene los permisos de escritura','error' => 50);
+					return json_encode($arr);
+				}
+				$dbS->squery(
+					"UPDATE
+						ensayoViga
+					SET
+						status = 2
+					WHERE
+						id_ensayoViga = 1QQ
+					",array($id_ensayoViga),
+					"UPDATE -- EnsayoViga ::  editEnsayoJL : 2"
+				);
+				if(!$dbS->didQuerydied){
+					$dbS->commitTransaction();
+					$arr = array('ensayoViga' => $id_ensayoCilindro,'estatus' => '¡Ensayo completado!','error' => 0);
+					return json_encode($arr);
+				}
+				else{
+					$dbS->rollbackTransaction();
+					$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del ensayoViga, verifica tus datos y vuelve a intentarlo','error' => 13);
+					return json_encode($arr);	
+				}
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 10);
+				return json_encode($arr);
+			}		
+		}
+		return json_encode($arr);
+	}
+	
 
 	public function completeEnsayo($token,$rol_usuario_id,$id_ensayoViga){
 		global $dbS;
@@ -400,7 +507,7 @@ class EnsayoViga{
 						SET
 							pendingEnsayos = pendingEnsayos -1,
 							ensayosAwaitingApproval = ensayosAwaitingApproval +1,
-							notVistoJLForEnsayoApproval = ensayosAwaitingApproval +1
+							notVistoJLForEnsayoApproval = notVistoJLForEnsayoApproval +1
 						WHERE
 							id_footerEnsayo = 1QQ
 						",array($a['footerEnsayo_id']),
@@ -427,7 +534,6 @@ class EnsayoViga{
 							"UPDATE
 								ensayoViga
 							SET
-								fecha = CURDATE(),
 								status = 1
 							WHERE
 								id_ensayoViga = 1QQ
@@ -454,6 +560,93 @@ class EnsayoViga{
 					$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 10);
 					return json_encode($arr);
 				}		
+		}
+		return json_encode($arr);
+	}
+
+	public function editEnsayo($token,$rol_usuario_id,$id_ensayoViga){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$dbS->beginTransaction();
+			$a = $dbS->qarrayA(
+				"	SELECT
+						registrosCampo_id,
+						footerEnsayo_id,
+						status
+					FROM
+						ensayoViga
+					WHERE
+						id_ensayoViga = 1QQ
+				",
+				array($id_ensayoViga),
+				"SELECT -- EnsayoViga ::  editEnsayo : 1"
+				);
+			if(!$dbS->didQuerydied){
+				if($a['status']>1){
+					$dbS->rollbackTransaction();
+					$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, el jefe de laboratorio ha revocado tus permisos de escritura','error' => 50);
+					return json_encode($arr);
+				}
+				$dbS->squery(
+					"UPDATE
+						footerEnsayo
+					SET
+						pendingEnsayos = pendingEnsayos + 1,
+						ensayosAwaitingApproval = ensayosAwaitingApproval -1
+					WHERE
+						id_footerEnsayo = 1QQ
+					",array($a['footerEnsayo_id']),
+					"UPDATE -- EnsayoViga ::  editEnsayo : 2"
+				);
+				if($dbS->didQuerydied){
+					$dbS->rollbackTransaction();
+					$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCCH, verifica tus datos y vuelve a intentarlo','error' => 40);
+					return json_encode($arr);
+				}
+				$dbS->squery(
+					"UPDATE
+						registrosCampo
+					SET
+						statusEnsayo = 0
+					WHERE
+						id_registrosCampo = 1QQ
+					",array($a['registrosCampo_id']),
+					"UPDATE -- EnsayoViga ::  editEnsayo : 3"
+				);
+
+				if(!$dbS->didQuerydied){
+					$dbS->squery(
+						"UPDATE
+							ensayoViga
+						SET
+							status = 0
+						WHERE
+							id_ensayoViga = 1QQ
+						",array($id_ensayoViga),
+						"UPDATE -- EnsayoViga ::  editEnsayo : 4"
+					);
+					if(!$dbS->didQuerydied){
+						$dbS->commitTransaction();
+						$arr = array('ensayoViga' => $id_ensayoCilindro,'estatus' => '¡Ensayo completado!','error' => 0);
+						return json_encode($arr);
+					}
+					else{
+						$dbS->rollbackTransaction();
+						$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, verifica tus datos y vuelve a intentarlo','error' => 13);
+						return json_encode($arr);	
+					}
+				}else{
+					$dbS->rollbackTransaction();
+					$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, verifica tus datos y vuelve a intentarlo','error' => 12);
+					return json_encode($arr);
+				}
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 10);
+				return json_encode($arr);
+			}
 		}
 		return json_encode($arr);
 	}
