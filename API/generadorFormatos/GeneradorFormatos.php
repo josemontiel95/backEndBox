@@ -107,8 +107,8 @@
 				//Obtenemos el id del usuario que solicita
 				$id_usuario = substr(decurl($token),10);
 				
-				$s= $dbS->qarrayA("
-				      	SELECT
+				$s= $dbS->qarrayA(
+					"	SELECT
 							laboratorio_id,						
 							CONCAT(nombre,' ',apellido) AS nombreRealizo,
 							firma AS firmaRealizo
@@ -124,12 +124,10 @@
 				if(!$dbS->didQuerydied){
 					if($s=="empty"){
 						$arr = array('id_usuario' => $id_usuario,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
-					}
-					else{
+					}else{
 						return $s;
 					}
-				}
-				else{
+				}else{
 						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 				}
 			}
@@ -605,8 +603,8 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qarrayA("
-				      	SELECT
+				$s= $dbS->qarrayA(
+					"SELECT
 				      		cliente.razonSocial,
 							obra.obra,
 							obra.localizacion AS obraLocalizacion,
@@ -676,8 +674,8 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qAll("
-			      	SELECT
+				$s= $dbS->qAll(
+					"SELECT
 			      		claveEspecimen,
 			      		registrosCampo.fecha AS fechaColado,
 			      		ensayoViga.fecha AS fechaEnsayo,
@@ -701,7 +699,7 @@
 						disApoyo,
 						disCarga,
 						carga,
-						ROUND (( ((ancho1 + ancho2)/2) * ( ((per1 + per2)/2) * ((per1 + per2)/2) ) ) )AS modRuptura,
+						mr AS modRuptura,
 						defectos,
 						ROUND(velAplicacionExp,6),
 						CONCAT(nombre,' ',apellido) AS realizo
