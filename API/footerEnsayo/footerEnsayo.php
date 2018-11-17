@@ -14,6 +14,252 @@ class footerEnsayo{
 		echo $data;
 	}
 
+	public function formatoSeen($token,$rol_usuario_id,$id_formatoCampo,$id_footerEnsayo){
+		global $dbS;
+
+		$usuario = new Usuario();
+
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$id_usuario=$usuario->id_usuario;
+		if($arr['error'] == 0){
+			$dbS->beginTransaction();
+			$dbS->squery(
+				"UPDATE
+					footerEnsayo
+				SET
+					notVistoJLForEnsayoApproval = 0
+				WHERE
+					id_footerEnsayo = '1QQ'
+				",array($id_footerEnsayo),
+				"UPDATE -- FooterEnsayo :: generatePDFFinal : 3 var_system[apiRoot]:".$var_system[0]
+			);
+			if($dbS->didQuerydied){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en actualizar el estado de lectura del formato, verifica tus datos y vuelve a intentarlo','error' => 24);
+				return json_encode($arr);
+			}
+			$dbS->squery(
+				"UPDATE
+					formatoCampo
+				SET
+					notVistoJLForBrigadaApproval = 0
+				WHERE
+					id_formatoCampo = 1QQ
+				",array($id_formatoCampo),
+				"UPDATE -- FooterEnsayo :: generatePDFFinal : 3 var_system[apiRoot]:".$var_system[0]
+			);
+
+			if(!$dbS->didQuerydied){
+				$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Exito Formato generado','error' => 0);	
+				$dbS->commitTransaction();
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en actualizar el estado de lectura del formato, verifica tus datos y vuelve a intentarlo','error' => 23);
+				return json_encode($arr);
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function autEnsayoForAdmin($token,$rol_usuario_id,$id_formatoCampo,$id_ensayo){
+		global $dbS;
+
+		$usuario = new Usuario();
+		$mailer = new Mailer();
+
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$id_usuario=$usuario->id_usuario;
+		if($arr['error'] == 0){
+			$dbS->beginTransaction();
+			$a = $dbS->qarrayA(
+				"	SELECT
+						tipo
+					FROM
+						footerEnsayo
+					WHERE
+						formatoCampo_id =1QQ
+				",array($id_formatoCampo),
+				"SELECT -- FooterEnsayo :: generatePDFFinal : 1"
+			);
+			if(!$dbS->didQuerydied && !($a=="empty")){
+				$table = "";
+				switch($a['tipo']){
+					case "CILINDRO":
+						$table="ensayoCilindro";
+						$id="id_ensayoCilindro";
+					break;
+					case "CUBO":
+						$table="ensayoCubo";
+						$id="id_ensayoCubo";
+					break;
+					case "VIGAS":
+						$table="ensayoViga";
+						$id="id_ensayoViga";
+					break;
+				}
+				$b = $dbS->qarrayA(
+					"	SELECT
+							pdfFinal,
+							jefaLabApproval_id,
+							status
+						FROM
+							1QQ
+						WHERE
+							1QQ =1QQ
+					",array($table,$id,$id_ensayo),
+					"SELECT -- FooterEnsayo :: generatePDFFinal : 1"
+				);
+				//Cachamos la excepcion
+				if(!$dbS->didQuerydied && !($b=="empty")){
+					if($b['status'] == 0 || $b['status'] == 2){ // 0 es edicion TMU y 2 es edicion JL. Ambos estados son invalidos para autorizar
+						$dbS->rollbackTransaction();
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en autorizar ensayo, no puedes autorizar antes de que el TMU ceda sus derechos de escritura','error' => 20);
+						return json_encode($arr);
+					}
+
+					$dbS->squery(
+						"UPDATE
+							footerEnsayo
+						SET
+							ensayosAwaitingApproval = ensayosAwaitingApproval-1
+						WHERE
+							formatoCampo_id =1QQ
+						",array($id_formatoCampo),
+						"UPDATE -- FooterEnsayo :: generatePDFFinal : 3 var_system[apiRoot]:".$var_system[0]
+					);
+					if($dbS->didQuerydied){
+						$dbS->rollbackTransaction();
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en autorizar ensayo, verifica tus datos y vuelve a intentarlo','error' => 24);
+						return json_encode($arr);
+					}
+					$dbS->squery(
+						"UPDATE
+							1QQ
+						SET
+							jefaLabApproval_id = '1QQ',
+							status = 4
+						WHERE
+							1QQ = 1QQ
+						"
+						,array($table,$id_usuario,$id,$id_ensayo),
+						"UPDATE -- FooterEnsayo :: generatePDFFinal : 3 var_system[apiRoot]:".$var_system[0]
+					);
+
+					if(!$dbS->didQuerydied){
+						$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Exito Formato generado','error' => 0);	
+						$dbS->commitTransaction();
+					}else{
+						$dbS->rollbackTransaction();
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en autorizar ensayo, verifica tus datos y vuelve a intentarlo','error' => 23);
+						return json_encode($arr);
+					}
+				}else{
+					$dbS->rollbackTransaction();
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en autorizar ensayo, verifica tus datos y vuelve a intentarlo','error' => 21);
+					return json_encode($arr);
+				}
+				
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en autorizar ensayo, verifica tus datos y vuelve a intentarlo','error' => 22);
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function generatePDFFinal($token,$rol_usuario_id,$id_formatoCampo,$id_ensayo){
+		global $dbS;
+
+		$usuario = new Usuario();
+		$mailer = new Mailer();
+		$generador = new GeneradorFormatos();
+
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
+		if($arr['error'] == 0){
+			$a = $dbS->qarrayA(
+				"	SELECT
+						tipo
+					FROM
+						footerEnsayo
+					WHERE
+						formatoCampo_id =1QQ
+				",array($id_formatoCampo),
+				"SELECT -- FooterEnsayo :: generatePDFFinal : 1"
+			);
+			if(!$dbS->didQuerydied && !($a=="empty")){
+				$table = "";
+				switch($a['tipo']){
+					case "CILINDRO":
+						$table="ensayoCilindro";
+						$id="id_ensayoCilindro";
+					break;
+					case "CUBO":
+						$table="ensayoCubo";
+						$id="id_ensayoCubo";
+					break;
+					case "VIGAS":
+						$table="ensayoViga";
+						$id="id_ensayoViga";
+					break;
+				}
+				$var_system = $dbS->qarrayA(
+					"	SELECT
+							apiRoot
+						FROM
+							systemstatus
+						ORDER BY id_systemstatus DESC;
+					",array(),
+					"SELECT -- FooterEnsayo :: generatePDFFinal : 2"
+				);
+				if($dbS->didQuerydied || ($var_system == "empty")){
+					$dbS->rollbackTransaction();
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato','error' => 20);
+					return json_encode($arr);
+				}
+				$hora_de_creacion = getdate();
+				$target_dir = "./../../../SystemData/FormatosFinalesData/".$a['tipo']."/".$id_formatoCampo."/";
+				$dirDatabase = $var_system['apiRoot']."SystemData/FormatosFinalesData/".$a['tipo']."/".$id_formatoCampo."/"."Final".$a['tipo']."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+				if (!file_exists($target_dir)) {
+					mkdir($target_dir, 0777, true);
+				}
+				$target_dir=$target_dir."Final".$a['tipo']."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+				//Cachamos la excepcion
+				try{
+					$arr=json_decode( $generador->generateInformeCampo($token,$rol_usuario_id,$id_formatoCampo,$target_dir),true);
+						
+					if($arr['error'] > 0){
+						$dbS->rollbackTransaction();
+						return json_encode($arr);
+					}
+
+					$dbS->squery(
+						"UPDATE
+							1QQ
+						SET
+							pdfFinal = '1QQ'
+						WHERE
+							1QQ = 1QQ
+						"
+						,array($table,$dirDatabase,$id,$id_ensayo),
+						"UPDATE -- FooterEnsayo :: generatePDFFinal : 3 var_system[apiRoot]:".$var_system[0]
+					);
+				}catch(Exception $e){
+					$dbS->rollbackTransaction();
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 7);
+					return json_encode($arr);
+				}
+				$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Exito Formato generado','error' => 0);	
+				$dbS->commitTransaction();
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en generar formato , verifica tus datos y vuelve a intentarlo','error' => 11);
+			}
+		}
+		return json_encode($arr);
+	}
+
+
 	public function generatePDFEnsayo($token,$rol_usuario_id,$id_footerEnsayo){
 		global $dbS;
 
@@ -329,7 +575,92 @@ class footerEnsayo{
 					id_formatoCampo AS id,
 					footerEnsayo.id_footerEnsayo AS id_footerEnsayo,
 					CONCAT(nombre,' ',apellido) AS nombre,
-					footerEnsayo.tipo AS tipo,
+					formatoCampo.tipo AS tipo,
+					ensayosAwaitingApproval,
+					notVistoJLForBrigadaApproval,
+					notVistoJLForEnsayoApproval,
+					CASE
+						WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval = 0      THEN 'Revisar cambios JB'
+						WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval IS NULL  THEN 'Revisar cambios JB'
+						WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval > 0      THEN 'Autorizar y generar PDF'
+						WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval > 0      THEN 'Autorizar y generar PDF'
+					END AS accReq,
+					informeNo AS informeNo,
+					ordenDeTrabajo_id,
+					CASE
+						WHEN formatoCampo.tipo = 'CILINDRO' THEN 2
+						WHEN formatoCampo.tipo = 'CUBO' THEN 3
+						WHEN formatoCampo.tipo = 'VIGAS' THEN 4
+						ELSE 0
+					END AS tipoNo
+				FROM
+				    ordenDeTrabajo,
+					formatoCampo LEFT JOIN 
+					footerEnsayo ON formatoCampo_id = id_formatoCampo LEFT JOIN 
+					usuario ON encargado_id = id_usuario
+				WHERE
+					id_ordenDeTrabajo = ordenDeTrabajo_id AND
+					formatoCampo.status > 0 AND
+					(
+					(footerEnsayo.ensayosAwaitingApproval > 0 AND
+					notVistoJLForEnsayoApproval > 0) OR
+					notVistoJLForBrigadaApproval > 0
+					) AND
+					ordenDeTrabajo.laboratorio_id = 1QQ
+				UNION
+				SELECT 
+					id_formatoRegistroRev AS id,
+					'N.A.' AS id_footerEnsayo,
+					'N.A.' AS nombre,
+					'REVENIMIENTO' AS tipo,
+					'N.A.' AS ensayosAwaitingApproval,
+					notVistoJLForBrigadaApproval,
+					'N.A.' AS notVistoJLForEnsayoApproval,
+					IF(jefaLabApproval_id IS NOT NULL, 'Completado', 'Autorizar y generar PDF') AS accReq,
+					regNo AS informeNo,
+					ordenDeTrabajo_id,
+					'1' AS tipoNo
+				FROM
+					formatoRegistroRev,
+					ordenDeTrabajo
+				WHERE
+					id_ordenDeTrabajo = ordenDeTrabajo_id
+					AND laboratorio_id = 1QQ
+					AND notVistoJLForBrigadaApproval > 0
+				",
+				array($laboratorio_id,$laboratorio_id),
+				"SELECT -- FooterEnsayo :: getAwaitingApproval : 1"
+			);
+			
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('No existen footer relacionados con el id_footerEnsayo'=>$id_footerEnsayo,'error' => 5);
+				}
+				else{
+					return json_encode($s);
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+		}
+		$dbS->commitTransaction();
+		return json_encode($arr);
+	}
+
+	public function getAwaitingApprovalSeen($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id = $usuario->laboratorio_id;
+		$dbS->beginTransaction();
+		if($arr['error'] == 0){
+			$s= $dbS->qAll(
+				"SELECT
+					id_formatoCampo AS id,
+					footerEnsayo.id_footerEnsayo AS id_footerEnsayo,
+					CONCAT(nombre,' ',apellido) AS nombre,
+					formatoCampo.tipo AS tipo,
 					ensayosAwaitingApproval,
 					notVistoJLForBrigadaApproval,
 					CASE
@@ -341,25 +672,22 @@ class footerEnsayo{
 					informeNo AS informeNo,
 					ordenDeTrabajo_id,
 					CASE
-						WHEN footerEnsayo.tipo = 'CILINDRO' THEN 2
-						WHEN footerEnsayo.tipo = 'CUBO' THEN 3
-						WHEN footerEnsayo.tipo = 'VIGAS' THEN 4
+						WHEN formatoCampo.tipo = 'CILINDRO' THEN 2
+						WHEN formatoCampo.tipo = 'CUBO' THEN 3
+						WHEN formatoCampo.tipo = 'VIGAS' THEN 4
 						ELSE 0
 					END AS tipoNo
 				FROM
+				    ordenDeTrabajo,
 					formatoCampo LEFT JOIN 
-					footerEnsayo ON formatoCampo_id = id_formatoCampo,
-					usuario
+					footerEnsayo ON formatoCampo_id = id_formatoCampo LEFT JOIN 
+					usuario ON encargado_id = id_usuario
 				WHERE
-					encargado_id = id_usuario AND
-					footerEnsayo.active = 1 AND 
-					formatoCampo.status > 0 AND
-					(
-					(footerEnsayo.ensayosAwaitingApproval > 0 AND
-					notVistoJLForEnsayoApproval > 0) OR
-					notVistoJLForBrigadaApproval > 0
-					) AND
-					usuario.laboratorio_id = 1QQ
+					id_ordenDeTrabajo = ordenDeTrabajo_id 
+					AND formatoCampo.status > 0 
+					AND footerEnsayo.ensayosAwaitingApproval > 0 
+					AND notVistoJLForEnsayoApproval = 0
+					AND ordenDeTrabajo.laboratorio_id = 1QQ
 				UNION
 				SELECT 
 					id_formatoRegistroRev AS id,
@@ -378,7 +706,8 @@ class footerEnsayo{
 				WHERE
 					id_ordenDeTrabajo = ordenDeTrabajo_id
 					AND laboratorio_id = 1QQ
-					AND notVistoJLForBrigadaApproval > 0
+					AND notVistoJLForBrigadaApproval = 0
+					AND jefaLabApproval_id IS NULL
 				",
 				array($laboratorio_id,$laboratorio_id),
 				"SELECT -- FooterEnsayo :: getAwaitingApproval : 1"

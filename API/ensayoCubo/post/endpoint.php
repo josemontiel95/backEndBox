@@ -25,7 +25,18 @@
 			$footer = new EnsayoCubo();
 			echo $footer->completeEnsayo($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ensayoCubo']);		
 		break;
-		
+		case 'completeEnsayoJL':
+			$footer = new EnsayoCubo();
+			echo $footer->completeEnsayoJL($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ensayoCubo']);		
+		break;
+		case 'editEnsayoJL':
+			$footer = new EnsayoCubo();
+			echo $footer->editEnsayoJL($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ensayoCubo']);
+		break;
+		case 'editEnsayo':
+			$footer = new EnsayoCubo();
+			echo $footer->editEnsayo($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ensayoCubo']);
+		break;
 	}
 	
 ?>

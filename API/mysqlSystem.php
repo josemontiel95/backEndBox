@@ -42,7 +42,9 @@ class MySQLSystem{
 		if($values['month']>10 || $values['month']<4){
 			$query="set time_zone = '-06:00'";
 			$result = mysqli_query($this->connection,$query);
-			
+			$query="SET @@lc_time_names = 'es_MX'";
+			$result = mysqli_query($this->connection,$query);
+
 		}else{
 			$query="set time_zone = '-05:00'";
 			$result = mysqli_query($this->connection,$query);

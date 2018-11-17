@@ -268,7 +268,11 @@ class Tecnicos_ordenDeTrabajo{
 		if($arr['error'] == 0){
 			$s= $dbS->qAll(
 				"SELECT
-			      	DAYNAME(createdON) AS dia,
+					CASE
+						WHEN DAYOFWEEK(createdON) = 4 THEN 'Miercoles'
+						WHEN DAYOFWEEK(createdON) = 7 THEN 'Sabado'
+						ELSE DAYNAME(createdON)
+					END AS dia,
 			      	MONTHNAME(createdON) AS mes,
 			      	YEAR(createdON) AS anio,
 					TIME(createdON) AS hora

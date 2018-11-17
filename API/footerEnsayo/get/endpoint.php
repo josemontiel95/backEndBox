@@ -16,33 +16,41 @@
 		case 'getFooterByID':
 			$footer = new footerEnsayo();
 			echo $footer->getFooterByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_footerEnsayo']);
-			break;
+		break;
 			
 		case 'getFooterByFormatoCampoID':
 			$footer = new footerEnsayo();
 			echo $footer->getFooterByFormatoCampoID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
-			break;
+		break;
 		case 'isTheWholeFamilyHereAndComplete':
 			$footer = new footerEnsayo();
 			echo $footer->isTheWholeFamilyHereAndComplete($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_footerEnsayo']);
-			break;
+		break;
 		
+		case 'getAwaitingApprovalSeen':
+			$footer = new footerEnsayo();
+			echo $footer->getAwaitingApprovalSeen($_GET['token'],$_GET['rol_usuario_id']);
+		break;
 		case 'getAwaitingApproval':
 			$footer = new footerEnsayo();
 			echo $footer->getAwaitingApproval($_GET['token'],$_GET['rol_usuario_id']);
-			break;
+		break;
 		case 'getAllFooterPendientes':
 			$footer = new footerEnsayo();
 			echo $footer->getAllFooterPendientes($_GET['token'],$_GET['rol_usuario_id']);
-			break;
+		break;
 		case 'ping':
 			$footer = new footerEnsayo();
 			echo $footer->ping();
-			break;
+		break;
 			
 		case 'ping2':
 			$footer = new footerEnsayo();
 			echo $footer->ping2($_GET['data']);
-			break;
+		break;
+		case 'generatePDFFinal':
+			$footer = new footerEnsayo();
+			echo $footer->generatePDFFinal($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo'],$_GET['id_ensayo']);		
+		break;
 	}
 ?>

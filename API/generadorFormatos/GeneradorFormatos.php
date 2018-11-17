@@ -107,8 +107,8 @@
 				//Obtenemos el id del usuario que solicita
 				$id_usuario = substr(decurl($token),10);
 				
-				$s= $dbS->qarrayA("
-				      	SELECT
+				$s= $dbS->qarrayA(
+					"	SELECT
 							laboratorio_id,						
 							CONCAT(nombre,' ',apellido) AS nombreRealizo,
 							firma AS firmaRealizo
@@ -124,12 +124,10 @@
 				if(!$dbS->didQuerydied){
 					if($s=="empty"){
 						$arr = array('id_usuario' => $id_usuario,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
-					}
-					else{
+					}else{
 						return $s;
 					}
-				}
-				else{
+				}else{
 						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
 				}
 			}
@@ -464,8 +462,8 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qarrayA("
-				      SELECT
+				$s= $dbS->qarrayA(
+					"SELECT
 				      	regNo,
 				      	obra.incertidumbre,
 				        obra,
@@ -605,8 +603,8 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qarrayA("
-				      	SELECT
+				$s= $dbS->qarrayA(
+					"SELECT
 				      		cliente.razonSocial,
 							obra.obra,
 							obra.localizacion AS obraLocalizacion,
@@ -676,8 +674,8 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qAll("
-			      	SELECT
+				$s= $dbS->qAll(
+					"SELECT
 			      		claveEspecimen,
 			      		registrosCampo.fecha AS fechaColado,
 			      		ensayoViga.fecha AS fechaEnsayo,
@@ -701,7 +699,7 @@
 						disApoyo,
 						disCarga,
 						carga,
-						ROUND (( ((ancho1 + ancho2)/2) * ( ((per1 + per2)/2) * ((per1 + per2)/2) ) ) )AS modRuptura,
+						mr AS modRuptura,
 						defectos,
 						ROUND(velAplicacionExp,6),
 						CONCAT(nombre,' ',apellido) AS realizo
@@ -1303,19 +1301,15 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qAll("
-				    	SELECT
+				$s= $dbS->qAll(
+					"SELECT
 				    		ensayoCubo.fecha AS fechaEnsaye,
 				    		claveEspecimen,
 				    		revObra,
 				    		CASE
-								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
-								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
 								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
-								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
 								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
-								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
 								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
 								ELSE 'Error, Contacta a soporte'
 							END AS diasEnsaye,
@@ -1328,7 +1322,6 @@
 							ROUND((carga/(l1*l2)),3) AS kg,
 							fprima,
 				    		ROUND((((carga/(l1*l2))/fprima)*100),3)  AS porcentResis,
-				    	
 							grupo,
 							registrosCampo.localizacion
 						FROM
@@ -1348,6 +1341,7 @@
 						WHERE
 							id_registrosCampo = ensayoCubo.registrosCampo_id AND
 							id_formatoCampo = ensayoCubo.formatoCampo_id AND 
+							ensayoCubo.status <> 0 AND
 							ensayoCubo.formatoCampo_id = 1QQ
 				      ",
 				      array($id_formatoCampo),
@@ -1376,21 +1370,17 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qAll("
-				    	SELECT
+				$s= $dbS->qAll(
+					"	SELECT
 				    		ensayoCilindro.fecha AS fechaEnsaye,
 				    		claveEspecimen,
 				    		revObra,
 				    		peso,
 				    		CASE
 								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
-								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
 								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
-								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
 								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
-								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
 								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
-								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
 								ELSE 'Error, Contacta a soporte'
 							END AS diasEnsaye,
 							ROUND (d1+d2)/2 AS diametro,
@@ -1403,7 +1393,6 @@
 				    		fprima,
 				    		ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100),3)  AS porcentResis,
 				    		falla,
-				    		
 							grupo,
 							registrosCampo.localizacion
 						FROM
@@ -1421,6 +1410,7 @@
 								ORDER BY id_systemstatus DESC LIMIT 1
 							)AS var_system
 						WHERE
+							ensayoCilindro.status <> 0 AND
 							id_registrosCampo = ensayoCilindro.registrosCampo_id AND
 							id_formatoCampo = ensayoCilindro.formatoCampo_id AND 
 							ensayoCilindro.formatoCampo_id = 1QQ
@@ -1450,33 +1440,28 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qAll("
-				    	SELECT
+				$s= $dbS->qAll(
+					"	SELECT
 							claveEspecimen,
 							registrosCampo.fecha,
 							CASE
-								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
-								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
-								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
-								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
-								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
-								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
-								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
-								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
+								WHEN MOD(diasEnsaye,3) = 1 THEN prueba1  
+								WHEN MOD(diasEnsaye,3) = 2 THEN prueba2  
+								WHEN MOD(diasEnsaye,3) = 0 THEN prueba3  
 								ELSE 'Error, Contacta a soporte'
 							END AS diasEnsaye,
 							CASE
-								WHEN lijado IS NULL OR lijado = 'N/A' THEN 'CUERO'  
-								WHEN cuero IS NULL OR cuero = 'N/A' THEN 'LIJADO'
+								WHEN lijado = 'SI' THEN 'LIJADO'  
+								WHEN cuero = 'SI' THEN 'CUERO'
 								ELSE 'ERROR'
 							END AS puntosApoyo,
 							condiciones,
-							(ancho1 + ancho2)/2 AS anchoPromedio,
-							(per1 + per2)/2 AS perPromedio,
+							ROUND((ancho1 + ancho2)/2,3) AS anchoPromedio,
+							ROUND((per1 + per2)/2,3) AS perPromedio,
 							disApoyo,
 							carga,
-							( ((ancho1 + ancho2)/2) * ( ((per1 + per2)/2) * ((per1 + per2)/2) ) ) AS modRuptura,
-							( ((ancho1 + ancho2)/2) * ( ((per1 + per2)/2) * ((per1 + per2)/2) ) )/ensayo_def_MPa AS modRuptura2,
+							mr AS modRuptura,
+							mr/ensayo_def_MPa AS modRuptura2,
 							defectos
 						FROM
 							ensayoViga,
@@ -1493,6 +1478,7 @@
 								ORDER BY id_systemstatus DESC LIMIT 1
 							)AS var_system
 						WHERE
+							ensayoViga.status <> 0 AND
 							id_registrosCampo = ensayoViga.registrosCampo_id AND
 							id_formatoCampo = ensayoViga.formatoCampo_id AND 
 							ensayoViga.formatoCampo_id = 1QQ 

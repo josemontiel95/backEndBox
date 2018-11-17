@@ -371,6 +371,213 @@ class registrosCampo{
 
 	}
 	
+	public function insertRegistroJefaLaboratorio($token,$rol_usuario_id,$campo,$valor,$id_registrosCampo){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
+		if($arr['error'] == 0){
+			$info = $dbS->qarrayA(
+				"SELECT
+					rc.formatoCampo_id AS formatoCampo_id,
+					rc.grupo AS grupo
+				FROM
+					registrosCampo AS rc
+				WHERE
+					rc.id_registrosCampo = 1QQ
+				"
+				,
+				array($id_registrosCampo),
+				"SELECT -- registrosCampo :: insertRegistroJefeBrigada"
+			);
+
+			if($dbS->didQuerydied || $info == "empty"){
+				$dbS->rollbackTransaction();
+				$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 9);
+				return json_encode($arr);
+			}
+			$isGroupProperty;
+			switch ($campo) {
+				case '1':
+					$campo = 'herramienta_id';
+					$isGroupProperty=false;
+					break;
+				case '2':
+					$campo = 'fprima';
+					$isGroupProperty=true;
+					break;
+				case '3':
+					$campo = 'revObra';
+					$isGroupProperty=true;
+					break;
+				case '4':
+					$campo = 'tamAgregado';
+					$isGroupProperty=true;
+					break;
+				case '5':
+					$campo = 'volumen';
+					$isGroupProperty=true;
+					break;
+				case '6':
+					$campo = 'diasEnsaye';
+					$isGroupProperty=false;
+					break;
+				case '7':
+					$campo = 'unidad';
+					$isGroupProperty=true;
+					break;
+				case '8':
+					$campo = 'tempMuestreo';
+					$isGroupProperty=true;
+					break;
+				case '9':
+					$campo = 'tempRecoleccion';
+					$isGroupProperty=true;
+					break;
+				case '10':
+					$campo = 'localizacion';
+					$isGroupProperty=true;
+					break;
+				case '11':
+					$campo = 'horaMuestreo';
+					$isGroupProperty=true;
+					break;
+				case '12':
+					$campo = 'status';
+					$isGroupProperty=true;
+					break;
+				case '13':
+					$campo = 'revProyecto';
+					$isGroupProperty=true;
+					break;
+			}
+			if($campo == 'herramienta_id'){
+				$herramienta = $dbS->qarrayA(
+									"
+										SELECT
+											id_herramienta,
+											placas
+										FROM
+											herramientas
+										WHERE
+											id_herramienta = 1QQ
+									"
+									,
+									array($valor),
+									"SELECT"
+								);
+				if(!$dbS->didQuerydied && $herramienta != "empty"){
+					$a = $dbS->qarrayA(
+								"
+									SELECT
+									id_obra,
+									revenimiento, 
+									prefijo,
+									registrosCampo.consecutivoProbeta,
+									MONTH(NOW()) AS mes,
+									DAY(NOW()) AS dia
+									FROM
+										ordenDeTrabajo,
+										obra,
+										formatoCampo,
+										registrosCampo
+									WHERE
+										id_obra = obra_id AND
+										id_ordenDeTrabajo =  formatoCampo.ordenDeTrabajo_id AND
+										id_formatoCampo = formatoCampo_id AND
+										id_registrosCampo = 1QQ
+								"
+								,
+								array($id_registrosCampo),
+								"SELECT -- registrosCampo :: insertRegistroJefeBrigada"
+							);
+					if(!$dbS->didQuerydied && $herramienta != "empty"){
+						$mes = $this->numberToRomanRepresentation($a['mes']);
+						$placa;
+						if($valor<1000){
+							$placa = '@UnitIO@';
+						}else{
+							$placa = $herramienta['placas'];
+						}
+						$new_clave = $a['prefijo']."-".$mes."-".$a['dia']."-".$placa."-".$a['consecutivoProbeta'];
+						$dbS->squery(
+							"UPDATE
+								registrosCampo
+							SET
+								claveEspecimen = '1QQ',
+								1QQ = '1QQ'
+							WHERE
+								id_registrosCampo = 1QQ AND
+								status > 1
+
+						",array($new_clave,$campo,$valor,$id_registrosCampo),
+						"UPDATE -- registrosCampo :: insertRegistroJefeBrigada");
+						if(!$dbS->didQuerydied){
+							$dbS->commitTransaction();
+							$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => '¡Exito en la inserccion de un registro!','clave'=>$new_clave,'error' => 0);
+							return json_encode($arr);
+						}
+						else{
+							$dbS->rollbackTransaction();
+							$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 8);
+							return json_encode($arr);
+						}
+						
+					}
+					else{
+						$dbS->rollbackTransaction();
+						$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 7);
+						return json_encode($arr);
+					}
+				}
+				else{
+					$dbS->rollbackTransaction();
+					$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 6);
+					return json_encode($arr);
+				}	
+			}
+			if($isGroupProperty){
+				$dbS->squery("
+					UPDATE
+						registrosCampo
+					SET
+						1QQ = '1QQ'
+					WHERE
+						formatoCampo_id = 1QQ AND 
+						grupo = 1QQ AND
+						status > 1
+
+					",array($campo,$valor,$info['formatoCampo_id'],$info['grupo']),
+					"UPDATE -- registrosCampo :: insertRegistroJefeBrigada"
+				);
+			}else{
+				$dbS->squery("
+					UPDATE
+						registrosCampo
+					SET
+						1QQ = '1QQ'
+					WHERE
+						id_registrosCampo = 1QQ AND
+						status > 1
+
+					",array($campo,$valor,$id_registrosCampo),
+					"UPDATE -- registrosCampo :: insertRegistroJefeBrigada"
+				);
+			}
+			
+			if(!$dbS->didQuerydied){
+				$dbS->commitTransaction();
+				$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => '¡Exito en la inserccion de un registro!','error' => 0);
+				return json_encode($arr);
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 5);
+				return json_encode($arr);
+			}
+		}
+		return json_encode($arr);
+	}
+
 	public function insertRegistroJefeBrigada($token,$rol_usuario_id,$campo,$valor,$id_registrosCampo){
 		global $dbS;
 		$usuario = new Usuario();
@@ -704,8 +911,7 @@ class registrosCampo{
 				return json_encode($arr);
 			}
 			$tipo = $dbS->qarrayA(
-				"
-					SELECT
+				"   SELECT
 						tipo
 					FROM
 						formatoCampo
@@ -721,8 +927,8 @@ class registrosCampo{
 				return json_encode($arr);
 			}
 			if($tipo['tipo']=="VIGAS"){
-				$s= $dbS->qAll("
-				      SELECT
+				$s= $dbS->qAll(
+					"SELECT
 				      	rc.id_registrosCampo,
 						rc.formatoCampo_id,
 				        rc.claveEspecimen,
@@ -744,9 +950,33 @@ class registrosCampo{
 							WHEN MOD(rc.diasEnsaye,3) = 2 THEN fc.prueba2  
 							WHEN MOD(rc.diasEnsaye,3) = 0 THEN fc.prueba3  
 							ELSE 'Error, Contacta a soporte'
-						END AS diasEnsaye     
+						END AS diasEnsaye,
+						rc.footerEnsayo_id,
+						id_ensayoViga AS id_ensayo,
+						IF (id_ensayoViga IS NOT NULL, 1,0) AS ensayadoNo,
+						IF (id_ensayoViga IS NOT NULL, 'Si','No') AS ensayado,
+						fc.tipo AS tipo,
+						ensayoViga.status AS statusEnsayo,
+						pdfFinal,
+						jefaLabApproval_id,
+						CASE 
+							WHEN ensayoViga.status IS NULL THEN 'Ensayo Pendiente'
+							WHEN ensayoViga.status = 0 THEN 'Ensayo Pendiente'
+							WHEN ensayoViga.status <> 0 AND pdfFinal IS NULL THEN 'Ensayo Terminado'
+							WHEN ensayoViga.status <> 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NULL THEN 'PDF Generado'
+							WHEN ensayoViga.status <> 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NOT NULL THEN 'Autorizado'
+							ELSE 'Error, contacte a soporte'
+						END AS statusGeneral,
+						CASE 
+							WHEN ensayoViga.status IS NULL THEN 0
+							WHEN ensayoViga.status = 0 THEN 0
+							WHEN ensayoViga.status <> 0 AND pdfFinal IS NULL THEN 0
+							WHEN ensayoViga.status <> 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NULL THEN 0
+							WHEN ensayoViga.status <> 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NOT NULL THEN 1
+							ELSE -1
+						END AS statusGeneralNo
 					FROM 
-				      	registrosCampo AS rc, 
+				      	registrosCampo AS rc LEFT JOIN ensayoViga ON registrosCampo_id = id_registrosCampo,
 				      	formatoCampo AS fc
 				      WHERE 
 				      	rc.formatoCampo_id= fc.id_formatoCampo AND
@@ -756,9 +986,9 @@ class registrosCampo{
 					array($id_formatoCampo),
 					"SELECT"
 			    );
-			}else{
-				$s= $dbS->qAll("
-				      SELECT
+			}else if($tipo['tipo']=="CILINDRO"){
+				$s= $dbS->qAll(
+					" SELECT
 				      	rc.id_registrosCampo,
 						rc.formatoCampo_id,
 				        rc.claveEspecimen,
@@ -781,9 +1011,33 @@ class registrosCampo{
 							WHEN MOD(rc.diasEnsaye,4) = 3 THEN fc.prueba3  
 							WHEN MOD(rc.diasEnsaye,4) = 0 THEN fc.prueba4  
 							ELSE 'Error, Contacta a soporte'
-						END AS diasEnsaye     
+						END AS diasEnsaye,
+						rc.footerEnsayo_id,
+						id_ensayoCilindro AS id_ensayo,
+						IF (id_ensayoCilindro IS NOT NULL, 1,0) AS ensayadoNo,
+						IF (id_ensayoCilindro IS NOT NULL, 'Si','No') AS ensayado,
+						fc.tipo AS tipo,
+						ensayoCilindro.status AS statusEnsayo,
+						pdfFinal,
+						jefaLabApproval_id,
+						CASE 
+							WHEN ensayoCilindro.status IS NULL THEN 'Ensayo Pendiente'
+							WHEN ensayoCilindro.status = 0 THEN 'Ensayo Pendiente'
+							WHEN ensayoCilindro.status <> 0 AND pdfFinal IS NULL THEN 'Ensayo Terminado'
+							WHEN ensayoCilindro.status <> 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NULL THEN 'PDF Generado'
+							WHEN ensayoCilindro.status <> 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NOT NULL THEN 'Autorizado'
+							ELSE 'Error, contacte a soporte'
+						END AS statusGeneral,
+						CASE 
+							WHEN ensayoCilindro.status IS NULL THEN 0
+							WHEN ensayoCilindro.status = 0 THEN 0
+							WHEN ensayoCilindro.status <> 0 AND pdfFinal IS NULL THEN 0
+							WHEN ensayoCilindro.status <> 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NULL THEN 0
+							WHEN ensayoCilindro.status <> 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NOT NULL THEN 1
+							ELSE -1
+						END AS statusGeneralNo
 					FROM 
-				      	registrosCampo AS rc, 
+						registrosCampo AS rc LEFT JOIN ensayoCilindro ON registrosCampo_id = id_registrosCampo,
 				      	formatoCampo AS fc
 				      WHERE 
 				      	rc.formatoCampo_id= fc.id_formatoCampo AND
@@ -793,8 +1047,71 @@ class registrosCampo{
 					array($id_formatoCampo),
 					"SELECT"
 			    );
+			}else if($tipo['tipo']=="CUBO"){
+				$s= $dbS->qAll(
+					" SELECT
+				      	rc.id_registrosCampo,
+						rc.formatoCampo_id,
+				        rc.claveEspecimen,
+						rc.fecha,
+						rc.fprima,
+						rc.revProyecto,
+						rc.revObra,
+						rc.tamagregado,
+						rc.volumen,
+						rc.unidad,
+						rc.horaMuestreo,
+						rc.tempMuestreo,
+						rc.tempRecoleccion,
+						rc.localizacion,
+						rc.status,
+						rc.herramienta_id,
+						CASE
+							WHEN MOD(rc.diasEnsaye,4) = 1 THEN fc.prueba1  
+							WHEN MOD(rc.diasEnsaye,4) = 2 THEN fc.prueba2  
+							WHEN MOD(rc.diasEnsaye,4) = 3 THEN fc.prueba3  
+							WHEN MOD(rc.diasEnsaye,4) = 0 THEN fc.prueba4  
+							ELSE 'Error, Contacta a soporte'
+						END AS diasEnsaye,
+						rc.footerEnsayo_id,
+						id_ensayoCubo AS id_ensayo,
+						IF (id_ensayoCubo IS NOT NULL, 1,0) AS ensayadoNo,
+						IF (id_ensayoCubo IS NOT NULL, 'Si','No') AS ensayado,
+						fc.tipo AS tipo,
+						ensayoCubo.status AS statusEnsayo,
+						pdfFinal,
+						jefaLabApproval_id,
+						CASE 
+							WHEN ensayoCubo.status IS NULL THEN 'Ensayo Pendiente'
+							WHEN ensayoCubo.status = 0 THEN 'Ensayo Pendiente'
+							WHEN ensayoCubo.status <> 0 AND pdfFinal IS NULL THEN 'Ensayo Terminado'
+							WHEN ensayoCubo.status <> 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NULL THEN 'PDF Generado'
+							WHEN ensayoCubo.status <> 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NOT NULL THEN 'Autorizado'
+							ELSE 'Error, contacte a soporte'
+						END AS statusGeneral,
+						CASE 
+							WHEN ensayoCubo.status IS NULL THEN 0
+							WHEN ensayoCubo.status = 0 THEN 0
+							WHEN ensayoCubo.status = 0 AND pdfFinal IS NULL THEN 0
+							WHEN ensayoCubo.status = 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NULL THEN 0
+							WHEN ensayoCubo.status = 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NOT NULL THEN 1
+							ELSE -1
+						END AS statusGeneralNo
+					FROM 
+						registrosCampo AS rc LEFT JOIN ensayoCubo ON registrosCampo_id = id_registrosCampo,
+				      	formatoCampo AS fc
+				      WHERE 
+				      	rc.formatoCampo_id= fc.id_formatoCampo AND
+				      	rc.active = 1 AND
+				      	rc.formatoCampo_id = 1QQ
+				      ",
+					array($id_formatoCampo),
+					"SELECT"
+			    );
+			}else{
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getAllRegistrosByID , verifica tus datos y vuelve a intentarlo','error' => 20);
+				return json_encode($arr);
 			}
-			
 			
 			if(!$dbS->didQuerydied){
 				if($s=="empty"){

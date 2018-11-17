@@ -103,6 +103,8 @@ CREATE TABLE cliente(
 )ENGINE=INNODB;
 ALTER TABLE cliente AUTO_INCREMENT=1001;
 
+ALTER TABLE cliente MODIFY email VARCHAR(100);
+
 CREATE TABLE concretera(
 	id_concretera INT(11) NOT NULL AUTO_INCREMENT,
 	concretera VARCHAR(40) NOT NULL,
@@ -178,6 +180,10 @@ ADD COLUMN incertidumbreVigas DOUBLE;
 
 ALTER TABLE obra
 ADD COLUMN correo_alterno VARCHAR(100) NOT NULL;
+
+ALTER TABLE obra MODIFY correo_residente VARCHAR(100);
+
+ALTER TABLE obra MODIFY obra VARCHAR(200);
 
 
 INSERT INTO obra(obra,prefijo,fechaDeCreacion,descripcion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento,incertidumbre) 
@@ -558,6 +564,8 @@ ADD COLUMN preliminar VARCHAR(200);
 
 ALTER TABLE formatoCampo ADD COLUMN registrosNo INT NOT NULL DEFAULT 0;
 
+ALTER TABLE formatoCampo ADD COLUMN notVistoJLForBrigadaApproval INT DEFAULT 0;
+
 
 CREATE TABLE registrosCampo(
 	id_registrosCampo INT(11) NOT NULL AUTO_INCREMENT,
@@ -659,6 +667,9 @@ ADD COLUMN preliminar VARCHAR(200);
 ALTER TABLE formatoRegistroRev ADD jefaLabApproval_id INT(11) DEFAULT NULL;
 
 ALTER TABLE formatoRegistroRev ADD CONSTRAINT revJefaLabApproval_id FOREIGN KEY (jefaLabApproval_id) REFERENCES usuario(id_usuario) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE formatoRegistroRev ADD COLUMN notVistoJLForBrigadaApproval INT DEFAULT 0;
+
+ALTER TABLE formatoRegistroRev ADD COLUMN jefaLabApproval_id INT DEFAULT NULL;
 
 
 ALTER TABLE formatoRegistroRev 
@@ -821,6 +832,7 @@ ALTER TABLE ensayoCilindro ADD jefaLabApproval_id INT(11) DEFAULT NULL;
 
 ALTER TABLE ensayoCilindro ADD CONSTRAINT cilindroJefaLabApproval_id FOREIGN KEY (jefaLabApproval_id) REFERENCES usuario(id_usuario) ON DELETE SET NULL ON UPDATE CASCADE;
 
+ALTER TABLE ensayoCilindro ADD COLUMN pdfFinal VARCHAR(200);
 
 
 CREATE TABLE ensayoCubo(
@@ -869,6 +881,7 @@ ALTER TABLE ensayoCubo ADD jefaLabApproval_id INT(11) DEFAULT NULL;
 
 ALTER TABLE ensayoCubo ADD CONSTRAINT cuboJefaLabApproval_id FOREIGN KEY (jefaLabApproval_id) REFERENCES usuario(id_usuario) ON DELETE SET NULL ON UPDATE CASCADE;
 
+ALTER TABLE ensayoCubo ADD COLUMN pdfFinal VARCHAR(200);
 
 
 CREATE TABLE ensayoViga(
@@ -934,6 +947,7 @@ ALTER TABLE ensayoViga ADD jefaLabApproval_id INT(11) DEFAULT NULL;
 
 ALTER TABLE ensayoViga ADD CONSTRAINT jefaLabApproval_id FOREIGN KEY (jefaLabApproval_id) REFERENCES usuario(id_usuario) ON DELETE SET NULL ON UPDATE CASCADE;
 
+ALTER TABLE ensayoViga ADD COLUMN pdfFinal VARCHAR(200);
 
 
 
@@ -989,7 +1003,6 @@ ALTER TABLE footerEnsayo ADD COLUMN preliminarGabs VARCHAR(200);
 ALTER TABLE footerEnsayo ADD COLUMN ensayosAwaitingApproval INT DEFAULT 0;
 
 ALTER TABLE footerEnsayo ADD COLUMN notVistoJLForEnsayoApproval INT DEFAULT 0;
-ALTER TABLE footerEnsayo ADD COLUMN notVistoJLForBrigadaApproval INT DEFAULT 0;
 
 
 

@@ -32,6 +32,11 @@
 			$registrocampo = new registrosCampo();
 			echo $registrocampo->insertRegistroJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['campo'],$_POST['valor'],$_POST['id_registrosCampo']);
 		break;
+		
+		case 'insertRegistroJefaLaboratorio':
+			$registrocampo = new registrosCampo();
+			echo $registrocampo->insertRegistroJefaLaboratorio($_POST['token'],$_POST['rol_usuario_id'],$_POST['campo'],$_POST['valor'],$_POST['id_registrosCampo']);
+		break;
 		case 'updateFooter':
 			$formatocampo = new formatoCampo();
 			echo $formatocampo->updateFooter($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoCampo'],$_POST['observaciones'],$_POST['cono_id'],$_POST['varilla_id'],$_POST['flexometro_id'],$_POST['termometro_id'],$_POST['tipo'],$_POST['tipoConcreto'],$_POST['prueba1'],$_POST['prueba2'],$_POST['prueba3'],$_POST['prueba4']);

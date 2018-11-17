@@ -45,8 +45,8 @@ class FormatoRegistroRev{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$s= $dbS->qarrayA("
-			      SELECT 
+			$s= $dbS->qarrayA(
+				" SELECT 
 			      	COUNT(*) As No
 			      FROM 
 			      	registrosRev

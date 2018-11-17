@@ -26,6 +26,18 @@
 			$footer = new EnsayoCilindro();
 			echo $footer->completeEnsayo($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ensayoCilindro']);		
 		break;
+		case 'completeEnsayoJL':
+			$footer = new EnsayoCilindro();
+			echo $footer->completeEnsayoJL($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ensayoCilindro']);		
+		break;
+		case 'editEnsayoJL':
+			$footer = new EnsayoCilindro();
+			echo $footer->editEnsayoJL($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ensayoCilindro']);
+		break;
+		case 'editEnsayo':
+			$footer = new EnsayoCilindro();
+			echo $footer->editEnsayo($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_ensayoCilindro']);
+		break;
 		
 	}
 	

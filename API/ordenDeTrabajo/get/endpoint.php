@@ -45,5 +45,9 @@
 			$herra = new ordenDeTrabajo();
 			echo $herra->getAllHerraAvailable($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		case 'ping':
+			$herra = new ordenDeTrabajo();
+			echo $herra->ping($_GET['data']);
+		break;
 	}
 ?>

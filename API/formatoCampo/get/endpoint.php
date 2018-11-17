@@ -33,6 +33,11 @@
 			$formato = new formatoCampo();
 			echo $formato->generatePDF($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
 		break;
+		
+		case 'sentMail':
+			$formato = new formatoCampo();
+			echo $formato->sentMail($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
+		break;
 		case 'getRegistrosByID':
 			$registro = new registrosCampo();
 			echo $registro->getRegistrosByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_registrosCampo']);
