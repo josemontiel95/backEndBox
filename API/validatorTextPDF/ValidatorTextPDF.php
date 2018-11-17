@@ -116,6 +116,20 @@
 			
 		}
 
+		function validatedCamposFinalCubos($campoFront,$string){
+			//Instanciamos el objeto
+			$pdf = new InformeCubos();
+			$pdf->AddPage();
+
+			//Generamos las celdas de los campos
+			$pdf->generateCellsCampos();
+
+		
+			print_r($pdf->getCellsTables());
+
+
+		}
+
 		function truncaCadena($tam_font,$string,$tam){
 				$pdf = new fpdf();
 				$pdf->AddPage();

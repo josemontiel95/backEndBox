@@ -17,6 +17,10 @@
 			$validator = new ValidatorTextPDF();
 			echo $validator->validatedInfo($_GET['campo'],$_GET['string']);
 			break;
+		case 'validatedCamposFinalCubos':
+			$validator = new ValidatorTextPDF();
+			echo $validator->validatedCamposFinalCubos($_GET['campo'],$_GET['string']);
+			break;
 		
 	}
 ?>
