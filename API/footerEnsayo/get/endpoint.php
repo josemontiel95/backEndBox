@@ -27,6 +27,10 @@
 			echo $footer->isTheWholeFamilyHereAndComplete($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_footerEnsayo']);
 		break;
 		
+		case 'getAwaitingApprovalSeen':
+			$footer = new footerEnsayo();
+			echo $footer->getAwaitingApprovalSeen($_GET['token'],$_GET['rol_usuario_id']);
+		break;
 		case 'getAwaitingApproval':
 			$footer = new footerEnsayo();
 			echo $footer->getAwaitingApproval($_GET['token'],$_GET['rol_usuario_id']);

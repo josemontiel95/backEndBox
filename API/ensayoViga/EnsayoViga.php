@@ -691,7 +691,7 @@ class EnsayoViga{
 					$promedioAncho = ($variables['ancho1'] + $variables['ancho2'])/2;
 					$promedioPer = ($variables['per1'] + $variables['per2'])/2;
 					$area = ($promedioAncho * ($promedioPer * $promedioPer));
-					$prom = $variables['l1']*$variables['l2']*$variables['l3'];
+					$prom = ($variables['l1']*$variables['l2']*$variables['l3'])/3;
 					if($area != 0){
 						if($variables['posFractura'] == 1){ // Dentro del Claro
 							$modulo = number_format(($variables['carga']*$variables['disApoyo'])/$area,2);

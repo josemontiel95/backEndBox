@@ -183,6 +183,8 @@ ADD COLUMN correo_alterno VARCHAR(100) NOT NULL;
 
 ALTER TABLE obra MODIFY correo_residente VARCHAR(100);
 
+ALTER TABLE obra MODIFY obra VARCHAR(200);
+
 
 INSERT INTO obra(obra,prefijo,fechaDeCreacion,descripcion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento,incertidumbre) 
 VALUES("obra1","prefijo1","fechaDeCreacion1","descripcion1","localizacion1","nombre_residente1",1234,"correo_residente1",1001,1001,1,123,123);
@@ -667,6 +669,8 @@ ALTER TABLE formatoRegistroRev ADD jefaLabApproval_id INT(11) DEFAULT NULL;
 ALTER TABLE formatoRegistroRev ADD CONSTRAINT revJefaLabApproval_id FOREIGN KEY (jefaLabApproval_id) REFERENCES usuario(id_usuario) ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE formatoRegistroRev ADD COLUMN notVistoJLForBrigadaApproval INT DEFAULT 0;
 
+ALTER TABLE formatoRegistroRev ADD COLUMN jefaLabApproval_id INT DEFAULT NULL;
+
 
 ALTER TABLE formatoRegistroRev 
 ADD COLUMN preliminar VARCHAR(200);
@@ -828,6 +832,7 @@ ALTER TABLE ensayoCilindro ADD jefaLabApproval_id INT(11) DEFAULT NULL;
 
 ALTER TABLE ensayoCilindro ADD CONSTRAINT cilindroJefaLabApproval_id FOREIGN KEY (jefaLabApproval_id) REFERENCES usuario(id_usuario) ON DELETE SET NULL ON UPDATE CASCADE;
 
+ALTER TABLE ensayoCilindro ADD COLUMN pdfFinal VARCHAR(200);
 
 
 CREATE TABLE ensayoCubo(
@@ -876,6 +881,7 @@ ALTER TABLE ensayoCubo ADD jefaLabApproval_id INT(11) DEFAULT NULL;
 
 ALTER TABLE ensayoCubo ADD CONSTRAINT cuboJefaLabApproval_id FOREIGN KEY (jefaLabApproval_id) REFERENCES usuario(id_usuario) ON DELETE SET NULL ON UPDATE CASCADE;
 
+ALTER TABLE ensayoCubo ADD COLUMN pdfFinal VARCHAR(200);
 
 
 CREATE TABLE ensayoViga(
@@ -941,6 +947,7 @@ ALTER TABLE ensayoViga ADD jefaLabApproval_id INT(11) DEFAULT NULL;
 
 ALTER TABLE ensayoViga ADD CONSTRAINT jefaLabApproval_id FOREIGN KEY (jefaLabApproval_id) REFERENCES usuario(id_usuario) ON DELETE SET NULL ON UPDATE CASCADE;
 
+ALTER TABLE ensayoViga ADD COLUMN pdfFinal VARCHAR(200);
 
 
 

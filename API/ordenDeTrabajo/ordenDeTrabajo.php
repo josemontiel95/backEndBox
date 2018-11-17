@@ -14,6 +14,10 @@ class ordenDeTrabajo{
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
+	public function ping($data){
+		return $data;
+	}
+
 	public function getAllFormatosOLD($token,$rol_usuario_id,$id_ordenDeTrabajo){
 		global $dbS;
 		$usuario = new Usuario();
@@ -86,62 +90,82 @@ class ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		
 		if($arr['error'] == 0){
+			
 			$arrayCCH = $dbS->qAll(
-				"SELECT
-					id_formatoCampo AS id,
-					footerEnsayo.id_footerEnsayo AS id_footerEnsayo,
-					CONCAT(nombre,' ',apellido) AS nombre,
-					footerEnsayo.tipo AS tipo,
-					ensayosAwaitingApproval,
-					notVistoJLForBrigadaApproval,
-					CASE
-						WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval = 0      THEN 'Revisar cambios JB'
-						WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval IS NULL  THEN 'Revisar cambios JB'
-						WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval > 0      THEN 'Autorizar y generar PDF'
-						WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval > 0      THEN 'Autorizar y generar PDF'
-						WHEN formatoCampo.status = 0       THEN 'En edicion JB'
-						ELSE 'Error, contacte a soporte'
-					END AS accReq,
-					informeNo AS informeNo,
-					ordenDeTrabajo_id,
-					CASE
-						WHEN formatoCampo.tipo = 'CILINDRO' THEN 2
-						WHEN formatoCampo.tipo = 'CUBO' THEN 3
-						WHEN formatoCampo.tipo = 'VIGAS' THEN 4
-						ELSE 0
-					END AS tipoNo,
-					formatoCampo.status 
-				FROM
-					formatoCampo LEFT JOIN 
-					footerEnsayo ON formatoCampo_id = id_formatoCampo LEFT JOIN 
-					usuario ON encargado_id = id_usuario
-				WHERE
-					ordenDeTrabajo_id = 1QQ
-				UNION
-				SELECT 
-					id_formatoRegistroRev AS id,
-					'N.A.' AS id_footerEnsayo,
-					'N.A.' AS nombre,
-					'REVENIMIENTO' AS tipo,
-					'N.A.' AS ensayosAwaitingApproval,
-					notVistoJLForBrigadaApproval,
-					IF(jefaLabApproval_id IS NOT NULL, 'Completado', 'Autorizar y generar PDF') AS accReq,
-					regNo AS informeNo,
-					ordenDeTrabajo_id,
-					'1' AS tipoNo,
-					formatoRegistroRev.status
-				FROM
-					formatoRegistroRev,
-					ordenDeTrabajo
-				WHERE
-					id_ordenDeTrabajo = ordenDeTrabajo_id
-					AND ordenDeTrabajo_id = 1QQ
-					",
-					array($id_ordenDeTrabajo,$id_ordenDeTrabajo),
-					"SELECT -- ordenDeTrabajo :: getAllFormatos : 1"
-				);
-
+				"SELECT 
+					* 
+				FROM 
+				(
+					SELECT
+						id_formatoCampo AS id,
+						footerEnsayo.id_footerEnsayo AS id_footerEnsayo,
+						CONCAT(nombre,' ',apellido) AS nombre,
+						formatoCampo.tipo AS tipo,
+						CASE
+							WHEN DAYOFWEEK(formatoCampo.createdON) = 4 THEN CONCAT('miercoles ', DATE(formatoCampo.createdON))
+							WHEN DAYOFWEEK(formatoCampo.createdON) = 7 THEN CONCAT('sabado ', DATE(formatoCampo.createdON))
+							ELSE  CONCAT(DAYNAME(formatoCampo.createdON), ' ', DATE(formatoCampo.createdON))
+						END AS fecha,
+						ensayosAwaitingApproval,
+						notVistoJLForBrigadaApproval,
+						CASE
+							WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval = 0      THEN 'Revisar cambios JB'
+							WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval IS NULL  THEN 'Revisar cambios JB'
+							WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval > 0      THEN 'Autorizar y generar PDF'
+							WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval > 0      THEN 'Autorizar y generar PDF'
+							WHEN formatoCampo.status = 0       THEN 'En edicion JB'
+							ELSE 'Error, contacte a soporte'
+						END AS accReq,
+						informeNo AS informeNo,
+						ordenDeTrabajo_id,
+						CASE
+							WHEN formatoCampo.tipo = 'CILINDRO' THEN 2
+							WHEN formatoCampo.tipo = 'CUBO' THEN 3
+							WHEN formatoCampo.tipo = 'VIGAS' THEN 4
+							ELSE 0
+						END AS tipoNo,
+						formatoCampo.status,
+						formatoCampo.createdON AS createdON
+					FROM
+						formatoCampo LEFT JOIN 
+						footerEnsayo ON formatoCampo_id = id_formatoCampo LEFT JOIN 
+						usuario ON encargado_id = id_usuario
+					WHERE
+						ordenDeTrabajo_id = 1QQ
+					UNION
+					SELECT 
+						id_formatoRegistroRev AS id,
+						'N.A.' AS id_footerEnsayo,
+						'N.A.' AS nombre,
+						'REVENIMIENTO' AS tipo,
+						CASE
+							WHEN DAYOFWEEK(formatoRegistroRev.createdON) = 4 THEN CONCAT('Miercoles ', DATE(formatoRegistroRev.createdON))
+							WHEN DAYOFWEEK(formatoRegistroRev.createdON) = 7 THEN CONCAT('Sabado ', DATE(formatoRegistroRev.createdON))
+							ELSE  CONCAT(DAYNAME(formatoRegistroRev.createdON), ' ', DATE(formatoRegistroRev.createdON))
+						END AS fecha,
+						'N.A.' AS ensayosAwaitingApproval,
+						notVistoJLForBrigadaApproval,
+						IF(jefaLabApproval_id IS NOT NULL, 'Completado', 'Autorizar y generar PDF') AS accReq,
+						regNo AS informeNo,
+						ordenDeTrabajo_id,
+						'1' AS tipoNo,
+						formatoRegistroRev.status,
+						formatoRegistroRev.createdON AS createdON
+					FROM
+						formatoRegistroRev,
+						ordenDeTrabajo
+					WHERE
+						id_ordenDeTrabajo = ordenDeTrabajo_id
+						AND ordenDeTrabajo_id = 1QQ
+					) AS T1
+				ORDER BY createdON DESC
+				",
+				array($id_ordenDeTrabajo,$id_ordenDeTrabajo),
+				"SELECT -- ordenDeTrabajo :: getAllFormatos : 1"
+			);
+				
 			if(!$dbS->didQuerydied){
 				return json_encode($arrayCCH);
 			}
