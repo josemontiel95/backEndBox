@@ -124,8 +124,9 @@
 			//Generamos las celdas de los campos
 			$pdf->generateCellsCampos();
 
-		
 			print_r($pdf->getCellsTables());
+
+			
 
 
 		}
