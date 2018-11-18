@@ -17,6 +17,165 @@ class FormatoRegistroRev{
 
 	private $wc = '/1QQ/';
 
+	public function autEnsayoForAdmin($token,$rol_usuario_id,$id_formatoRegistroRev){
+		global $dbS;
+
+		$usuario = new Usuario();
+		$mailer = new Mailer();
+
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$'id_usuario'=$usuario->id_usuario;
+		if($arr['error'] == 0){
+			$dbS->beginTransaction();	
+			$count = $dbS->qvalue(
+				"	SELECT
+						COUNT(*) AS No
+					FROM
+						registrosRev
+					WHERE 
+						formatoRegistroRev_id = 1QQ
+						AND status IN (0,3)
+				",array($id_formatoRegistroRev,),
+				"SELECT -- FooterEnsayo :: generatePDFFinal : 1"
+			);
+			if($dbS->didQuerydied || ($var_system == "empty")){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato','error' => 20);
+				return json_encode($arr);
+			}	
+			if($count != 0){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato','error' => 20);
+				return json_encode($arr);
+			}						
+			$dbS->squery(
+				"UPDATE
+					formatoRegistroRev
+				SET
+					jefaLabApproval_id = '1QQ',
+					status = 2
+				WHERE
+					id_formatoRegistroRev = 1QQ
+				"
+				,array($id_usuario,$id_formatoRegistroRev),
+				"UPDATE -- FormatoRegistroRev :: autEnsayoForAdmin : 1 "
+			);
+
+			if($dbS->didQuerydied){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en autorizar ensayo, verifica tus datos y vuelve a intentarlo','error' => 23);
+				return json_encode($arr);
+			}
+
+			$dbS->squery(
+				"UPDATE
+					registrosRev
+				SET
+					status = 4
+				WHERE
+					formatoRegistroRev_id = 1QQ
+				"
+				,array($id_formatoRegistroRev),
+				"UPDATE -- FormatoRegistroRev :: autEnsayoForAdmin : 1 "
+			);
+			if($dbS->didQuerydied){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en autorizar ensayo, verifica tus datos y vuelve a intentarlo','error' => 23);
+				return json_encode($arr);
+			}
+
+			$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Exito Formato generado','error' => 0);	
+			$dbS->commitTransaction();
+		}
+		return json_encode($arr);
+	}
+
+	public function generatePDFFinal($token,$rol_usuario_id,$id_formatoRegistroRev){
+		global $dbS;
+
+		$usuario = new Usuario();
+		$generador = new GeneradorFormatos();
+
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$dbS->beginTransaction();
+		if($arr['error'] == 0){	
+			$count = $dbS->qvalue(
+				"	SELECT
+						COUNT(*) AS No
+					FROM
+						registrosRev
+					WHERE 
+						formatoRegistroRev_id = 1QQ
+						AND status IN (0,3)
+				",array($id_formatoRegistroRev,),
+				"SELECT -- FooterEnsayo :: generatePDFFinal : 1"
+			);
+			if($dbS->didQuerydied || ($count == "empty")){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato','error' => 20);
+				return json_encode($arr);
+			}	
+			if($count != 0){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato','error' => 25);
+				return json_encode($arr);
+			}			
+			$var_system = $dbS->qarrayA(
+				"	SELECT
+						apiRoot
+					FROM
+						systemstatus
+					ORDER BY id_systemstatus DESC;
+				",array(),
+				"SELECT -- FooterEnsayo :: generatePDFFinal : 1"
+			);
+			if($dbS->didQuerydied || ($var_system == "empty")){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato','error' => 30);
+				return json_encode($arr);
+			}
+			$hora_de_creacion = getdate();
+			$target_dir = "./../../../SystemData/FormatosFinalesData/Revenimiento/".$id_formatoRegistroRev."/";
+			$dirDatabase = $var_system['apiRoot']."SystemData/FormatosFinalesData/Revenimiento/Revenimiento/".$id_formatoRegistroRev."/"."FinalRevenimiento(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+			if (!file_exists($target_dir)) {
+				mkdir($target_dir, 0777, true);
+			}
+			$target_dir=$target_dir."FinalRevenimiento(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+			//Cachamos la excepcion
+			try{
+				$arr=json_decode( $generador->generateInformeRevenimiento($token,$rol_usuario_id,$id_formatoRegistroRev,$target_dir),true);
+				if($arr['error'] > 0){
+					$dbS->rollbackTransaction();
+					return json_encode($arr);
+				}
+				$dbS->squery(
+					"UPDATE
+						formatoRegistroRev
+					SET
+						pdfFinal = '1QQ'
+					WHERE
+						id_formatoRegistroRev = 1QQ
+					"
+					,array($dirDatabase,$id_formatoRegistroRev),
+					"UPDATE -- FooterEnsayo :: generatePDFFinal : 2"
+				);
+			}catch(Exception $e){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 7);
+				return json_encode($arr);
+			}
+			if(!$dbS->didQuerydied){
+				$arr = array('id_formatoRegistroRev' => $id_formatoRegistroRev,'estatus' => 'Exito Formato generado','error' => 0);	
+				$dbS->commitTransaction();
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 30);
+				return json_encode($arr);
+			}
+		}
+		return json_encode($arr);
+	}
+
 	public function getformatoDefoults($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();

@@ -35,6 +35,11 @@
 			$registrorev = new RegistrosRev();
 			echo $registrorev->initInsert($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev']);
 		break;
+		
+		case 'autEnsayoForAdmin':
+			$registrorev = new RegistrosRev();
+			echo $registrorev->autEnsayoForAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev']);
+		break;
 		case 'insertRegistroJefeBrigada':
 			$registrorev = new RegistrosRev();
 			echo $registrorev->insertRegistroJefeBrigada($_POST['token'],$_POST['rol_usuario_id'],$_POST['campo'],$_POST['valor'],$_POST['id_registrosRev']);
@@ -52,6 +57,12 @@
 			//Realizamos la query para obtener la informacion para el formato
 			$formato = new FormatoRegistroRev();
 			echo $formato->generatePDF($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev']);
+		break;
+		
+		case 'generatePDFFinal':
+			//Realizamos la query para obtener la informacion para el formato
+			$formato = new FormatoRegistroRev();
+			echo $formato->generatePDFFinal($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev']);
 		break;
 
 	}

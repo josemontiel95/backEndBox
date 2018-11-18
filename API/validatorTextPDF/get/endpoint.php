@@ -16,7 +16,7 @@
 		case 'validatedInfo':
 			$validator = new ValidatorTextPDF();
 			echo $validator->validatedInfo($_GET['campo'],$_GET['string']);
-			break;
+		break;
 		
 	}
 ?>

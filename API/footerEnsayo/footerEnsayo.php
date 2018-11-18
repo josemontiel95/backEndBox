@@ -171,7 +171,6 @@ class footerEnsayo{
 		global $dbS;
 
 		$usuario = new Usuario();
-		$mailer = new Mailer();
 		$generador = new GeneradorFormatos();
 
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -232,7 +231,6 @@ class footerEnsayo{
 						$dbS->rollbackTransaction();
 						return json_encode($arr);
 					}
-
 					$dbS->squery(
 						"UPDATE
 							1QQ
@@ -249,8 +247,14 @@ class footerEnsayo{
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 7);
 					return json_encode($arr);
 				}
-				$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Exito Formato generado','error' => 0);	
-				$dbS->commitTransaction();
+				if(!$dbS->didQuerydied){
+					$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Exito Formato generado','error' => 0);	
+					$dbS->commitTransaction();
+				}else{
+					$dbS->rollbackTransaction();
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 30);
+					return json_encode($arr);
+				}
 			}else{
 				$dbS->rollbackTransaction();
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en generar formato , verifica tus datos y vuelve a intentarlo','error' => 11);
@@ -360,6 +364,8 @@ class footerEnsayo{
 		return json_encode($arr);
 	}
 
+	/* BEGINS  completeFormato*/
+
 	public function completeFormato($token,$rol_usuario_id,$id_footerEnsayo){
 		global $dbS;
 
@@ -382,72 +388,159 @@ class footerEnsayo{
 				"UPDATE -- FooterEnsayo :: completeFormato : 1"
 			);
 			if(!$dbS->didQuerydied){
+				/* 
+					Obtenemos tipo para poder identificar la tabla de ensayo
+					Obtenemos el formato de campo para el analizar si ya todos estan ensaydos y que todos tengan un status correcto.
+				*/
 				$a = $dbS->qarrayA(
-					"	SELECT
-							tipo
-						FROM
-							footerEnsayo
-						WHERE
-							id_footerEnsayo =1QQ
+					"SELECT
+						formatoCampo_id,
+						tipo
+					FROM
+						footerEnsayo
+					WHERE
+						id_footerEnsayo =1QQ
 					",array($id_footerEnsayo),
-					"SELECT -- FooterEnsayo :: completeFormato : 1"
+					"SELECT -- FooterEnsayo :: completeFormato : 2"
 				);
 				if(!$dbS->didQuerydied && !($a=="empty")){
 					$table = "";
 					switch($a['tipo']){
 						case "CILINDRO":
+							$id= "id_ensayoCilindro";
 							$table="ensayoCilindro";
 						break;
 						case "CUBO":
+							$id= "id_ensayoCubo";
 							$table="ensayoCubo";
 						break;
 						case "VIGAS":
+							$id= "id_ensayoViga";
 							$table="ensayoViga";
 						break;
 					}
-					$b = $dbS->qAll(
-						"	SELECT
-								registrosCampo_id,
-								formatoCampo_id
+					$homeAloneClubMembers = $dbS->qvalue(
+							"SELECT
+								COUNT(*) AS No
 							FROM
-								1QQ
+								registrosCampo LEFT JOIN 
+								1QQ AS ensayo ON registrosCampo_id = id_registrosCampo
 							WHERE
-								footerEnsayo_id =1QQ
-						",array($table,$id_footerEnsayo),
-						"SELECT-- FooterEnsayo :: completeFormato : 3"
+								registrosCampo.formatoCampo_id =1QQ
+								AND ensayo.active IS NULL
+						",array($table,$a['formatoCampo_id']),
+						"SELECT -- FooterEnsayo :: completeFormato : 3"
 					);
-					if(!$dbS->didQuerydied && !($b=="empty")){
-						foreach ($b as $value) {
-							$dbS->squery(
-								"UPDATE
-									formatoCampo
-								SET
-									ensayadoFin = ensayadoFin -1
+					if($dbS->didQuerydied || ($homeAloneClubMembers=="empty") ){
+						$dbS->rollbackTransaction();
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en verificar la integridad del formato, verifica tus datos y vuelve a intentarlo','error' => 12);
+						return json_encode($arr);
+					}
+					if($homeAloneClubMembers != 0){
+						$dbS->rollbackTransaction();
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error: Solo puedes completar cuando hayas ensayado TODOS los especimenes que el jefe de brigada tomo en obra','error' => 20);
+						return json_encode($arr);
+					}
+
+					$underAgeMemebrsClub = $dbS->qvalue(
+						"SELECT
+							COUNT(*) AS No
+						FROM
+							(
+								SELECT
+									status,
+									1QQ AS id
+								FROM
+									1QQ 
 								WHERE
-									id_formatoCampo = 1QQ
-								"
-								,array($value['formatoCampo_id']),
-								"UPDATE -- FooterEnsayo :: completeFormato : 4"
-							);
-							if($dbS->didQuerydied){
-								$dbS->rollbackTransaction();
-								$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar del formato','error' => 50);
-								return json_encode($arr);
-							}
-						}
+									status IN (0,2)
+									AND formatoCampo_id =1QQ
+							UNION
+								SELECT 
+									status,
+									id_registrosCampo AS id
+								FROM 
+									registrosCampo
+								WHERE 
+									status IN (0,3)
+									AND formatoCampo_id =1QQ
+							) AS t1
+						
+						",array($id,$table,$a['formatoCampo_id'],$a['formatoCampo_id']),
+						"SELECT -- FooterEnsayo :: completeFormato : 4"
+					);
+					if($dbS->didQuerydied || ($underAgeMemebrsClub=="empty") ){
+						$dbS->rollbackTransaction();
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en verificar la integridad del formato, verifica tus datos y vuelve a intentarlo','error' => 13);
+						return json_encode($arr);
+					}
+					if($homeAloneClubMembers != 0){
+						$dbS->rollbackTransaction();
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error: Todos los ensayos deben estar marcados como completados para poder continuar','error' => 30);
+						return json_encode($arr);
+					}
+					$noOfRegistries = $dbS->qvalue(
+						"SELECT
+							COUNT(*)
+						FROM
+							1QQ
+						WHERE
+							footerEnsayo_id =1QQ
+						",array($table,$id_footerEnsayo),
+						"SELECT-- FooterEnsayo :: completeFormato : 5"
+					);
+					if(!$dbS->didQuerydied && !($noOfRegistries=="empty")){
+						$dbS->squery(
+							"UPDATE
+								formatoCampo
+							SET
+								ensayadoFin = ensayadoFin - 1QQ
+							WHERE
+								id_formatoCampo = 1QQ
+							"
+							,array($noOfRegistries,$value['formatoCampo_id']),
+							"UPDATE -- FooterEnsayo :: completeFormato : 6"
+						);
 						if(!$dbS->didQuerydied ){
+							/* 
+								Se  mueven los ENSAYOS a estado 5, 'Bloquedo por el padre.'
+								0 - Edicion del TMU
+								1 - Semi completado TMU
+								2 - Edicion JL
+								3 - Completado JL
+								4 - Autorizado
+								5 - Bloquedo por el padre.
+							*/
 							$dbS->squery(
 								"UPDATE
 									1QQ
 								SET
-									status = 2
+									status = 5
 								WHERE
 									active = 1 AND
 									footerEnsayo_id = 1QQ
 								"
 								,array($table,$id_footerEnsayo),
-								"UPDATE-- FooterEnsayo :: completeFormato : 5"
-					      	);
+								"UPDATE-- FooterEnsayo :: completeFormato : 7"
+							);
+							if($dbS->didQuerydied){
+								$dbS->rollbackTransaction();
+								$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 40);
+								return json_encode($arr);
+							}
+							$dbS->squery(
+								"UPDATE
+									registrosCampo
+								SET
+									status = 5
+								WHERE
+									active = 1 AND
+									footerEnsayo_id = 1QQ
+								"
+								,array($table,$id_footerEnsayo),
+								"UPDATE-- FooterEnsayo :: completeFormato : 8"
+							);
+
 							if(!$dbS->didQuerydied){
 								$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato completado','error' => 0);	
 							}else{
@@ -474,6 +567,10 @@ class footerEnsayo{
 		$dbS->commitTransaction();
 		return json_encode($arr);
 	}
+
+	/* ENDS  completeFormato*/
+
+
 	public function isTheWholeFamilyHereAndComplete($token,$rol_usuario_id,$id_footerEnsayo){
 		global $dbS;
 		$usuario = new Usuario();
@@ -563,6 +660,7 @@ class footerEnsayo{
 		$dbS->commitTransaction();
 		return json_encode($arr);
 	}
+
 	public function getAwaitingApproval($token,$rol_usuario_id){
 		global $dbS;
 		$usuario = new Usuario();
