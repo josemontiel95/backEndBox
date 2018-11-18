@@ -140,13 +140,16 @@
 
 			//Definimos el array con los tamaños de cada celda para crear las duplas
 			$array_campo = 	array(
+									'tam_font_Cells' => $tam_font_Cells,
+									'tam_font_CellsRows' => $tam_font_CellsRows,
+									'tam_cellsTablesAlto' => $tam_cellsTablesAlto,
 									'tam_fechaColado'	=> $tam_fechaColado,
 									'tam_infoNumero'	=> $tam_infoNumero,
 									'tam_clave'	=> $tam_clave,
 									'tam_edad'	=> $tam_edad,
-									'tam_l1'	=> $tam_l1,
-									'tam_l2'	=> $tam_l2,
-									'tam_resisCompresion'	=> $tam_resisCompresion,
+									'tam_lado1Ancho'	=> $tam_l1,
+									'tam_lado2Ancho'	=> $tam_l2,
+									'tam_kgAncho'	=> $tam_resisCompresion,
 									'tam_area'	=> $tam_area,
 									'tam_velocidad'	=> $tam_velocidad,
 									'tam_resis'	=> $tam_resis

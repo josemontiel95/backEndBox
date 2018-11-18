@@ -4,6 +4,7 @@
 	include_once("./../../disenoFormatos/InformeCubos.php");
 	include_once("./../../disenoFormatos/CCH.php");
 	include_once("./../../disenoFormatos/EnsayoCuboPDF.php");
+	include_once("./../../disenoFormatos/EnsayoCilindroPDF.php");
 	include_once("./../../disenoFormatos/InformeRevenimiento.php");
 	include_once("./../../configSystem.php"); 
 	include_once("./../../usuario/Usuario.php");
@@ -215,7 +216,7 @@
 					$campo = 'tam_flexometro';
 					break;
 				default:
-						$arr = array('campoFront' => $campoFront,'estatus' => 'Error, no existe relacion con ese campo.','error' => 11);
+						$arr = array('campoFront' => $campo,'estatus' => 'Error, no existe relacion con ese campo.','error' => 11);
 						return json_encode($arr);
 						break;
 			}
@@ -278,6 +279,101 @@
 			}
 
 			return json_encode($arr);
+
+		}
+
+		function validatedCamposEnsayoCubo($campo,$string){
+			//Instanciamos los formatos que usaremos
+			$infoCubos = new InformeCubos();
+			$ensayoCubo = new EnsayoCuboPDF();
+
+			//Generamos los campos
+			$infoCubos->generateCellsCampos();
+
+			//Añadimos una pagina por error del formato
+			$ensayoCubo->AddPage();
+			$ensayoCubo->generateArrayCampo();
+
+			$arrayInfoCubos = $infoCubos->getCellsTables();
+			$arrayEnsayoCubo = $ensayoCubo->getArrayCampo();
+
+
+			switch ($campo) {
+				case '1':
+					$campo = 'tam_lado1Ancho';
+					break;
+				case '2':
+					$campo = 'tam_lado2Ancho';
+					break;
+				//La carga de los ensayos
+				case '3':
+					$campo = 'tam_kgAncho';
+					break;
+				default:
+						$arr = array('campoFront' => $campo,'estatus' => 'Error, no existe relacion con ese campo.','error' => 11);
+						return json_encode($arr);
+						break;
+			}
+
+			//Ingresamos todos los campos generados a un arreglo de "arreglos"
+			$arrayAux =  array(
+							$arrayInfoCubos,
+							$arrayEnsayoCubo
+						);
+
+			//Verificamos el maximo tamaño de funete de los formatos
+			if($arrayInfoCubos['tam_font_CellsRows'] < $arrayEnsayoCubo['tam_font_CellsRows']){
+				$tam_font_max = $arrayEnsayoCubo['tam_font_CellsRows'];
+			}else{
+				$tam_font_max =$arrayInfoCubos['tam_font_CellsRows'];
+			}
+
+			//Declaramos el array donde guardaremos los arreglo que tienen el campo
+			$arr = array();
+
+			//Verificamos si el campo seleccionado se encuentra en mas formatos
+			for ($i=0; $i < sizeof($arrayAux); $i++) { 
+				if(array_key_exists($campo,$arrayAux[$i])){
+					array_push($arr,$arrayAux[$i][$campo]);
+				}
+			}
+
+			//print_r($arr);
+			
+			$min = $arr[0];
+			for ($i=1; $i <sizeof($arr) ; $i++) { 
+				if($arr[$i] < $min){
+					$min = $arr[$i];
+				}
+			}
+
+			
+
+
+			$pdf = new fpdf();
+			$pdf->AddPage();
+			$pdf->SetFont('Arial','',$tam_font_max);
+			$tam_string = $pdf->GetStringWidth($string);
+
+			if($tam_string <= $min){
+				$arr = array('string' => $string,'tam_string' => $tam_string,'tam_campo' => $min,'estatus' => 'Texto valido.','error' => 0);
+			}else{
+				$new_string = $this->truncaCadena($tam_font_max,$string,$min);
+				$tam_new_string = $pdf->GetStringWidth($new_string);
+				$arr = array('string' => $string,'tam_string' => $tam_string,'new_string' => $new_string,'tam_new_string' => $tam_new_string,'tam_campo' => $min,'estatus' => 'El texto excedió el tamaño permitido.','error' => 100);
+			}
+
+			return json_encode($arr);
+		}
+
+
+		function validatedCamposEnsayoCilindros($campo,$string){
+			//Instanciamos los formatos que usaremos
+			$infoCilindros = new InformeCilindros();
+			$ensayoCilindros = new EnsayoCilindroPDF();
+
+			//Generamos los campos
+			$infoCubos->generateCellsCampos();
 
 		}
 

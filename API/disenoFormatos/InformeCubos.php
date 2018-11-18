@@ -123,8 +123,8 @@
 											'dirCliente'			=> $dirCliente,
 											'tam_dirCliente'		=> $tam_dirCliente,
 
-											'tam_nomObraText'			=>	$tam_nomObraText,
-											'tam_localizacionText'		=>	$tam_localizacionText,
+											'tam_nomObraText'			=>	$tam_nomObraText*3,
+											'tam_localizacionText'		=>	$tam_localizacionText*3,
 											'tam_informeText'			=>	$tam_informeText,
 											'tam_razonText'				=>	$tam_razonText,
 											'tam_dirClienteText'		=>	$tam_dirClienteText
@@ -516,6 +516,9 @@
 
 			//Cuadro con informacion
 			//Obra
+
+			$posicionAux = configPosition();
+
 			$this->Cell($this->cellsInfo['tam_obra'],$this->cellsInfo['tam_CellsLeftAlto'],$this->cellsInfo['obra'],0);
 			
 			//Caja de texto
@@ -622,9 +625,25 @@
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
+
+			//Ejecutamos la funcion qe reduce el tamaño de la fuente en caso de ser necesario
+
+			$string = 'PRUEBA DE CADENA PARA VER QUE TANTO CABE EN LA CELDA DE EL NOMBRE DE LA OBRA LALlalalalalalalalalalalalalalalalLALALALALllaalalalalalalLALALALALALlalalalalalLLALALALAL	ALALALALALA ESPEREMOS LA FUNCION JALE CHIDO SI NO VALE VERGA :(';
+
+			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],$string);
+
+			//print_r($resultado);
+
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
 
-			$this->Cell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],'tam_stringCarac'),'B',0);
+			if($resultado['error'] == 0){
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+			}else{
+				$string = $resultado['estatus'];
+			}
+
+			$this->multicell($this->cellsInfo['tam_nomObraText']/3,$this->cellsInfo['tam_CellsLeftAlto'],$string,'B','C');
+			$this->ln(0);
 
 			$this->Ln($this->cellsInfo['tam_font_left'] - 2);
 
@@ -637,7 +656,7 @@
 
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
 
-			$this->Cell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],'tam_stringCarac'),'B',0);
+			$this->Cell($this->cellsInfo['tam_localizacionText']/3,$this->cellsInfo['tam_CellsLeftAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],'tam_stringCarac'),'B',0);
 
 			$this->Ln($this->cellsInfo['tam_font_left'] - 2);
 

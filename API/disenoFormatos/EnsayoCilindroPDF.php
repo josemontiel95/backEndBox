@@ -24,8 +24,130 @@
 		private $cellsDetails;
 
 		//Funcion que coloca una vista previa de la información
-		function generateCellsInfo(){
+		/*
+			PENDIENTE PARA REVISAR BIEN LOS DATOS
+
+						|
+						|
+						|
+						V
+
+		*/
+
+
+		function generateArrayCampo(){
+			$tam_font_head = 5;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
+
+
+			$fechaColado = 'FECHA DE COLADO';
+			$tam_fechaColado = $this->GetStringWidth($fechaColado)+3;
+			$this->Cell($tam_fechaColado,$tam_font_head+3,$fechaColado,1,0,'C');
+
+			$infoNumero = 'INFORME NUMERO';
+			$tam_infoNumero = $this->GetStringWidth($infoNumero)+3;
+			$this->Cell($tam_infoNumero,$tam_font_head+3,$infoNumero,1,0,'C');
+
+			$clave = 'CLAVE';
+			$tam_clave = $this->GetStringWidth($clave)+24;
+			$this->Cell($tam_clave,$tam_font_head+3,$clave,1,0,'C');
+
+			$peso = 'PESO EN kg';
+			$tam_peso = $this->GetStringWidth($peso)+2;
+			$this->Cell($tam_peso,$tam_font_head+3,$peso,1,0,'C');
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+
+			$edad = 'EDAD DE';
+			$tam_edad = $this->GetStringWidth($edad)+3;
+			$this->Cell($tam_edad,($tam_font_head+3)/3,$edad,'L,T,R',2,'C');
+			$this->cell($tam_edad,($tam_font_head+3)/3,utf8_decode('ENSAYE'),'L,R',2,'C');
+			$this->cell($tam_edad,($tam_font_head+3)/3,utf8_decode('EN DIÁS'),'L,B,R',0,'C');
+
+			$this->SetXY($posicion_x + $tam_edad,$posicion_y);
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$diametro = 'DIAMETROS (cm)';
+			$tam_diametro = $this->GetStringWidth($diametro)+5;
+			$this->Cell($tam_diametro,($tam_font_head+3)/2,$diametro,'L,T,R',2,'C');
+			$tam_d1 = $tam_d2 = $tam_diametro/2;
+			$this->cell($tam_d1,($tam_font_head+3)/2,'D1',1,0,'C');
+			$this->cell($tam_d2,($tam_font_head+3)/2,'D2',1,0,'C');
+
+			$this->SetXY($posicion_x + $tam_diametro,$posicion_y);
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$altura = 'ALTURAS (cm)';
+			$tam_altura = $this->GetStringWidth($altura)+5;
+			$this->Cell($tam_altura,($tam_font_head+3)/2,$altura,'L,T,R',2,'C');
+			$tam_h1 = $tam_h2 = $tam_altura/2;
+			$this->cell($tam_h1,($tam_font_head+3)/2,'H1',1,0,'C');
+			$this->cell($tam_h2,($tam_font_head+3)/2,'H2',1,0,'C');
+
+			$this->SetXY($posicion_x + $tam_altura,$posicion_y);
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$carga = 'CARGA';
+			$tam_carga = $this->GetStringWidth($carga)+3;
+			$this->Cell($tam_carga,($tam_font_head+3)/2,$carga,'L,T,R',2,'C');
+			$this->cell($tam_carga,($tam_font_head+3)/2,'kg','L,B,R',0,'C');
+
+			$this->SetXY($posicion_x + $tam_carga,$posicion_y);
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$area = 'AREA';
+			$tam_area = $this->GetStringWidth($area)+6;
+			$this->Cell($tam_area,($tam_font_head+3)/2,$area,'L,T,R',2,'C');
+			$this->cell($tam_area,($tam_font_head+3)/2,utf8_decode('cm²'),'L,B,R',2,'C');
+
+			$this->SetXY($posicion_x + $tam_area,$posicion_y);
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$resis = 'COMPRESIÓN kg/cm²';
+			$tam_resis = $this->GetStringWidth($resis)+2;
+			$posicion_x = $this->GetX();
+			$this->Cell($tam_resis,($tam_font_head+3)/2,'RESISTENCIA A','L,T,R',2,'C');
+			$this->cell($tam_resis,($tam_font_head+3)/2,utf8_decode($resis),'L,B,R',2,'C');
+
+			$this->SetXY($posicion_x + $tam_resis,$posicion_y);
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+
+			$velocidad = 'Vel. Aplicación';
+			$tam_velocidad = $this->GetStringWidth($velocidad)+2;
+			$posicion_x = $this->GetX();
+			$this->Cell($tam_velocidad,($tam_font_head+3)/2,utf8_decode($velocidad),'L,T,R',2,'C');
+			$this->cell($tam_velocidad,($tam_font_head+3)/2,utf8_decode('Experimental'),'L,B,R',2,'C');
+
+			$this->SetXY($posicion_x + $tam_velocidad,$posicion_y);
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$falla = 'FALLA N°';
 			
+			$posicion_x = $this->GetX();
+			$this->cell(0,($tam_font_head+3),utf8_decode($falla),1,2,'C');
+			$tam_falla = $this->GetX() - $posicion_x;
+		
+
+			$this->Ln(0);
+			//Definimos el array con los tamaños de cada celda para crear las duplas
+			$array_campo = 	array(
+									$tam_fechaColado,
+									$tam_infoNumero,
+									$tam_clave,
+									$tam_peso,
+									$tam_edad,
+									$tam_d1,
+									$tam_d2,
+									$tam_h1,
+									$tam_h2,
+									$tam_carga,
+									$tam_area,
+									$tam_resis,
+									$tam_velocidad,
+									$tam_falla
+							);
+
+			$tam_font_head = 5.5;	
+			$tam_cellsTablesAlto = 	$tam_font_head - 2;
+			$this->SetFont('Arial','',$tam_font_head);
+		
 
 			
 		}

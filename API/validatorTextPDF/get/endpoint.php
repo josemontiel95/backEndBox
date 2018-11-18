@@ -26,6 +26,10 @@
 			$validator = new ValidatorTextPDF();
 			echo $validator->validatedCamposCCH($_GET['campo'],$_GET['string']);
 			break;
+		case 'validatedCamposEnsayoCubo':
+			$validator = new ValidatorTextPDF();
+			echo $validator->validatedCamposEnsayoCubo($_GET['campo'],$_GET['string']);
+			break;
 		
 	}
 ?>

@@ -8,6 +8,20 @@
 
 		var $angle=0;
 
+
+		/*
+				FUNCION PENDIENTE POR SI NO SIRVE EL METODO DE SOLO PONER UN MULTICELL EN TEXTOS DE OBRA Y LOCALIZACION DE LA OBRA
+
+
+		function configPosition($tam_font,$string,$tamAltoCells,$tamAnchoCells){
+			//Contador de las iteracion que realiza el ciclo
+			$count = 0;
+
+			//Maximo de iteracion que puede hacer el ciclo
+			$max = 3;
+
+		}
+		*/
 		function putInfoTables($grupos,$tam_font,$arrayTamCells,$tamAltoCells,$valor){
 			$this->SetFont('Arial','',$tam_font);
 			$num_rows = 0;
@@ -196,6 +210,44 @@
 				$string.='...';
 			}
 			return $string;
+		}
+
+		//Funcion para obra y locacalizacion de la obra
+		function printInfoObraAndLocObra($sizeFont,$tam,$string){
+			/*
+				Quite los contadores, porque no contaria el numero de iteraciones sino que aun quede un tamaño de fuente bueno
+
+			//Contador de las iteracion del ciclo
+			$cont = 0;
+
+			//Maximo de iteracion que puede realizar el ciclo
+			$max = 3;
+			*/
+
+			//Configuramos el tamaño de fuente para la cadena
+			$this->SetFont('Arial','',$sizeFont);
+
+			//Tamaño de la cadena
+			$tam_string = $this->GetStringWidth($string);
+
+
+			while($tam_string > $tam && $sizeFont>=1){
+				//Decrementamos el tamaño de fuente
+				$sizeFont-=0.1;
+
+				//Configuramos el tamaño de fuente nuevamente para calcular el tamaño de la cadena con el nuevo tamaño de fuente
+				$this->SetFont('Arial','',$sizeFont);
+
+				$tam_string = $this->GetStringWidth($string); 
+			}
+			if($tam_string <= $tam){
+				return array('sizeFont' => $sizeFont, 'estatus' => 'Texto valido','error' => 0);
+			}
+				return array('estatus' => 'Error, el texto excede el tamaño, aun reduciendo el tamaño de fuente','error' => 1);
+		}
+
+		function hola(){
+			echo "hola";
 		}
 
 
