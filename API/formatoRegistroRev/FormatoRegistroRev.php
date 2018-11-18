@@ -24,7 +24,7 @@ class FormatoRegistroRev{
 		$mailer = new Mailer();
 
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		$'id_usuario'=$usuario->id_usuario;
+		$id_usuario=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$dbS->beginTransaction();	
 			$count = $dbS->qvalue(
