@@ -34,10 +34,13 @@
 			$pdf->Output();
 		}
 
-		function generateCellsInfoForvalidation(){
-			$pdf  = new InformeCilindros('L','mm','Letter');
-			$pdf->AddPage();
-			return $pdf->generateCellsInfo();
+		function getCellsTables(){
+			return $this->cellsTables;
+		
+		}
+
+		function getcellsDetails(){
+			return $this->cellsDetails;
 		}
 
 		function generateCellsInfo(){

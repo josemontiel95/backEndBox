@@ -27,6 +27,14 @@
 			$pdf->AddPage();
 			return $pdf->generateCellsInfo();
 		}
+
+		function getCellsTables(){
+			return $this->cellsTables;
+		}
+
+		function getcellsDetails(){
+			return $this->cellsDetails;
+		}
 		
 
 		function generateCellsInfo(){
@@ -122,6 +130,9 @@
 											'tam_dirClienteText'		=>	$tam_dirClienteText
 									);
 			
+			//print_r( $this->cellsInfo);
+
+
 			return $this->cellsInfo;
 		}
 
