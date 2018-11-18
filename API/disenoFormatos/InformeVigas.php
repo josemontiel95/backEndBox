@@ -35,10 +35,30 @@
 			$pdf->Output();
 		}
 
-		function generateCellsInfoForvalidation(){
-			$pdf  = new InformeVigas('L','mm','Letter');
-			$pdf->AddPage();
-			return $pdf->generateCellsInfo();
+		function getCellsInfo(){
+			return $this->cellsInfo;
+		}
+
+		function getcellsDetails(){
+			return $this->cellsDetails;
+		}
+
+		function generateCellsDetails(){
+			$tam_font_details = 7;
+			$this->SetFont('Arial','B',$tam_font_details);
+
+			$observaciones = 'OBSERVACIONES:';
+			$tam_observacionesAncho = $this->GetStringWidth($observaciones)+2;
+			$tam_observacionAnchoTxt = 	259.3975 - $tam_observacionesAncho;
+
+			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
+
+			$this->cellsDetails = array(
+											'tam_font_details'			=>	$tam_font_details,
+											'observaciones'				=>	$observaciones,
+											'tam_observacionesAncho'	=>	$tam_observacionesAncho,
+											'tam_observacionAnchoTxt'	=>	$tam_observacionAnchoTxt
+										);
 		}
 
 		function generateCellsInfo(){
@@ -99,8 +119,8 @@
 			$eleColado = 'ELEMENTO COLADO:';
 			$tam_eleColado = $this->GetStringWidth($nomCli)+2;
 
-			$tam_nomObraText = $tam_localizacionText = $tam_razonText = $tam_dirClienteText = $tam_eleColadoText = 135;
-			$tam_informeText  = $tam_sustituyeInformeText = $tam_tipoConcretoText = $tam_fechaEnsayeText = $tam_mrProyectoText = $tam_sustituyeInformeText = $separacion - 10;
+			$tam_nomObraText = $tam_localizacionText = $tam_razonText = $tam_dirClienteText = $tam_elementoAncho = 135;
+			$tam_informeText  = $tam_sustituyeInformeText = $tam_tipoConcretoText = $tam_fechaEnsayeText = $tam_fprimaAncho = $tam_sustituyeInformeText = $separacion - 10;
 
 			$this->cellsInfo 	= 	array(
 											'separacion'					=>	$separacion,
@@ -154,8 +174,8 @@
 
 											'tam_fechaEnsayeText'				=>	$tam_fechaEnsayeText,
 											'tam_tipoConcretoText'				=>	$tam_tipoConcretoText,
-											'tam_mrProyectoText'				=>	$tam_mrProyectoText,
-											'tam_eleColadoText'					=>	$tam_eleColadoText
+											'tam_fprimaAncho'				=>	$tam_fprimaAncho,
+											'tam_elementoAncho'					=>	$tam_elementoAncho
 									);
 			return $this->cellsInfo;
 		}
@@ -247,7 +267,7 @@
 
 			//Caja de texto
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_right']);
-			$this->Cell($this->cellsInfo['tam_mrProyectoText'],$this->cellsInfo['tam_CellsRightAlto'],$this->getMaxString($this->cellsInfo['tam_font_right'],$this->cellsInfo['tam_mrProyectoText'],'tam_stringCarac'),'B',0,'C');
+			$this->Cell($this->cellsInfo['tam_fprimaAncho'],$this->cellsInfo['tam_CellsRightAlto'],$this->getMaxString($this->cellsInfo['tam_font_right'],$this->cellsInfo['tam_fprimaAncho'],'tam_stringCarac'),'B',0,'C');
 
 			$this->Ln($this->cellsInfo['tam_font_right'] - 2);
 
@@ -261,7 +281,7 @@
 
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
 
-			$this->Cell($this->cellsInfo['tam_eleColadoText'],$this->cellsInfo['tam_CellsLeftAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_eleColadoText'],'tam_stringCarac'),'B',0);
+			$this->Cell($this->cellsInfo['tam_elementoAncho'],$this->cellsInfo['tam_CellsLeftAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_elementoAncho'],'tam_stringCarac'),'B',0);
 
 
 			//-Informe al cual sustituye
@@ -411,7 +431,7 @@
 
 			//Caja de texto
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_right']);
-			$this->Cell($this->cellsInfo['tam_mrProyectoText'],$this->cellsInfo['tam_CellsRightAlto'],utf8_decode(	$this->printInfo($this->cellsInfo['tam_font_right'],$this->cellsInfo['tam_mrProyectoText'],$infoFormato['fprima'])	),'B',0,'C');
+			$this->Cell($this->cellsInfo['tam_fprimaAncho'],$this->cellsInfo['tam_CellsRightAlto'],utf8_decode(	$this->printInfo($this->cellsInfo['tam_font_right'],$this->cellsInfo['tam_fprimaAncho'],$infoFormato['fprima'])	),'B',0,'C');
 
 			$this->Ln($this->cellsInfo['tam_font_right'] - 2);
 
@@ -425,7 +445,7 @@
 
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
 
-			$this->Cell($this->cellsInfo['tam_eleColadoText'],$this->cellsInfo['tam_CellsLeftAlto'],utf8_decode(	$this->printInfo($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_eleColadoText'],$infoFormato['localizacion'])	),'B',0);
+			$this->Cell($this->cellsInfo['tam_elementoAncho'],$this->cellsInfo['tam_CellsLeftAlto'],utf8_decode(	$this->printInfo($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_elementoAncho'],$infoFormato['localizacion'])	),'B',0);
 
 
 			//-Informe al cual sustituye

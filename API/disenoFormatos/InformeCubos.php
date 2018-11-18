@@ -31,6 +31,10 @@
 		function getCellsTables(){
 			return $this->cellsTables;
 		}
+
+		function getcellsDetails(){
+			return $this->cellsDetails;
+		}
 		
 
 		function generateCellsInfo(){
