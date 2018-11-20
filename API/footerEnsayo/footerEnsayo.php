@@ -615,18 +615,14 @@ class footerEnsayo{
 						"SELECT-- FooterEnsayo :: completeFormato : 5"
 					);
 					if(!$dbS->didQuerydied && !($noOfRegistries=="empty")){
-						$dbS->squery(
-							"UPDATE
-								formatoCampo
-							SET
-								ensayadoFin = ensayadoFin - 1QQ
-							WHERE
-								id_formatoCampo = 1QQ
-							"
-							,array($noOfRegistries,$value['formatoCampo_id']),
-							"UPDATE -- FooterEnsayo :: completeFormato : 6"
-						);
-						if(!$dbS->didQuerydied ){
+						/* 
+							Nov 19 -- Jose Montiel
+							Se retiro el codigo que disminuia los penidng ensayos de formatoCampo, y se migraron a los complete de cada ensayo. Esto con la finalidad de saber si ya se puede completar el ensayo.
+							La funcionalidad solia estar aqui, pues antes se combinaban los registros provenientes de diferentes formatos de campo,
+							al completarse, se disminuia individualmente a cada registro.
+						*/
+
+						if(!$dbS->didQuerydied){
 							/* 
 								Se  mueven los ENSAYOS a estado 5, 'Bloquedo por el padre.'
 								0 - Edicion del TMU
@@ -929,6 +925,7 @@ class footerEnsayo{
 					ordenDeTrabajo
 				WHERE
 					id_ordenDeTrabajo = ordenDeTrabajo_id
+					AND formatoRegistroRev.status > 0
 					AND laboratorio_id = 1QQ
 					AND notVistoJLForBrigadaApproval = 0
 					AND jefaLabApproval_id IS NULL

@@ -466,9 +466,10 @@ class formatoCampo{
 					FLEXOMETRO,
 					formatoCampo.termometro_id,	
 					TERMOMETRO,
-					formatoCampo.preliminar AS preliminar
+					formatoCampo.preliminar AS preliminar,
+					preliminarGabs
 			      FROM 
-			        ordenDeTrabajo,cliente,obra,formatoCampo,
+			        ordenDeTrabajo,cliente,obra,formatoCampo LEFT JOIN footerEnsayo ON formatoCampo_id = id_formatoCampo,
 			        (
 							SELECT
 								id_formatoCampo,

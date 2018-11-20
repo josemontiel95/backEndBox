@@ -117,19 +117,46 @@ class RegistrosRev{
 				case '13':
 					$campo = 'status';
 					break;
+				
 
 			}
+			if($campo=="status" && $valor=="3"){
+				$formatoRegistroRev_id= $dbS->qvalue(
+					"SELECT
+						 formatoRegistroRev_id
+					  FROM 
+						  registrosRev
+					  WHERE 
+						  id_registrosRev = 1QQ
+					  ", array($id_registrosRev),
+					  "SELECT -- RegistrosRev :: insertRegistroJefeBrigada : 1"
+					  );
+				if($dbS->didQuerydied || ($formatoRegistroRev_id=="empty")){
+					$arr = array('id_registrosRev' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' =>20);
+					return json_encode($arr);
+				}
+				$dbS->squery(
+						"UPDATE
+							formatoRegistroRev
+						SET
+							pdfFinal = NULL
+						WHERE
+							id_formatoRegistroRev = 1QQ
 
-			$dbS->squery("
-						UPDATE
+				",array($formatoRegistroRev_id),
+				"UPDATE -- RegistrosRev :: insertRegistroJefeBrigada : 2");
+			}
+
+			$dbS->squery(
+					"	UPDATE
 							registrosRev
 						SET
 							1QQ = '1QQ'
 						WHERE
 							id_registrosRev = 1QQ
 
-				",array($campo,$valor,$id_registrosRev),"UPDATE");
-			$arr = array('estatus' => 'Exito en insercion', 'error' => 0);
+				",array($campo,$valor,$id_registrosRev),
+				"UPDATE -- RegistrosRev :: insertRegistroJefeBrigada : 3");
 			if(!$dbS->didQuerydied){
 				$arr = array('id_registrosRev' => $id_registrosRev,'estatus' => '¡Exito en la inserccion de un registro!','error' => 0);
 				return json_encode($arr);
@@ -146,8 +173,8 @@ class RegistrosRev{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$s= $dbS->qarrayA("
-			      SELECT
+			$s= $dbS->qarrayA(
+				"SELECT
 			      	id_registrosRev,
 			      	fecha,
 					revProyecto,	
@@ -167,9 +194,8 @@ class RegistrosRev{
 			      WHERE 
 			      	registrosRev.active = 1 AND
 			      	id_registrosRev = 1QQ
-			      ",
-			      array($id_registrosRev),
-			      "SELECT"
+			      ", array($id_registrosRev),
+			      "SELECT -- RegistrosRev :: getRegistrosByID : 1"
 			      );
 			
 			if(!$dbS->didQuerydied){
