@@ -741,6 +741,8 @@
 		}
 
 		function putTables($infoFormato,$regisFormato,$infoU){
+			
+
 			//Guardamos la posicion de la Y para alinear todas las celdas a la misma altura
 			$posicion_y = $this->GetY();
 
@@ -940,7 +942,7 @@
 			
 
 
-			$this->cell($tam_separador,$this->cellsTables['tam_cellsTablesAlto'],$this->getMaxString($this->cellsTables['tam_font_CellsRows'],$tam_separador,'tam_stringCarac').'---PENDIENTE---',1,2,'C');
+			$this->cell($tam_separador,$this->cellsTables['tam_cellsTablesAlto'],'',1,2,'C');
 
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 
@@ -1026,6 +1028,9 @@
 			$tam_font_footer = 8; $this->SetFont('Arial','B',$tam_font_footer);
 			
 			$tam_boxElaboro = 259/3;	$tam_first = 10; $tam_second = 10;
+
+			$this->SetX($this->GetX() + $tam_boxElaboro/2);
+
 			$posicion_y = $this->GetY();
 			$this->cell($tam_boxElaboro,$tam_first,'Realizo','L,T,R',2,'C');
 			$posicion_x = $this->GetX();
@@ -1036,13 +1041,13 @@
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('SIGNATARIO/JEFE DE LABORATORIO')/2),$this->gety() - 3,utf8_decode('SIGNATARIO/JEFE DE LABORATORIO'));	
 			$this->SetFont('Arial','B',$tam_font_footer);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreLaboratorista'])/2),$this->gety() - 12,utf8_decode($infoU['nombreLaboratorista']));	
-			if(!(empty($infoU['firmaLaboratorista']))){
+			if($infoU['firmaLaboratorista'] != "null"){
 				
 				$this->Image($infoU['firmaLaboratorista'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 			}
 			else{
 
-				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 18,utf8_decode('NO HAY FIRMA'))	;	
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 8,utf8_decode('NO HAY FIRMA'))	;	
 
 			}
 
@@ -1058,10 +1063,10 @@
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('DIRECTOR GENERAL/GERENTE GENERAL')/2),$this->gety() - 3,utf8_decode('DIRECTOR GENERAL/GERENTE GENERAL'));	
 			$this->SetFont('Arial','B',$tam_font_footer);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreG'])/2),$this->gety() - 12,utf8_decode($infoU['nombreG']));	
-			if(!(empty($infoU['firmaG']))){
+			if($infoU['firmaG'] != "null"){
 				$this->Image($infoU['firmaG'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 			}else{
-				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 18,utf8_decode('NO HAY FIRMA'));	
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 8,utf8_decode('NO HAY FIRMA'));	
 			}
 
 			
@@ -1227,7 +1232,7 @@
 				}
 			}
 
-			$this->cell($tam_separador,$this->cellsTables['tam_cellsTablesAlto'],$this->getMaxString($this->cellsTables['tam_font_CellsRows'],$tam_separador,'tam_stringCarac').'---PENDIENTE---',1,2,'C');
+			$this->cell($tam_separador,$this->cellsTables['tam_cellsTablesAlto'],'',1,2,'C');
 
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 
@@ -1351,7 +1356,7 @@
 		    $this->Cell($tam_noPagina,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
 
 		    //Clave de validacion
-		    $clave = 'PENDIENTE';
+		    $clave = 'FI-05-LCC-05-0.1';
 		    $tam_clave = $this->GetStringWidth($clave);
 		    $this->SetX(-($tam_clave + 10));
 		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');

@@ -695,7 +695,7 @@
 			$this->cell(0,$this->cellsTables['tam_cellsTablesAlto'],'',1,1);
 
 			//Linea con posibilidad de separador
-			$this->cell(0,$this->cellsTables['tam_elementoAlto'],'-------PENDIENTE-------',1,1,'C');
+			$this->cell(0,$this->cellsTables['tam_elementoAlto'],'',1,1,'C');
 
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 
@@ -1176,7 +1176,7 @@
 			$this->cell(0,$this->cellsTables['tam_cellsTablesAlto'],'',1,1);
 
 			//Linea con posibilidad de separador
-			$this->cell(0,$this->cellsTables['tam_elementoAlto'],'-------PENDIENTE-------',1,1,'C');
+			$this->cell(0,$this->cellsTables['tam_elementoAlto'],'',1,1,'C');
 
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 
@@ -1249,6 +1249,9 @@
 			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
 			
 			$tam_boxElaboro = 259/3;	$tam_first = 10; $tam_second = 10;
+
+			$this->SetX($this->GetX() + $tam_boxElaboro/2);
+
 			$posicion_y = $this->GetY();
 			$this->cell($tam_boxElaboro,$tam_first,'Realizo','L,T,R',2,'C');
 			$posicion_x = $this->GetX();
@@ -1260,13 +1263,13 @@
 			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreLaboratorista'])/2),$this->gety() - 12,utf8_decode($infoU['nombreLaboratorista']));	
 
-			if(!(empty($infoU['firmaLaboratorista']))){
+			if($infoU['firmaLaboratorista'] != "null"){
 				
 				$this->Image($infoU['firmaLaboratorista'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 			}
 			else{
 
-				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 18,utf8_decode('NO HAY FIRMA'))	;	
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 8,utf8_decode('NO HAY FIRMA'))	;	
 
 			}
 
@@ -1288,10 +1291,10 @@
 			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreG'])/2),$this->gety() - 12,utf8_decode($infoU['nombreG']));	
 
-			if(!(empty($infoU['firmaG']))){
+			if($infoU['firmaG'] != "null"){
 				$this->Image($infoU['firmaG'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 			}else{
-				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 18,utf8_decode('NO HAY FIRMA'));	
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 8,utf8_decode('NO HAY FIRMA'));	
 			}
 
 			//$this->Image($infoU['firmaG'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
