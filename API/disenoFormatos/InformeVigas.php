@@ -374,14 +374,33 @@
 		}
 		//Funcion que coloca la informacion del informe, como: el No. de informe, Obra, etc.
 		function putInfo($infoFormato){
+			//Guardamos la posicion de x para posteriormente imprimir la siguiente celda
+			$posicion_y = $this->GetY();
+
 			//Nombre de la obra
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']);
 			$this->Cell($this->cellsInfo['tam_obra'],$this->cellsInfo['tam_CellsLeftAlto'],$this->cellsInfo['obra'],0);
 
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
+
+			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['obra'],3);
+
+
+			if($resultado['error'] == 0){
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+			}else{
+				$string = $resultado['estatus'];
+			}
+
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
-			$this->Cell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],utf8_decode(	$this->printInfo($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],$infoFormato['obra'])	),'B',0);
+
+			$this->multicell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],utf8_decode($infoFormato['obra']),'B','C');
+
+			$posicion_yAux = $this->GetY();
+
+			//Nos colocamos en la misma posicion que la anterior celda
+			$this->SetY($posicion_y);
 
 			//Informe No.
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_right']);
@@ -392,7 +411,10 @@
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_right']);
 			$this->Cell($this->cellsInfo['tam_informeText'],$this->cellsInfo['tam_CellsRightAlto'],utf8_decode(	$this->printInfo($this->cellsInfo['tam_font_right'],$this->cellsInfo['tam_informeText'],$infoFormato['informeNo'])	),'B',0,'C');
 
-			$this->Ln($this->cellsInfo['tam_font_right'] - 2);
+			$this->SetY($posicion_yAux + 2);
+
+			//Guardamos la posicion de x para posteriormente imprimir la siguiente celda
+			$posicion_y = $this->GetY();
 
 			//Localizacion de la obra
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']);
@@ -401,9 +423,23 @@
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
-			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
+			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['localizacion'],3);
 
-			$this->Cell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],utf8_decode(	$this->printInfo($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],$infoFormato['obraLocalizacion'])	),'B',0);
+
+			if($resultado['error'] == 0){
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+			}else{
+				$string = $resultado['estatus'];
+			}
+
+			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
+			
+			$this->multicell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],utf8_decode($infoFormato['localizacion']),'B','C');
+
+			$posicion_yAux = $this->GetY();
+
+			//Nos colocamos en la misma posicion que la anterior celda
+			$this->SetY($posicion_y);
 			
 			//Fecha de ensaye
 			$this->SetX(-($this->cellsInfo['tam_fechaEnsaye'] + $this->cellsInfo['separacion']));
@@ -414,7 +450,7 @@
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_right']);
 			$this->Cell($this->cellsInfo['tam_fechaEnsayeText'],$this->cellsInfo['tam_CellsRightAlto'],utf8_decode(	$this->printInfo($this->cellsInfo['tam_font_right'],$this->cellsInfo['tam_fechaEnsayeText'],$infoFormato['fecha'])	),'B',0,'C');
 
-			$this->Ln($this->cellsInfo['tam_font_right'] - 2);
+			$this->SetY($posicion_yAux + 2);
 
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']);
 
@@ -831,7 +867,7 @@
 
 			$this->arrayCampos = $array_campo;
 
-			$tam_font_CellsRows = 7;
+			$tam_font_CellsRows = 6;
 			$tam_cellsTablesAlto = $tam_font_CellsRows - 2.5;
 			$grupos = 12;
 

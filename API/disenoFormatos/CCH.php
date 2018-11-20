@@ -475,10 +475,22 @@
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
 
 			$this->SetX(50);
+			
 
-			$this->Cell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($infoFormato['obra']),'B',0);
+			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_cellsAlto'],$infoFormato['obra'],3);
 
-			$this->Ln($this->cellsInfo['tam_font_left'] - 2);
+
+			if($resultado['error'] == 0){
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+			}else{
+				$string = $resultado['estatus'];
+			}
+
+
+			$this->multicell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($infoFormato['obra']),'B','C');
+			
+
+			$this->Ln(1);
 			
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']); 
 			
@@ -489,10 +501,27 @@
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
 
 			$this->SetX(50);
+			
 
-			$this->Cell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($infoFormato['localizacion']),'B',0);
+			$posiciony = $this->GetY();
+
+			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_cellsAlto'],$infoFormato['localizacion'],3);
+
+
+			if($resultado['error'] == 0){
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+			}else{
+				$string = $resultado['estatus'];
+			}
+
+			$this->multicell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($infoFormato['localizacion']),'B','C');
+
+			$posicionyAux = $this->GetY();
+			
 
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_right']); 
+
+			$this->SetY($posiciony);
 
 			//Numero del informe
 			$this->SetX(-($this->cellsInfo['tam_informeNo']+40));
@@ -563,9 +592,11 @@
 
 			$this->SetX(50);
 
-			$this->Cell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_cellsAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],'tam_stringCarac'),'B',0);
+			$string = 'gola'."\n".'como'."\n"."estas'";
 
-			$this->Ln($this->cellsInfo['tam_font_left'] - 2);
+			$this->multicell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_cellsAlto'],$string,'B','C');
+
+			$this->Ln(1);
 
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']); 
 	
@@ -577,9 +608,20 @@
 
 			$this->SetX(50);
 
-			$this->Cell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_cellsAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],'tam_stringCarac'),'B',0);
+			//Guardamos la posicion de y para poner la siguiente celda
+
+			$posiciony = $this->GetY();
+
+			$string = 'gola'."\n".'como'."\n"."estas'";
+
+			$this->multicell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_cellsAlto'],$string,'B','C');
+
+			$posicionyAux = $this->GetY();
+
 
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_right']); 
+
+			$this->SetY($posiciony);
 
 			//Numero del informe
 			$this->SetX(-($this->cellsInfo['tam_informeNo']+40));
@@ -590,7 +632,7 @@
 		
 			$this->Cell($this->cellsInfo['tam_informeText'],$this->cellsInfo['tam_cellsAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_informeText'],'tam_stringCarac'),'B',0,'C');
 
-			$this->Ln($this->cellsInfo['tam_font_left'] - 2);
+			$this->Sety($posicionyAux + 1);
 
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']); 
 			//Nombre del cliente
@@ -614,7 +656,7 @@
 			$this->Cell($this->cellsInfo['tam_dirClienteText'],$this->cellsInfo['tam_cellsAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_dirClienteText'],'tam_stringCarac'),'B',0);
 
 			//Divide la informacion del formato de la Tabla (Esta en funcion del tamaño de fuente de la informacion de la derecha)
-			$this->Ln(10);
+			$this->Ln(5);
 
 			//Titulo del CCH
 			$tam_font_tituloCCH = 12; //Definimos el tamaño de la fuente
@@ -833,7 +875,7 @@
 
 
 
-			$this->Ln(10);//Separacion con la parte de los detalles
+			$this->Ln(5);//Separacion con la parte de los detalles
 			/*
 			
 			

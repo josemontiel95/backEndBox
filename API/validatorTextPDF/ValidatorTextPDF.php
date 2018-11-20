@@ -126,8 +126,8 @@
 			if($band == 1){
 				$tam_celdaAlto = $arr[$posicion]['tam_CellsLeftAlto'];
 				$arr = $pdf->printInfoObraAndLocObra($arr[$posicion][$tam_font],$min,$tam_celdaAlto,$string,3);
-				echo "array resultado";
-				print_r($arr);
+				//	echo "array resultado";
+				//print_r($arr);
 			}
 			return json_encode($arr);
 		}
@@ -303,10 +303,10 @@
 			if($band == 1){
 				//Tomamos arbitrariamente la el tamaño de la celda(en altura) ya que no repercute para la ejecucion, en este caso tomamos la mas pequeña
 				$tam_celdaAlto = $arrayAux[0]['tam_cellsTablesAlto'];
-				echo "Division".$tam_celdaAlto;
+				//echo "Division".$tam_celdaAlto;
 				$arr = $pdf->printInfoObraAndLocObra($tam_font_max,$min/3,$tam_celdaAlto,$string,3);
-				echo "array resultado";
-				print_r($arr);
+				//echo "array resultado";
+				//print_r($arr);
 			}
 
 			return json_encode($arr);
