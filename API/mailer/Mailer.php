@@ -64,7 +64,7 @@ class Mailer{
 					<p></p>
 					<p><b>Estimado '.$cliente.',</b></p>
 					<p></p>
-					<p>Este es un correo automatizado, A continuación te hacemos entrega de informacion preliminar del servicio que contrato con nosotros.</p>
+					<p>Este es un correo automatizado, A continuación te hacemos entrega de informacion final del servicio que contrato con nosotros.</p>
 					<p></p>
 					<p><b>Servicio</b></p>
 					<p></p>
