@@ -675,6 +675,12 @@ ALTER TABLE formatoRegistroRev ADD COLUMN jefaLabApproval_id INT DEFAULT NULL;
 ALTER TABLE formatoRegistroRev 
 ADD COLUMN preliminar VARCHAR(200);
 
+ALTER TABLE formatoRegistroRev ADD COLUMN pdfFinal VARCHAR(200);
+
+ALTER TABLE formatoRegistroRev ADD COLUMN sentToClientFinal INT DEFAULT 0;
+ALTER TABLE formatoRegistroRev ADD COLUMN dateSentToClientFinal DATE DEFAULT NULL;
+
+
 CREATE TABLE registrosRev(
 	id_registrosRev INT(11) NOT NULL AUTO_INCREMENT,
 	formatoRegistroRev_id INT(11),
@@ -834,6 +840,8 @@ ALTER TABLE ensayoCilindro ADD CONSTRAINT cilindroJefaLabApproval_id FOREIGN KEY
 
 ALTER TABLE ensayoCilindro ADD COLUMN pdfFinal VARCHAR(200);
 
+ALTER TABLE ensayoCilindro ADD COLUMN sentToClientFinal INT DEFAULT 0;
+ALTER TABLE ensayoCilindro ADD COLUMN dateSentToClientFinal DATE DEFAULT NULL;
 
 CREATE TABLE ensayoCubo(
 	id_ensayoCubo INT(11) NOT NULL AUTO_INCREMENT,
@@ -882,6 +890,9 @@ ALTER TABLE ensayoCubo ADD jefaLabApproval_id INT(11) DEFAULT NULL;
 ALTER TABLE ensayoCubo ADD CONSTRAINT cuboJefaLabApproval_id FOREIGN KEY (jefaLabApproval_id) REFERENCES usuario(id_usuario) ON DELETE SET NULL ON UPDATE CASCADE;
 
 ALTER TABLE ensayoCubo ADD COLUMN pdfFinal VARCHAR(200);
+
+ALTER TABLE ensayoCubo ADD COLUMN sentToClientFinal INT DEFAULT 0;
+ALTER TABLE ensayoCubo ADD COLUMN dateSentToClientFinal DATE DEFAULT NULL;
 
 
 CREATE TABLE ensayoViga(
@@ -949,7 +960,8 @@ ALTER TABLE ensayoViga ADD CONSTRAINT jefaLabApproval_id FOREIGN KEY (jefaLabApp
 
 ALTER TABLE ensayoViga ADD COLUMN pdfFinal VARCHAR(200);
 
-
+ALTER TABLE ensayoViga ADD COLUMN sentToClientFinal INT DEFAULT 0;
+ALTER TABLE ensayoViga ADD COLUMN dateSentToClientFinal DATE DEFAULT NULL;
 
 CREATE TABLE footerEnsayo(
 	id_footerEnsayo INT(11) NOT NULL AUTO_INCREMENT,

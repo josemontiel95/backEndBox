@@ -467,7 +467,9 @@ class formatoCampo{
 					formatoCampo.termometro_id,	
 					TERMOMETRO,
 					formatoCampo.preliminar AS preliminar,
-					preliminarGabs
+					preliminarGabs,
+					formatoCampo.ensayadoFin AS ensayadoFin,
+					IF(footerEnsayo.active IS NOT NULL,1,0) AS footerExist
 			      FROM 
 			        ordenDeTrabajo,cliente,obra,formatoCampo LEFT JOIN footerEnsayo ON formatoCampo_id = id_formatoCampo,
 			        (

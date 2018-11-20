@@ -388,7 +388,7 @@ class registrosCampo{
 				"
 				,
 				array($id_registrosCampo),
-				"SELECT -- registrosCampo :: insertRegistroJefeBrigada"
+				"SELECT -- registrosCampo :: insertRegistroJefaLaboratorio : 1"
 			);
 
 			if($dbS->didQuerydied || $info == "empty"){
@@ -451,6 +451,47 @@ class registrosCampo{
 					$isGroupProperty=true;
 					break;
 			}
+			if($campo=="status" && $valor=="3"){
+				$tipo= $dbS->qvalue(
+					"SELECT
+						 formatoCampo.tipo AS tipo
+					  FROM 
+					  	registrosCampo INNER JOIN formatoCampo ON id_formatoCampo = formatoCampo_id
+					  WHERE 
+					  	id_registrosCampo = 1QQ
+					  ", array($id_registrosCampo),
+					  "SELECT -- RegistrosRev :: insertRegistroJefaLaboratorio : 2"
+					  );
+				if($dbS->didQuerydied || ($tipo=="empty")){
+					$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' =>20);
+					return json_encode($arr);
+				}
+				$table = "";
+				switch($tipo){
+					case "CILINDRO":
+						$table="ensayoCilindro";
+						$id="id_ensayoCilindro";
+					break;
+					case "CUBO":
+						$table="ensayoCubo";
+						$id="id_ensayoCubo";
+					break;
+					case "VIGAS":
+						$table="ensayoViga";
+						$id="id_ensayoViga";
+					break;
+				}
+				$dbS->squery(
+						"UPDATE
+							1QQ
+						SET
+							pdfFinal = NULL
+						WHERE
+							registrosCampo_id = 1QQ
+
+				",array($table,$id_registrosCampo),
+				"UPDATE -- registrosCampo :: insertRegistroJefaLaboratorio : 3");
+			}
 			if($campo == 'herramienta_id'){
 				$herramienta = $dbS->qarrayA(
 									"
@@ -464,7 +505,7 @@ class registrosCampo{
 									"
 									,
 									array($valor),
-									"SELECT"
+									"SELECT -- registrosCampo :: insertRegistroJefaLaboratorio : 4 "
 								);
 				if(!$dbS->didQuerydied && $herramienta != "empty"){
 					$a = $dbS->qarrayA(
@@ -489,7 +530,7 @@ class registrosCampo{
 								"
 								,
 								array($id_registrosCampo),
-								"SELECT -- registrosCampo :: insertRegistroJefeBrigada"
+								"SELECT -- registrosCampo :: insertRegistroJefaLaboratorio : 5 "
 							);
 					if(!$dbS->didQuerydied && $herramienta != "empty"){
 						$mes = $this->numberToRomanRepresentation($a['mes']);
@@ -511,7 +552,7 @@ class registrosCampo{
 								status > 1
 
 						",array($new_clave,$campo,$valor,$id_registrosCampo),
-						"UPDATE -- registrosCampo :: insertRegistroJefeBrigada");
+						"UPDATE -- registrosCampo :: insertRegistroJefaLaboratorio :6");
 						if(!$dbS->didQuerydied){
 							$dbS->commitTransaction();
 							$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => '¡Exito en la inserccion de un registro!','clave'=>$new_clave,'error' => 0);
