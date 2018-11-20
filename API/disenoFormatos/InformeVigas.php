@@ -22,6 +22,13 @@
 		//Array que contiene los letreros de los detalles
 		private $cellsDetails;
 
+
+		function generateCellsInfoForvalidation(){
+			$pdf  = new InformeVigas('L','mm','Letter');
+			$pdf->AddPage();
+			return $pdf->generateCellsInfo();
+		}
+
 		function demo(){
 			$pdf  = new InformeVigas('L','mm','Letter');
 			$pdf->AddPage();
@@ -101,7 +108,7 @@
 			$posicionCellsText = 50;
 
 			$tam_font_left = 7;	
-			$tam_CellsLeftAlto = $tam_font_left - 3;
+			$tam_CellsLeftAlto = $tam_font_left - 4;
 			$this->SetFont('Arial','',$tam_font_left);
 			
 			$obra = 'NOMBRE DE LA OBRA:';
@@ -182,15 +189,22 @@
 
 		function putCaracInfo(){
 			
+			//Guardamos la posicion de x para posteriormente imprimir la siguiente celda
+			$posicion_y = $this->GetY();
 
 			//Nombre de la obra
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']);
-			$this->Cell($this->cellsInfo['tam_obra'],$this->cellsInfo['tam_CellsLeftAlto'],$this->cellsInfo['obra'],0);
+			$this->cell($this->cellsInfo['tam_obra'],$this->cellsInfo['tam_CellsLeftAlto'],$this->cellsInfo['obra'],0);
 
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
-			$this->Cell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],'tam_stringCarac'),'B',0);
+			$this->multicell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],'PRUEBA DE TEXTO LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1','B','C');
+
+			$posicion_yAux = $this->GetY();
+
+			//Nos colocamos en la misma posicion que la anterior celda
+			$this->SetY($posicion_y);
 
 			//Informe No.
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_right']);
@@ -199,11 +213,18 @@
 
 			//Caja de texto
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_right']);
-			$this->Cell($this->cellsInfo['tam_informeText'],$this->cellsInfo['tam_CellsRightAlto'],$this->getMaxString($this->cellsInfo['tam_font_right'],$this->cellsInfo['tam_informeText'],'tam_stringCarac'),'B',0,'C');
+			$this->Cell($this->cellsInfo['tam_informeText'],$this->cellsInfo['tam_CellsRightAlto'],$this->getMaxString($this->cellsInfo['tam_font_right'],$this->cellsInfo['tam_informeText'],'tam_stringCarac'),'B','C');
 
-			$this->Ln($this->cellsInfo['tam_font_right'] - 2);
+			$this->SetY($posicion_yAux + 2);
+
+			
 
 			//Localizacion de la obra
+
+			//Guardamos la posicion de la y para imprimir despues la siguiente celda
+
+			$posicion_y = $this->GetY();
+
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']);
 			$this->Cell($this->cellsInfo['tam_locObra'],$this->cellsInfo['tam_CellsLeftAlto'],utf8_decode($this->cellsInfo['locObra']),0);
 
@@ -212,7 +233,11 @@
 
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
 
-			$this->Cell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],'tam_stringCarac'),'B',0);
+			$this->multicell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],'PRUEBA DE TEXTO LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1','B','C');
+
+			$posicion_yAux = $this->GetY();
+
+			$this->SetY($posicion_y);
 			
 			//Fecha de ensaye
 			$this->SetX(-($this->cellsInfo['tam_fechaEnsaye'] + $this->cellsInfo['separacion']));
@@ -223,7 +248,9 @@
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_right']);
 			$this->Cell($this->cellsInfo['tam_fechaEnsayeText'],$this->cellsInfo['tam_CellsRightAlto'],$this->getMaxString($this->cellsInfo['tam_font_right'],$this->cellsInfo['tam_fechaEnsayeText'],'tam_stringCarac'),'B',0,'C');
 
-			$this->Ln($this->cellsInfo['tam_font_right'] - 2);
+			$this->SetY($posicion_yAux + 2);
+
+			//$this->Ln($this->cellsInfo['tam_font_right'] - 2);
 
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']);
 
@@ -462,7 +489,7 @@
 		}
 
 		function putCaracCampos(){
-			$tam_font_Cells = 8;	
+			$tam_font_Cells = 7;	
 			$this->SetFont('Arial','B',$tam_font_Cells);
 
 			$iden = 'Identificación de la ';
@@ -587,7 +614,7 @@
 
 			$this->arrayCampos = $array_campo;
 
-			$tam_font_CellsRows = 7;
+			$tam_font_CellsRows = 6;
 			$tam_cellsTablesAlto = $tam_font_CellsRows - 2.5;
 
 			$grupos = 12; //Ponemos todos los rows que pueden venir en el formato ya que no hay grupos como tal
@@ -679,7 +706,7 @@
 
 
 		function putTables($infoFormato,$regisFormato){
-			$tam_font_Cells = 8;	
+			$tam_font_Cells = 7;	
 			$this->SetFont('Arial','B',$tam_font_Cells);
 
 			$iden = 'Identificación de la ';
