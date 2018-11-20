@@ -90,10 +90,8 @@ class ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		
 		if($arr['error'] == 0){
-			
-			$arrayCCH = $dbS->qAll(
+			$arr = $dbS->qAll(
 				"SELECT 
 					* 
 				FROM 
@@ -115,6 +113,7 @@ class ordenDeTrabajo{
 							WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval IS NULL  THEN 'Revisar cambios JB'
 							WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval > 0      THEN 'Autorizar y generar PDF'
 							WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval > 0      THEN 'Autorizar y generar PDF'
+							WHEN formatoCampo.status = 2       THEN 'Autorizado & Completado'
 							WHEN formatoCampo.status = 0       THEN 'En edicion JB'
 							ELSE 'Error, contacte a soporte'
 						END AS accReq,
@@ -147,7 +146,7 @@ class ordenDeTrabajo{
 						END AS fecha,
 						'N.A.' AS ensayosAwaitingApproval,
 						notVistoJLForBrigadaApproval,
-						IF(jefaLabApproval_id IS NOT NULL, 'Completado', 'Autorizar y generar PDF') AS accReq,
+						IF(jefaLabApproval_id IS NOT NULL, 'Autorizado & completado', 'Autorizar y generar PDF') AS accReq,
 						regNo AS informeNo,
 						ordenDeTrabajo_id,
 						'1' AS tipoNo,
@@ -167,11 +166,12 @@ class ordenDeTrabajo{
 			);
 				
 			if(!$dbS->didQuerydied){
-				return json_encode($arrayCCH);
+				if($arr == "empty")
+					$arr = array('estatus' =>"No hay registros", 'error' => 5); //Pendiente
 			}
 			else{
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query de CCH, verifica tus datos y vuelve a intentarlo','error' => 6);	
-			}		
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la query , verifica tus datos y vuelve a intentarlo','error' => 6);	
+			}	
 		}
 		return json_encode($arr);
 	}

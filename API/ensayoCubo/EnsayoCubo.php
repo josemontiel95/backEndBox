@@ -263,7 +263,8 @@ class EnsayoCubo{
 				"	SELECT
 						registrosCampo_id,
 						footerEnsayo_id,
-						status
+						status,
+						formatoCampo_id
 					FROM
 						ensayoCubo
 					WHERE
@@ -275,7 +276,23 @@ class EnsayoCubo{
 			if(!$dbS->didQuerydied){
 				if($a['status']==0){
 					$dbS->rollbackTransaction();
-					$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, el TMU mantiene los permisos de escritura','error' => 50);
+					$arr = array('ensayoCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, el TMU mantiene los permisos de escritura','error' => 50);
+					return json_encode($arr);
+				}
+				$dbS->squery(
+					"UPDATE
+						formatoCampo
+					SET
+						ensayadoFin = ensayadoFin - 1
+					WHERE
+						id_formatoCampo = 1QQ
+					"
+					,array($a['formatoCampo_id']),
+					"UPDATE -- EnsayoCubo :: completeEnsayoJL : 2"
+				);
+				if($dbS->didQuerydied){
+					$dbS->rollbackTransaction();
+					$arr = array('ensayoCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registro TMU, verifica tus datos y vuelve a intentarlo','error' => 41);
 					return json_encode($arr);
 				}
 				$dbS->squery(
@@ -286,7 +303,7 @@ class EnsayoCubo{
 					WHERE
 						id_ensayoCubo = 1QQ
 					",array($id_ensayoCubo),
-					"UPDATE -- EnsayoCubo ::  completeEnsayoJL : 2"
+					"UPDATE -- EnsayoCubo ::  completeEnsayoJL : 3"
 				);
 				if(!$dbS->didQuerydied){
 					$dbS->commitTransaction();
@@ -315,7 +332,8 @@ class EnsayoCubo{
 				"	SELECT
 						registrosCampo_id,
 						footerEnsayo_id,
-						status
+						status,
+						formatoCampo_id
 					FROM
 						ensayoCubo
 					WHERE
@@ -327,7 +345,23 @@ class EnsayoCubo{
 			if(!$dbS->didQuerydied){
 				if($a['status'] == 0){
 					$dbS->rollbackTransaction();
-					$arr = array('registroCubo' => 'NULL','token' => $token, 'estatus' => 'Error en la actualizacion del TMU, el TMU mantiene los permisos de escritura','error' => 50);
+					$arr = array('ensayoCubo' => 'NULL','token' => $token, 'estatus' => 'Error en la actualizacion del TMU, el TMU mantiene los permisos de escritura','error' => 50);
+					return json_encode($arr);
+				}
+				$dbS->squery(
+					"UPDATE
+						formatoCampo
+					SET
+						ensayadoFin = ensayadoFin + 1
+					WHERE
+						id_formatoCampo = 1QQ
+					"
+					,array($a['formatoCampo_id']),
+					"UPDATE -- EnsayoCubo :: editEnsayoJL : 2"
+				);
+				if($dbS->didQuerydied){
+					$dbS->rollbackTransaction();
+					$arr = array('ensayoCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registro TMU, verifica tus datos y vuelve a intentarlo','error' => 41);
 					return json_encode($arr);
 				}
 				$dbS->squery(
@@ -338,7 +372,7 @@ class EnsayoCubo{
 					WHERE
 						id_ensayoCubo = 1QQ
 					",array($id_ensayoCubo),
-					"UPDATE -- EnsayoCubo ::  editEnsayoJL : 2"
+					"UPDATE -- EnsayoCubo ::  editEnsayoJL : 3"
 				);
 				if(!$dbS->didQuerydied){
 					$dbS->commitTransaction();
@@ -367,7 +401,8 @@ class EnsayoCubo{
 				$a = $dbS->qarrayA(
 					"	SELECT
 							registrosCampo_id,
-							footerEnsayo_id
+							footerEnsayo_id,
+							formatoCampo_id
 						FROM
 							ensayoCubo
 						WHERE
@@ -379,6 +414,22 @@ class EnsayoCubo{
 				if(!$dbS->didQuerydied){
 					$dbS->squery(
 						"UPDATE
+							formatoCampo
+						SET
+							ensayadoFin = ensayadoFin - 1
+						WHERE
+							id_formatoCampo = 1QQ
+						"
+						,array($a['formatoCampo_id']),
+						"UPDATE -- EnsayoCubo :: completeEnsayo : 2"
+					);
+					if($dbS->didQuerydied){
+						$dbS->rollbackTransaction();
+						$arr = array('ensayoCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCCH, verifica tus datos y vuelve a intentarlo','error' => 41);
+						return json_encode($arr);
+					}
+					$dbS->squery(
+						"UPDATE
 							footerEnsayo
 						SET
 							pendingEnsayos = pendingEnsayos -1,
@@ -387,11 +438,11 @@ class EnsayoCubo{
 						WHERE
 							id_footerEnsayo = 1QQ
 						",array($a['footerEnsayo_id']),
-						"UPDATE -- EnsayoCubo ::  completeEnsayo : 2"
+						"UPDATE -- EnsayoCubo ::  completeEnsayo : 3"
 					);
 					if($dbS->didQuerydied){
 						$dbS->rollbackTransaction();
-						$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCCH, verifica tus datos y vuelve a intentarlo','error' => 40);
+						$arr = array('ensayoCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCCH, verifica tus datos y vuelve a intentarlo','error' => 40);
 						return json_encode($arr);
 					}
 					$dbS->squery(
@@ -402,7 +453,7 @@ class EnsayoCubo{
 						WHERE
 							id_registrosCampo = 1QQ
 						",array($a['registrosCampo_id']),
-						"UPDATE -- EnsayoCubo ::  completeEnsayo : 3"
+						"UPDATE -- EnsayoCubo ::  completeEnsayo : 4"
 					);
 					
 					if(!$dbS->didQuerydied){
@@ -415,7 +466,7 @@ class EnsayoCubo{
 							WHERE
 								id_ensayoCubo = 1QQ
 							",array($id_ensayoCubo),
-							"UPDATE -- EnsayoCubo ::  completeEnsayo : 4"
+							"UPDATE -- EnsayoCubo ::  completeEnsayo : 5"
 						);
 						if(!$dbS->didQuerydied){
 							$dbS->commitTransaction();
@@ -450,7 +501,8 @@ class EnsayoCubo{
 				"	SELECT
 						registrosCampo_id,
 						footerEnsayo_id,
-						status
+						status,
+						formatoCampo_id
 					FROM
 						ensayoCubo
 					WHERE
@@ -462,7 +514,23 @@ class EnsayoCubo{
 			if(!$dbS->didQuerydied){
 				if($a['status']>1){
 					$dbS->rollbackTransaction();
-					$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, el jefe de laboratorio ha revocado tus permisos de escritura','error' => 50);
+					$arr = array('ensayoCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, el jefe de laboratorio ha revocado tus permisos de escritura','error' => 50);
+					return json_encode($arr);
+				}
+				$dbS->squery(
+					"UPDATE
+						formatoCampo
+					SET
+						ensayadoFin = ensayadoFin + 1
+					WHERE
+						id_formatoCampo = 1QQ
+					"
+					,array($a['formatoCampo_id']),
+					"UPDATE -- EnsayoCubo :: editEnsayo : 2"
+				);
+				if($dbS->didQuerydied){
+					$dbS->rollbackTransaction();
+					$arr = array('ensayoCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCCH, verifica tus datos y vuelve a intentarlo','error' => 41);
 					return json_encode($arr);
 				}
 				$dbS->squery(
@@ -474,11 +542,11 @@ class EnsayoCubo{
 					WHERE
 						id_footerEnsayo = 1QQ
 					",array($a['footerEnsayo_id']),
-					"UPDATE -- EnsayoCubo ::  editEnsayo : 2"
+					"UPDATE -- EnsayoCubo ::  editEnsayo : 3"
 				);
 				if($dbS->didQuerydied){
 					$dbS->rollbackTransaction();
-					$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, verifica tus datos y vuelve a intentarlo','error' => 40);
+					$arr = array('ensayoCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, verifica tus datos y vuelve a intentarlo','error' => 40);
 					return json_encode($arr);
 				}
 				$dbS->squery(
@@ -489,7 +557,7 @@ class EnsayoCubo{
 					WHERE
 						id_registrosCampo = 1QQ
 					",array($a['registrosCampo_id']),
-					"UPDATE -- EnsayoCubo ::  editEnsayo : 3"
+					"UPDATE -- EnsayoCubo ::  editEnsayo : 4"
 				);
 				if(!$dbS->didQuerydied){
 					$dbS->squery(
@@ -500,25 +568,25 @@ class EnsayoCubo{
 						WHERE
 							id_ensayoCubo = 1QQ
 						",array($id_ensayoCubo),
-						"UPDATE -- EnsayoCubo ::  editEnsayo : 4"
+						"UPDATE -- EnsayoCubo ::  editEnsayo : 5"
 					);
 					if(!$dbS->didQuerydied){
 						$dbS->commitTransaction();
-						$arr = array('registroCubo' => $id_ensayoCilindro,'estatus' => '¡Ensayo completado!','error' => 0);
+						$arr = array('ensayoCubo' => $id_ensayoCilindro,'estatus' => '¡Ensayo completado!','error' => 0);
 						return json_encode($arr);
 					}else{
 						$dbS->rollbackTransaction();
-						$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCubo, verifica tus datos y vuelve a intentarlo','error' => 5);
+						$arr = array('ensayoCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registroCubo, verifica tus datos y vuelve a intentarlo','error' => 5);
 						return json_encode($arr);	
 					}
 				}else{
 					$dbS->rollbackTransaction();
-					$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, verifica tus datos y vuelve a intentarlo','error' => 5);
+					$arr = array('ensayoCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, verifica tus datos y vuelve a intentarlo','error' => 5);
 					return json_encode($arr);
 				}
 			}else{
 				$dbS->rollbackTransaction();
-				$arr = array('registroCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
+				$arr = array('ensayoCubo' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 5);
 				return json_encode($arr);
 			}
 		}

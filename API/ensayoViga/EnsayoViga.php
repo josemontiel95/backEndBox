@@ -383,19 +383,36 @@ class EnsayoViga{
 				"	SELECT
 						registrosCampo_id,
 						footerEnsayo_id,
-						status
+						status,
+						formatoCampo_id
 					FROM
 						ensayoViga
 					WHERE
 						id_ensayoViga = 1QQ
 				",
 				array($id_ensayoViga),
-				"SELECT -- EnsayoViga ::  completeEnsayo : 1"
+				"SELECT -- EnsayoViga ::  completeEnsayoJL : 1"
 				);
 			if(!$dbS->didQuerydied){
 				if($a['status']==0){
 					$dbS->rollbackTransaction();
 					$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, el TMU mantiene los permisos de escritura','error' => 50);
+					return json_encode($arr);
+				}
+				$dbS->squery(
+					"UPDATE
+						formatoCampo
+					SET
+						ensayadoFin = ensayadoFin - 1
+					WHERE
+						id_formatoCampo = 1QQ
+					"
+					,array($a['formatoCampo_id']),
+					"UPDATE -- EnsayoViga :: completeEnsayoJL : 2"
+				);
+				if($dbS->didQuerydied){
+					$dbS->rollbackTransaction();
+					$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registro TMU, verifica tus datos y vuelve a intentarlo','error' => 41);
 					return json_encode($arr);
 				}
 				$dbS->squery(
@@ -406,7 +423,7 @@ class EnsayoViga{
 					WHERE
 						id_ensayoViga = 1QQ
 					",array($id_ensayoViga),
-					"UPDATE -- EnsayoViga ::  completeEnsayo : 2"
+					"UPDATE -- EnsayoViga ::  completeEnsayoJL : 3"
 				);
 				if(!$dbS->didQuerydied){
 					$dbS->commitTransaction();
@@ -437,7 +454,8 @@ class EnsayoViga{
 				"	SELECT
 						registrosCampo_id,
 						footerEnsayo_id,
-						status
+						status,
+						formatoCampo_id
 					FROM
 						ensayoViga
 					WHERE
@@ -454,13 +472,29 @@ class EnsayoViga{
 				}
 				$dbS->squery(
 					"UPDATE
+						formatoCampo
+					SET
+						ensayadoFin = ensayadoFin + 1
+					WHERE
+						id_formatoCampo = 1QQ
+					"
+					,array($a['formatoCampo_id']),
+					"UPDATE -- EnsayoViga :: editEnsayoJL : 2"
+				);
+				if($dbS->didQuerydied){
+					$dbS->rollbackTransaction();
+					$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registro TMU, verifica tus datos y vuelve a intentarlo','error' => 41);
+					return json_encode($arr);
+				}
+				$dbS->squery(
+					"UPDATE
 						ensayoViga
 					SET
 						status = 2
 					WHERE
 						id_ensayoViga = 1QQ
 					",array($id_ensayoViga),
-					"UPDATE -- EnsayoViga ::  editEnsayoJL : 2"
+					"UPDATE -- EnsayoViga ::  editEnsayoJL : 3"
 				);
 				if(!$dbS->didQuerydied){
 					$dbS->commitTransaction();
@@ -491,7 +525,8 @@ class EnsayoViga{
 				$a = $dbS->qarrayA(
 					"	SELECT
 							registrosCampo_id,
-							footerEnsayo_id
+							footerEnsayo_id,
+							formatoCampo_id
 						FROM
 							ensayoViga
 						WHERE
@@ -503,6 +538,22 @@ class EnsayoViga{
 				if(!$dbS->didQuerydied){
 					$dbS->squery(
 						"UPDATE
+							formatoCampo
+						SET
+							ensayadoFin = ensayadoFin - 1
+						WHERE
+							id_formatoCampo = 1QQ
+						"
+						,array($a['formatoCampo_id']),
+						"UPDATE -- EnsayoViga :: completeEnsayo : 2"
+					);
+					if($dbS->didQuerydied){
+						$dbS->rollbackTransaction();
+						$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registro TMU, verifica tus datos y vuelve a intentarlo','error' => 41);
+						return json_encode($arr);
+					}
+					$dbS->squery(
+						"UPDATE
 							footerEnsayo
 						SET
 							pendingEnsayos = pendingEnsayos -1,
@@ -511,7 +562,7 @@ class EnsayoViga{
 						WHERE
 							id_footerEnsayo = 1QQ
 						",array($a['footerEnsayo_id']),
-						"UPDATE -- EnsayoViga ::  completeEnsayo : 2"
+						"UPDATE -- EnsayoViga ::  completeEnsayo : 3"
 					);
 					if($dbS->didQuerydied){
 						$dbS->rollbackTransaction();
@@ -526,7 +577,7 @@ class EnsayoViga{
 						WHERE
 							id_registrosCampo = 1QQ
 						",array($a['registrosCampo_id']),
-						"UPDATE -- EnsayoViga ::  completeEnsayo : 3"
+						"UPDATE -- EnsayoViga ::  completeEnsayo : 4"
 					);
 
 					if(!$dbS->didQuerydied){
@@ -538,7 +589,7 @@ class EnsayoViga{
 							WHERE
 								id_ensayoViga = 1QQ
 							",array($id_ensayoViga),
-							"UPDATE -- EnsayoViga ::  completeEnsayo : 4"
+							"UPDATE -- EnsayoViga ::  completeEnsayo : 5"
 						);
 						if(!$dbS->didQuerydied){
 							$dbS->commitTransaction();
@@ -574,7 +625,8 @@ class EnsayoViga{
 				"	SELECT
 						registrosCampo_id,
 						footerEnsayo_id,
-						status
+						status,
+						formatoCampo_id
 					FROM
 						ensayoViga
 					WHERE
@@ -591,6 +643,22 @@ class EnsayoViga{
 				}
 				$dbS->squery(
 					"UPDATE
+						formatoCampo
+					SET
+						ensayadoFin = ensayadoFin + 1
+					WHERE
+						id_formatoCampo = 1QQ
+					"
+					,array($a['formatoCampo_id']),
+					"UPDATE -- EnsayoViga :: editEnsayo : 2"
+				);
+				if($dbS->didQuerydied){
+					$dbS->rollbackTransaction();
+					$arr = array('ensayoViga' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registro TMU, verifica tus datos y vuelve a intentarlo','error' => 41);
+					return json_encode($arr);
+				}
+				$dbS->squery(
+					"UPDATE
 						footerEnsayo
 					SET
 						pendingEnsayos = pendingEnsayos + 1,
@@ -598,7 +666,7 @@ class EnsayoViga{
 					WHERE
 						id_footerEnsayo = 1QQ
 					",array($a['footerEnsayo_id']),
-					"UPDATE -- EnsayoViga ::  editEnsayo : 2"
+					"UPDATE -- EnsayoViga ::  editEnsayo : 3"
 				);
 				if($dbS->didQuerydied){
 					$dbS->rollbackTransaction();
@@ -613,7 +681,7 @@ class EnsayoViga{
 					WHERE
 						id_registrosCampo = 1QQ
 					",array($a['registrosCampo_id']),
-					"UPDATE -- EnsayoViga ::  editEnsayo : 3"
+					"UPDATE -- EnsayoViga ::  editEnsayo : 4"
 				);
 
 				if(!$dbS->didQuerydied){
@@ -625,7 +693,7 @@ class EnsayoViga{
 						WHERE
 							id_ensayoViga = 1QQ
 						",array($id_ensayoViga),
-						"UPDATE -- EnsayoViga ::  editEnsayo : 4"
+						"UPDATE -- EnsayoViga ::  editEnsayo : 5"
 					);
 					if(!$dbS->didQuerydied){
 						$dbS->commitTransaction();

@@ -39,7 +39,7 @@ class FormatoRegistroRev{
 						ordenDeTrabajo ON id_ordenDeTrabajo = ordenDeTrabajo_id JOIN
 						obra ON id_obra=obra_id
 					WHERE
-						id_formatoRegistroRev =1049
+						id_formatoRegistroRev =1QQ
 				",array($id_formatoRegistroRev),
 				"SELECT -- FormatoRegistroRev :: autRevenimientoForAdmin : 1"
 			);
@@ -67,7 +67,7 @@ class FormatoRegistroRev{
 			}	
 			if($count != 0){
 				$dbS->rollbackTransaction();
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato','error' => 20);
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error, no puedes autorizar formatos hasta que completes todos los registros','error' => 20);
 				return json_encode($arr);
 			}						
 			$dbS->squery(
@@ -93,7 +93,7 @@ class FormatoRegistroRev{
 				"UPDATE
 					registrosRev
 				SET
-					status = 4
+					status = 5
 				WHERE
 					formatoRegistroRev_id = 1QQ
 				"
@@ -215,6 +215,38 @@ class FormatoRegistroRev{
 			return json_encode($arr);
 		}
 	}
+	public function formatoSeen($token,$rol_usuario_id,$id_formatoRegistroRev){
+		global $dbS;
+
+		$usuario = new Usuario();
+
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$id_usuario=$usuario->id_usuario;
+		if($arr['error'] == 0){
+			$dbS->beginTransaction();
+			
+			$dbS->squery(
+				"UPDATE
+					formatoRegistroRev
+				SET
+					notVistoJLForBrigadaApproval = 0
+				WHERE
+					id_formatoRegistroRev = 1QQ
+				",array($id_formatoRegistroRev),
+				"UPDATE -- FormatoRegistroRev :: formatoSeen :1 "
+			);
+
+			if(!$dbS->didQuerydied){
+				$arr = array('id_formatoRegistroRev' => $id_formatoRegistroRev,'estatus' => 'Exito, marcado como visto','error' => 0);	
+				$dbS->commitTransaction();
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en actualizar el estado de lectura del formato, verifica tus datos y vuelve a intentarlo','error' => 23);
+				return json_encode($arr);
+			}
+		}
+		return json_encode($arr);
+	}
 
 	public function generatePDFFinal($token,$rol_usuario_id,$id_formatoRegistroRev){
 		global $dbS;
@@ -238,12 +270,12 @@ class FormatoRegistroRev{
 			);
 			if($dbS->didQuerydied || ($count == "empty")){
 				$dbS->rollbackTransaction();
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato','error' => 20);
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la validacion de los datos. Contacta a soporte','error' => 20);
 				return json_encode($arr);
 			}	
 			if($count != 0){
 				$dbS->rollbackTransaction();
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato','error' => 25);
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error, no puedes generar formatos hasta que completes todos los registros','error' => 25);
 				return json_encode($arr);
 			}			
 			$var_system = $dbS->qarrayA(

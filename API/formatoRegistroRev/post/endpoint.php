@@ -37,7 +37,7 @@
 		break;
 		
 		case 'autRevenimientoForAdmin':
-			$registrorev = new RegistrosRev();
+			$registrorev = new FormatoRegistroRev();
 			echo $registrorev->autRevenimientoForAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev']);
 		break;
 		case 'insertRegistroJefeBrigada':
@@ -57,6 +57,12 @@
 			//Realizamos la query para obtener la informacion para el formato
 			$formato = new FormatoRegistroRev();
 			echo $formato->generatePDF($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev']);
+		break;
+		
+		case 'formatoSeen':
+			//Realizamos la query para obtener la informacion para el formato
+			$formato = new FormatoRegistroRev();
+			echo $formato->formatoSeen($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev']);
 		break;
 		
 		case 'generatePDFFinal':
