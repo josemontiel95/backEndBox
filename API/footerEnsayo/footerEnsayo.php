@@ -121,17 +121,20 @@ class footerEnsayo{
 					"	SELECT
 							pdfFinal,
 							jefaLabApproval_id,
-							status
+							ensayo.status,
+							grupo,
+							registrosCampo.status AS regSatatus,
+							registrosCampo.formatoCampo_id AS formatoCampo_id
 						FROM
-							1QQ
+							1QQ AS ensayo INNER JOIN registrosCampo ON registrosCampo_id = id_registrosCampo
 						WHERE
-							1QQ =1QQ
+							1QQ = 1QQ
 					",array($table,$id,$id_ensayo),
 					"SELECT -- FooterEnsayo :: generatePDFFinal : 1"
 				);
 				//Cachamos la excepcion
 				if(!$dbS->didQuerydied && !($b=="empty")){
-					if($b['status'] == 0 || $b['status'] == 2){ // 0 es edicion TMU y 2 es edicion JL. Ambos estados son invalidos para autorizar
+					if($b['status'] == 0 || $b['status'] == 2 || $b['regSatatus'] == 0 || $b['regSatatus'] == 3){ // 0 es edicion TMU y 2 es edicion JL. Ambos estados son invalidos para autorizar
 						$dbS->rollbackTransaction();
 						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en autorizar ensayo, no puedes autorizar antes de que el TMU ceda sus derechos de escritura','error' => 20);
 						return json_encode($arr);
@@ -145,6 +148,22 @@ class footerEnsayo{
 						WHERE
 							formatoCampo_id =1QQ
 						",array($id_formatoCampo),
+						"UPDATE -- FooterEnsayo :: generatePDFFinal : 3 var_system[apiRoot]:".$var_system[0]
+					);
+					if($dbS->didQuerydied){
+						$dbS->rollbackTransaction();
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en autorizar ensayo, verifica tus datos y vuelve a intentarlo','error' => 24);
+						return json_encode($arr);
+					}
+					$dbS->squery(
+						"UPDATE
+							registrosCampo
+						SET
+							status = 4
+						WHERE
+							formatoCampo_id =1QQ 
+							AND grupo = 1QQ
+						",array($id_formatoCampo,$b['grupo']),
 						"UPDATE -- FooterEnsayo :: generatePDFFinal : 3 var_system[apiRoot]:".$var_system[0]
 					);
 					if($dbS->didQuerydied){
@@ -504,7 +523,7 @@ class footerEnsayo{
 				"UPDATE
 					footerEnsayo
 				SET
-					status = 1
+					status = 2
 				WHERE
 					active = 1 AND
 					id_footerEnsayo = 1QQ
@@ -578,7 +597,7 @@ class footerEnsayo{
 								FROM
 									1QQ 
 								WHERE
-									status IN (0,2)
+									status IN (0,1,2,3)
 									AND formatoCampo_id =1QQ
 							UNION
 								SELECT 
@@ -599,9 +618,9 @@ class footerEnsayo{
 						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en verificar la integridad del formato, verifica tus datos y vuelve a intentarlo','error' => 13);
 						return json_encode($arr);
 					}
-					if($homeAloneClubMembers != 0){
+					if($underAgeMemebrsClub != 0){
 						$dbS->rollbackTransaction();
-						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error: Todos los ensayos deben estar marcados como completados para poder continuar','error' => 30);
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error: Todos los ensayos deben estar marcados como completados/autorizados para poder continuar','error' => 30);
 						return json_encode($arr);
 					}
 					$noOfRegistries = $dbS->qvalue(
@@ -621,6 +640,17 @@ class footerEnsayo{
 							La funcionalidad solia estar aqui, pues antes se combinaban los registros provenientes de diferentes formatos de campo,
 							al completarse, se disminuia individualmente a cada registro.
 						*/
+						$dbS->squery(
+							"UPDATE
+								formatoCampo
+							SET
+								status = 2
+							WHERE
+								id_formatoCampo = 1QQ
+							"
+							,array($a['formatoCampo_id']),
+							"UPDATE-- FooterEnsayo :: completeFormato : 6"
+						);
 
 						if(!$dbS->didQuerydied){
 							/* 
@@ -656,9 +686,9 @@ class footerEnsayo{
 									status = 5
 								WHERE
 									active = 1 AND
-									footerEnsayo_id = 1QQ
+									formatoCampo_id = 1QQ
 								"
-								,array($table,$id_footerEnsayo),
+								,array($a['formatoCampo_id']),
 								"UPDATE-- FooterEnsayo :: completeFormato : 8"
 							);
 
@@ -759,7 +789,7 @@ class footerEnsayo{
 					FROM
 						1QQ 
 					WHERE
-						status = 0
+						status IN (0,2)
 						AND formatoCampo_id =1QQ
 					
 				",array($table,$footerEnsayoInfo['formatoCampo_id']),
