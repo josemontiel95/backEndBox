@@ -16,8 +16,11 @@ class FormatoRegistroRev{
 
 
 	private $wc = '/1QQ/';
+	public function ping($data){
+		return $data;
+	}
 
-	public function autEnsayoForAdmin($token,$rol_usuario_id,$id_formatoRegistroRev){
+	public function autRevenimientoForAdmin($token,$rol_usuario_id,$id_formatoRegistroRev){
 		global $dbS;
 
 		$usuario = new Usuario();
@@ -27,6 +30,25 @@ class FormatoRegistroRev{
 		$id_usuario=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$dbS->beginTransaction();	
+
+			$iguala= $dbS->qvalue(
+				"	SELECT
+						IF(obra.tipo = 1, 1,0) AS iguala
+					FROM
+						formatoRegistroRev JOIN 
+						ordenDeTrabajo ON id_ordenDeTrabajo = ordenDeTrabajo_id JOIN
+						obra ON id_obra=obra_id
+					WHERE
+						id_formatoRegistroRev =1049
+				",array($id_formatoRegistroRev),
+				"SELECT -- FormatoRegistroRev :: autRevenimientoForAdmin : 1"
+			);
+			if($dbS->didQuerydied|| ($iguala == "empty")){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en autorizar ensayo, verifica tus datos y vuelve a intentarlo','error' => 34);
+				return json_encode($arr);
+			}
+
 			$count = $dbS->qvalue(
 				"	SELECT
 						COUNT(*) AS No
@@ -36,7 +58,7 @@ class FormatoRegistroRev{
 						formatoRegistroRev_id = 1QQ
 						AND status IN (0,3)
 				",array($id_formatoRegistroRev,),
-				"SELECT -- FooterEnsayo :: generatePDFFinal : 1"
+				"SELECT -- FormatoRegistroRev :: autRevenimientoForAdmin : 2"
 			);
 			if($dbS->didQuerydied || ($var_system == "empty")){
 				$dbS->rollbackTransaction();
@@ -58,7 +80,7 @@ class FormatoRegistroRev{
 					id_formatoRegistroRev = 1QQ
 				"
 				,array($id_usuario,$id_formatoRegistroRev),
-				"UPDATE -- FormatoRegistroRev :: autEnsayoForAdmin : 1 "
+				"UPDATE -- FormatoRegistroRev :: autRevenimientoForAdmin : 2 "
 			);
 
 			if($dbS->didQuerydied){
@@ -76,18 +98,122 @@ class FormatoRegistroRev{
 					formatoRegistroRev_id = 1QQ
 				"
 				,array($id_formatoRegistroRev),
-				"UPDATE -- FormatoRegistroRev :: autEnsayoForAdmin : 1 "
+				"UPDATE -- FormatoRegistroRev :: autRevenimientoForAdmin : 3 "
 			);
 			if($dbS->didQuerydied){
 				$dbS->rollbackTransaction();
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en autorizar ensayo, verifica tus datos y vuelve a intentarlo','error' => 23);
 				return json_encode($arr);
 			}
-
-			$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Exito Formato generado','error' => 0);	
-			$dbS->commitTransaction();
+			if($iguala == 1){
+				$arr=json_decode($this->sentIfIguala($id_formatoRegistroRev),true);
+				if($arr['error'] == 0){
+					$arr = array('id_formatoRegistroRev' => $id_formatoRegistroRev,'estatus' => 'Exito Formato autorizado','error' => 0);	
+					$dbS->commitTransaction();
+				}else{
+					$dbS->rollbackTransaction();
+					return json_encode($arr);
+				}
+			}else{
+				$arr = array('id_formatoRegistroRev' => $id_formatoRegistroRev,'estatus' => 'Exito Formato autorizado','error' => 0);	
+				$dbS->commitTransaction();
+			}
+			
 		}
 		return json_encode($arr);
+	}
+	private function sentIfIguala($id_formatoRegistroRev){
+		global $dbS;
+		$mailer = new Mailer();
+
+		$info = $dbS->qarrayA(
+			"SELECT
+			id_cliente,
+			id_obra,
+			id_ordenDeTrabajo,
+			cliente.email AS emailCliente,
+			obra.correo_residente AS emailResidente,
+			obra.correo_alterno AS correo_alterno,
+			CONCAT(nombre,'(',razonSocial,')') AS nombre
+		FROM
+			cliente,
+			obra,
+			ordenDeTrabajo,
+			formatoRegistroRev
+		WHERE
+			formatoRegistroRev.ordenDeTrabajo_id = ordenDeTrabajo.id_ordenDeTrabajo AND
+			ordenDeTrabajo.obra_id = obra.id_obra AND
+			obra.cliente_id = cliente.id_cliente AND
+			id_formatoRegistroRev = 1QQ
+			",
+			array($id_formatoRegistroRev),
+			"SELECT -- FormatoRegistroRev :: autRevenimientoForAdmin :: sentIfIguala : 1"
+		);
+		if(!$dbS->didQuerydied && ($info != "empty")){
+			try{
+				$dirDatabase = $dbS->qvalue(
+					"SELECT pdfFinal FROM formatoRegistroRev WHERE id_formatoRegistroRev=1QQ",
+					array($id_formatoRegistroRev),
+					"SELECT  -- FormatoRegistroRev :: autRevenimientoForAdmin :: sentIfIguala : 2"
+				);
+				if($dbS->didQuerydied || ($dirDatabase == "empty")){ // Si no murio la query de guardar el preliminar en BD
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 40);
+					return json_encode($arr);
+				}
+				//  Envio del primer correo
+				$resp=$mailer->sendMailFinal($info['emailCliente'], $info['nombre'], $dirDatabase);
+				if($resp==202){
+					$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato enviado','error' => 0);	
+				}else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 106, 'sendGridError'=>$resp);
+					return json_encode($arr);
+				}
+				//  Envio del segundo correo
+				$resp=$mailer->sendMailFinal($info['emailResidente'], $info['nombre'], $dirDatabase);
+				if($resp==202){
+					$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato enviado','error' => 0);	
+				}else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 107, 'sendGridError'=>$resp);
+					return json_encode($arr);
+				}
+				//  Envio del tercer correo
+				$resp=$mailer->sendMailFinal($info['correo_alterno'], $info['nombre'], $dirDatabase);
+				if($resp==202){
+					$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato enviado','error' => 0);	
+				}else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 108, 'sendGridError'=>$resp);
+					return json_encode($arr);
+				}
+
+				$dbS->squery(
+					"UPDATE
+						formatoRegistroRev
+					SET
+						sentToClientFinal = sentToClientFinal + 1,
+						dateSentToClientFinal = CURDATE()
+					WHERE
+						id_formatoRegistroRev = 1QQ
+					"
+					,array($id_formatoRegistroRev),
+					"UPDATE  -- FormatoRegistroRev :: autRevenimientoForAdmin :: sentIfIguala : 3"
+				);
+
+				if($dbS->didQuerydied){
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente:'.$e->getMessage(),'error' => 7);
+					return json_encode($arr);
+				}
+
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Exito','error' => 0);
+				return json_encode($arr);
+
+			}catch(Exception $e){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente:'.$e->getMessage(),'error' => 7);
+				return json_encode($arr);
+			}
+		}else{
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 108, 'sendGridError'=>$resp);
+			return json_encode($arr);
+		}
 	}
 
 	public function generatePDFFinal($token,$rol_usuario_id,$id_formatoRegistroRev){
@@ -97,8 +223,8 @@ class FormatoRegistroRev{
 		$generador = new GeneradorFormatos();
 
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		$dbS->beginTransaction();
 		if($arr['error'] == 0){	
+			$dbS->beginTransaction();
 			$count = $dbS->qvalue(
 				"	SELECT
 						COUNT(*) AS No
@@ -136,7 +262,7 @@ class FormatoRegistroRev{
 			}
 			$hora_de_creacion = getdate();
 			$target_dir = "./../../../SystemData/FormatosFinalesData/Revenimiento/".$id_formatoRegistroRev."/";
-			$dirDatabase = $var_system['apiRoot']."SystemData/FormatosFinalesData/Revenimiento/Revenimiento/".$id_formatoRegistroRev."/"."FinalRevenimiento(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
+			$dirDatabase = $var_system['apiRoot']."SystemData/FormatosFinalesData/Revenimiento/".$id_formatoRegistroRev."/"."FinalRevenimiento(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
 			if (!file_exists($target_dir)) {
 				mkdir($target_dir, 0777, true);
 			}
@@ -159,19 +285,20 @@ class FormatoRegistroRev{
 					,array($dirDatabase,$id_formatoRegistroRev),
 					"UPDATE -- FooterEnsayo :: generatePDFFinal : 2"
 				);
+				if(!$dbS->didQuerydied){
+					$arr = array('id_formatoRegistroRev' => $id_formatoRegistroRev,'estatus' => 'Exito Formato generado','error' => 0);	
+					$dbS->commitTransaction();
+				}else{
+					$dbS->rollbackTransaction();
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato.','error' => 60);
+					return json_encode($arr);
+				}
 			}catch(Exception $e){
 				$dbS->rollbackTransaction();
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 7);
 				return json_encode($arr);
 			}
-			if(!$dbS->didQuerydied){
-				$arr = array('id_formatoRegistroRev' => $id_formatoRegistroRev,'estatus' => 'Exito Formato generado','error' => 0);	
-				$dbS->commitTransaction();
-			}else{
-				$dbS->rollbackTransaction();
-				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 30);
-				return json_encode($arr);
-			}
+			
 		}
 		return json_encode($arr);
 	}
@@ -410,20 +537,20 @@ class FormatoRegistroRev{
 				if(!$dbS->didQuerydied){
 					$id = $dbS->lastInsertedID;
 					$dbS->squery(
-								"
-									UPDATE
-										obra
-									SET
-										consecutivoDocumentos = consecutivoDocumentos+1
-									WHERE
-										id_obra = 1QQ
+							"
+								UPDATE
+									obra
+								SET
+									consecutivoDocumentos = consecutivoDocumentos+1
+								WHERE
+									id_obra = 1QQ
 
-								"
-								,
-								array($a['id_obra'])
-								,
-								"SELECT"
-							);
+							"
+							,
+							array($a['id_obra'])
+							,
+							"SELECT"
+						);
 					if(!$dbS->didQuerydied){
 						$dbS->commitTransaction();
 						$arr = array('id_formatoRegistroRev' => $id,'informeNo'=>$infoNo,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);									
@@ -475,8 +602,8 @@ class FormatoRegistroRev{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$s= $dbS->qarrayA("
-			      SELECT
+			$s= $dbS->qarrayA(
+				"SELECT
 			      	regNo,
 			        obra,
 					formatoRegistroRev.localizacion,
@@ -491,7 +618,8 @@ class FormatoRegistroRev{
 					VARILLA,
 					formatoRegistroRev.flexometro_id,
 					FLEXOMETRO,
-					preliminar
+					preliminar,
+					pdfFinal
 			      FROM 
 			        ordenDeTrabajo,cliente,obra,formatoRegistroRev,
 			        (
@@ -537,7 +665,7 @@ class FormatoRegistroRev{
 			      	formatoRegistroRev.id_formatoRegistroRev = 1QQ
 			      ",
 			      array($id_formatoRegistroRev),
-			      "SELECT"
+			      "SELECT -- FormatoRegistroRev :: getInfoByID : 1"
 			      );
 
 			if(!$dbS->didQuerydied){

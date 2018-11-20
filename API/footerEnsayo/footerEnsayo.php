@@ -2,6 +2,8 @@
 include_once("./../../configSystem.php");
 include_once("./../../usuario/Usuario.php");
 include_once("./../../generadorFormatos/GeneradorFormatos.php");
+include_once("./../../mailer/Mailer.php");
+include_once("./../../mailer/sendgrid-php/sendgrid-php.php");
 
 class footerEnsayo{
 	
@@ -71,6 +73,24 @@ class footerEnsayo{
 		$id_usuario=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$dbS->beginTransaction();
+			$iguala= $dbS->qvalue(
+				"	SELECT
+						IF(obra.tipo = 1, 1,0) AS iguala
+					FROM
+						formatoCampo JOIN 
+						ordenDeTrabajo ON id_ordenDeTrabajo = ordenDeTrabajo_id JOIN
+						obra ON id_obra=obra_id
+					WHERE
+						id_formatoCampo =1QQ
+				",array($id_formatoCampo),
+				"SELECT -- FooterEnsayo :: generatePDFFinal : 1"
+			);
+			if($dbS->didQuerydied || ($iguala == "empty")){
+				$dbS->rollbackTransaction();
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en autorizar ensayo, verifica tus datos y vuelve a intentarlo','error' => 34);
+				return json_encode($arr);
+			}
+
 			$a = $dbS->qarrayA(
 				"	SELECT
 						tipo
@@ -146,8 +166,19 @@ class footerEnsayo{
 					);
 
 					if(!$dbS->didQuerydied){
-						$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Exito Formato generado','error' => 0);	
-						$dbS->commitTransaction();
+						if($iguala == 1){
+							$arr=json_decode($this->sentIfIguala($id_formatoCampo,$table,$id_ensayo,$id),true);
+							if($arr['error'] == 0){
+								$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Exito Formato generado','error' => 0);	
+								$dbS->commitTransaction();
+							}else{
+								$dbS->rollbackTransaction();
+								return json_encode($arr);
+							}
+						}else{
+							$arr = array('id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Exito Formato generado','error' => 0);	
+							$dbS->commitTransaction();
+						}
 					}else{
 						$dbS->rollbackTransaction();
 						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en autorizar ensayo, verifica tus datos y vuelve a intentarlo','error' => 23);
@@ -165,6 +196,100 @@ class footerEnsayo{
 			}
 		}
 		return json_encode($arr);
+	}
+
+	private function sentIfIguala($id_formatoCampo,$table,$id_ensayo,$id){
+		global $dbS;
+		$mailer = new Mailer();
+
+		$info = $dbS->qarrayA(
+			"   SELECT
+					id_cliente,
+					id_obra,
+					id_ordenDeTrabajo,
+					cliente.email AS emailCliente,
+					obra.correo_residente AS emailResidente,
+					obra.correo_alterno AS correo_alterno,
+					CONCAT(nombre,'(',razonSocial,')') AS nombre,
+					email
+				FROM
+					cliente,
+					obra,
+					ordenDeTrabajo,
+					formatoCampo
+				WHERE
+					formatoCampo.ordenDeTrabajo_id = ordenDeTrabajo.id_ordenDeTrabajo AND
+					ordenDeTrabajo.obra_id = obra.id_obra AND
+					obra.cliente_id = cliente.id_cliente AND
+					id_formatoCampo = 1QQ
+			",
+			array($id_formatoCampo),
+			"SELECT  -- FormatoCampo :: completeFormato : 4"
+		);
+		if(!$dbS->didQuerydied && ($info != "empty")){
+			try{
+				$dirDatabase = $dbS->qvalue(
+					"SELECT pdfFinal FROM 1QQ WHERE 1QQ=1QQ",
+					array($table,$id,$id_ensayo),"SELECT  -- FormatoCampo :: completeFormato : 5"
+				);
+				if($dbS->didQuerydied || ($dirDatabase == "empty")){ // Si no murio la query de guardar el preliminar en BD
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 40);
+					return json_encode($arr);
+				}
+				//  Envio del primer correo
+				$resp=$mailer->sendMailFinal($info['emailCliente'], $info['nombre'], $dirDatabase);
+				if($resp==202){
+					$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato enviado','error' => 0);	
+				}else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 106, 'sendGridError'=>$resp);
+					return json_encode($arr);
+				}
+				//  Envio del segundo correo
+				$resp=$mailer->sendMailFinal($info['emailResidente'], $info['nombre'], $dirDatabase);
+				if($resp==202){
+					$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato enviado','error' => 0);	
+				}else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 107, 'sendGridError'=>$resp);
+					return json_encode($arr);
+				}
+				//  Envio del tercer correo
+				$resp=$mailer->sendMailFinal($info['correo_alterno'], $info['nombre'], $dirDatabase);
+				if($resp==202){
+					$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato enviado','error' => 0);	
+				}else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 108, 'sendGridError'=>$resp);
+					return json_encode($arr);
+				}
+
+				$dbS->squery(
+					"UPDATE
+						1QQ
+					SET
+						sentToClientFinal = sentToClientFinal + 1,
+						dateSentToClientFinal = CURDATE()
+					WHERE
+						1QQ = 1QQ
+					"
+					,array($table,$id,$id_ensayo),
+					"UPDATE -- FooterEnsayo :: generatePDFFinal : 3 var_system[apiRoot]:".$var_system[0]
+				);
+
+				if($dbS->didQuerydied){
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente:'.$e->getMessage(),'error' => 7);
+					return json_encode($arr);
+				}
+
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Exito','error' => 0);
+				return json_encode($arr);
+
+			}catch(Exception $e){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente:'.$e->getMessage(),'error' => 7);
+				return json_encode($arr);
+			}
+		}else{
+			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 108, 'sendGridError'=>$resp);
+			return json_encode($arr);
+		}
 	}
 
 	public function generatePDFFinal($token,$rol_usuario_id,$id_formatoCampo,$id_ensayo){
@@ -723,6 +848,7 @@ class footerEnsayo{
 					ordenDeTrabajo
 				WHERE
 					id_ordenDeTrabajo = ordenDeTrabajo_id
+					AND formatoRegistroRev.status > 0
 					AND laboratorio_id = 1QQ
 					AND notVistoJLForBrigadaApproval > 0
 				",

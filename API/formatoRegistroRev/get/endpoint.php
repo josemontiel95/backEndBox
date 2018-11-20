@@ -44,6 +44,11 @@
 			$registro = new RegistrosRev();
 			echo $registro->getAllRegistrosByID($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoRegistroRev']);
 		break;
+		
+		case 'ping':
+			$registro = new FormatoRegistroRev();
+			echo $registro->ping($_GET['data']);
+		break;
 
 	}
 

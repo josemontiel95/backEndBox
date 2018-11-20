@@ -36,9 +36,9 @@
 			echo $registrorev->initInsert($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev']);
 		break;
 		
-		case 'autEnsayoForAdmin':
+		case 'autRevenimientoForAdmin':
 			$registrorev = new RegistrosRev();
-			echo $registrorev->autEnsayoForAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev']);
+			echo $registrorev->autRevenimientoForAdmin($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev']);
 		break;
 		case 'insertRegistroJefeBrigada':
 			$registrorev = new RegistrosRev();
