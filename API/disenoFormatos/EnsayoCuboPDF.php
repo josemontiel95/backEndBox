@@ -2,6 +2,10 @@
 	include_once("./../../FPDF/MyPDF.php");
 
 	class EnsayoCuboPDF extends MyPDF{
+		public $arrayCampos;
+
+
+
 		function Header(){
 			//Espacio definido para los logotipos
 			//Definimos las dimensiones del logotipo de Lacocs
@@ -39,6 +43,116 @@
    			$this->SetFont('Arial','B',75);
 	    	$this->SetTextColor(192,192,192);
     		$this->RotatedText(55.5,172,'PREELIMINAR',45);
+		}
+
+		function getArrayCampo(){
+			return $this->array_campo;
+		}
+
+		function generateArrayCampo(){
+			$tam_font_Cells = 5;	
+			$tam_font_CellsRows = 5;
+			$tam_cellsTablesAlto = 	$tam_font_Cells - 2;
+		
+
+			
+			$this->SetFont('Arial','',$tam_font_Cells);
+
+			$fechaColado = 'FECHA DE COLADO';
+			$tam_fechaColado = $this->GetStringWidth($fechaColado)+3;
+			$this->Cell($tam_fechaColado,$tam_font_Cells+3,$fechaColado,1,0,'C');
+
+			$infoNumero = 'INFORME NUMERO';
+			$tam_infoNumero = $this->GetStringWidth($infoNumero)+3;
+			$this->Cell($tam_infoNumero,$tam_font_Cells+3,$infoNumero,1,0,'C');
+
+			$clave = 'CLAVE';
+			$tam_clave = $this->GetStringWidth($clave)+25;
+			$this->Cell($tam_clave,$tam_font_Cells+3,$clave,1,0,'C');
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+
+			$edad = 'EDAD DE ENSAYE';
+			$tam_edad = $this->GetStringWidth($edad)+3;
+			$this->Cell($tam_edad,($tam_font_Cells+3)/2,$edad,'L,T,R',2,'C');
+			$this->cell($tam_edad,($tam_font_Cells+3)/2,utf8_decode('EN DIÁS'),'L,B,R',0,'C');
+
+			$this->SetXY($posicion_x + $tam_edad,$posicion_y);
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$lado = 'LADO (cm)';
+			$tam_lado = $this->GetStringWidth($lado)+20;
+			$this->Cell($tam_lado,($tam_font_Cells+3)/2,$lado,'L,T,R',2,'C');
+			$tam_l1 = $tam_l2 = $tam_lado/2;
+			$this->cell($tam_l1,($tam_font_Cells+3)/2,'L1',1,0,'C');
+			$this->cell($tam_l2,($tam_font_Cells+3)/2,'L2',1,0,'C');
+
+			$this->SetXY($posicion_x + $tam_lado,$posicion_y);
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$resisCompresion = 'RESISTENCIA A';
+			$tam_resisCompresion = $this->GetStringWidth($resisCompresion)+3;
+			$this->Cell($tam_resisCompresion,($tam_font_Cells+3)/2,$resisCompresion,'L,T,R',2,'C');
+			$this->cell($tam_resisCompresion,($tam_font_Cells+3)/6,utf8_decode('COMPRESIÓN'),'L,R',2,'C');
+			$this->cell($tam_resisCompresion,($tam_font_Cells+3)/3,'kg','L,B,R',0,'C');
+
+			$this->SetXY($posicion_x + $tam_resisCompresion,$posicion_y);
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+			$area = 'AREA';
+			$tam_area = $this->GetStringWidth($area)+10;
+			$this->Cell($tam_area,($tam_font_Cells+3)/2,$area,'L,T,R',2,'C');
+			$this->cell($tam_area,($tam_font_Cells+3)/2,utf8_decode('cm²'),'L,B,R',2,'C');
+
+			$this->SetXY($posicion_x + $tam_area,$posicion_y);
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+
+			$velocidad = 'Vel. Aplicación';
+			$tam_velocidad = $this->GetStringWidth($velocidad)+2;
+			$posicion_x = $this->GetX();
+			$this->Cell($tam_velocidad,($tam_font_Cells+3)/2,utf8_decode($velocidad),'L,T,R',2,'C');
+			$this->cell($tam_velocidad,($tam_font_Cells+3)/2,utf8_decode('Experimental'),'L,B,R',2,'C');
+
+			$this->SetXY($posicion_x + $tam_velocidad,$posicion_y);
+
+			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
+
+			$resis = 'COMPRESIÓN kg/cm²';
+			$posicion_x = $this->GetX();
+			
+			$this->Cell(0,($tam_font_Cells+3)/2,'RESISTENCIA A','L,T,R',2,'C');
+			$this->cell(0,($tam_font_Cells+3)/2,utf8_decode($resis),'L,B,R',2,'C');
+
+			
+			$tam_resis =  196 - (
+											$tam_fechaColado +
+											$tam_infoNumero +
+											$tam_clave +
+											$tam_edad +
+											$tam_l1 +
+											$tam_l2 +
+											$tam_resisCompresion +
+											$tam_area +
+											$tam_velocidad
+										);
+			$this->lN(0);
+		
+
+			//Definimos el array con los tamaños de cada celda para crear las duplas
+			$array_campo = 	array(
+									'tam_fechaColado'	=> $tam_fechaColado,
+									'tam_infoNumero'	=> $tam_infoNumero,
+									'tam_clave'	=> $tam_clave,
+									'tam_edad'	=> $tam_edad,
+									'tam_l1'	=> $tam_l1,
+									'tam_l2'	=> $tam_l2,
+									'tam_resisCompresion'	=> $tam_resisCompresion,
+									'tam_area'	=> $tam_area,
+									'tam_velocidad'	=> $tam_velocidad,
+									'tam_resis'	=> $tam_resis
+							);
+
+			$this->array_campo = $array_campo;
 		}
 
 		
@@ -154,7 +268,7 @@
 									$tam_resis
 							);
 
-			$tam_font_head = 5.5;
+			$tam_font_head = 5;
 			$tam_cellsTablesAlto = 	$tam_font_head - 2;
 			$this->SetFont('Arial','',$tam_font_head);
 

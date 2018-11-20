@@ -22,6 +22,13 @@
 		//Array que contiene los letreros de los detalles
 		private $cellsDetails;
 
+		function getCellsTables(){
+			return $this->cellsTables;
+		}
+
+		function getcellsDetails(){
+			return $this->cellsDetails;
+		}
 
 
 		function generateCellsInfo(){
@@ -180,7 +187,7 @@
 
 			//Localizacion
 			$localizacion = 'LOCALIZACIÓN';
-			$tam_localizacionAncho = 259.3975 - (
+			$tam_elementoAncho = 259.3975 - (
 													$tam_claveAncho +
 													$tam_fechaAncho +
 													$tam_fprimaAncho +
@@ -258,7 +265,7 @@
 											'tam_recoleccionAlto'		=>	$tam_recoleccionAlto,
 
 											'localizacion'				=>	$localizacion,							
-											'tam_localizacionAncho'		=>	$tam_localizacionAncho,
+											'tam_elementoAncho'		=>	$tam_elementoAncho,
 											'tam_localizacionAlto'		=>	$tam_localizacionAlto
 							);
 			 
@@ -275,7 +282,7 @@
 											$tam_horaAncho,
 											$tam_muestreoAncho,
 											$tam_recoleccionAncho,
-											$tam_localizacionAncho									
+											$tam_elementoAncho									
 									);
 
 		}
@@ -725,7 +732,7 @@
 			$this->SetY($posicion_y); 
 			$this->SetX($posicion_x);
 			$posicion_x = $this->GetX();
-			$this->cell($this->cellsTables['tam_localizacionAncho'],$this->cellsTables['tam_localizacionAlto'],utf8_decode($this->cellsTables['localizacion']),1,2,'C');
+			$this->cell($this->cellsTables['tam_elementoAncho'],$this->cellsTables['tam_localizacionAlto'],utf8_decode($this->cellsTables['localizacion']),1,2,'C');
 			$posicion_y = $this->GetY();
 						
 			$this->SetX(10); //Definimos donde empieza los 
@@ -1052,7 +1059,7 @@
 			$this->SetY($posicion_y); 
 			$this->SetX($posicion_x);
 			$posicion_x = $this->GetX();
-			$this->cell($this->cellsTables['tam_localizacionAncho'],$this->cellsTables['tam_localizacionAlto'],utf8_decode($this->cellsTables['localizacion']),1,2,'C');
+			$this->cell($this->cellsTables['tam_elementoAncho'],$this->cellsTables['tam_localizacionAlto'],utf8_decode($this->cellsTables['localizacion']),1,2,'C');
 			$posicion_y = $this->GetY();
 						
 			$this->SetX(10); //Definimos donde empieza los 
