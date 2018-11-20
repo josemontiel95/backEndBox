@@ -701,7 +701,7 @@
 						carga,
 						mr AS modRuptura,
 						defectos,
-						ROUND(velAplicacionExp,6),
+						ROUND(velAplicacionExp,1),
 						CONCAT(nombre,' ',apellido) AS realizo
 					FROM 
 						usuario,
@@ -899,7 +899,7 @@
 			      		carga,
 			      		ROUND(((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4),3) AS area,
 			      		ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100),3)  AS porcentResis,
-			      		ROUND(velAplicacionExp,6),
+			      		ROUND(velAplicacionExp,1),
 				    	falla
 					FROM 
 						ensayoCilindro,
@@ -1040,7 +1040,7 @@
 						l2,
 						carga,
 						ROUND((l1*l2),3) AS area,
-						ROUND(velAplicacionExp,6),
+						ROUND(velAplicacionExp,1),
 						ROUND((carga/(l1*l2)),3) AS kg
 					FROM 
 						ensayoCubo,

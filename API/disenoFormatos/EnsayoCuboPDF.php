@@ -107,11 +107,11 @@
 
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 
-			$velocidad = 'Vel. Aplicación';
+			$velocidad = 'kg/cm2 por minuto';
 			$tam_velocidad = $this->GetStringWidth($velocidad)+2;
 			$posicion_x = $this->GetX();
-			$this->Cell($tam_velocidad,($tam_font_Cells+3)/2,utf8_decode($velocidad),'L,T,R',2,'C');
-			$this->cell($tam_velocidad,($tam_font_Cells+3)/2,utf8_decode('Experimental'),'L,B,R',2,'C');
+			$this->Cell($tam_velocidad,($tam_font_Cells+3)/2,utf8_decode('Vel. Aplicación'),'L,T,R',2,'C');
+			$this->cell($tam_velocidad,($tam_font_Cells+3)/2,utf8_decode('kg/cm2 por minuto'),'L,B,R',2,'C');
 
 			$this->SetXY($posicion_x + $tam_velocidad,$posicion_y);
 
@@ -236,11 +236,13 @@
 
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 
-			$velocidad = 'Vel. Aplicación';
+
+
+			$velocidad = 'kg/cm2 por minuto';
 			$tam_velocidad = $this->GetStringWidth($velocidad)+2;
 			$posicion_x = $this->GetX();
-			$this->Cell($tam_velocidad,($tam_font_head+3)/2,utf8_decode($velocidad),'L,T,R',2,'C');
-			$this->cell($tam_velocidad,($tam_font_head+3)/2,utf8_decode('Experimental'),'L,B,R',2,'C');
+			$this->Cell($tam_velocidad,($tam_font_head+3)/2,utf8_decode('Vel. Aplicación'),'L,T,R',2,'C');
+			$this->cell($tam_velocidad,($tam_font_head+3)/2,utf8_decode('kg/cm2 por minuto'),'L,B,R',2,'C');
 
 			$this->SetXY($posicion_x + $tam_velocidad,$posicion_y);
 
@@ -400,8 +402,8 @@
 			$pdf->AliasNbPages();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($infoFormato,$regisFormato,$infoU);
-			$pdf->Output();
-			//$pdf->Output('F',$target_dir);
+			//$pdf->Output();
+			$pdf->Output('F',$target_dir);
 		}
 
 
