@@ -4,10 +4,11 @@
 	include_once("./../../disenoFormatos/InformeCubos.php");
 	include_once("./../../disenoFormatos/CCH.php");
 	include_once("./../../disenoFormatos/EnsayoCuboPDF.php");
+	include_once("./../../disenoFormatos/EnsayoCilindroPDF.php");
 	include_once("./../../disenoFormatos/InformeRevenimiento.php");
 	include_once("./../../configSystem.php"); 
 	include_once("./../../usuario/Usuario.php");
-	include_once("./../../FPDF/fpdf.php");
+	include_once("./../../FPDF/MyPDF.php");
 
 	class ValidatorTextPDF{
 
@@ -16,15 +17,18 @@
 			Funcion que valida las celdas que comparten todos los formatos(header)
 		*/
 		function validatedInfo($campoFront,$string){
+			$band = 0;
 			switch ($campoFront) {
 					case 'informeNo';
 							$campo = 'tam_informeText';
 						break;
 					case 'obra';
 							$campo = 'tam_nomObraText';
+							$band = 1;
 						break;
 					case 'localizacion';
 							$campo = 'tam_localizacionText';
+							$band = 1;
 						break;
 					case 'razonSocial';
 							$campo = 'tam_razonText';
@@ -57,13 +61,15 @@
 							$arrayinfoRev
 						);
 
+
 			$tam_font = 'tam_font_left';
+
 			if($campo == 'tam_informeText'){
 				$tam_font = 'tam_font_right';
 				array_pop($arr);
 			}
-					
-						
+
+
 			/*
 				//Mostramos los arrays
 
@@ -77,6 +83,8 @@
 			print_r($arrayinfoRev);
 			
 			*/
+					
+						
 			//Asignamos arbitrariamente a uno que sera el mas "pequeño" hasta enontrar otro, en este caso $arr[0]
 			$posicion = 0;
 			$min = $arr[$posicion][$campo];
@@ -91,31 +99,37 @@
 
 
 			
-			$pdf = new fpdf();
+			$pdf = new MyPDF();
 			$pdf->AddPage();
 			$pdf->SetFont('Arial','',$arr[$posicion][$tam_font]);
 			$tam_string = $pdf->GetStringWidth($string);
 
-			if($tam_string <= $min){
+			//Metodo para campos que no son el nombre de la obra o la localizacion
+			if($tam_string <= $min && $band == 0){
 				$arr = array('string' => $string,'tam_string' => $tam_string,'tam_campo' => $min,'estatus' => 'Texto valido.','error' => 0);
 			}else{
-				$new_string = $this->truncaCadena($arr[$posicion][$tam_font],$string,$min);
-				$tam_new_string = $pdf->GetStringWidth($new_string);
-				$arr = array('string' => $string,'tam_string' => $tam_string,'new_string' => $new_string,'tam_new_string' => $tam_new_string,'tam_campo' => $min,'estatus' => 'El texto excedió el tamaño permitido.','error' => 100);
+				if($band == 0){
+					$new_string = $this->truncaCadena($arr[$posicion][$tam_font],$string,$min);
+					$tam_new_string = $pdf->GetStringWidth($new_string);
+					$arr = array('string' => $string,'tam_string' => $tam_string,'new_string' => $new_string,'tam_new_string' => $tam_new_string,'tam_campo' => $min,'estatus' => 'El texto excedió el tamaño permitido.','error' => 100);
+				}
+				
 			}
 
-			return json_encode($arr);
-			
+			//Metodo para el campo de la obra o localizacion de la obra
+
+			//Desde un principio sabemos que si la cadena es menos que el ancho del campo 
 			/*
-				Mostramos el resultado
-
-			echo "Valor minimo encontrado: ".$min;
-			echo "Posicion: ".$posicion." Valor de campo:".$arr[$posicion][$campo];
-			*/			
-			
-
-
-			
+			ECHO "array antes de imprimir el resultado";
+			print_r($arr[$posicion]);
+			*/
+			if($band == 1){
+				$tam_celdaAlto = $arr[$posicion]['tam_CellsLeftAlto'];
+				$arr = $pdf->printInfoObraAndLocObra($arr[$posicion][$tam_font],$min,$tam_celdaAlto,$string,3);
+				//	echo "array resultado";
+				//print_r($arr);
+			}
+			return json_encode($arr);
 		}
 
 
@@ -139,6 +153,13 @@
 			$arrayInfoCilindros = $infoCilindros->getCellsTables();
 			$arrayInfoVigas = $infoVigas->getCellsInfo();
 
+
+			/*
+			print_r($arrayInfoCubos);
+			print_r($arrayCCH);
+			print_r($arrayInfoCilindros);
+			print_r($arrayInfoVigas);
+			*/
 			
 
 
@@ -167,7 +188,6 @@
 			switch ($campo) {
 				case '2':
 					$campo = 'tam_fprimaAncho';
-					$band = 1;
 					break;
 				//Revenimiento de la obra
 				case '3':
@@ -215,7 +235,7 @@
 					$campo = 'tam_flexometro';
 					break;
 				default:
-						$arr = array('campoFront' => $campoFront,'estatus' => 'Error, no existe relacion con ese campo.','error' => 11);
+						$arr = array('campoFront' => $campo,'estatus' => 'Error, no existe relacion con ese campo.','error' => 11);
 						return json_encode($arr);
 						break;
 			}
@@ -241,6 +261,103 @@
 			}
 
 			array_push($arrayAux,$arrayInfoVigas);
+
+			//Declaramos el array donde guardaremos los arreglo que tienen el campo
+			$arr = array();
+
+			//Verificamos si el campo seleccionado se encuentra en mas formatos y lo extraemos
+			for ($i=0; $i < sizeof($arrayAux); $i++) { 
+				if(array_key_exists($campo,$arrayAux[$i])){
+					array_push($arr,$arrayAux[$i][$campo]);
+				}
+			}
+
+			/*
+			echo "Campo:".$campo;
+
+			print_r($arr);*/
+			
+			//Buscamos el minimo
+			$min = $arr[0];
+			for ($i=1; $i <sizeof($arr) ; $i++) { 
+				if($arr[$i] < $min){
+					$min = $arr[$i];
+				}
+			}
+
+			$pdf = new MyPDF();
+			$pdf->AddPage();
+			$pdf->SetFont('Arial','',$tam_font_max);
+			$tam_string = $pdf->GetStringWidth($string);
+
+			if($tam_string <= $min && $band == 0){
+				$arr = array('string' => $string,'tam_string' => $tam_string,'tam_campo' => $min,'estatus' => 'Texto valido.','error' => 0);
+			}else{
+				if($band == 0){
+					$new_string = $this->truncaCadena($tam_font_max,$string,$min);
+					$tam_new_string = $pdf->GetStringWidth($new_string);
+					$arr = array('string' => $string,'tam_string' => $tam_string,'new_string' => $new_string,'tam_new_string' => $tam_new_string,'tam_campo' => $min,'estatus' => 'El texto excedió el tamaño permitido.','error' => 100);
+				}
+			}
+
+			if($band == 1){
+				//Tomamos arbitrariamente la el tamaño de la celda(en altura) ya que no repercute para la ejecucion, en este caso tomamos la mas pequeña
+				$tam_celdaAlto = $arrayAux[0]['tam_cellsTablesAlto'];
+				//echo "Division".$tam_celdaAlto;
+				$arr = $pdf->printInfoObraAndLocObra($tam_font_max,$min/3,$tam_celdaAlto,$string,3);
+				//echo "array resultado";
+				//print_r($arr);
+			}
+
+			return json_encode($arr);
+
+		}
+
+		function validatedCamposEnsayoCubo($campo,$string){
+			//Instanciamos los formatos que usaremos
+			$infoCubos = new InformeCubos();
+			$ensayoCubo = new EnsayoCuboPDF();
+
+			//Generamos los campos
+			$infoCubos->generateCellsCampos();
+
+			//Añadimos una pagina por error del formato
+			$ensayoCubo->AddPage();
+			$ensayoCubo->generateArrayCampo();
+
+			$arrayInfoCubos = $infoCubos->getCellsTables();
+			$arrayEnsayoCubo = $ensayoCubo->getArrayCampo();
+
+
+			switch ($campo) {
+				case '1':
+					$campo = 'tam_lado1Ancho';
+					break;
+				case '2':
+					$campo = 'tam_lado2Ancho';
+					break;
+				//La carga de los ensayos
+				case '3':
+					$campo = 'tam_kgAncho';
+					break;
+				default:
+						$arr = array('campoFront' => $campo,'estatus' => 'Error, no existe relacion con ese campo.','error' => 11);
+						return json_encode($arr);
+						break;
+			}
+
+			//Ingresamos todos los campos generados a un arreglo de "arreglos"
+			$arrayAux =  array(
+							$arrayInfoCubos,
+							$arrayEnsayoCubo
+						);
+
+			//Verificamos el maximo tamaño de funete de los formatos
+			if($arrayInfoCubos['tam_font_CellsRows'] < $arrayEnsayoCubo['tam_font_CellsRows']){
+				$tam_font_max = $arrayEnsayoCubo['tam_font_CellsRows'];
+			}else{
+				$tam_font_max =$arrayInfoCubos['tam_font_CellsRows'];
+			}
 
 			//Declaramos el array donde guardaremos los arreglo que tienen el campo
 			$arr = array();
@@ -278,6 +395,16 @@
 			}
 
 			return json_encode($arr);
+		}
+
+
+		function validatedCamposEnsayoCilindros($campo,$string){
+			//Instanciamos los formatos que usaremos
+			$infoCilindros = new InformeCilindros();
+			$ensayoCilindros = new EnsayoCilindroPDF();
+
+			//Generamos los campos
+			$infoCubos->generateCellsCampos();
 
 		}
 

@@ -44,7 +44,7 @@
 							-Este informe sustituye a:
 			*/
 			$tam_font_right = 7.5;
-			$tam_CellsRightAlto =	$tam_font_right - 3;
+			$tam_CellsRightAlto =	$tam_font_right - 4;
 			$this->SetFont('Arial','B',$tam_font_right);
 
 			//Separacion del margen
@@ -70,7 +70,7 @@
 			$posicionCellsText = 50;
 
 			$tam_font_left = 7;
-			$tam_CellsLeftAlto = $tam_font_left - 3;
+			$tam_CellsLeftAlto = $tam_font_left - 4;
 			$this->SetFont('Arial','B',$tam_font_left);
 			
 			$obra = 'Nombre de la Obra:';
@@ -149,7 +149,7 @@
 			$resistencia = '% DE'."\n".$resistencia;
 
 			$proyecto = 'PROYECTO';
-			$tam_proyectoAncho = $this->GetStringWidth($proyecto)+3;
+			$tam_fprimaAncho = $this->GetStringWidth($proyecto)+3;
 			$tam_proyectoAlto = $tam_font_Cells - 3;
 			$proyecto = "F'c"."\n".'PROYECTO'."\n".'(kg/cm²)';
 
@@ -243,7 +243,7 @@
 			$elemento = 'ELEMENTO MUESTREADO';
 			$tam_elementoAncho = 259.3975 - (
 											$tam_resistenciaAncho +
-											$tam_proyectoAncho +
+											$tam_fprimaAncho +
 											$tam_resis_compresionAncho	 +
 											$tam_cargaAncho +
 											$tam_especimenesAncho +
@@ -268,7 +268,7 @@
 											'tam_resistenciaAlto' 			=> $tam_resistenciaAlto,
 
 											'proyecto' 						=> $proyecto,
-											'tam_proyectoAncho' 			=> $tam_proyectoAncho,
+											'tam_fprimaAncho' 			=> $tam_fprimaAncho,
 											'tam_proyectoAlto' 				=> $tam_proyectoAlto,
 
 
@@ -346,7 +346,7 @@
 			 								$tam_kgAncho,
 			 								$tam_mpAncho,
 			 								$tam_kgcmAncho,
-			 								$tam_proyectoAncho,
+			 								$tam_fprimaAncho,
 											$tam_resistenciaAncho,
 											$tam_elementoAncho,
 											$tam_separador								
@@ -373,12 +373,12 @@
 			//Incertidumbre
 			$incertidumbre = 'INCERTIDUMBRE';
 			$tam_incertidumbreAncho = $this->GetStringWidth($incertidumbre)+20;
-			$tam_incertidumbreAlto = $tam_font_details - 3;
+			$tam_incertidumbreAlto = $tam_font_details - 4;
 
 			//Metodos empleados
 			$metodos = 'METODOS EMPLEADOS: EL ENSAYO REALIZADO CUMPLE CON LAS NORMAS MEXICANAS NMX-C-161-ONNCCE-2013, NMX-C-156-ONNCCE-2010,'."\n".'NMX-C-159-ONNCCE-2016,NMX-C-109-ONNCCE-2013,NMX-C-083-ONNCCE-2014';
 			$tam_metodosAncho = 259.3975 - $tam_incertidumbreAncho;
-			$tam_metodosAlto = $tam_font_details - 3;
+			$tam_metodosAlto = $tam_font_details - 4;
 
 			$this->cellsDetails = array(
 											'tam_font_details'			=>	$tam_font_details,
@@ -516,16 +516,27 @@
 
 			//Cuadro con informacion
 			//Obra
+
+			$posicionAux = configPosition();
+
 			$this->Cell($this->cellsInfo['tam_obra'],$this->cellsInfo['tam_CellsLeftAlto'],$this->cellsInfo['obra'],0);
 			
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
-			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
+			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['obra'],3);
 
-			$this->Cell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],utf8_decode(	$this->printInfo($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],$infoFormato['obra'])	),'B',0);
 
-			$this->Ln($this->cellsInfo['tam_font_left'] - 2);
+			if($resultado['error'] == 0){
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+			}else{
+				$string = $resultado['estatus'];
+			}
+
+
+			$this->multicell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],utf8_decode(	$infoFormato['obra']	),'B','C');
+
+			$this->Ln(2);
 
 			//Localizacion de la obra
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']);
@@ -534,11 +545,18 @@
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
-			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
+			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['localizacion'],3);
 
-			$this->Cell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],utf8_decode(	$this->printInfo($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],$infoFormato['localizacion'])	),'B',0);
 
-			$this->Ln($this->cellsInfo['tam_font_left'] - 2);
+			if($resultado['error'] == 0){
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+			}else{
+				$string = $resultado['estatus'];
+			}
+
+			$this->multicell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],utf8_decode(	$infoFormato['localizacion']	),'B','C');
+
+			$this->Ln(2);
 
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']);
 
@@ -622,11 +640,35 @@
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
-			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
 
-			$this->Cell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],'tam_stringCarac'),'B',0);
+			//Ejecutamos la funcion qe reduce el tamaño de la fuente en caso de ser necesario
 
-			$this->Ln($this->cellsInfo['tam_font_left'] - 2);
+			$string = 'Prueba del texto: linea 1';
+
+			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],$string,3);
+
+
+			if($resultado['error'] == 0){
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+			}else{
+				$string = $resultado['estatus'];
+			}
+
+
+
+			$this->multicell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],$string,'B','C');
+
+
+
+			/*
+				La razon del que porque solo puse un dos esque por el momento el tamaño de cada celda es de 3 (tam_font_left - 4)
+				Y el tamaño de los espacion es 5(tam_font_left - 2)
+
+				La diferencia es de 2 puntos, entonces solo hay un salto de linea de 2 puntos 
+			*/
+			$this->Ln(2);
+
+
 
 			//Localizacion de la obra
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']);
@@ -635,11 +677,25 @@
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
+			$string = 'PRUEBA DE TEXTO LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1LINEA 1';
+			/*
+			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],$string,3);
+
+			
+			//print_r($resultado);
+			
+
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
 
-			$this->Cell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],'tam_stringCarac'),'B',0);
+			if($resultado['error'] == 0){
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+			}else{
+				$string = $resultado['estatus'];
+			}*/
 
-			$this->Ln($this->cellsInfo['tam_font_left'] - 2);
+			$this-> multicell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],$string,'B','C');
+		
+			$this->Ln(2);
 
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']);
 
@@ -700,10 +756,10 @@
 			//Proyecto
 
 			$this->SetY($posicion_y);
-			$this->SetX($posicion_x - $this->cellsTables['tam_proyectoAncho']);
+			$this->SetX($posicion_x - $this->cellsTables['tam_fprimaAncho']);
 
 			$posicion_x = $this->GetX();
-			$this->multicell($this->cellsTables['tam_proyectoAncho'],$this->cellsTables['tam_proyectoAlto'],utf8_decode($this->cellsTables['proyecto']),1,'C');
+			$this->multicell($this->cellsTables['tam_fprimaAncho'],$this->cellsTables['tam_proyectoAlto'],utf8_decode($this->cellsTables['proyecto']),1,'C');
 
 
 			//----------------------SE MUEVEN FUENTES---------------------
@@ -954,13 +1010,13 @@
 			//Guardamos las posiciones de esa linea
 			$posicion_x = $this->GetX();	$posicion_y = $this->GetY();
 
-			$this->multicell($tam_incertidumbre,($tam_font_footer - 3),$incertidumbre."\n".utf8_decode(	$this->printInfo($tam_font_footer,$tam_incertidumbre,$infoFormato['incertidumbreCubo'])	),1,'C');
+			$this->multicell($tam_incertidumbre,($tam_font_footer - 4),$incertidumbre."\n".utf8_decode(	$this->printInfo($tam_font_footer,$tam_incertidumbre,$infoFormato['incertidumbreCubo'])	),1,'C');
 
 			//Metodos empleados
 			$this->SetY($posicion_y);
 			$metodos = 'METODOS EMPLEADOS: EL ENSAYO REALIZADO CUMPLE CON LAS NORMAS MEXICANAS NMX-C-161-ONNCCE-2013, NMX-C-156-ONNCCE-2010,'."\n".'NMX-C-159-ONNCCE-2016,NMX-C-109-ONNCCE-2013,NMX-C-083-ONNCCE-2014';
 			$tam_metodos = $this->GetStringWidth($metodos)+3;
-			$this->multicell($posicion_x -10,($tam_font_footer - 3),$metodos,1,2);
+			$this->multicell($posicion_x -10,($tam_font_footer - 4),$metodos,1,2);
 
 			$this->Ln(1);
 
@@ -969,7 +1025,7 @@
 			$tam_image = 20;
 			$tam_font_footer = 8; $this->SetFont('Arial','B',$tam_font_footer);
 			
-			$tam_boxElaboro = 259/3;	$tam_first = 12.5; $tam_second = 12.5;
+			$tam_boxElaboro = 259/3;	$tam_first = 10; $tam_second = 10;
 			$posicion_y = $this->GetY();
 			$this->cell($tam_boxElaboro,$tam_first,'Realizo','L,T,R',2,'C');
 			$posicion_x = $this->GetX();
@@ -1036,10 +1092,10 @@
 			//Proyecto
 
 			$this->SetY($posicion_y);
-			$this->SetX($posicion_x - $this->cellsTables['tam_proyectoAncho']);
+			$this->SetX($posicion_x - $this->cellsTables['tam_fprimaAncho']);
 
 			$posicion_x = $this->GetX();
-			$this->multicell($this->cellsTables['tam_proyectoAncho'],$this->cellsTables['tam_proyectoAlto'],utf8_decode($this->cellsTables['proyecto']),1,'C');
+			$this->multicell($this->cellsTables['tam_fprimaAncho'],$this->cellsTables['tam_proyectoAlto'],utf8_decode($this->cellsTables['proyecto']),1,'C');
 
 
 			//----------------------SE MUEVEN FUENTES---------------------
@@ -1235,7 +1291,7 @@
 			$tam_image = 20;
 			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
 			
-			$tam_boxElaboro = 259/3;	$tam_first = 12.5; $tam_second = 12.5;
+			$tam_boxElaboro = 259/3;	$tam_first = 10; $tam_second = 10;
 			$posicion_y = $this->GetY();
 			$this->cell($tam_boxElaboro,$tam_first,'Realizo','L,T,R',2,'C');
 			$posicion_x = $this->GetX();

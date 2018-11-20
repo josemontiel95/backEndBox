@@ -102,7 +102,7 @@
 			$tam_localizacionText = 196 - $tam_localizacion;
 
 			$tam_CellsRightAlto = $tam_font_right - 4;
-			$tam_CellsLeftAlto = $tam_font_left - 3;
+			$tam_CellsLeftAlto = $tam_font_left - 4;
 
 			$this->cellsInfo 	= 	array(
 
@@ -277,8 +277,10 @@
 			//Caja de texto
 			$this->SetX($posicionCellsText);
 			$this->SetFont('Arial','',$tam_font_left);
-			$this->Cell($linea_Text,$tam_font_left - 4,$this->getMaxString($tam_font_left,$linea_Text,'tam_stringCarac'),'B',0);
-			$this->Ln(4);
+
+			$string = 'hola'."\n".'como'."\n"."estas?";
+			$this->multicell($linea_Text,$tam_font_left - 4,$string,'B','C');
+			$this->Ln(1);
 
 			$locObra = 'LOCALIZACIÓN DE LA OBRA:';
 			$this->SetFont('Arial','B',$tam_font_left);
@@ -286,9 +288,9 @@
 			//Caja de texto
 			$this->SetX($posicionCellsText);
 			$this->SetFont('Arial','',$tam_font_left);
-			$this->Cell($linea_Text,$tam_font_left - 4,$this->getMaxString($tam_font_left,$linea_Text,'tam_stringCarac'),'B',0);
+			$this->multicell($linea_Text,$tam_font_left - 4,$string,'B','C');
 
-			$this->Ln(4);
+			$this->Ln(1);
 
 			$this->SetFont('Arial','B',$tam_font_left);
 			$nomCli = 'NOMBRE DEL CLIENTE:';
@@ -383,19 +385,38 @@
 
 			//Caja de texto
 			$this->SetX($posicionCellsText);
-			$this->SetFont('Arial','',$tam_font_left);
-			$this->Cell($linea_Text,$tam_font_left - 4,utf8_decode(	$this->printInfo($tam_font_right,$linea_Text,$infoFormato['obra'])	),'B',0);
-			$this->Ln(4);
+
+			$resultado = $this->printInfoObraAndLocObra($tam_font_left,$linea_Text,$tam_font_left - 4,$infoFormato['obra'],3);
+
+			if($resultado['error'] == 0){
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+			}else{
+				$string = $resultado['estatus'];
+			}
+
+		
+			$this->multicell($linea_Text,$tam_font_left - 4,utf8_decode(	$infoFormato['obra']	),'B','C');
+
+			$this->Ln(1);
 
 			$locObra = 'LOCALIZACIÓN DE LA OBRA:';
 			$this->SetFont('Arial','B',$tam_font_left);
 			$this->Cell($this->GetStringWidth($locObra)+2,$tam_font_left - 3,utf8_decode($locObra),0);
 			//Caja de texto
-			$this->SetX($posicionCellsText);
-			$this->SetFont('Arial','',$tam_font_left);
-			$this->Cell($linea_Text,$tam_font_left - 4,utf8_decode(	$this->printInfo($tam_font_right,$linea_Text,$infoFormato['locObra'])	),'B',0);
 
-			$this->Ln(4);
+			$this->SetX($posicionCellsText);
+
+			$resultado = $this->printInfoObraAndLocObra($tam_font_left,$linea_Text,$tam_font_left - 4,$infoFormato['locObra'],3);
+
+			if($resultado['error'] == 0){
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+			}else{
+				$string = $resultado['estatus'];
+			}
+
+			$this->multicell($linea_Text,$tam_font_left - 4,utf8_decode(	$this->printInfo($tam_font_right,$linea_Text,$infoFormato['locObra'])	),'B','C');
+
+			$this->Ln(1);
 
 			$this->SetFont('Arial','B',$tam_font_left);
 			$nomCli = 'NOMBRE DEL CLIENTE:';
@@ -850,7 +871,7 @@
 		}
 
 		function putCaracDetails(){
-			$this->SetY(-100);	
+			$this->ln(5);	
 			$tam_font_details = 7;	
 			$tam_observaciones = 5;
 	

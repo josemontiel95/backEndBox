@@ -1,0 +1,5 @@
+NOTAS SOBRE ALGUNOS FUNCIONAMIENTOS DEL VALIDADOR DE FORMATOS:
+
+
+	-En el validador de texto (validatorText), en la función "validatedInfo" no busco ni el tamaño de fuente mas grande, ni el tamaño de celda mas grande, debido a que en la creacion de los diseños, los mantuve constantes. No desarrolle los algoritmos para mejorar el tiempo de ejecucion de la funcion. Desarrollar algoritmo en caso de que ya no sean constantes las medidas.
+

@@ -8,6 +8,20 @@
 
 		var $angle=0;
 
+
+		/*
+				FUNCION PENDIENTE POR SI NO SIRVE EL METODO DE SOLO PONER UN MULTICELL EN TEXTOS DE OBRA Y LOCALIZACION DE LA OBRA
+
+
+		function configPosition($tam_font,$string,$tamAltoCells,$tamAnchoCells){
+			//Contador de las iteracion que realiza el ciclo
+			$count = 0;
+
+			//Maximo de iteracion que puede hacer el ciclo
+			$max = 3;
+
+		}
+		*/
 		function putInfoTables($grupos,$tam_font,$arrayTamCells,$tamAltoCells,$valor){
 			$this->SetFont('Arial','',$tam_font);
 			$num_rows = 0;
@@ -199,6 +213,100 @@
 		}
 
 
+		function printInfoObraAndLocObra($sizeFont,$tam,$tamaño_alto,$string,$numRows){
+			//Creamos un objeto tipo MyPDF para hacer las operaciones que necesitamos
+			$pdf = new MyPDF('L','mm','Letter');
+
+
+
+			$pdf->AddPage();
+
+			//Guardamos la posicion inicial de "Y" para comprobar posteriormente que solo se crearon el numero de rows que se necesitaba
+			$posIniY = $pdf->GetY();
+
+			$limit = $pdf->GetY() + ($tamaño_alto*$numRows);
+
+			$pdf->SetFont('Arial','',$sizeFont);
+
+			$pdf->multicell($tam,$tamaño_alto,$string,1,'C');
+
+
+
+			$posiciony = $pdf->GetY();
+
+			//Calculamos los rows que se generan al escribir
+
+			$totalRows = ($posiciony-$posIniY)/$tamaño_alto;
+
+			//Este ciclo decrementara el tamaño de fuente
+			while($posiciony > $limit && $sizeFont>=1){
+				//Decrementamos el tamaño de fuente
+				$sizeFont-=1;
+
+				//Configuramos el tamaño de fuente
+				$pdf->SetFont('Arial','',$sizeFont);
+
+				//Nos posicionamos en la posicion de "Y" que tenia inicialmente
+				$pdf->sety($posIniY);
+
+				$pdf->multicell($tam,$tamaño_alto,$string,1,'C');
+
+				$posiciony = $pdf->gety();
+			}
+
+
+
+			/*
+			$pdf->sety(100);	
+
+			$pdf->multicell($tam,$tamaño_alto,$string,1,'C');
+
+			$pdf->output();*/
+
+			if($posiciony <= $limit){
+				return array('sizeFont' => $sizeFont,'Total de renglones que serian' => $totalRows, 'estatus' => 'Texto valido','error' => 0);
+			}else{
+				return array('estatus' => 'Error, el texto excede el tamaño, aun reduciendo el tamaño de fuente','error' => 1);
+			}
+
+		}
+
+		/*
+		//Funcion para obra y locacalizacion de la obra
+		function printInfoObraAndLocObra($sizeFont,$tam,$string){
+			/*
+				Quite los contadores, porque no contaria el numero de iteraciones sino que aun quede un tamaño de fuente bueno
+
+			//Contador de las iteracion del ciclo
+			$cont = 0;
+
+			//Maximo de iteracion que puede realizar el ciclo
+			$max = 3;
+			
+
+			//Configuramos el tamaño de fuente para la cadena
+			$this->SetFont('Arial','',$sizeFont);
+
+			//Tamaño de la cadena
+			$tam_string = $this->GetStringWidth($string);
+
+			//echo "Tamaño de fuente antes del ciclo:".$sizeFont;
+			while($tam_string > $tam && $sizeFont>=1){
+				//Decrementamos el tamaño de fuente
+				$sizeFont-=0.1;
+
+				//Configuramos el tamaño de fuente nuevamente para calcular el tamaño de la cadena con el nuevo tamaño de fuente
+				$this->SetFont('Arial','',$sizeFont);
+
+				$tam_string = $this->GetStringWidth($string); 
+			}
+			//echo "Tamaño del espacio:".$tam."Tamaño de la cadena".$tam_string."Tamaño de fuente".$sizeFont;
+			if($tam_string <= $tam){
+				return array('sizeFont' => $sizeFont, 'estatus' => 'Texto valido','error' => 0);
+			}
+				return array('estatus' => 'Error, el texto excede el tamaño, aun reduciendo el tamaño de fuente','error' => 1);
+		}
+		*/
 		function getMaxStringMultiCell($sizeString,$tam,$value,$group){
 			//Instanciamos el objeto para crear el pdf
 			$pdf = new fpdf();
