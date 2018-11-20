@@ -134,6 +134,171 @@
 			return $arr;
 		}
 
+
+
+		/*
+			FUNCION QUE EXTRAE EL USUARIO Y AL JEFE DE LABORATORIO QUE CREO LA ORDEN DE TRABAJO (ESTE CASO SIRVE PARA LOS FORMATOS DE GABINO)
+
+
+		*/
+		function getInfoUserCubos($token,$rol_usuario_id,$id_footerEnsayo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				//Obtenemos el id del usuario que solicita
+				$id_usuario = substr(decurl($token),10);
+				
+				$s= $dbS->qarrayA("
+				      	SELECT
+							usuarioRealizo.nombreRealizo,	
+							usuarioRealizo.firma AS firmaRealizo,
+							CONCAT(nombre,' ',apellido) AS nombreLaboratorista,
+							usuario.firma AS firmaLaboratorista
+						FROM
+							ordenDeTrabajo,
+							formatoCampo,
+							ensayoCubo,
+							usuario,
+							(
+								SELECT						
+									CONCAT(nombre,' ',apellido) AS nombreRealizo,
+									firma
+								FROM
+									usuario
+								WHERE
+									usuario.id_usuario = 1QQ
+							) AS usuarioRealizo
+						WHERE
+							ordenDeTrabajo.jefa_lab_id = usuario.id_usuario AND 
+							formatoCampo.ordenDeTrabajo_id = ordenDeTrabajo.id_ordenDeTrabajo AND
+							ensayoCubo.formatoCampo_id = formatoCampo.id_formatoCampo AND
+							ensayoCubo.footerEnsayo_id = 1QQ
+				      ",
+				      array($id_usuario,$id_footerEnsayo),				      
+				      "SELECT -- GeneradorFormatos :: getInfoUser : 1"
+				      );
+
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('id_usuario' => $id_usuario,'id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Error no se encontro información suficiente en esos id','error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+		}
+
+		function getInfoUserCilindros($token,$rol_usuario_id,$id_footerEnsayo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				//Obtenemos el id del usuario que solicita
+				$id_usuario = substr(decurl($token),10);
+				
+				$s= $dbS->qarrayA("
+				      	SELECT
+							usuarioRealizo.nombreRealizo,	
+							usuarioRealizo.firma AS firmaRealizo,
+							CONCAT(nombre,' ',apellido) AS nombreLaboratorista,
+							usuario.firma AS firmaLaboratorista
+						FROM
+							ordenDeTrabajo,
+							formatoCampo,
+							ensayoCilindro,
+							usuario,
+							(
+								SELECT						
+									CONCAT(nombre,' ',apellido) AS nombreRealizo,
+									firma
+								FROM
+									usuario
+								WHERE
+									usuario.id_usuario = 1QQ
+							) AS usuarioRealizo
+						WHERE
+							ordenDeTrabajo.jefa_lab_id = usuario.id_usuario AND 
+							formatoCampo.ordenDeTrabajo_id = ordenDeTrabajo.id_ordenDeTrabajo AND
+							ensayoCilindro.formatoCampo_id = formatoCampo.id_formatoCampo AND
+							ensayoCilindro.footerEnsayo_id = 1QQ
+				      ",
+				      array($id_usuario,$id_footerEnsayo),				      
+				      "SELECT -- GeneradorFormatos :: getInfoUser : 1"
+				      );
+
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('id_usuario' => $id_usuario,'id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Error no se encontro información suficiente en esos id','error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+		}
+
+		function getInfoUserVigas($token,$rol_usuario_id,$id_footerEnsayo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				//Obtenemos el id del usuario que solicita
+				$id_usuario = substr(decurl($token),10);
+				
+				$s= $dbS->qarrayA("
+				      	SELECT
+							usuarioRealizo.nombreRealizo,	
+							usuarioRealizo.firma AS firmaRealizo,
+							CONCAT(nombre,' ',apellido) AS nombreLaboratorista,
+							usuario.firma AS firmaLaboratorista
+						FROM
+							ordenDeTrabajo,
+							formatoCampo,
+							ensayoViga,
+							usuario,
+							(
+								SELECT						
+									CONCAT(nombre,' ',apellido) AS nombreRealizo,
+									firma
+								FROM
+									usuario
+								WHERE
+									usuario.id_usuario = 1QQ
+							) AS usuarioRealizo
+						WHERE
+							ordenDeTrabajo.jefa_lab_id = usuario.id_usuario AND 
+							formatoCampo.ordenDeTrabajo_id = ordenDeTrabajo.id_ordenDeTrabajo AND
+							ensayoViga.formatoCampo_id = formatoCampo.id_formatoCampo AND
+							ensayoViga.footerEnsayo_id = 1QQ
+				      ",
+				      array($id_usuario,$id_footerEnsayo),				      
+				      "SELECT -- GeneradorFormatos :: getInfoUser : 1"
+				      );
+
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('id_usuario' => $id_usuario,'id_footerEnsayo' => $id_footerEnsayo,'estatus' => 'Error no se encontro información suficiente en esos id','error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+		}
 				
 		/*
 				FUNCION QUE EXTRAE AL USUARIO QUE REALIZO Y AL JEFE DE LABORATORIO ENCARGADO DEL RESPECTIVO LABORATORIO
@@ -192,6 +357,8 @@
 			return $arr;
 		}
 		*/
+
+		/*
 		function getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo){
 			global $dbS;
 			$usuario = new Usuario();
@@ -239,6 +406,56 @@
 				}
 				else{
 						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+				}
+			}
+			return $arr;
+		}
+
+		*/
+
+		function getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				//Obtenemos el id del usuario que solicita
+				$id_usuario = substr(decurl($token),10);
+				
+				$s= $dbS->qarrayA("
+				      	SELECT
+							nombreLaboratorista,
+							firmaLaboratorista,
+							nombreG,
+							firmaG
+						FROM
+							laboratorio,
+							(
+								SELECT
+									laboratorio_id,						
+									CONCAT(nombre,' ',apellido) AS nombreLaboratorista,
+									firma AS firmaLaboratorista
+								FROM
+									usuario
+								WHERE
+									usuario.id_usuario = 1QQ
+							) AS laboratorista
+						WHERE
+							laboratorio.id_laboratorio = laboratorista.laboratorio_id
+				      ",
+				      array($id_usuario),				      
+				      "SELECT -- GeneradorFormatos :: getInfoUserFinal : 1"
+				      );
+
+				if(!$dbS->didQuerydied){
+					if($s=="empty"){
+						$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
+					}
+					else{
+						return $s;
+					}
+				}
+				else{
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoUserFinal , verifica tus datos y vuelve a intentarlo','error' => 6);
 				}
 			}
 			return $arr;
@@ -573,7 +790,7 @@
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
 				//Obtenemos la informacion de quien esta realizando el pdf
-				$infoU = $this->getInfoUser($token,$rol_usuario_id);
+				$infoU = $this->getInfoUserVigas($token,$rol_usuario_id,$id_footerEnsayo);
 				if(!(array_key_exists('error', $infoU))){
 					$info = $this->getInfoEnsayoVigas($token,$rol_usuario_id,$id_footerEnsayo);
 					if(!(array_key_exists('error', $info))){
@@ -743,7 +960,7 @@
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
 				//Obtenemos la informacion de quien esta realizando el pdf
-				$infoU = $this->getInfoUser($token,$rol_usuario_id);
+				$infoU = $this->getInfoUserCilindros($token,$rol_usuario_id,$id_footerEnsayo);
 				if(!(array_key_exists('error', $infoU))){
 					$info = $this->getInfoEnsayoCilindros($token,$rol_usuario_id,$id_footerEnsayo);
 					if(!(array_key_exists('error', $info))){
@@ -773,7 +990,7 @@
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
 				//Obtenemos la informacion de quien esta realizando el pdf
-				$infoU = $this->getInfoUser($token,$rol_usuario_id);
+				$infoU = $this->getInfoUserCubos($token,$rol_usuario_id,$id_footerEnsayo);
 				if(!(array_key_exists('error', $infoU))){
 					$info = $this->getInfoEnsayoCubo($token,$rol_usuario_id,$id_footerEnsayo);
 					if(!(array_key_exists('error', $info))){
@@ -1461,7 +1678,7 @@
 							disApoyo,
 							carga,
 							mr AS modRuptura,
-							mr/ensayo_def_MPa AS modRuptura2,
+							ROUND((mr/ensayo_def_MPa),2) AS modRuptura2,
 							defectos
 						FROM
 							ensayoViga,
