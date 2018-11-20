@@ -517,7 +517,7 @@
 			//Cuadro con informacion
 			//Obra
 
-			$posicionAux = configPosition();
+		
 
 			$this->Cell($this->cellsInfo['tam_obra'],$this->cellsInfo['tam_CellsLeftAlto'],$this->cellsInfo['obra'],0);
 			

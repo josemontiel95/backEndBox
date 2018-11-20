@@ -266,9 +266,59 @@
 			if($posiciony <= $limit){
 				return array('sizeFont' => $sizeFont,'Total de renglones que serian' => $totalRows, 'estatus' => 'Texto valido','error' => 0);
 			}else{
-				return array('estatus' => 'Error, el texto excede el tamaño, aun reduciendo el tamaño de fuente','error' => 1);
+				$new_string = $this->truncMulticell($sizeFont,$tam,$tamaño_alto,$string,$numRows);
+				$tam_new_string = $pdf->GetStringWidth($new_string);
+				$arr = array('string' => $string,'tam_string' => $tam_string,'new_string' => $new_string,'tam_new_string' => $tam_new_string,'tam_campo' => $min,'estatus' => 'El texto excedió el tamaño permitido.','error' => 100);
 			}
 
+		}
+
+
+		function truncMulticell($sizeFont,$tam,$tamaño_alto,$string,$numRows){
+			//Creamos un objeto tipo MyPDF para hacer las operaciones que necesitamos
+			$pdf = new MyPDF('L','mm','Letter');
+
+
+
+			$pdf->AddPage();
+
+			//Guardamos la posicion inicial de "Y" para comprobar posteriormente que solo se crearon el numero de rows que se necesitaba
+			$posIniY = $pdf->GetY();
+
+			$limit = $pdf->GetY() + ($tamaño_alto*$numRows);
+
+			$pdf->SetFont('Arial','',$sizeFont);
+
+			$pdf->multicell($tam,$tamaño_alto,$string,1,'C');
+
+
+
+			$posiciony = $pdf->GetY();
+
+			//Calculamos los rows que se generan al escribir
+
+			$totalRows = ($posiciony-$posIniY)/$tamaño_alto;
+
+			//Este ciclo decrementara el tamaño de fuente
+			while($posiciony > $limit){
+				$string = substr($string,0,strlen($string) - 1);
+				$pdf->sety($posIniY);
+				$pdf->multicell($tam,$tamaño_alto,$string,1,'C');
+				$posiciony = $pdf->gety();
+			}
+
+
+
+			/*
+			$pdf->sety(100);	
+
+			$pdf->multicell($tam,$tamaño_alto,$string,1,'C');
+
+			$pdf->output();*/
+			//Quitamos la ultima letra y ponemos puntos suspensivos para demostrar que no es valido
+			$string = substr($string,0,(strlen($string))-2);
+			$string.='...';
+			return $string;
 		}
 
 		/*
