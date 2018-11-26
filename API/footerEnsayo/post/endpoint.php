@@ -45,6 +45,10 @@
 			$footer = new footerEnsayo();
 			echo $footer->formatoSeen($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoCampo'],$_POST['id_footerEnsayo']);		
 		break;
+		case 'getLog':
+			$footer = new footerEnsayo();
+			echo $footer->getLog($_POST['token'],$_POST['rol_usuario_id']);		
+		break;
 	}
 ?>
 	

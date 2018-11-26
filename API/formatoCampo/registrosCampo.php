@@ -115,8 +115,8 @@ class registrosCampo{
 					//Obtenemos la informacion para generar la claveEspecimen
 					$ids=array(); // arreglo de id_registrosCampo
 					for($j=0;$j<$NoDeRegistros;$j++){
-						$a= $dbS->qarrayA("
-							SELECT
+						$a= $dbS->qarrayA(
+							"SELECT
 								id_obra,
 								revenimiento,
 								prefijo,

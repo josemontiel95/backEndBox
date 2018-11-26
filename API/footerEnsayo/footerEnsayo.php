@@ -217,6 +217,7 @@ class footerEnsayo{
 		return json_encode($arr);
 	}
 
+
 	private function sentIfIguala($id_formatoCampo,$table,$id_ensayo,$id){
 		global $dbS;
 		$mailer = new Mailer();
@@ -310,6 +311,7 @@ class footerEnsayo{
 			return json_encode($arr);
 		}
 	}
+
 
 	public function generatePDFFinal($token,$rol_usuario_id,$id_formatoCampo,$id_ensayo){
 		global $dbS;
@@ -809,6 +811,187 @@ class footerEnsayo{
 			$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Exito','error' => 0);
 		}
 		$dbS->commitTransaction();
+		return json_encode($arr);
+	}
+	
+	public function getLog($token,$rol_usuario_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id=$usuario->laboratorio_id;
+		if($arr['error'] == 0){
+			$arr = $dbS->qAll(
+				    "SELECT
+						id_log, 
+						queryType,
+						status
+					FROM
+						log LIMIT 10000
+				",array(),
+				"SELECT -- FooterEnsayo :: generatePDFEnsayo : 1"
+			);
+			if($dbS->didQuerydied){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en generar formato , verifica tus datos y vuelve a intentarlo','error' => 11);
+			}else if($arr=="empty"){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en generar formato , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
+		return json_encode($arr);
+	}
+
+	public function getHistoricEnsayos($token,$rol_usuario_id,$obra_id){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		if($arr['error'] == 0){
+			$arr = $dbS->qAll(
+				"SELECT
+					O.obra,
+					fc.informeNo,
+					fc.tipo AS tipo,
+					CASE
+						WHEN fc.tipo = 'CILINDRO' THEN 2
+						WHEN fc.tipo = 'CUBO' THEN 3
+						WHEN fc.tipo = 'VIGAS' THEN 4
+						ELSE 0
+					END AS tipoNo,
+					rc.claveEspecimen,
+					rc.fecha AS fechaColado,
+					CASE
+						WHEN MOD(rc.diasEnsaye,4) = 1 THEN fc.prueba1  
+						WHEN MOD(rc.diasEnsaye,4) = 2 THEN fc.prueba2  
+						WHEN MOD(rc.diasEnsaye,4) = 3 THEN fc.prueba3  
+						WHEN MOD(rc.diasEnsaye,4) = 0 THEN fc.prueba4  
+						ELSE 'Error, Contacta a soporte'
+					END AS diasEnsaye,
+					CASE
+						WHEN MOD(diasEnsaye,4) = 1 THEN DATE_ADD(rc.fecha, INTERVAL prueba1 DAY)
+						WHEN MOD(diasEnsaye,4) = 2 THEN DATE_ADD(rc.fecha, INTERVAL prueba2 DAY)  
+						WHEN MOD(diasEnsaye,4) = 3 THEN DATE_ADD(rc.fecha, INTERVAL prueba3 DAY)  
+						WHEN MOD(diasEnsaye,4) = 0 THEN DATE_ADD(rc.fecha, INTERVAL prueba4 DAY)
+						ELSE 'Error, Contacta a soporte'
+					END AS fechaEnsayeAsignado,
+					ensayo.fecha AS fechaEnsayoReal,
+					ensayo.carga AS carga,
+					ensayo.resistencia,
+					ensayo.footerEnsayo_id AS id_footerEnsayo
+				FROM
+						obra AS O 
+					INNER JOIN 
+						ordenDeTrabajo AS ODT 
+					ON id_obra = obra_id
+					INNER JOIN 
+						formatoCampo AS fc
+					ON id_ordenDeTrabajo = ordenDeTrabajo_id 
+					INNER JOIN
+						registrosCampo AS rc
+					ON id_formatoCampo = formatoCampo_id
+					INNER JOIN
+						ensayoCubo AS ensayo
+					ON id_registrosCampo = registrosCampo_id
+				WHERE 
+					O.id_obra=1QQ
+				UNION
+				SELECT
+					O.obra,
+					fc.informeNo,
+					fc.tipo AS tipo,
+					CASE
+						WHEN fc.tipo = 'CILINDRO' THEN 2
+						WHEN fc.tipo = 'CUBO' THEN 3
+						WHEN fc.tipo = 'VIGAS' THEN 4
+						ELSE 0
+					END AS tipoNo,
+					rc.claveEspecimen,
+					rc.fecha AS fechaColado,
+					CASE
+						WHEN MOD(rc.diasEnsaye,4) = 1 THEN fc.prueba1  
+						WHEN MOD(rc.diasEnsaye,4) = 2 THEN fc.prueba2  
+						WHEN MOD(rc.diasEnsaye,4) = 3 THEN fc.prueba3  
+						WHEN MOD(rc.diasEnsaye,4) = 0 THEN fc.prueba4  
+						ELSE 'Error, Contacta a soporte'
+					END AS diasEnsaye,
+					CASE
+						WHEN MOD(diasEnsaye,4) = 1 THEN DATE_ADD(rc.fecha, INTERVAL prueba1 DAY)
+						WHEN MOD(diasEnsaye,4) = 2 THEN DATE_ADD(rc.fecha, INTERVAL prueba2 DAY)  
+						WHEN MOD(diasEnsaye,4) = 3 THEN DATE_ADD(rc.fecha, INTERVAL prueba3 DAY)  
+						WHEN MOD(diasEnsaye,4) = 0 THEN DATE_ADD(rc.fecha, INTERVAL prueba4 DAY)
+						ELSE 'Error, Contacta a soporte'
+					END AS fechaEnsayeAsignado,
+					ensayo.fecha AS fechaEnsayoReal,
+					ensayo.carga AS carga,
+					ensayo.resistencia,
+					ensayo.footerEnsayo_id AS id_footerEnsayo
+				FROM
+						obra AS O 
+					INNER JOIN 
+						ordenDeTrabajo AS ODT 
+					ON id_obra = obra_id
+					INNER JOIN 
+						formatoCampo AS fc
+					ON id_ordenDeTrabajo = ordenDeTrabajo_id 
+					INNER JOIN
+						registrosCampo AS rc
+					ON id_formatoCampo = formatoCampo_id
+					INNER JOIN
+						ensayoCilindro AS ensayo
+					ON id_registrosCampo = registrosCampo_id
+				WHERE 
+					O.id_obra=1QQ
+				UNION
+				SELECT
+					O.obra,
+					fc.informeNo,
+					fc.tipo AS tipo,
+					CASE
+						WHEN fc.tipo = 'CILINDRO' THEN 2
+						WHEN fc.tipo = 'CUBO' THEN 3
+						WHEN fc.tipo = 'VIGAS' THEN 4
+						ELSE 0
+					END AS tipoNo,
+					rc.claveEspecimen,
+					rc.fecha AS fechaColado,
+					CASE
+						WHEN MOD(rc.diasEnsaye,3) = 1 THEN fc.prueba1  
+						WHEN MOD(rc.diasEnsaye,3) = 2 THEN fc.prueba2  
+						WHEN MOD(rc.diasEnsaye,3) = 0 THEN fc.prueba3  
+						ELSE 'Error, Contacta a soporte'
+					END AS diasEnsaye,
+					CASE
+						WHEN MOD(diasEnsaye,3) = 1 THEN DATE_ADD(rc.fecha, INTERVAL prueba1 DAY)
+						WHEN MOD(diasEnsaye,3) = 2 THEN DATE_ADD(rc.fecha, INTERVAL prueba2 DAY)  
+						WHEN MOD(diasEnsaye,3) = 0 THEN DATE_ADD(rc.fecha, INTERVAL prueba3 DAY)  
+						ELSE 'Error, Contacta a soporte'
+					END AS fechaEnsayeAsignado,
+					ensayo.fecha AS fechaEnsayoReal,
+					ensayo.carga AS carga,
+					ensayo.mr AS resistencia,
+					ensayo.footerEnsayo_id AS id_footerEnsayo
+				FROM
+						obra AS O 
+					INNER JOIN 
+						ordenDeTrabajo AS ODT 
+					ON id_obra = obra_id
+					INNER JOIN 
+						formatoCampo AS fc
+					ON id_ordenDeTrabajo = ordenDeTrabajo_id 
+					INNER JOIN
+						registrosCampo AS rc
+					ON id_formatoCampo = formatoCampo_id
+					INNER JOIN
+						ensayoViga AS ensayo
+					ON id_registrosCampo = registrosCampo_id
+				WHERE 
+					O.id_obra=1QQ
+				",array($obra_id,$obra_id,$obra_id),
+				"SELECT -- FooterEnsayo :: generatePDFEnsayo : 1"
+			);
+			if($dbS->didQuerydied){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en generar formato , verifica tus datos y vuelve a intentarlo','error' => 11);
+			}else if($arr=="empty"){
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en generar formato , verifica tus datos y vuelve a intentarlo','error' => 5);
+			}
+		}
 		return json_encode($arr);
 	}
 

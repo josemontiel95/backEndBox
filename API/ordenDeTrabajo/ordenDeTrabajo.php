@@ -24,8 +24,7 @@ class ordenDeTrabajo{
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
 			$arrayCCH = $dbS->qAll(
-							"
-								SELECT
+							"SELECT
 									id_formatoCampo AS id_formato,
 									informeNo AS formatoNo,
 									IF(informeNo IS NOT NULL,'CONTROL DE CONCRETO HIDRAULICO','ERROR')AS tipo,
@@ -42,8 +41,7 @@ class ordenDeTrabajo{
 			
 			if(!$dbS->didQuerydied){
 				$arrayRev = $dbS->qAll(
-							"
-								SELECT
+							"   SELECT
 									id_formatoRegistroRev AS id_formato,
 									regNo AS formatoNo,
 									IF(regNo IS NOT NULL,'REVENIMIENTO','ERROR')AS tipo,
@@ -109,12 +107,15 @@ class ordenDeTrabajo{
 						ensayosAwaitingApproval,
 						notVistoJLForBrigadaApproval,
 						CASE
-							WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval = 0      THEN 'Revisar cambios JB'
-							WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval IS NULL  THEN 'Revisar cambios JB'
-							WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval > 0      THEN 'Autorizar y generar PDF'
-							WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval > 0      THEN 'Autorizar y generar PDF'
+							WHEN formatoCampo.status = 0 THEN 'JB: editar'
+							WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval = 0      THEN 'JL: Revisar cambios del JB'
+							WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval IS NULL  THEN 'JL: Revisar cambios del JB'
+							WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval IS NULL  THEN 'TMU: Ensayos pendientes'
+							WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval > 0      THEN 'JL: Generar PDF y autorizar'
+							WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval > 0      THEN 'JL: Generar PDF y autorizar'
+							WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval = 0 AND formatoCampo.registrosNo > 0 THEN 'TMU: Ensayos pendientes'
+							WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval = 0 AND formatoCampo.registrosNo = 0 THEN 'JL: Completar Formato'
 							WHEN formatoCampo.status = 2       THEN 'Autorizado & Completado'
-							WHEN formatoCampo.status = 0       THEN 'En edicion JB'
 							ELSE 'Error, contacte a soporte'
 						END AS accReq,
 						informeNo AS informeNo,
@@ -274,6 +275,77 @@ class ordenDeTrabajo{
 		return json_encode($arr);	
 	}
 	
+	public function getByObraJefaLab($token,$rol_usuario_id, $id_obra){
+		global $dbS;
+		$usuario = new Usuario();
+		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$laboratorio_id= $usuario->laboratorio_id;
+		if($arr['error'] == 0){
+			$arr= $dbS->qAll(
+				"SELECT 
+					id_ordenDeTrabajo,
+					jefa_lab_id,
+					obra_id,
+					obra.obra,
+					actividades,
+					condicionesTrabajo,
+					CONCAT(fechaInicio,' ',horaInicio) AS fechaInicio,
+					CONCAT(fechaFin,' ',horaFin) AS fechaFin,
+					horaInicio,
+					horaFin,
+					observaciones,
+					lugar,
+					ordenDeTrabajo.laboratorio_id,
+					laboratorio,
+					jefe_brigada_id,
+					IF(ordenDeTrabajo.active = 1,'Si','No') AS active,
+					CASE 
+						WHEN ordenDeTrabajo.status = 0 THEN 'Edicion JL'
+						WHEN ordenDeTrabajo.status = 1 THEN 'Ejecucion JB'
+						WHEN ordenDeTrabajo.status = 2 THEN 'Terminado JB'
+						ELSE 'Error'
+					END AS odtStatus,
+					CASE
+						WHEN CURDATE() < ordenDeTrabajo.fechaInicio  THEN 'Agendado'
+						WHEN CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()< TIMESTAMP(CONCAT(ordenDeTrabajo.fechaInicio,' ',ordenDeTrabajo.horaInicio)) THEN 'Agendado para hoy'
+						WHEN CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()>= TIMESTAMP(CONCAT(ordenDeTrabajo.fechaInicio,' ',ordenDeTrabajo.horaInicio)) AND NOW() <= TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 'En curso'
+						WHEN ordenDeTrabajo.status = 1 AND CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()> TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 'Atrasado'
+						WHEN ordenDeTrabajo.status = 2 AND CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()> TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 'Terminado'
+						WHEN ordenDeTrabajo.status = 1 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 'Atrasado'
+						WHEN ordenDeTrabajo.status = 2 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 'Terminado'
+						WHEN ordenDeTrabajo.status = 3 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 'Completado'
+						ELSE 'Error, contacte a soporte'
+					END AS estado,
+					CASE
+						WHEN CURDATE() < ordenDeTrabajo.fechaInicio  THEN 1
+						WHEN CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()< TIMESTAMP(CONCAT(ordenDeTrabajo.fechaInicio,' ',ordenDeTrabajo.horaInicio)) THEN 1
+						WHEN CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()>= TIMESTAMP(CONCAT(ordenDeTrabajo.fechaInicio,' ',ordenDeTrabajo.horaInicio)) AND NOW() <= TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 2
+						WHEN ordenDeTrabajo.status = 1 AND CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()> TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 0
+						WHEN ordenDeTrabajo.status = 2 AND CURDATE() >= ordenDeTrabajo.fechaInicio AND CURDATE() <= ordenDeTrabajo.fechaFin AND NOW()> TIMESTAMP(CONCAT(ordenDeTrabajo.fechaFin,' ',ordenDeTrabajo.horaFin)) THEN 3
+						WHEN ordenDeTrabajo.status = 1 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 0
+						WHEN ordenDeTrabajo.status = 2 AND CURDATE() > ordenDeTrabajo.fechaFin  THEN 3
+						ELSE 4
+					END AS color
+				FROM
+					ordenDeTrabajo,obra,laboratorio
+				WHERE
+					obra_id = id_obra
+					AND ordenDeTrabajo.laboratorio_id = id_laboratorio
+					AND id_obra = 1QQ
+				",
+				array($id_obra),
+				"SELECT -- OrdenDeTrabajo :: getAllJefaLab : 1"
+			);
+
+			if(!$dbS->didQuerydied){
+						if($arr == "empty")
+							$arr = array('estatus' =>"No hay registros", 'error' => 5); 
+						
+			}else
+				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en el query, verifica tus datos y vuelve a intentarlo','error' => 6);
+		}
+		return json_encode($arr);	
+	}
 
 	//Devuelve todas las ordenes de trabajo que aun estan pendientes de completar
 	public function getAllJefaLab($token,$rol_usuario_id, $status){

@@ -189,8 +189,8 @@ class Obra{
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
-			$arr= $dbS->qAll("
-			      SELECT 
+			$arr= $dbS->qAll(
+				"SELECT 
 			        id_obra,
 					obra
 			      FROM 

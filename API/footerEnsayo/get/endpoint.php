@@ -52,5 +52,14 @@
 			$footer = new footerEnsayo();
 			echo $footer->generatePDFFinal($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo'],$_GET['id_ensayo']);		
 		break;
+		case 'getHistoricEnsayos':
+			$footer = new footerEnsayo();
+			echo $footer->getHistoricEnsayos($_GET['token'],$_GET['rol_usuario_id'],$_GET['obra_id']);		
+		break;
+		
+		case 'getLog':
+			$footer = new footerEnsayo();
+			echo $footer->getLog($_GET['token'],$_GET['rol_usuario_id']);		
+		break;
 	}
 ?>
