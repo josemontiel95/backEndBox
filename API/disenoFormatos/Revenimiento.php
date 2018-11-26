@@ -209,7 +209,7 @@
 			$this->Cell($tam_texto_adicional,$tam_font_left - 3,utf8_decode($texto_adicional),0);
 			$this->Ln(8);
 
-			$localizacion = 'LOCALIZACIÓN:';
+			$localizacion = 'ELEMENTO COLADO:';
 			//Caja de texto
 			$this->SetFont('Arial','B',$tam_font_left);
 			$tam_localizacion = $this->GetStringWidth($localizacion)+3;
@@ -218,7 +218,17 @@
 			$this->Cell($tam_localizacion,$tam_font_left - 3,utf8_decode($localizacion),0);
 			//Caja de texto
 			$this->SetFont('Arial','',$tam_font_left);
-			$this->Cell($tam_localizacionText,$tam_font_left - 4,utf8_decode(	$this->printInfo($tam_font_right,$tam_localizacionText,$infoFormato['locRev'])	),'B',0);
+
+			$resultado = $this->printInfoObraAndLocObra($tam_font_left,$tam_localizacionText,$tam_font_left - 4,$infoFormato['locRev'],3);
+
+
+			if($resultado['error'] == 0){
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+			}else{
+				$string = $resultado['estatus'];
+			}
+
+			$this->multicell($tam_localizacionText,$tam_font_left - 4,utf8_decode(	$infoFormato['locRev']	),'B','C');
 
 			$this->ln(8);
 		}
@@ -523,7 +533,7 @@
 
 			$this->cell($tam_box/3,($tam_font_details - 1),'RR = RESISTENCIA RAPIDA','B',0,'C');
 
-			$this->cell($tam_box/3,($tam_font_details - 1),'CA = NORMAL','B,R',0,'C');
+			$this->cell($tam_box/3,($tam_font_details - 1),'N = NORMAL','B,R',0,'C');
 
 			$this->ln(12);
 
@@ -811,7 +821,7 @@
 
 			$this->cell($tam_box/3,($tam_font_details - 1),'RR = RESISTENCIA RAPIDA','B',0,'C');
 
-			$this->cell($tam_box/3,($tam_font_details - 1),'CA = NORMAL','B,R',0,'C');
+			$this->cell($tam_box/3,($tam_font_details - 1),'N = NORMAL','B,R',0,'C');
 
 			$this->ln(12);
 

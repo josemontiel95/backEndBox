@@ -175,29 +175,49 @@
 			$this->Ln($tam_font_left - 2);
 
 
+			//Guardamos las posicion de la y
+			$posiciony = $this->GetY();
+
 			//Cuadro con informacion
 			$obra = 'OBRA:';
 			$this->Cell($this->GetStringWidth($obra)+2,$tam_font_left - 3,$obra,0);
 			//Caja de texto
 			$this->SetX(50);
-			$this->Cell(170,$tam_font_left - 3,utf8_decode($infoFormato['obra']),'B',0);
 
-			$this->SetX($this->GetX()+5);
+			$resultado = $this->printInfoObraAndLocObra($tam_font_left,170,$tam_font_left - 3,$infoFormato['obra'],3);
+
+			$this->multicell(170,$tam_font_left - 3,utf8_decode($infoFormato['obra']),'B','C');
+
+			$posiciony_aux = $this->GetY();
+
+			$this->SetY($posiciony);
+
+			$this->SetX(225);
 			$tipoConcreto = 'Tipo de Concreto:';
 			$this->Cell($this->GetStringWidth($tipoConcreto)+2,$tam_font_left - 3,utf8_decode($tipoConcreto),0);
 			//Caja de texto
 			$this->Cell(0,$tam_font_left - 3,utf8_decode($infoFormato['tipoConcreto']),'B',0);
 
-			$this->Ln($tam_font_left - 2);
+			$this->SetY($posiciony_aux + 1);
+
+			$posiciony = $this->GetY();			
 
 			$locObra = 'DIRECCIÓN DE LA OBRA:';
 			$this->Cell($this->GetStringWidth($locObra)+2,$tam_font_left - 3,utf8_decode($locObra),0);
 
 			//Caja de texto
 			$this->SetX(50);
-			$this->Cell(170,$tam_font_left - 3,utf8_decode($infoFormato['obraLocalizacion']),'B',0);
 
-			$this->SetX($this->GetX()+6.5);
+			$resultado = $this->printInfoObraAndLocObra($tam_font_left,170,$tam_font_left - 3,$infoFormato['obraLocalizacion'],3);
+
+			$this->multicell(170,$tam_font_left - 3,utf8_decode($infoFormato['obraLocalizacion']),'B','C');
+
+			$posiciony_aux = $this->GetY();
+
+			$this->SetY($posiciony);
+
+			$this->SetX(226.5);
+
 			$mrProyecto = 'MR de proyecto:';
 			$this->Cell($this->GetStringWidth($mrProyecto)+2,$tam_font_left - 3,utf8_decode($mrProyecto),0);
 			//Caja de texto
@@ -211,7 +231,11 @@
 			$this->Cell($this->GetStringWidth($nomCli)+2,$tam_font_left - 3,utf8_decode($eleColado),0);
 			//Caja de texto
 			$this->SetX(50);
-			$this->Cell(170,$tam_font_left - 3,utf8_decode($infoFormato['eleColado']),'B',0);
+
+			$resultado = $this->printInfoObraAndLocObra($tam_font_left,170,$tam_font_left - 3,$infoFormato['eleColado'],3);
+
+
+			$this->multicell(170,$tam_font_left - 3,utf8_decode($infoFormato['eleColado']),'B','C');
 
 			//Divide la informacion del formato de la Tabla (Esta en funcion del tamaño de fuente de la informacion de la derecha)
 			$this->Ln($tam_font_left);
