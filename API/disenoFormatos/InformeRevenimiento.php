@@ -446,7 +446,7 @@
 			$this->Cell($tam_texto_adicional,$tam_font_left - 3,utf8_decode($texto_adicional),0);
 			$this->Ln(8);
 
-			$localizacion = 'LOCALIZACIÓN:';
+			$localizacion = 'ELEMENTO COLADO:';
 			//Caja de texto
 			$this->SetFont('Arial','B',$tam_font_left);
 			$tam_localizacion = $this->GetStringWidth($localizacion)+3;
@@ -455,7 +455,17 @@
 			$this->Cell($tam_localizacion,$tam_font_left - 3,utf8_decode($localizacion),0);
 			//Caja de texto
 			$this->SetFont('Arial','',$tam_font_left);
-			$this->Cell($tam_localizacionText,$tam_font_left - 4,utf8_decode(	$this->printInfo($tam_font_right,$tam_localizacionText,$infoFormato['locRev'])	),'B',0);
+
+			$resultado = $this->printInfoObraAndLocObra($tam_font_left,$tam_localizacionText,$tam_font_left - 4,$infoFormato['locRev'],3);
+
+
+			if($resultado['error'] == 0){
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+			}else{
+				$string = $resultado['estatus'];
+			}
+
+			$this->multicell($tam_localizacionText,$tam_font_left - 4,utf8_decode(	$infoFormato['locRev']	),'B','C');
 
 			$this->ln(8);
 		}
@@ -814,7 +824,7 @@
 			$this->SetXY($posicion_x+$this->GetStringWidth($simbologia)+2,$posicion_y+10/3);
 			$this->cell(0,10/3,'RR = RESISTENCIA RAPIDA','R',0);
 			$this->SetXY($posicion_x+$this->GetStringWidth($simbologia)+2,$posicion_y+2*(10/3));
-			$this->cell(0,10/3,'CA = NORMAL','B,R',0);
+			$this->cell(0,10/3,'N = NORMAL','B,R',0);
 			$this->Ln(0);
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 
@@ -834,7 +844,7 @@
 			$posicion_x = $this->GetX();
 			$this->cell($tam_boxElaboro,$tam_second,'','L,B,R',2,'C');
 
-			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('___________________________________________'));	
+			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('_____________________________'));	
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('SIGNATARIO/JEFE DE LABORATORIO')/2),$this->gety() - 3,utf8_decode('SIGNATARIO/JEFE DE LABORATORIO'));	
 			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 
@@ -846,7 +856,7 @@
 
 			
 			$this->cell($tam_boxElaboro,$tam_second,'','L,B,R',2,'C');
-			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('___________________________________________'));	
+			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('_____________________________'));	
 
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('DIRECTOR GENERAL/GERENTE GENERAL')/2),$this->gety() - 3,utf8_decode('DIRECTOR GENERAL/GERENTE GENERAL'));	
 			$this->SetFont('Arial','B',$tam_font_footer);
@@ -861,7 +871,7 @@
 			$this->cell($tam_boxElaboro,$tam_first,'Recibe','L,T,R',2,'C');
 			$this->cell($tam_boxElaboro,$tam_second,'','L,B,R',2,'C');
 			$posicion_x = $this->GetX();
-			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('___________________________________________'));	
+			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('_____________________________'));	
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NOMBRE DE QUIEN RECIBE')/2),$this->gety() - 3,utf8_decode('NOMBRE DE QUIEN RECIBE'));	
 			$this->Image('./../../disenoFormatos/firma.png',(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 			$this->Ln(0);
@@ -909,7 +919,7 @@
 			$this->SetXY($posicion_x+$this->GetStringWidth($simbologia)+2,$posicion_y+10/3);
 			$this->cell(0,10/3,'RR = RESISTENCIA RAPIDA','R',0);
 			$this->SetXY($posicion_x+$this->GetStringWidth($simbologia)+2,$posicion_y+2*(10/3));
-			$this->cell(0,10/3,'CA = NORMAL','B,R',0);
+			$this->cell(0,10/3,'N = NORMAL','B,R',0);
 			$this->Ln(0);
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 

@@ -56,7 +56,7 @@
 							-Este informe sustituye a:
 			*/
 			$tam_font_right = 7.5;
-			$tam_CellsRightAlto =	$tam_font_right - 3;	
+			$tam_CellsRightAlto =	$tam_font_right - 4;	
 			$this->SetFont('Arial','B',$tam_font_right);
 
 			//Separacion del margen
