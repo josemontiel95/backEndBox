@@ -15,19 +15,44 @@ class Obra{
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 
-	public function insertAdmin($token,$rol_usuario_id,$obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre, $incertidumbreCilindro, $incertidumbreCubo, $incertidumbreVigas, $cotizacion,$consecutivoProbeta,$consecutivoDocumentos,$correo_alterno){
+	public function insertAdmin($token,$rol_usuario_id,$obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre, $incertidumbreCilindro, $incertidumbreCubo, $incertidumbreVigas, $cotizacion,$consecutivoProbetaCCH_VIGA,    $consecutivoProbetaCCH_CILINDRO,    $consecutivoProbetaCCH_CUBO,$consecutivoDocumentosCCH_VIGA, $consecutivoDocumentosCCH_CILINDRO, $consecutivoDocumentosCCH_CUBO,$consecutivoDocumentosCCH_REV,$correo_alterno){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
-			$dbS->squery("
-						INSERT INTO
-						obra(laboratorio_id,obra,prefijo,fechaDeCreacion,descripcion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento, incertidumbre, incertidumbreCilindro, incertidumbreCubo, incertidumbreVigas, cotizacion,consecutivoProbeta,consecutivoDocumentos,correo_alterno)
-
-						VALUES
-						('1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ')
-				",array($laboratorio_id,$obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,  $incertidumbreCilindro, $incertidumbreCubo, $incertidumbreVigas, $cotizacion,$consecutivoProbeta,$consecutivoDocumentos,$correo_alterno),"INSERT");
+			$dbS->squery(
+				"INSERT INTO obra
+					(laboratorio_id,			   obra,                               prefijo,
+					fechaDeCreacion,			   descripcion,                        localizacion,
+					nombre_residente,			   telefono_residente,                 correo_residente,
+					cliente_id, 				   concretera_id,                      tipo,
+					revenimiento,  				   incertidumbre, 					   incertidumbreCilindro, 
+					incertidumbreCubo, 			   incertidumbreVigas,                 cotizacion,
+					consecutivoProbetaCCH_VIGA,	   consecutivoProbetaCCH_CILINDRO,     consecutivoProbetaCCH_CUBO,
+					consecutivoDocumentosCCH_VIGA, consecutivoDocumentosCCH_CILINDRO,  consecutivoDocumentosCCH_CUBO,
+					consecutivoDocumentosCCH_REV,  correo_alterno)
+				VALUES
+				   ('1QQ','1QQ','1QQ',
+					'1QQ','1QQ','1QQ',
+					'1QQ','1QQ','1QQ',
+					'1QQ','1QQ','1QQ',
+					'1QQ','1QQ','1QQ',
+					'1QQ','1QQ','1QQ',
+					'1QQ','1QQ','1QQ',
+					'1QQ','1QQ','1QQ',
+					'1QQ','1QQ')
+				",array(
+					$laboratorio_id,				$obra,								$prefijo,
+					$fechaDeCreacion,				$descripcion,						$localizacion,
+					$nombre_residente,				$telefono_residente,				$correo_residente,
+					$cliente_id,					$concretera_id,						$tipo,
+					$revenimiento,					$incertidumbre,						$incertidumbreCilindro, 
+					$incertidumbreCubo,				$incertidumbreVigas, 				$cotizacion,
+					$consecutivoProbetaCCH_VIGA,    $consecutivoProbetaCCH_CILINDRO,    $consecutivoProbetaCCH_CUBO,
+					$consecutivoDocumentosCCH_VIGA, $consecutivoDocumentosCCH_CILINDRO, $consecutivoDocumentosCCH_CUBO,
+					$consecutivoDocumentosCCH_REV,	$correo_alterno),
+				"INSERT");
 				$arr = array('id_obra' => 'No disponible, esto NO es un error', 'obra' => $obra, 'estatus' => 'Exito en insercion', 'error' => 0);
 			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la insercion , verifica tus datos y vuelve a intentarlo','error' => 5);
@@ -36,7 +61,7 @@ class Obra{
 		return json_encode($arr);
 	}
 
-	public function upDateAdmin($token,$rol_usuario_id,$id_obra,$obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,  $incertidumbreCilindro, $incertidumbreCubo, $incertidumbreVigas, $cotizacion,$consecutivoProbeta,$consecutivoDocumentos,$correo_alterno){
+	public function upDateAdmin($token,$rol_usuario_id,$id_obra,$obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,  $incertidumbreCilindro, $incertidumbreCubo, $incertidumbreVigas, $cotizacion,$consecutivoProbetaCCH_VIGA,$consecutivoProbetaCCH_CILINDRO,$consecutivoProbetaCCH_CUBO,$consecutivoDocumentosCCH_VIGA,$consecutivoDocumentosCCH_CILINDRO,$consecutivoDocumentosCCH_CUBO,$consecutivoDocumentosCCH_REV,$correo_alterno){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -61,14 +86,19 @@ class Obra{
 							incertidumbreCubo = '1QQ',
 							incertidumbreVigas = '1QQ',
 							cotizacion='1QQ',
-							consecutivoProbeta='1QQ',
-							consecutivoDocumentos='1QQ',
+							consecutivoProbetaCCH_VIGA='1QQ',
+							consecutivoProbetaCCH_CILINDRO='1QQ',
+							consecutivoProbetaCCH_CUBO='1QQ',
+							consecutivoDocumentosCCH_VIGA='1QQ',
+							consecutivoDocumentosCCH_CILINDRO='1QQ',
+							consecutivoDocumentosCCH_CUBO='1QQ',
+							consecutivoDocumentosCCH_REV='1QQ',
 							correo_alterno='1QQ'
 						WHERE
 							active=1 AND
 							id_obra = '1QQ'
 					 "
-					,array($obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,  $incertidumbreCilindro, $incertidumbreCubo, $incertidumbreVigas, $cotizacion,$consecutivoProbeta,$consecutivoDocumentos,$correo_alterno,$id_obra),"UPDATE"
+					,array($obra,$prefijo,$fechaDeCreacion,$descripcion,$localizacion,$nombre_residente,$telefono_residente,$correo_residente,$cliente_id,$concretera_id,$tipo,$revenimiento,$incertidumbre,  $incertidumbreCilindro, $incertidumbreCubo, $incertidumbreVigas, $cotizacion,$consecutivoProbetaCCH_VIGA,$consecutivoProbetaCCH_CILINDRO,$consecutivoProbetaCCH_CUBO,$consecutivoDocumentosCCH_VIGA,$consecutivoDocumentosCCH_CILINDRO,$consecutivoDocumentosCCH_CUBO,$consecutivoDocumentosCCH_REV,$correo_alterno,$id_obra),"UPDATE"
 			      	);
 			$arr = array('id_obra' => $id_obra, 'obra' => $obra,'estatus' => 'Exito de actualizacion','error' => 0);
 			if($dbS->didQuerydied){
@@ -289,7 +319,13 @@ class Obra{
 					id_concretera,
 					concretera,
 					cotizacion,
-					consecutivoProbeta,
+					consecutivoProbetaCCH_VIGA,
+					consecutivoProbetaCCH_CILINDRO,
+					consecutivoProbetaCCH_CUBO,
+					consecutivoDocumentosCCH_VIGA,
+					consecutivoDocumentosCCH_CILINDRO,
+					consecutivoDocumentosCCH_CUBO,
+					consecutivoDocumentosCCH_REV,
 					incertidumbreCilindro,
 					incertidumbreCubo,
 					incertidumbreVigas,
@@ -300,7 +336,6 @@ class Obra{
 					concretera.active AS isConcreteraActive,
 					revenimiento,
 					incertidumbre,
-					consecutivoDocumentos,
 					correo_alterno
 			      FROM 
 			      	cliente,obra,concretera

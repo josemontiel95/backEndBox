@@ -51,12 +51,12 @@ class registrosCampo{
 					FROM
 						systemstatus
 					ORDER BY id_systemstatus DESC;
-				",array(),"SELECT");
+				",array(),
+				"SELECT -- registrosCampo :: initInsert : 1");
 			if(!$dbS->didQuerydied && ($var_system != "empty")){
 				/*Consultamos cuantos registros exiten actualemnte*/
 				$rows = $dbS->qarrayA(
-					"
-						SELECT
+					"   SELECT
 							COUNT(*) AS numRows
 						FROM
 							registrosCampo
@@ -65,7 +65,7 @@ class registrosCampo{
 					"
 					,
 					array($formatoCampo_id),
-					"SELECT"
+					"SELECT -- registrosCampo :: initInsert : 2"
 				);
 
 				if($dbS->didQuerydied || ($rows=="empty")){
@@ -75,17 +75,17 @@ class registrosCampo{
 				}
 				/*Obtenemos el tipo del formato para tratar diferente a las Vigas que a los Cubos y cilindros*/
 				$tipo = $dbS->qarrayA(
-					"
-						SELECT
-							tipo
-						FROM
-							formatoCampo
-						WHERE
-							id_formatoCampo = 1QQ
+					"SELECT
+						tipo,
+						ordenDeTrabajo_id
+					FROM
+						formatoCampo
+					WHERE
+						id_formatoCampo = 1QQ
 					"
 					,
 					array($formatoCampo_id),
-					"SELECT"
+					"SELECT -- registrosCampo :: initInsert : 3"
 				);
 				if($dbS->didQuerydied || ($tipo=="empty")){
 					$dbS->rollbackTransaction();
@@ -96,10 +96,23 @@ class registrosCampo{
 				/*Obtenemos los valores de configuracion global acorde a si es viga o cubo/cilindro*/
 
 				$NoDeRegistros;
+				$tipoNo;
 				if($tipo['tipo'] == "VIGAS"){
+					$tipoNo= 4;
+					$consecutivoTipo="consecutivoDocumentosCCH_VIGA";
+					$consecutivoProbetaTipo="consecutivoProbetaCCH_VIGA";
 					$NoDeRegistros = $var_system['multiplosNoOfRegistrosCCH_VIGAS'];
 					$maxNoOfRegistrosCCH=(int)($var_system['maxNoOfRegistrosCCH_VIGAS']);
-				}else if($tipo['tipo'] == "CILINDRO" || $tipo['tipo'] == "CUBO"){
+				}else if($tipo['tipo'] == "CILINDRO"){
+					$tipoNo= 2;
+					$consecutivoTipo="consecutivoDocumentosCCH_CILINDRO";
+					$consecutivoProbetaTipo="consecutivoProbetaCCH_CILINDRO";
+					$NoDeRegistros = $var_system['multiplosNoOfRegistrosCCH'];
+					$maxNoOfRegistrosCCH=(int)($var_system['maxNoOfRegistrosCCH']);
+				}else if($tipo['tipo'] == "CUBO"){
+					$tipoNo= 3;
+					$consecutivoTipo="consecutivoDocumentosCCH_CUBO";
+					$consecutivoProbetaTipo="consecutivoProbetaCCH_CUBO";
 					$NoDeRegistros = $var_system['multiplosNoOfRegistrosCCH'];
 					$maxNoOfRegistrosCCH=(int)($var_system['maxNoOfRegistrosCCH']);
 				}else{
@@ -107,6 +120,79 @@ class registrosCampo{
 					$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, no se encontro el tipo de formato. Verifica que hayas seleccionado el tipo.','error' => 80);
 					return json_encode($arr);
 				}
+				/*Se genera el identificador de documento en bas al tipo. */
+					//codigo migrado desde formatoCampo y refactorizado para contemplar diferentes consecutivos y estilos.
+				if($rows['numRows'] == 0){ // solo sucede en la incercion del primer grupo.
+					$infoObra= $dbS->qarrayA(
+						"SELECT 
+							id_obra,
+							cotizacion,
+							consecutivoDocumentosCCH_VIGA,
+							consecutivoDocumentosCCH_CILINDRO,
+							consecutivoDocumentosCCH_CUBO,
+							prefijo,
+							YEAR(NOW()) AS anio
+						FROM
+							obra,
+							(
+								SELECT
+									obra_id
+								FROM
+									ordenDeTrabajo
+								WHERE
+									id_ordenDeTrabajo = 1QQ
+		
+							)AS ordenDeTrabajo
+						WHERE
+							id_obra = ordenDeTrabajo.obra_id
+						",
+						array($tipo['ordenDeTrabajo_id']),
+						"SELECT -- registrosCampo :: initInsert : 4"
+					);
+					if($dbS->didQuerydied || ($infoObra=="empty")){
+						$dbS->rollbackTransaction();
+						$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 200);
+						return json_encode($arr);
+					}
+					$año = $a['anio'] - 2000;
+					if($tipoNo == 4){
+						$infoNo = $infoObra[$consecutivoTipo];
+					}else if($tipoNo == 2 || $tipoNo == 3){
+						$infoNo = $infoObra['prefijo']."/".$infoObra['cotizacion']."/".$año."/".$infoObra[$consecutivoTipo];
+					}
+					$dbS->squery(
+						"UPDATE formatoCampo SET
+							informeNo ='1QQ'
+						WHERE
+							id_formatoCampo = 1QQ
+							
+						",array($infoNo,$formatoCampo_id)
+						,"UPDATE  -- registrosCampo :: initInsert : 5"
+					);
+					if($dbS->didQuerydied){
+						$dbS->rollbackTransaction();
+						$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 201);
+						return json_encode($arr);
+					}
+					$dbS->squery(
+						"UPDATE
+							obra
+						SET
+							1QQ = 1QQ + 1
+						WHERE
+							id_obra = 1QQ
+						",array($consecutivoTipo,$consecutivoTipo,$infoObra['id_obra'])
+						,"UPDATE  -- registrosCampo :: initInsert : 6"
+					);
+					if($dbS->didQuerydied){
+						$dbS->rollbackTransaction();
+						$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 202);
+						return json_encode($arr);
+					}
+				}
+				/*Fin de la generacion de identificador */
+
+
 				/*Calculamos cuantos habria si incertamos los proximos n registros y el asignamos el grupo para modificaciones colectivas*/
 				$numRows=$rows['numRows']+$NoDeRegistros;
 				$grupo=(floor($rows['numRows']/$NoDeRegistros)+1);
@@ -121,7 +207,9 @@ class registrosCampo{
 								revenimiento,
 								prefijo,
 								formatoCampo.tipo AS tipo,
-								consecutivoProbeta,
+								consecutivoProbetaCCH_VIGA,
+								consecutivoProbetaCCH_CILINDRO,
+								consecutivoProbetaCCH_CUBO,
 								MONTH(NOW()) AS mes,
 								DAY(NOW()) AS dia
 							FROM
@@ -140,10 +228,10 @@ class registrosCampo{
 							//Hacemos la clave
 							$mes = $this->numberToRomanRepresentation($a['mes']);
 							$remplazable = '@UnitIO@';
-							$clave = $a['prefijo']."-".$mes."-".$a['dia']."-".$remplazable."-".$a['consecutivoProbeta'];
+							$clave = $a['prefijo']."-".$mes."-".$a['dia']."-".$remplazable."-".$a[$consecutivoProbetaTipo];
 							//Obtenemos los dias de ensaye para este formato.
-							$b= $dbS->qarrayA("
-						      	SELECT 
+							$b= $dbS->qarrayA(
+								"SELECT 
 									tipoConcreto,
 									prueba1,
 									prueba2,
@@ -159,8 +247,8 @@ class registrosCampo{
 							);
 							if(!$dbS->didQuerydied && !($b=="empty")){
 								//obtenemos datos de registros de CCH que tiene el systema.
-								$c= $dbS->qAll("
-							      	SELECT 
+								$c= $dbS->qAll(
+									"SELECT 
 										diasEnsaye,
 										formatoCampo_id
 									FROM
@@ -218,28 +306,27 @@ class registrosCampo{
 										break;
 									}
 									
-									$dbS->squery("
-										INSERT INTO
+									$dbS->squery(
+										"INSERT INTO
 											registrosCampo(claveEspecimen,formatoCampo_id, fecha, revProyecto,diasEnsaye,consecutivoProbeta,grupo)
 
 										VALUES
 											('1QQ',1QQ, CURDATE(),'1QQ','1QQ','1QQ','1QQ')
-									",array($clave,$formatoCampo_id, $a['revenimiento'], $diasEnsaye,$a['consecutivoProbeta'],$grupo),
+									",array($clave,$formatoCampo_id, $a['revenimiento'], $diasEnsaye,$a[$consecutivoProbetaTipo],$grupo),
 									"INSERT -- RegistrosCampo :: initInsert : insert ragNo=".$j." diasEnsaye=".$diasEnsaye." valueR=".$valueR." count(pruebas)=".count($pruebas));
 									if(!$dbS->didQuerydied){
 										$id = $dbS->lastInsertedID;
 										$dbS->squery(
-											"
-												UPDATE 
+											"   UPDATE 
 													obra
 												SET
-													consecutivoProbeta = consecutivoProbeta+1
+													1QQ = 1QQ + 1
 
 												WHERE
 													 id_obra = 1QQ
 											"
 											,
-											array($a['id_obra']),
+											array($consecutivoProbetaTipo,$consecutivoProbetaTipo,$a['id_obra']),
 											"UPDATE"
 										);
 										if(!$dbS->didQuerydied){
@@ -261,27 +348,26 @@ class registrosCampo{
 									}
 								}else{
 									if($c=="empty"){
-										$dbS->squery("
-											INSERT INTO
+										$dbS->squery(
+											"INSERT INTO
 												registrosCampo(claveEspecimen,formatoCampo_id, fecha, revProyecto,diasEnsaye,consecutivoProbeta,grupo)
 
 											VALUES
 												('1QQ',1QQ, CURDATE(),'1QQ',1,'1QQ','1QQ')
-										",array($clave,$formatoCampo_id, $a['revenimiento'],$a['consecutivoProbeta'],$grupo),"INSERT");
+										",array($clave,$formatoCampo_id, $a['revenimiento'],$a[$consecutivoProbetaTipo],$grupo),"INSERT");
 										if(!$dbS->didQuerydied){
 											$id = $dbS->lastInsertedID;
 											$dbS->squery(
-												"
-													UPDATE 
+												"   UPDATE 
 														obra
 													SET
-														consecutivoProbeta = consecutivoProbeta+1
-
+														1QQ = 1QQ + 1
+	
 													WHERE
 														 id_obra = 1QQ
 												"
 												,
-												array($a['id_obra']),
+												array($consecutivoProbetaTipo,$consecutivoProbetaTipo,$a['id_obra']),
 												"UPDATE"
 											);
 											if(!$dbS->didQuerydied){
