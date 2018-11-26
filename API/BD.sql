@@ -515,8 +515,6 @@ CREATE TABLE formatoCampo(
 
 	ensayadoFin int(11) NOT NULL DEFAULT 8,
 
-	loteStatus int(11) NOT NULL DEFAULT 0,
-
 	posInicial POINT NOT NULL,
 	posFinal POINT,
 
@@ -554,6 +552,8 @@ ALTER TABLE formatoCampo AUTO_INCREMENT=1001;
 
 ALTER TABLE formatoCampo 
 ADD COLUMN loteStatus int(11) NOT NULL DEFAULT 0;
+
+ALTER TABLE formatoCampo DROP COLUMN loteStatus;
 	
 ALTER TABLE formatoCampo ALTER ensayadoFin SET DEFAULT 8;
 
@@ -565,6 +565,7 @@ ADD COLUMN preliminar VARCHAR(200);
 ALTER TABLE formatoCampo ADD COLUMN registrosNo INT NOT NULL DEFAULT 0;
 
 ALTER TABLE formatoCampo ADD COLUMN notVistoJLForBrigadaApproval INT DEFAULT 0;
+
 
 
 CREATE TABLE registrosCampo(
@@ -618,6 +619,9 @@ ADD COLUMN statusEnsayo INT NOT NULL DEFAULT 0;
 
 ALTER TABLE registrosCampo
 ADD COLUMN grupo INT NOT NULL DEFAULT 0;
+
+ALTER TABLE registrosCampo 
+ADD COLUMN loteStatus int(11) NOT NULL DEFAULT 0;
 
 CREATE TABLE formatoRegistroRev(
 	id_formatoRegistroRev INT(11) NOT NULL AUTO_INCREMENT,
@@ -680,6 +684,8 @@ ALTER TABLE formatoRegistroRev ADD COLUMN pdfFinal VARCHAR(200);
 ALTER TABLE formatoRegistroRev ADD COLUMN sentToClientFinal INT DEFAULT 0;
 ALTER TABLE formatoRegistroRev ADD COLUMN dateSentToClientFinal DATE DEFAULT NULL;
 
+ALTER TABLE formatoRegistroRev 
+ADD COLUMN loteStatus int(11) NOT NULL DEFAULT 0;
 
 CREATE TABLE registrosRev(
 	id_registrosRev INT(11) NOT NULL AUTO_INCREMENT,
@@ -733,7 +739,6 @@ CREATE TABLE listaAsistencia(
 	FOREIGN KEY(tecnicos_ordenDeTrabajo_id)
 	REFERENCES tecnicos_ordenDeTrabajo(id_tecnicos_ordenDeTrabajo)
 	ON DELETE SET NULL ON UPDATE CASCADE
-
 )ENGINE=INNODB;
 ALTER TABLE listaAsistencia AUTO_INCREMENT=1001;
 
@@ -753,16 +758,29 @@ CREATE TABLE loteCorreos(
 	FOREIGN KEY(creador_id)
 	REFERENCES usuario(id_usuario)
 	ON DELETE SET NULL ON UPDATE CASCADE
-
 )ENGINE=INNODB;
 ALTER TABLE loteCorreos AUTO_INCREMENT=1001;
 
-INSERT INTO loteCorreos(creador_id) VALUES (1045);
+ALTER TABLE loteCorreos ADD factua VARCHAR(30) DEFAULT NULL;
+ALTER TABLE loteCorreos ADD observaciones TEXT DEFAULT NULL;
+
+ALTER TABLE loteCorreos ADD customMail  INT DEFAULT 0;
+ALTER TABLE loteCorreos ADD adjunto  INT DEFAULT 0;
+ALTER TABLE loteCorreos ADD customMailStatus INT DEFAULT 0;
+ALTER TABLE loteCorreos ADD customText TEXT DEFAULT NULL;
+
+
+ALTER TABLE loteCorreos ADD adjuntoPath TEXT DEFAULT NULL;
+
+ALTER TABLE loteCorreos DROP COLUMN adjuntoPath;
+
+ALTER TABLE loteCorreos ADD pdfPath VARCHAR(200) DEFAULT NULL;
+ALTER TABLE loteCorreos ADD xmlPath VARCHAR(200) DEFAULT NULL;
+
 
 CREATE TABLE correoDeLote(
 	id_correoDeLote INT(11) NOT NULL AUTO_INCREMENT,
 	loteCorreos_id INT(11),
-	formatoCampo_id INT(11),
 	pdf  varchar(150),
 
 	status INT NOT NULL DEFAULT 0,
@@ -783,6 +801,13 @@ CREATE TABLE correoDeLote(
 
 )ENGINE=INNODB;
 ALTER TABLE correoDeLote AUTO_INCREMENT=1001;
+
+
+ALTER TABLE correoDeLote ADD registrosCampo_id INT(11) DEFAULT NULL;
+ALTER TABLE correoDeLote ADD CONSTRAINT correoDeLote_ibfk_2 FOREIGN KEY (registrosCampo_id) REFERENCES registrosCampo(id_registrosCampo) ON DELETE SET NULL ON UPDATE CASCADE;
+
+ALTER TABLE correoDeLote ADD formatoRegistroRev_id INT(11) DEFAULT NULL;
+ALTER TABLE correoDeLote ADD CONSTRAINT formatoRegistroRev_ibfk_5 FOREIGN KEY (formatoRegistroRev_id) REFERENCES formatoRegistroRev(id_formatoRegistroRev) ON DELETE SET NULL ON UPDATE CASCADE;
 
 
 

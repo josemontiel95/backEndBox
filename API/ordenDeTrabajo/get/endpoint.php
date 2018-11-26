@@ -21,6 +21,10 @@
 			$orden = new ordenDeTrabajo();
 			echo $orden->getAllJefaLab($_GET['token'],$_GET['rol_usuario_id'],$_GET['status']);
 		break;
+		case 'getByObraJefaLab':
+			$orden = new ordenDeTrabajo();
+			echo $orden->getByObraJefaLab($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_obra']);
+		break;
 		case 'getAllFormatos':
 			$orden = new ordenDeTrabajo();
 			echo $orden->getAllFormatos($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_ordenDeTrabajo']);
@@ -45,6 +49,7 @@
 			$herra = new ordenDeTrabajo();
 			echo $herra->getAllHerraAvailable($_GET['token'],$_GET['rol_usuario_id']);
 		break;
+		
 		case 'ping':
 			$herra = new ordenDeTrabajo();
 			echo $herra->ping($_GET['data']);

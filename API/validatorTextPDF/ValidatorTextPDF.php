@@ -21,25 +21,25 @@
 			switch ($campoFront) {
 					case 'informeNo';
 							$campo = 'tam_informeText';
-						break;
+					break;
 					case 'obra';
 							$campo = 'tam_nomObraText';
 							$band = 1;
-						break;
+					break;
 					case 'localizacion';
 							$campo = 'tam_localizacionText';
 							$band = 1;
-						break;
+					break;
 					case 'razonSocial';
 							$campo = 'tam_razonText';
-						break;
+					break;
 					case 'direccion';
 							$campo = 'tam_dirClienteText';
-						break;
+					break;
 					default:
 						$arr = array('campoFront' => $campoFront,'estatus' => 'Error, no existe relacion con ese campo.','error' => 11);
 						return json_encode($arr);
-						break;
+					break;
 			}
 
 			//Instanciamos los formatos

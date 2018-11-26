@@ -18,14 +18,7 @@
 			$lote = new loteCorreos();
 			echo $lote->getAllAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['status']);
 		break;
-		case 'completeFormato':
-			$lote = new loteCorreos();
-			echo $lote->completeFormato($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
-		break;
-		case 'completeFormato':
-			$lote = new loteCorreos();
-			echo $lote->completeFormato($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo']);
-		break;
+		
 		
 		case 'getLoteByID':
 			$lote = new loteCorreos();
@@ -35,6 +28,11 @@
 		case 'getAllAdministrativo':
 			$lote = new loteCorreos();
 			echo $lote->getAllAdministrativo($_GET['token'],$_GET['rol_usuario_id']);
+		break;
+		
+		case 'getAllAdministrativoFULL':
+			$lote = new loteCorreos();
+			echo $lote->getAllAdministrativoFULL($_GET['token'],$_GET['rol_usuario_id'],$_GET['obra_id']);
 		break;
 		case 'getAllFormatosByLote':
 			$lote = new loteCorreos();
@@ -47,9 +45,18 @@
 
 		case 'sentAllEmailFormatosByLote':
 			$lote = new loteCorreos();
-			echo $lote->sentAllEmailFormatosByLote($_GET['token'],$_GET['rol_usuario_id'],$_GET['lote']);
+			echo $lote->sentAllEmailFormatosByLote($_GET['token'],$_GET['rol_usuario_id'],$_GET['lote'],$_GET['all']);
 		break;
 		
+		case 'sentGroupMailFormatosByLote':
+			$lote = new loteCorreos();
+			echo $lote->sentGroupMailFormatosByLote($_GET['token'],$_GET['rol_usuario_id'],$_GET['lote']);
+		break;
+		
+		case 'checkViabilityOfGroupMail':
+			$lote = new loteCorreos();
+			echo $lote->checkViabilityOfGroupMail($_GET['token'],$_GET['rol_usuario_id'],$_GET['lote']);
+		break;
 		case 'getAllFormatos':
 			$lote = new loteCorreos();
 			echo $lote->getAllFormatos($_GET['token'],$_GET['rol_usuario_id']);
