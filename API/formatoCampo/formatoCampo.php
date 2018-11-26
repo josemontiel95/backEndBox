@@ -29,91 +29,36 @@ class formatoCampo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$dbS->beginTransaction();
-		if($arr['error'] == 0){
-			//Informacion para crear el "Informe No."
-			$a= $dbS->qarrayA(
-				"SELECT 
-		      		id_obra,
-					cotizacion,
-					consecutivoDocumentos,
-					prefijo,
-					YEAR(NOW()) AS anio
-				FROM
-					obra,
-					(
-						SELECT
-							obra_id
-						FROM
-							ordenDeTrabajo
-						WHERE
-							id_ordenDeTrabajo = 1QQ
-
-					)AS ordenDeTrabajo
-				WHERE
-					id_obra = ordenDeTrabajo.obra_id
-				",
-				array($id_ordenDeTrabajo),
-				"SELECT"
+		if($arr['error'] == 0){			
+			/*
+				UPDATE Nov 25 2018
+				Autor: Bryan T.
+				Auxiliar: Jose M.
+				Se migro la generacion de informe No a la insercion del registro para permitir la modificacion de tipo
+			*/
+			$infoNo = "PENDIENTE";
+			$dbS->squery(
+				"INSERT INTO formatoCampo(
+						informeNo,
+						observaciones,
+						ordenDeTrabajo_id
+				)VALUES(
+					'1QQ',
+					'NO HAY OBSERVACIONES',
+					1QQ
+					)"
+				,array($infoNo,$id_ordenDeTrabajo)
+				,"INSERT"
 			);
-			if(!$dbS->didQuerydied && !($a=="empty")){
-				//Creamos el informe No.
-				$año = $a['anio'] - 2000;
-				$infoNo = $a['prefijo']."/".$a['cotizacion']."/".$año."/".$a['consecutivoDocumentos'];
-				$dbS->squery(
-					"INSERT INTO
-							formatoCampo
-							(
-								informeNo,
-								observaciones,
-								ordenDeTrabajo_id
-							)
-						VALUES
-							(
-							'1QQ',
-							'NO HAY OBSERVACIONES',
-							1QQ
-							)
-
-					"
-					,
-					array($infoNo,$id_ordenDeTrabajo)
-					,
-					"INSERT"
-				);
-				if(!$dbS->didQuerydied){
-					$id = $dbS->lastInsertedID;
-					$dbS->squery(
-								"
-									UPDATE
-										obra
-									SET
-										consecutivoDocumentos = consecutivoDocumentos+1
-									WHERE
-										id_obra = 1QQ
-
-								"
-								,
-								array($a['id_obra'])
-								,
-								"SELECT"
-							);
-					if(!$dbS->didQuerydied){
-						$dbS->commitTransaction();
-						$arr = array('id_formatoCampo' => $id,'informeNo'=>$infoNo,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);									
-					}
-					else{
-						$dbS->rollbackTransaction();
-						$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la modificacion de consecutivoDocumentos, verifica tus datos y vuelve a intentarlo','error' => 5);
-					}
-				}else{
-					$dbS->rollbackTransaction();
-					$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 6);
-				}
-			}
-			else{
+			if(!$dbS->didQuerydied){
+				$id = $dbS->lastInsertedID;
+				$dbS->commitTransaction();
+				$arr = array('id_formatoCampo' => $id,'informeNo'=>$infoNo,'token' => $token,	'estatus' => 'Exito en la insersion','error' => 0);									
+			}else{
 				$dbS->rollbackTransaction();
-				$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la consulta, verifica tus datos y vuelve a intentarlo','error' => 7);
-			}	
+				$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+			
 		}
 		return json_encode($arr);
 

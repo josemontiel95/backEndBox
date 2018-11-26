@@ -516,11 +516,11 @@ class FormatoRegistroRev{
 		$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			//Informacion para crear el "Informe No."
-			$a= $dbS->qarrayA("
-		      	SELECT 
+			$a= $dbS->qarrayA(
+				"SELECT 
 		      		id_obra,
 					cotizacion,
-					consecutivoDocumentos,
+					consecutivoDocumentosCCH_REV,
 					prefijo,
 					YEAR(NOW()) AS anio
 				FROM
@@ -543,45 +543,33 @@ class FormatoRegistroRev{
 			if(!$dbS->didQuerydied && !($a=="empty")){
 				//Creamos el informe No.
 				$año = $a['anio'] - 2000;
-				$infoNo = $a['prefijo']."/".$a['cotizacion']."/".$año."/".$a['consecutivoDocumentos'];
+				//$infoNo = $a['prefijo']."/".$a['cotizacion']."/".$año."/".$a['consecutivoDocumentosCCH_REV'];
+				$infoNo = $a['consecutivoDocumentosCCH_REV'];
 				$dbS->squery(
-					"
-						INSERT INTO
-							formatoRegistroRev
-							(
-								regNo,
-								observaciones,
-								ordenDeTrabajo_id
-							)
-						VALUES
-							(
-								'1QQ',
-								'NO HAY OBSERVACIONES',
-								1QQ
-							)
-
-					"
-					,
-					array($infoNo,$id_ordenDeTrabajo)
-					,
-					"INSERT"
+					"INSERT INTO
+						formatoRegistroRev(
+							regNo,
+							observaciones,
+							ordenDeTrabajo_id
+					)VALUES(
+							'1QQ',
+							'NO HAY OBSERVACIONES',
+							1QQ
+						)
+					",array($infoNo,$id_ordenDeTrabajo)
+					,"INSERT"
 				);
 				if(!$dbS->didQuerydied){
 					$id = $dbS->lastInsertedID;
 					$dbS->squery(
-							"
-								UPDATE
-									obra
-								SET
-									consecutivoDocumentos = consecutivoDocumentos+1
-								WHERE
-									id_obra = 1QQ
-
-							"
-							,
-							array($a['id_obra'])
-							,
-							"SELECT"
+							"UPDATE
+								obra
+							SET
+								consecutivoDocumentosCCH_REV = consecutivoDocumentosCCH_REV+1
+							WHERE
+								id_obra = 1QQ
+							",array($a['id_obra'])
+							,"SELECT"
 						);
 					if(!$dbS->didQuerydied){
 						$dbS->commitTransaction();
@@ -602,8 +590,8 @@ class FormatoRegistroRev{
 			}	
 		}
 		return json_encode($arr);
-
 	}
+	/*deprecated function, use  initInsertRev*/
 	public function insertJefeBrigada2($token,$rol_usuario_id,$regNo,$ordenDeTrabajo_id,$localizacion,$cono_id,$varilla_id,$flexometro_id,$longitud,$latitud){
 		global $dbS;
 		$usuario = new Usuario();
