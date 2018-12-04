@@ -26,71 +26,86 @@
 		
 		//Funcion que coloca una vista previa de la información
 		function generateCellsInfo(){
+			
+
 			//Asignamos el tamñao de la fuente
-			$tam_font_left = 7;	
+			$tam_font_right = $tam_font_left = 7;	
 			$this->SetFont('Arial','',$tam_font_left);
-			$tam_nomObraText;
 
 			$nomCli = 'CLIENTE:';
-			$this->Cell($this->GetStringWidth($nomCli)+2,$tam_font_left - 3,utf8_decode($nomCli),0);
+			$tam_nomCli = $this->GetStringWidth($nomCli)+2;
 
-			//Caja de texto
-			$this->SetX(50);
-			$this->Cell(170,$tam_font_left - 3,'B',0);
+			$tam_nomObraText = $tam_localizacionText = $tam_razonText = $tam_dirClienteText = $tam_elementoAncho = 170;
 
-			$this->SetX($this->GetX()+11.5);
+			//Posicion donde se pondra el "Registro No."
+			$this->SetX(220+11.5);
 			$regNo = 'Registro N°:';
-			$this->Cell($this->GetStringWidth($regNo)+.5,$tam_font_left - 3,utf8_decode($regNo),0);
-			//Caja de texto
-			$this->Cell(0,$tam_font_left - 3,'DUMMY','B',0);
+			$tam_regNo = $this->GetStringWidth($regNo)+.5;
+			
+			$tam_regNoText = 269.4 - (220 + 11.5 + $tam_regNo);
 
-			//Caja de texto
-			$this->SetX(50);
-			$this->Cell(170,$tam_font_left - 3,'DUMMY','B',0);
-
-			$this->Ln($tam_font_left - 2);
-
-
+			
 			//Cuadro con informacion
 			$obra = 'OBRA:';
-			$this->Cell($this->GetStringWidth($obra)+2,$tam_font_left - 3,$obra,0);
-			//Caja de texto
-			$this->SetX(50);
-			$this->Cell(170,$tam_font_left - 3,'DUMMY','B',0);
+			$tam_obra = $this->GetStringWidth($obra)+2;
 
-			$this->SetX($this->GetX()+5);
+			$this->SetX(225);
+
 			$tipoConcreto = 'Tipo de Concreto:';
-			$this->Cell($this->GetStringWidth($tipoConcreto)+2,$tam_font_left - 3,utf8_decode($tipoConcreto),0);
-			//Caja de texto
-			$this->Cell(0,$tam_font_left - 3,'DUMMY','B',0);
+			$tam_tipoConcreto = $this->GetStringWidth($tipoConcreto)+2;
 
-			$this->Ln($tam_font_left - 2);
+			$tam_tipoConcretoText = 269.4 - (225 + $tam_tipoConcreto);
+		
 
 			$locObra = 'DIRECCIÓN DE LA OBRA:';
-			$this->Cell($this->GetStringWidth($locObra)+2,$tam_font_left - 3,utf8_decode($locObra),0);
+			$tam_locObra = $this->GetStringWidth($locObra)+2;
 
 			//Caja de texto
-			$this->SetX(50);
-			$this->Cell(170,$tam_font_left - 3,'DUMMY','B',0);
 
-			$this->SetX($this->GetX()+6.5);
+			$this->SetX(226.5);
+
 			$mrProyecto = 'MR de proyecto:';
-			$this->Cell($this->GetStringWidth($mrProyecto)+2,$tam_font_left - 3,utf8_decode($mrProyecto),0);
+			$tam_mrProyecto = $this->GetStringWidth($mrProyecto)+2;
+	
 			//Caja de texto
-			$this->Cell(0,$tam_font_left - 3,'DUMMY','B',0);
 
-			$this->Ln($tam_font_left - 2);
-
+			$tam_mrProyectoText = 269.4 - (226.5 + $tam_mrProyecto);
 			
 			//Direccion del cliente
 			$eleColado = 'ELEMENTO COLADO:';
-			$this->Cell($this->GetStringWidth($nomCli)+2,$tam_font_left - 3,utf8_decode($eleColado),0);
-			//Caja de texto
-			$this->SetX(50);
-			$this->Cell(170,$tam_font_left - 3,'DUMMY','B',0);
+			$tam_eleColado = $this->GetStringWidth($nomCli)+2;
 
-			//Divide la informacion del formato de la Tabla (Esta en funcion del tamaño de fuente de la informacion de la derecha)
-			$this->Ln($tam_font_left);
+			//Alto de las celdas del lado izquierdo
+			$tam_CellsRightAlto = $tam_CellsLeftAlto = $tam_font_left - 3;
+			$posicionCellsText = 50;
+
+			$this->cellsInfo = array(
+										'posicionCellsText'				=>	$posicionCellsText,
+										'tam_font_right'				=>	$tam_font_right,
+										'tam_font_left'					=>	$tam_font_left,
+
+										'tam_CellsRightAlto'			=> $tam_CellsRightAlto,
+
+										'tam_CellsLeftAlto'				=>	$tam_CellsLeftAlto,
+
+										'tam_nomObraText'			=>	$tam_nomObraText,
+										'tam_localizacionText'		=>	$tam_localizacionText,
+										'tam_razonText'				=>	$tam_razonText,
+										'tam_dirClienteText'		=>	$tam_dirClienteText,
+										'tam_elementoAncho'			=>	$tam_elementoAncho,
+
+										'regNo'						=> $regNo,	
+										'tam_regNo'					=> $tam_regNo,	
+										'tam_regNoText'				=> $tam_regNoText,	
+										'tipoConcreto'				=> $tipoConcreto,	
+										'tam_tipoConcreto'			=> $tam_tipoConcreto,	
+										'tam_tipoConcretoText'		=> $tam_tipoConcretoText,	
+										'mrProyecto'					=> $mrProyecto,	
+										'tam_mrProyecto'				=> $tam_mrProyecto,	
+										'tam_mrProyectoText'			=> $tam_mrProyectoText	
+
+
+								);
 
 		}
 
@@ -234,6 +249,11 @@
 
 			$resultado = $this->printInfoObraAndLocObra($tam_font_left,170,$tam_font_left - 3,$infoFormato['eleColado'],3);
 
+			if($resultado['error'] == 0){
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+			}else{
+				$string = $resultado['estatus'];
+			}
 
 			$this->multicell(170,$tam_font_left - 3,utf8_decode($infoFormato['eleColado']),'B','C');
 

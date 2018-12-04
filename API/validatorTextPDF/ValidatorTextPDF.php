@@ -68,21 +68,6 @@
 				$tam_font = 'tam_font_right';
 				array_pop($arr);
 			}
-
-
-			/*
-				//Mostramos los arrays
-
-			echo "Cubos";
-			print_r($arrayInfoCubos);
-			echo "CILINDROS";
-			print_r($arrayInfoCilindros);
-			echo "VIGAS";
-			print_r($arrayinfoVigas);
-			echo "REVENIMIENTO";
-			print_r($arrayinfoRev);
-			
-			*/
 					
 						
 			//Asignamos arbitrariamente a uno que sera el mas "pequeño" hasta enontrar otro, en este caso $arr[0]
@@ -96,9 +81,6 @@
 				}
 			}
 
-
-
-			
 			$pdf = new MyPDF();
 			$pdf->AddPage();
 			$pdf->SetFont('Arial','',$arr[$posicion][$tam_font]);
@@ -118,16 +100,9 @@
 
 			//Metodo para el campo de la obra o localizacion de la obra
 
-			//Desde un principio sabemos que si la cadena es menos que el ancho del campo 
-			/*
-			ECHO "array antes de imprimir el resultado";
-			print_r($arr[$posicion]);
-			*/
 			if($band == 1){
 				$tam_celdaAlto = $arr[$posicion]['tam_CellsLeftAlto'];
 				$arr = $pdf->printInfoObraAndLocObra($arr[$posicion][$tam_font],$min,$tam_celdaAlto,$string,3);
-				//	echo "array resultado";
-				//print_r($arr);
 			}
 			return json_encode($arr);
 		}
@@ -153,17 +128,7 @@
 			$arrayInfoCilindros = $infoCilindros->getCellsTables();
 			$arrayInfoVigas = $infoVigas->getCellsInfo();
 
-
-			/*
-			print_r($arrayInfoCubos);
-			print_r($arrayCCH);
-			print_r($arrayInfoCilindros);
-			print_r($arrayInfoVigas);
-			*/
-			
-
-
-			//Generamos los campso de los detalles para validar las observaciones e instrumentos
+			//Generamos los campos de los detalles para validar las observaciones e instrumentos
 
 			$infoCubos->generateCellsDetails();
 			$cch->generateCellsDetails();
@@ -171,6 +136,7 @@
 			$infoVigas->generateCellsDetails();
 
 			
+			//Unimos los dos arreglos para validar todos los campos que se necesiten
 
 			$arrayInfoCubos = array_merge($arrayInfoCubos, $infoCubos->getcellsDetails());
 			$arrayCCH = array_merge($arrayCCH, $cch->getcellsDetails());
@@ -178,9 +144,9 @@
 			$arrayInfoVigas = array_merge($arrayInfoVigas, $infoVigas->getcellsDetails());
 
 			//Modificamos la medidas de la localizacion por estandarizacion en otros formatos
-			$arrayInfoCubos['tam_elementoAncho'] = $arrayInfoCubos['tam_elementoAncho']*3;
-			$arrayCCH['tam_elementoAncho'] = $arrayCCH['tam_elementoAncho']*3;
-			$arrayInfoCilindros['tam_elementoAncho'] = $arrayInfoCilindros['tam_elementoAncho']*3;
+			//$arrayInfoCubos['tam_elementoAncho'] = $arrayInfoCubos['tam_elementoAncho']*3;
+			//$arrayCCH['tam_elementoAncho'] = $arrayCCH['tam_elementoAncho']*3;
+			//$arrayInfoCilindros['tam_elementoAncho'] = $arrayInfoCilindros['tam_elementoAncho']*3;
 
 			$band = 0;
 
@@ -260,6 +226,7 @@
 				$tam_font_max = $arrayInfoVigas['tam_font_left'];
 			}
 
+			//Unimos los arreflos para posteriormente buscar el campos que se necesita
 			array_push($arrayAux,$arrayInfoVigas);
 
 			//Declaramos el array donde guardaremos los arreglo que tienen el campo
@@ -272,11 +239,6 @@
 				}
 			}
 
-			/*
-			echo "Campo:".$campo;
-
-			print_r($arr);*/
-			
 			//Buscamos el minimo
 			$min = $arr[0];
 			for ($i=1; $i <sizeof($arr) ; $i++) { 
@@ -300,13 +262,15 @@
 				}
 			}
 
+			//Veamos que tamaño tiene los elementos del array cuando el valor que se requiere es el del elemento colado
+			print_r($arr);
+
+
 			if($band == 1){
 				//Tomamos arbitrariamente la el tamaño de la celda(en altura) ya que no repercute para la ejecucion, en este caso tomamos la mas pequeña
 				$tam_celdaAlto = $arrayAux[0]['tam_cellsTablesAlto'];
-				//echo "Division".$tam_celdaAlto;
 				$arr = $pdf->printInfoObraAndLocObra($tam_font_max,$min/3,$tam_celdaAlto,$string,3);
-				//echo "array resultado";
-				//print_r($arr);
+				
 			}
 
 			return json_encode($arr);
