@@ -1008,7 +1008,7 @@
 			$this->cell($this->cellsDetails['tamCelda_firmaAncho'],$this->cellsDetails['tamCelda_firmaAlto'],'NOMBRE DE QUIEN FIRMA','B',2,'C');
 			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
 			$this->cell($this->cellsDetails['tam_laboratoristaAncho'],$this->cellsDetails['tam_laboratoristaAlto'],$this->cellsDetails['laboratorista'],0,0,'C');
-			$this->Image('./../../disenoFormatos/firmas/firma.png',(($posicion_x+($this->cellsDetails['tamCelda_firmaAncho'])/2)-($tam_image/2)),($posicion_y + (($this->cellsDetails['tamCelda_firmaAlto'])/2))-($tam_image/2),$tam_image,$tam_image);
+			//$this->Image('./../../disenoFormatos/firmas/firma.png',(($posicion_x+($this->cellsDetails['tamCelda_firmaAncho'])/2)-($tam_image/2)),($posicion_y + (($this->cellsDetails['tamCelda_firmaAlto'])/2))-($tam_image/2),$tam_image,$tam_image);
 		}
 
 	
@@ -1441,10 +1441,18 @@
 			$posicion_x = $this->GetX(); 
 			$posicion_y = $this->GetY();
 			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
-			$this->cell($this->cellsDetails['tamCelda_firmaAncho'],$this->cellsDetails['tamCelda_firmaAlto'],$infoU['nombreRealizo'],'B',2,'C');	
-			$this->cell($this->cellsDetails['tam_laboratoristaAncho'],$this->cellsDetails['tam_laboratoristaAlto'],$this->cellsDetails['laboratorista'],0,0,'C');
+			
+			
 
-			$this->Image($infoU['firmaRealizo'],(($posicion_x+($this->cellsDetails['tamCelda_firmaAncho'])/2)-($tam_image/2)),($posicion_y + (($this->cellsDetails['tamCelda_firmaAlto'])/2))-($tam_image/2),$tam_image,$tam_image);
+			if($infoU['firmaRealizo'] != "null"){
+				$this->cell($this->cellsDetails['tamCelda_firmaAncho'],$this->cellsDetails['tamCelda_firmaAlto'],$infoU['nombreRealizo'],'B',2,'C');	
+				$this->Image($infoU['firmaRealizo'],(($posicion_x+($this->cellsDetails['tamCelda_firmaAncho'])/2)-($tam_image/2)),($posicion_y + (($this->cellsDetails['tamCelda_firmaAlto'])/2))-($tam_image/2),$tam_image,$tam_image);
+			}else{
+				$this->cell($this->cellsDetails['tamCelda_firmaAncho'],$this->cellsDetails['tamCelda_firmaAlto'],utf8_decode($infoU['nombreRealizo']),0,2,'C');	
+				$this->cell($this->cellsDetails['tamCelda_firmaAncho'],$this->cellsDetails['tam_laboratoristaAlto'],'No hay firma.','B',2,'C');	
+			}
+			$this->cell($this->cellsDetails['tam_laboratoristaAncho'],$this->cellsDetails['tam_laboratoristaAlto'],$this->cellsDetails['laboratorista'],0,0,'C');
+			
 		}
 		
 		function Footer(){
