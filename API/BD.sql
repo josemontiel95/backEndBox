@@ -180,10 +180,26 @@ ADD COLUMN incertidumbreVigas DOUBLE;
 
 ALTER TABLE obra
 ADD COLUMN correo_alterno VARCHAR(100) NOT NULL;
-
 ALTER TABLE obra MODIFY correo_residente VARCHAR(100);
 
-ALTER TABLE obra MODIFY obra VARCHAR(200);
+ALTER TABLE obra MODIFY obra TEXT;
+
+-- Modificaciones de consecutivo de docs
+
+ALTER TABLE obra CHANGE COLUMN consecutivoDocumentos consecutivoDocumentosCCH_VIGA INT NOT NULL DEFAULT 1;
+
+ALTER TABLE obra ADD COLUMN consecutivoDocumentosCCH_CILINDRO INT NOT NULL DEFAULT 1;
+ALTER TABLE obra ADD COLUMN consecutivoDocumentosCCH_CUBO INT NOT NULL DEFAULT 1;
+
+ALTER TABLE obra ADD COLUMN consecutivoDocumentosCCH_REV INT NOT NULL DEFAULT 1;
+
+-- Modificaciones de consecutivo de especimenes
+
+ALTER TABLE obra CHANGE COLUMN consecutivoProbeta consecutivoProbetaCCH_VIGA INT NOT NULL DEFAULT 1;
+
+ALTER TABLE obra ADD COLUMN consecutivoProbetaCCH_CILINDRO INT NOT NULL DEFAULT 1;
+ALTER TABLE obra ADD COLUMN consecutivoProbetaCCH_CUBO INT NOT NULL DEFAULT 1;
+
 
 
 INSERT INTO obra(obra,prefijo,fechaDeCreacion,descripcion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento,incertidumbre) 

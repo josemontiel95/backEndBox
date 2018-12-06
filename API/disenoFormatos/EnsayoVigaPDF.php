@@ -139,7 +139,7 @@
 
 			$tam_font_tituloInforme = 7;
 			$this->SetFont('Arial','B',$tam_font_tituloInforme);
-			$tituloMetodos = 'METODOS EMPLEADOS: NMX-C-161-ONNCCE-2013,NMX-C-191-ONNCCE-1015';
+			$tituloMetodos = 'METODOS EMPLEADOS: NMX-C-161-ONNCCE-2013,NMX-C-191-ONNCCE-2015';
 			$tam_tituloMetodos = $this->GetStringWidth($tituloMetodos)+3;
 			$this->SetX((279 - $tam_tituloMetodos)/2);
 			$this->Cell($tam_tituloMetodos,$tam_font_info - 3,utf8_decode($tituloMetodos),0,'C');
@@ -169,7 +169,7 @@
 			$regNo = 'Registro N°:';
 			$this->Cell($this->GetStringWidth($regNo)+.5,$tam_font_left - 3,utf8_decode($regNo),0);
 			//Caja de texto
-			$this->Cell(0,$tam_font_left - 3,'PENDIENTE','B',0);
+			$this->Cell(0,$tam_font_left - 3,utf8_decode($infoFormato['informeNo']),'B',0);
 		
 
 			$this->Ln($tam_font_left - 2);
@@ -377,7 +377,7 @@
 			$tam_velocidad = $this->GetStringWidth($velocidad)+2;
 			$posicion_x = $this->GetX();
 			$this->Cell($tam_velocidad,(($tam_font_head+5))/2,utf8_decode('Vel. Aplicación'),'L,T,R',2,'C');
-			$this->cell($tam_velocidad,(($tam_font_head+5))/2,utf8_decode('kg/cm2 por minuto'),'L,B,R',2,'C');
+			$this->cell($tam_velocidad,(($tam_font_head+5))/2,utf8_decode('kg/cm² por minuto'),'L,B,R',2,'C');
 
 			$this->SetXY($posicion_x+$tam_velocidad,$posicion_y);
 			$realizo = 'Realizó';

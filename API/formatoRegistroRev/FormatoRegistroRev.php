@@ -543,8 +543,8 @@ class FormatoRegistroRev{
 			if(!$dbS->didQuerydied && !($a=="empty")){
 				//Creamos el informe No.
 				$año = $a['anio'] - 2000;
-				//$infoNo = $a['prefijo']."/".$a['cotizacion']."/".$año."/".$a['consecutivoDocumentosCCH_REV'];
-				$infoNo = $a['consecutivoDocumentosCCH_REV'];
+				$infoNo = $a['prefijo']."/".$a['cotizacion']."/".$año."/".$a['consecutivoDocumentosCCH_REV'];
+				//$infoNo = $a['consecutivoDocumentosCCH_REV'];
 				$dbS->squery(
 					"INSERT INTO
 						formatoRegistroRev(
@@ -626,7 +626,6 @@ class FormatoRegistroRev{
 				"SELECT
 			      	regNo,
 			        obra,
-					formatoRegistroRev.localizacion,
 					formatoRegistroRev.observaciones,
 					formatoRegistroRev.status,
 					nombre,

@@ -678,7 +678,7 @@
 
 			$this->SetFont('Arial','B',$tam_font_details);
 			$metodos = 'METODOS EMPLEADOS: ';
-			$metodos_usuados = 'NMX-C-161-ONNCCE-2013, NMX-C-159-ONNCCE-2016, NMX-C-191-ONNCE-2015';
+			$metodos_usuados = 'NMX-C-161-ONNCCE-2013, NMX-C-159-ONNCCE-2016, NMX-C-191-ONNCCE-2015';
 			$this->Cell($this->GetStringWidth($metodos)+2,($tam_font_details),$metodos,'L,T,B',0);
 			$this->SetFont('Arial','',$tam_font_details);
 			$this->Cell($this->GetStringWidth($metodos_usuados)+40,($tam_font_details),utf8_decode($metodos_usuados),'R,T,B',0);
