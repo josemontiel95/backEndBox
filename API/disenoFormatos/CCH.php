@@ -315,7 +315,7 @@
 			$instrumentos = 'Inventario de'."\n".'instrumentos';
 			$tam_instrumentos = $this->GetStringWidth('Inventario de')+5;
 
-			$this->SetFont('Arial','',$tam_font_inventario);
+			
 
 			$termo = 'Termómetro';
 			$tam_termo = $this->GetStringWidth($termo)+10;

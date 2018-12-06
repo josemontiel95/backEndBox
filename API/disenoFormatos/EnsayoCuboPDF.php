@@ -136,6 +136,27 @@
 											$tam_velocidad
 										);
 			$this->lN(0);
+
+			$tam_font_observaciones = 6.5;
+
+			$tam_observacionAnchoTxt = 10;
+
+			$tam_font_inventario = 6.5;
+
+			$this->SetFont('Arial','B',$tam_font_inventario);
+
+			//La herramienta
+			$termo = 'Termómetro';
+			$tam_termo = $this->GetStringWidth($termo)+10;
+
+			$bascula = 'BASCULA';
+			$tam_bascula = $tam_termo;
+
+			$flexo = 'REGLA VERNIER O FLEXOMETRO';
+			$tam_flexo = $tam_termo;
+
+			$prensa = 'PRENSA';
+			$tam_prensa = $tam_termo;
 		
 
 			//Definimos el array con los tamaños de cada celda para crear las duplas
@@ -152,7 +173,13 @@
 									'tam_kgAncho'	=> $tam_resisCompresion,
 									'tam_area'	=> $tam_area,
 									'tam_velocidad'	=> $tam_velocidad,
-									'tam_resis'	=> $tam_resis
+									'tam_resis'	=> $tam_resis,
+									'tam_observacionAnchoTxt' => $tam_observacionAnchoTxt,
+									'tam_bascula' => $tam_bascula,
+									'tam_flexo' => $tam_flexo,
+									'tam_prensa' => $tam_prensa,
+									'tam_font_inventario' => $tam_font_inventario,
+									'tam_font_observaciones' => $tam_font_observaciones
 							);
 
 			$this->array_campo = $array_campo;

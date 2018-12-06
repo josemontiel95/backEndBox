@@ -31,6 +31,155 @@
 			$pdf->Output();
 		}
 
+		function getCellsTables(){
+			return $this->cellsTables;
+		}
+
+		function generateCellsCampos(){
+			$tam_font_Cells = 6.5;
+			$tam_font_CellsRows = 5;
+			$tam_cellsTablesAlto = $tam_font_Cells - 3;
+			
+			$this->SetFont('Arial','B',$tam_font_Cells);
+
+
+			//Fecha
+			$determinacion = 'DETERMINACIÓN';
+			$fecha = 'FECHA DE';
+			$tam_fecha = $this->GetStringWidth($fecha);
+			$tam_ancho_determinacion = 19; 
+			$tam_alto_determinacion = $this->GetStringWidth($determinacion)+3;
+
+			//Revenimiento del proyecto
+			$revPro = 'REV. DE'."\n".'PROYECTO'."\n".'EN cm';
+			$tam_proAncho = $this->GetStringWidth('PROYECTO')+3;
+			
+			//Revenimietno Obtenido
+			$revObtenido = 'REV.'."\n".'OBTENIDO'."\n".'EN cm';
+			$tam_revObtenido = $this->GetStringWidth('OBTENIDO')+3;
+				
+			//Tamaño nominal del agregado
+			$nominal = 'TAMAÑO.'."\n".'NOMINAL'."\n".'DEL'."\n".'AGREGADO'."\n".'mm';
+			$tam_agregadoAncho = $this->GetStringWidth('AGREGADO')+3;
+			
+			//Identificacion del concreto
+			$iden = "\n".'IDENTIFICACION'."\n".'DEL CONCRETO';
+			$tam_iden = $this->GetStringWidth('IDENTIFICACION')+3;
+			$tam_anchoIden = $tam_iden;
+
+			//Volumen
+			$volumen = "\n".'VOLUMEN'."\n".'m³';
+			$tam_volumen = $this->GetStringWidth('VOLUMEN')+2;
+			$tam_volumenAncho = $tam_volumen;
+
+ 			//Hora de la determinacion
+			$hora_determinacion = 'DETERMINACIÓN';
+			$hora = 'HORA DE LA';
+			$tam_hora = $this->GetStringWidth($hora);
+			$tam_ancho_hora_determinacion = 13; 
+
+			//Unidad
+			$unidad = 'UNIDAD';
+			$tam_unidadAncho = $this->GetStringWidth('UNIDAD')+3;
+	
+			//Provedor del concreto
+			$provedor = 'PROVEDOR DEL'."\n".'CONCRETO';
+			$tam_provedor = $this->GetStringWidth('PROVEDOR DEL')+6;
+
+			//Numero de remision
+			$remision = 'NUMERO DE'."\n".'REMISIÓN';
+			$tam_remision = $this->GetStringWidth('NUMERO DE')+2;
+			
+
+			//Hora de salida de la planta
+			$salida = 'HORA DE'."\n".'SALIDA DE'."\n".'PLANTA';
+			$tam_salida = $this->GetStringWidth('SALIDA DE')+3;
+			
+			//Hora de llegada a la planta
+			$salida = 'HORA DE'."\n".'LLEGADA A'."\n".'OBRA';
+			$tam_llegada = 195.9 - (
+									$tam_ancho_determinacion+
+									$tam_proAncho+
+									$tam_revObtenido+
+									$tam_agregadoAncho+
+									$tam_anchoIden+
+									$tam_volumenAncho+
+									$tam_ancho_hora_determinacion+
+									$tam_unidadAncho+
+									$tam_provedor+
+									$tam_remision+
+									$tam_salida
+								);
+
+			
+		
+			$this->cellsTables = array(
+											'tam_font_Cells' => $tam_font_Cells,
+											'tam_font_CellsRows' => $tam_font_CellsRows,
+											'tam_cellsTablesAlto' => $tam_cellsTablesAlto,
+
+											'tam_ancho_determinacion' => $tam_ancho_determinacion,
+											'tam_proAncho' => $tam_proAncho,
+											'tam_revObtenido' => $tam_revObtenido,
+											'tam_agregadoAncho' => $tam_agregadoAncho,
+											'tam_anchoIden' => $tam_anchoIden,
+											'tam_volumenAncho' => $tam_volumenAncho,
+											'tam_ancho_hora_determinacion' => $tam_ancho_hora_determinacion,
+											'tam_unidadAncho' => $tam_unidadAncho,
+											'tam_provedor' => $tam_provedor,
+											'tam_remision' => $tam_remision,
+											'tam_salida' => $tam_salida,
+											'tam_llegada' => $tam_llegada
+
+								);
+		}
+
+
+		function getcellsDetails(){
+			return $this->cellsDetails;
+		}
+
+		function generateCellsDetails(){
+			$tam_font_details = 7;
+			$tam_font_inventario = 6.5;	
+			$tam_inventarioAlto = $tam_font_inventario-2;
+
+			//Tamaño de las herramientas, copie y pegue el mismo codigo que en el CCH para que esten del mismo tamaño
+
+			$this->SetFont('Arial','B',$tam_font_details);
+			$observaciones = 'OBSERVACIONES: ';
+			
+			$tam_observacionAnchoTxt = 195.9 - $this->GetStringWidth($observaciones);
+
+
+			//Instrumentos
+			$this->SetFont('Arial','B',$tam_font_inventario);
+			
+			$termo = 'Termómetro';
+			$tam_termo = $this->GetStringWidth($termo)+10;
+
+			$cono = 'Cono';
+			$tam_cono = $tam_termo;
+
+			$varilla = 'Varilla';
+			$tam_varilla = $tam_termo;
+
+			$flexometro = 'Flexometro';
+			$tam_flexometro = $tam_termo;
+
+			$this->cellsDetails = 	array(
+													'tam_font_details' => $tam_font_details,
+													'tam_font_inventario' => $tam_font_inventario,
+													'tam_inventarioAlto' => $tam_inventarioAlto,
+													'tam_observacionAnchoTxt' => $tam_observacionAnchoTxt,
+													'tam_cono' => $tam_cono,
+													'tam_varilla' => $tam_varilla,
+													'tam_flexometro' => $tam_flexometro
+
+												);
+
+		}
+
 
 		function Header(){
 			//Espacio definido para los logotipos
@@ -249,7 +398,7 @@
 
 			//Caja de texto
 			$this->SetFont('Arial','',$tam_font_right);
-			$this->Cell(0,$tam_font_right - 4,$this->getMaxString($tam_font_right,$tam_regNoText,'string'),'B',0,'C');
+			$this->Cell(0,$tam_font_right - 4,$this->getMaxString($tam_font_right,$tam_regNoText,'tam_stringCarac'),'B',0,'C');
 
 			$this->Ln($tam_font_right - 2);
 
@@ -393,13 +542,13 @@
 
 			$this->SetXY(($posicion_x + $tam_ancho_hora_determinacion),$posicion_y);
 			$unidad = 'UNIDAD';
-			$tam_unidad = $this->GetStringWidth('UNIDAD')+5;
+			$tam_unidad = $this->GetStringWidth('UNIDAD')+3;
 			$posicion_x = $this->GetX(); 
 			$this->cell($tam_unidad,$tam_alto_determinacion,$unidad,1,2,'C');
 
 			$this->SetXY(($posicion_x + $tam_unidad),$posicion_y);
 			$provedor = 'PROVEDOR DEL'."\n".'CONCRETO';
-			$tam_provedor = $this->GetStringWidth('PROVEDOR DEL')+4;
+			$tam_provedor = $this->GetStringWidth('PROVEDOR DEL')+6;
 			$posicion_x = $this->GetX(); 
 			$this->cell($tam_provedor,$tam_alto_determinacion/4,'','L,R,T',2,'C');
 			$this->cell($tam_provedor,$tam_alto_determinacion/4,utf8_decode('PROVEDOR DEL'),'L,R',2,'C');
@@ -471,6 +620,7 @@
 			$this->SetFont('Arial','B',$tam_font_details);
 			$observaciones = 'OBSERVACIONES: ';
 			$this->SetFont('Arial','',$tam_font_details);
+
 			$this->multicell(0,($tam_font_details - 2.5),utf8_decode($observaciones.$this->getMaxString($tam_font_details,196 - $this->GetStringWidth($observaciones),'tam_stringCarac')),'B',2);
 
 			$this->ln(4);
@@ -644,13 +794,13 @@
 
 			$this->SetXY(($posicion_x + $tam_ancho_hora_determinacion),$posicion_y);
 			$unidad = 'UNIDAD';
-			$tam_unidad = $this->GetStringWidth('UNIDAD')+5;
+			$tam_unidad = $this->GetStringWidth('UNIDAD')+3;
 			$posicion_x = $this->GetX(); 
 			$this->cell($tam_unidad,$tam_alto_determinacion,$unidad,1,2,'C');
 
 			$this->SetXY(($posicion_x + $tam_unidad),$posicion_y);
 			$provedor = 'PROVEDOR DEL'."\n".'CONCRETO';
-			$tam_provedor = $this->GetStringWidth('PROVEDOR DEL')+4;
+			$tam_provedor = $this->GetStringWidth('PROVEDOR DEL')+6;
 			$posicion_x = $this->GetX(); 
 			$this->cell($tam_provedor,$tam_alto_determinacion/4,'','L,R,T',2,'C');
 			$this->cell($tam_provedor,$tam_alto_determinacion/4,utf8_decode('PROVEDOR DEL'),'L,R',2,'C');
@@ -745,7 +895,7 @@
 			$this->Ln(4);
 
 
-			$this->SetY(-100);	
+			//$this->SetY(-100);	
 
 			$tam_font_details = 7;
 			$tam_font_inventario = 6.5;	

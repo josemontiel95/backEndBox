@@ -413,7 +413,7 @@
 
 		*/
 
-		function getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo){
+		function getInfoUserFinal($token,$rol_usuario_id){
 			global $dbS;
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -448,7 +448,7 @@
 
 				if(!$dbS->didQuerydied){
 					if($s=="empty"){
-						$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Error no se encontro información suficiente en  ese id','error' => 5);
+						$arr = array('id' => 'Null','estatus' => 'Error no se encontro información suficiente de los usuarios que firman,','error' => 5);
 					}
 					else{
 						return $s;
@@ -766,17 +766,22 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$info = $this->getInfoRev($token,$rol_usuario_id,$id_formatoRegistroRev);
-				if(!(array_key_exists('error', $info))){
-					$registros = $this->getRegRev($token,$rol_usuario_id,$id_formatoRegistroRev);
-					if(!(array_key_exists('error', $registros))){
-						$pdf = new InformeRevenimiento();	
-						$pdf->CreateNew($info,$registros,$target_dir);
+				$infoU = $this->getInfoUserFinal($token,$rol_usuario_id);
+				if(!(array_key_exists('error', $infoU))){
+					$info = $this->getInfoRev($token,$rol_usuario_id,$id_formatoRegistroRev);
+					if(!(array_key_exists('error', $info))){
+						$registros = $this->getRegRev($token,$rol_usuario_id,$id_formatoRegistroRev);
+						if(!(array_key_exists('error', $registros))){
+							$pdf = new InformeRevenimiento();	
+							$pdf->CreateNew($info,$registros,$infoU,$target_dir);
+						}else{
+							return json_encode($registros);
+						}
 					}else{
-						return json_encode($registros);
+						return json_encode($info);
 					}
 				}else{
-					return json_encode($info);
+					return json_encode($infoU);
 				}
 			}
 			else{
