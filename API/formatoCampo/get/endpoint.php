@@ -85,20 +85,10 @@
 			$formato = new formatoCampo();
 			echo $formato->ping2($_GET['data']);
 		break;
-		
-		/*
-		case 'getByIDAdmin':
-			$herra = new formatoCampo();
-			echo $herra->getByIDAdmin($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_herramienta']);
+		case 'ping':
+			$registro = new registrosCampo();
+			echo $registro->ping($_GET['data']);
 		break;
-		case 'getForDroptdownAdmin':
-			$herra = new formatoCampo();
-			echo $herra->getForDroptdownAdmin($_GET['token'],$_GET['rol_usuario_id']);
-		break;
-		case 'getAllJefaLab':
-			$herra = new formatoCampo();
-			echo $herra->getAllJefaLab($_GET['token'],$_GET['rol_usuario_id']);
-		break;
-		*/
+	
 	}
 ?>

@@ -1458,7 +1458,14 @@ class loteCorreos{
 						ensayo.fecha AS fechaEnsayado,
 						ensayo.pdfFinal,
 						ensayo.sentToClientFinal,
-						ensayo.dateSentToClientFinal
+						ensayo.dateSentToClientFinal,
+						CASE
+							WHEN MOD(rc.diasEnsaye,4) = 1 THEN fc.prueba1  
+							WHEN MOD(rc.diasEnsaye,4) = 2 THEN fc.prueba2  
+							WHEN MOD(rc.diasEnsaye,4) = 3 THEN fc.prueba3  
+							WHEN MOD(rc.diasEnsaye,4) = 0 THEN fc.prueba4  
+							ELSE 'Error, Contacta a soporte'
+						END AS diasEnsaye
 					FROM
 							cliente AS c
 						INNER JOIN 
@@ -1499,7 +1506,14 @@ class loteCorreos{
 						ensayo.fecha AS fechaEnsayado,
 						ensayo.pdfFinal,
 						ensayo.sentToClientFinal,
-						ensayo.dateSentToClientFinal
+						ensayo.dateSentToClientFinal,
+						CASE
+							WHEN MOD(rc.diasEnsaye,4) = 1 THEN fc.prueba1  
+							WHEN MOD(rc.diasEnsaye,4) = 2 THEN fc.prueba2  
+							WHEN MOD(rc.diasEnsaye,4) = 3 THEN fc.prueba3  
+							WHEN MOD(rc.diasEnsaye,4) = 0 THEN fc.prueba4  
+							ELSE 'Error, Contacta a soporte'
+						END AS diasEnsaye
 					FROM
 							cliente AS c
 						INNER JOIN 
@@ -1540,7 +1554,13 @@ class loteCorreos{
 						ensayo.fecha AS fechaEnsayado,
 						ensayo.pdfFinal,
 						ensayo.sentToClientFinal,
-						ensayo.dateSentToClientFinal
+						ensayo.dateSentToClientFinal,
+						CASE
+							WHEN MOD(rc.diasEnsaye,3) = 1 THEN fc.prueba1  
+							WHEN MOD(rc.diasEnsaye,3) = 2 THEN fc.prueba2  
+							WHEN MOD(rc.diasEnsaye,3) = 0 THEN fc.prueba3  
+							ELSE 'Error, Contacta a soporte'
+						END AS diasEnsaye
 					FROM
 							cliente AS c
 						INNER JOIN 
@@ -1581,7 +1601,8 @@ class loteCorreos{
 						'N.A.' AS fechaEnsayado,
 						fr.pdfFinal,
 						fr.sentToClientFinal,
-						fr.dateSentToClientFinal
+						fr.dateSentToClientFinal,
+						'N.A.' AS diasEnsaye
 					FROM
 							cliente AS c
 						INNER JOIN 

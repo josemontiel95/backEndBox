@@ -414,6 +414,7 @@ class formatoCampo{
 					formatoCampo.preliminar AS preliminar,
 					preliminarGabs,
 					formatoCampo.ensayadoFin AS ensayadoFin,
+					formatoCampo.registrosNo AS registrosNo,
 					IF(footerEnsayo.active IS NOT NULL,1,0) AS footerExist
 			      FROM 
 			        ordenDeTrabajo,cliente,obra,formatoCampo LEFT JOIN footerEnsayo ON formatoCampo_id = id_formatoCampo,

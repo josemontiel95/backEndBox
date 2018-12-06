@@ -149,8 +149,8 @@
 				//Obtenemos el id del usuario que solicita
 				$id_usuario = substr(decurl($token),10);
 				
-				$s= $dbS->qarrayA("
-				      	SELECT
+				$s= $dbS->qarrayA(
+					"  SELECT
 							usuarioRealizo.nombreRealizo,	
 							usuarioRealizo.firma AS firmaRealizo,
 							CONCAT(nombre,' ',apellido) AS nombreLaboratorista,
@@ -202,8 +202,8 @@
 				//Obtenemos el id del usuario que solicita
 				$id_usuario = substr(decurl($token),10);
 				
-				$s= $dbS->qarrayA("
-				      	SELECT
+				$s= $dbS->qarrayA(
+					"   SELECT
 							usuarioRealizo.nombreRealizo,	
 							usuarioRealizo.firma AS firmaRealizo,
 							CONCAT(nombre,' ',apellido) AS nombreLaboratorista,
@@ -255,8 +255,8 @@
 				//Obtenemos el id del usuario que solicita
 				$id_usuario = substr(decurl($token),10);
 				
-				$s= $dbS->qarrayA("
-				      	SELECT
+				$s= $dbS->qarrayA(
+					"   SELECT
 							usuarioRealizo.nombreRealizo,	
 							usuarioRealizo.firma AS firmaRealizo,
 							CONCAT(nombre,' ',apellido) AS nombreLaboratorista,
@@ -421,8 +421,8 @@
 				//Obtenemos el id del usuario que solicita
 				$id_usuario = substr(decurl($token),10);
 				
-				$s= $dbS->qarrayA("
-				      	SELECT
+				$s= $dbS->qarrayA(
+					"  	SELECT
 							nombreLaboratorista,
 							firmaLaboratorista,
 							nombreG,
@@ -469,8 +469,8 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qarrayA("
-				      SELECT
+				$s= $dbS->qarrayA(
+					"SELECT
 				      	informeNo,
 				        obra,
 						localizacion,
@@ -511,8 +511,8 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qarrayA("
-				      SELECT
+				$s= $dbS->qarrayA(
+					" SELECT
 				      	informeNo,
 				        obra,
 						localizacion,
@@ -827,6 +827,7 @@
 							obra.localizacion AS obraLocalizacion,
 							registrosCampo.localizacion AS eleColado,
 							formatoCampo.tipoConcreto,
+							formatoCampo.informeNo,
 							registrosCampo.fprima,
 							regVerFle.placas AS regVerFle_id_placas,		
 							prensas.placas AS prensa_placas
@@ -904,21 +905,25 @@
 						END AS diasEnsaye,
 						condiciones,
 						lijado,
-						cuero,						
-						ancho1,
-						ancho2,
-						per1,
-						per2,
-						l1,
-						l2,
-						l3,
-						ROUND ((l1+l2+l3)/3) prom,
-						disApoyo,
-						disCarga,
-						carga,
-						mr AS modRuptura,
+						cuero,	
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(ancho1, 1), 1), CHAR), ',', '  '), '.', ',') AS ancho1,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(ancho2, 1), 1), CHAR), ',', '  '), '.', ',') AS ancho2,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(per1, 1), 1), CHAR), ',', '  '), '.', ',') AS per1,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(per2, 1), 1), CHAR), ',', '  '), '.', ',') AS per2,
+						
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(l1, 1), 1), CHAR), ',', '  '), '.', ',') AS l1,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(l2, 1), 1), CHAR), ',', '  '), '.', ',') AS l2,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(l3, 1), 1), CHAR), ',', '  '), '.', ',') AS l3,
+
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((l1+l2+l3)/3), 0), 0), CHAR), ',', '  '), '.', ',') AS prom,
+						
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(disApoyo, 1), 1), CHAR), ',', '  '), '.', ',') AS disApoyo,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(disCarga, 1), 1), CHAR), ',', '  '), '.', ',') AS disCarga,
+
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(mr, 1), 1), CHAR), ',', '  '), '.', ',') AS modRuptura,
 						defectos,
-						ROUND(velAplicacionExp,1),
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(velAplicacionExp, 2), 2), CHAR), ',', '  '), '.', ',') AS velAplicacionExp,
 						CONCAT(nombre,' ',apellido) AS realizo
 					FROM 
 						usuario,
@@ -1018,8 +1023,8 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qarrayA("
-				      	SELECT
+				$s= $dbS->qarrayA(
+					"   SELECT
 							ensayoCilindro.footerEnsayo_id,
 							ensayoCilindro.fecha AS fechaEnsayo,
 							basculas.placas AS buscula_placas,
@@ -1092,20 +1097,16 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qAll("
-			      	SELECT
+				$s= $dbS->qAll(
+					"SELECT
 			      		registrosCampo.fecha AS fechaColado,
 			      		informeNo,
 			      		claveEspecimen,
 			      		peso,
 			      		CASE
-							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
-							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
 							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
-							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
 							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
-							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
 							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
 							ELSE 'Error, Contacta a soporte'
 						END AS diasEnsayeFinal,
@@ -1371,8 +1372,8 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qarrayA("
-				      SELECT
+				$s= $dbS->qarrayA(
+					" SELECT
 				      	informeNo,
 				        obra,
 						localizacion,

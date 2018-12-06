@@ -154,12 +154,10 @@ class registrosCampo{
 						$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 200);
 						return json_encode($arr);
 					}
-					$año = $a['anio'] - 2000;
-					if($tipoNo == 4){
-						$infoNo = $infoObra[$consecutivoTipo];
-					}else if($tipoNo == 2 || $tipoNo == 3){
-						$infoNo = $infoObra['prefijo']."/".$infoObra['cotizacion']."/".$año."/".$infoObra[$consecutivoTipo];
-					}
+					$anio = $infoObra['anio'] - 2000;
+					
+					$infoNo = $infoObra['prefijo']."/".$infoObra['cotizacion']."/".$anio."/".$infoObra[$consecutivoTipo];
+					
 					$dbS->squery(
 						"UPDATE formatoCampo SET
 							informeNo ='1QQ'
@@ -1101,7 +1099,13 @@ class registrosCampo{
 							WHEN ensayoViga.status <> 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NULL THEN 0
 							WHEN ensayoViga.status <> 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NOT NULL THEN 1
 							ELSE -1
-						END AS statusGeneralNo
+						END AS statusGeneralNo,
+						CASE
+							WHEN MOD(rc.diasEnsaye,3) = 1 THEN DATE_ADD(rc.fecha, INTERVAL fc.prueba1 DAY)
+							WHEN MOD(rc.diasEnsaye,3) = 2 THEN DATE_ADD(rc.fecha, INTERVAL fc.prueba2 DAY)  
+							WHEN MOD(rc.diasEnsaye,3) = 0 THEN DATE_ADD(rc.fecha, INTERVAL fc.prueba3 DAY)  
+							ELSE 'Error, Contacta a soporte'
+						END AS fechaEnsayeAsignado  
 					FROM 
 				      	registrosCampo AS rc LEFT JOIN ensayoViga ON registrosCampo_id = id_registrosCampo,
 				      	formatoCampo AS fc
@@ -1162,7 +1166,14 @@ class registrosCampo{
 							WHEN ensayoCilindro.status <> 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NULL THEN 0
 							WHEN ensayoCilindro.status <> 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NOT NULL THEN 1
 							ELSE -1
-						END AS statusGeneralNo
+						END AS statusGeneralNo,
+						CASE
+							WHEN MOD(rc.diasEnsaye,4) = 1 THEN DATE_ADD(rc.fecha, INTERVAL fc.prueba1 DAY)
+							WHEN MOD(rc.diasEnsaye,4) = 2 THEN DATE_ADD(rc.fecha, INTERVAL fc.prueba2 DAY)  
+							WHEN MOD(rc.diasEnsaye,4) = 3 THEN DATE_ADD(rc.fecha, INTERVAL fc.prueba3 DAY)  
+							WHEN MOD(rc.diasEnsaye,4) = 0 THEN DATE_ADD(rc.fecha, INTERVAL fc.prueba4 DAY)  
+							ELSE 'Error, Contacta a soporte'
+						END AS fechaEnsayeAsignado 
 					FROM 
 						registrosCampo AS rc LEFT JOIN ensayoCilindro ON registrosCampo_id = id_registrosCampo,
 				      	formatoCampo AS fc
@@ -1223,7 +1234,14 @@ class registrosCampo{
 							WHEN ensayoCubo.status = 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NULL THEN 0
 							WHEN ensayoCubo.status = 0 AND pdfFinal IS NOT NULL AND jefaLabApproval_id IS NOT NULL THEN 1
 							ELSE -1
-						END AS statusGeneralNo
+						END AS statusGeneralNo,
+						CASE
+							WHEN MOD(rc.diasEnsaye,4) = 1 THEN DATE_ADD(rc.fecha, INTERVAL fc.prueba1 DAY)
+							WHEN MOD(rc.diasEnsaye,4) = 2 THEN DATE_ADD(rc.fecha, INTERVAL fc.prueba2 DAY)  
+							WHEN MOD(rc.diasEnsaye,4) = 3 THEN DATE_ADD(rc.fecha, INTERVAL fc.prueba3 DAY)  
+							WHEN MOD(rc.diasEnsaye,4) = 0 THEN DATE_ADD(rc.fecha, INTERVAL fc.prueba4 DAY)  
+							ELSE 'Error, Contacta a soporte'
+						END AS fechaEnsayeAsignado 
 					FROM 
 						registrosCampo AS rc LEFT JOIN ensayoCubo ON registrosCampo_id = id_registrosCampo,
 				      	formatoCampo AS fc
@@ -1305,7 +1323,9 @@ class registrosCampo{
 		}
 		return json_encode($arr);
 	}
-
+	public function ping($data){
+		return $data;
+	}
 
 	public function getRegistrosForToday($token,$rol_usuario_id){
 		global $dbS;

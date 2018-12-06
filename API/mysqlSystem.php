@@ -1,11 +1,18 @@
 <?php
 class MySQLSystem{
 	
-	/* Variables de BDD */
+	/* Variables de BDD  Vieja
 	private $dbname = "lacocs";
 	private $dbuser = "lacocsadmin";
 	private $dbpssw = "Septiembre2018#";
 	private $dbsrvr = "mysqlcluster14.registeredsite.com";
+	*/
+
+	/* Variables de BDD  Nueva*/
+	private $dbname = "lacocspuedic";
+	private $dbuser = "lacocsdbadic";
+	private $dbpssw = "Diciembre2018%";
+	private $dbsrvr = "mysqlcluster9.registeredsite.com";
 	
 	/* Variables de buffer */
 	private $resultSet;
