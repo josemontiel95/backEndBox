@@ -24,18 +24,17 @@
 		private $cellsDetails;
 
 		//Funcion que coloca una vista previa de la información
-		/*
-			PENDIENTE PARA REVISAR BIEN LOS DATOS
 
-						|
-						|
-						|
-						V
-
-		*/
-
+		function getArrayCampo(){
+			return $this->array_campo;
+		}
 
 		function generateArrayCampo(){
+			$tam_font_Cells = 5;	//Equivalente a $tam_font_head
+			$tam_font_CellsRows = 5;	//Equivalente al cambio de fuente cuando se imprime la informacion de cada row
+			$tam_cellsTablesAlto = 	$tam_font_Cells - 2;
+
+
 			$tam_font_head = 5;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
 
 
@@ -52,8 +51,8 @@
 			$this->Cell($tam_clave,$tam_font_head+3,$clave,1,0,'C');
 
 			$peso = 'PESO EN kg';
-			$tam_peso = $this->GetStringWidth($peso)+2;
-			$this->Cell($tam_peso,$tam_font_head+3,$peso,1,0,'C');
+			$tam_pesoAncho = $this->GetStringWidth($peso)+2;
+			$this->Cell($tam_pesoAncho,$tam_font_head+3,$peso,1,0,'C');
 
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 
@@ -86,11 +85,11 @@
 			$this->SetXY($posicion_x + $tam_altura,$posicion_y);
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 			$carga = 'CARGA';
-			$tam_carga = $this->GetStringWidth($carga)+3;
-			$this->Cell($tam_carga,($tam_font_head+3)/2,$carga,'L,T,R',2,'C');
-			$this->cell($tam_carga,($tam_font_head+3)/2,'kg','L,B,R',0,'C');
+			$tam_kgAncho = $this->GetStringWidth($carga)+3;
+			$this->Cell($tam_kgAncho,($tam_font_head+3)/2,$carga,'L,T,R',2,'C');
+			$this->cell($tam_kgAncho,($tam_font_head+3)/2,'kg','L,B,R',0,'C');
 
-			$this->SetXY($posicion_x + $tam_carga,$posicion_y);
+			$this->SetXY($posicion_x + $tam_kgAncho,$posicion_y);
 
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 			$area = 'AREA';
@@ -123,34 +122,75 @@
 			
 			$posicion_x = $this->GetX();
 			$this->cell(0,($tam_font_head+3),utf8_decode($falla),1,2,'C');
-			$tam_falla = $this->GetX() - $posicion_x;
+			$tam_fallaAncho = 195.9 - (
+											$tam_fechaColado +
+											$tam_infoNumero +
+											$tam_clave +
+											$tam_pesoAncho +
+											$tam_edad +
+											$tam_diametro +
+											$tam_altura +
+											$tam_kgAncho +
+											$tam_area +
+											$tam_resis +
+											$tam_velocidad 
+										);
 		
 
 			$this->Ln(0);
-			//Definimos el array con los tamaños de cada celda para crear las duplas
-			$array_campo = 	array(
-									$tam_fechaColado,
-									$tam_infoNumero,
-									$tam_clave,
-									$tam_peso,
-									$tam_edad,
-									$tam_d1,
-									$tam_d2,
-									$tam_h1,
-									$tam_h2,
-									$tam_carga,
-									$tam_area,
-									$tam_resis,
-									$tam_velocidad,
-									$tam_falla
-							);
-
-			$tam_font_head = 5.5;	
-			$tam_cellsTablesAlto = 	$tam_font_head - 2;
-			$this->SetFont('Arial','',$tam_font_head);
-		
 
 			
+
+
+			
+			$tam_font_observaciones = 6.5;
+			$tam_observacionAnchoTxt = 10;
+
+			$tam_font_inventario = 6.5;
+
+			$this->SetFont('Arial','B',$tam_font_inventario);
+
+			//La herramienta
+			$termo = 'Termómetro';
+			$tam_termo = $this->GetStringWidth($termo)+10;
+
+			$bascula = 'BASCULA';
+			$tam_bascula = $tam_termo;
+
+			$flexo = 'REGLA VERNIER O FLEXOMETRO';
+			$tam_flexo = $tam_termo;
+
+			$prensa = 'PRENSA';
+			$tam_prensa = $tam_termo;
+
+
+			$this->array_campo = array(
+										'tam_font_Cells' => $tam_font_Cells,
+										'tam_font_CellsRows' => $tam_font_CellsRows,
+										'tam_cellsTablesAlto' => $tam_cellsTablesAlto,
+
+										'tam_fechaColado' => $tam_fechaColado,
+										'tam_infoNumero' => $tam_infoNumero,
+										'tam_clave' => $tam_clave,
+										'tam_pesoAncho' => $tam_pesoAncho,
+										'tam_edad' => $tam_edad,
+										'tam_d1' => $tam_d1,
+										'tam_d2' => $tam_d2,
+										'tam_h1' => $tam_h1,
+										'tam_h2' => $tam_h2,
+										'tam_kgAncho' => $tam_kgAncho,
+										'tam_area' => $tam_area,
+										'tam_resis' => $tam_resis,
+										'tam_velocidad' => $tam_velocidad,
+										'tam_fallaAncho' => $tam_fallaAncho,
+										'tam_observacionAnchoTxt' => $tam_observacionAnchoTxt,
+										'tam_bascula' => $tam_bascula,
+										'tam_flexo' => $tam_flexo,
+										'tam_prensa' => $tam_prensa,
+										'tam_font_inventario' => $tam_font_inventario,
+										'tam_font_observaciones' => $tam_font_observaciones
+									);
+					
 		}
 
 
@@ -236,8 +276,8 @@
 			$this->Cell($tam_clave,$tam_font_head+3,$clave,1,0,'C');
 
 			$peso = 'PESO EN kg';
-			$tam_peso = $this->GetStringWidth($peso)+2;
-			$this->Cell($tam_peso,$tam_font_head+3,$peso,1,0,'C');
+			$tam_pesoAncho = $this->GetStringWidth($peso)+2;
+			$this->Cell($tam_pesoAncho,$tam_font_head+3,$peso,1,0,'C');
 
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 
@@ -270,11 +310,11 @@
 			$this->SetXY($posicion_x + $tam_altura,$posicion_y);
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 			$carga = 'CARGA';
-			$tam_carga = $this->GetStringWidth($carga)+3;
-			$this->Cell($tam_carga,($tam_font_head+3)/2,$carga,'L,T,R',2,'C');
-			$this->cell($tam_carga,($tam_font_head+3)/2,'kg','L,B,R',0,'C');
+			$tam_kgAncho = $this->GetStringWidth($carga)+3;
+			$this->Cell($tam_kgAncho,($tam_font_head+3)/2,$carga,'L,T,R',2,'C');
+			$this->cell($tam_kgAncho,($tam_font_head+3)/2,'kg','L,B,R',0,'C');
 
-			$this->SetXY($posicion_x + $tam_carga,$posicion_y);
+			$this->SetXY($posicion_x + $tam_kgAncho,$posicion_y);
 
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 			$area = 'AREA';
@@ -306,7 +346,7 @@
 			
 			$posicion_x = $this->GetX();
 			$this->cell(0,($tam_font_head+3),utf8_decode($falla),1,2,'C');
-			$tam_falla = $this->GetX() - $posicion_x;
+			$tam_fallaAncho = $this->GetX() - $posicion_x;
 		
 
 			$this->Ln(0);
@@ -315,20 +355,20 @@
 									$tam_fechaColado,
 									$tam_infoNumero,
 									$tam_clave,
-									$tam_peso,
+									$tam_pesoAncho,
 									$tam_edad,
 									$tam_d1,
 									$tam_d2,
 									$tam_h1,
 									$tam_h2,
-									$tam_carga,
+									$tam_kgAncho,
 									$tam_area,
 									$tam_resis,
 									$tam_velocidad,
-									$tam_falla
+									$tam_fallaAncho
 							);
 
-			$tam_font_head = 5.5;	
+			$tam_font_head = 5;	
 			$tam_cellsTablesAlto = 	$tam_font_head - 2;
 			$this->SetFont('Arial','',$tam_font_head);
 		

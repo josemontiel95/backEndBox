@@ -227,11 +227,11 @@
 			$tam_pesoAlto = 1.5*($tam_font_Cells - 3);
 
 			$rev = 'REV. cm';
-			$tam_revAncho = $this->GetStringWidth($rev) + 3;
+			$tam_obraAncho = $this->GetStringWidth($rev) + 3;
 			$tam_revAlto = 1.5*($tam_font_Cells - 3);
 
 			$especimenes = 'ESPECIMENES';
-			$tam_especimenesAncho = ($tam_areaAncho + $tam_alturaAncho + $tam_diametroAncho + $tam_edadAncho + $tam_pesoAncho + $tam_revAncho);
+			$tam_especimenesAncho = ($tam_areaAncho + $tam_alturaAncho + $tam_diametroAncho + $tam_edadAncho + $tam_pesoAncho + $tam_obraAncho);
 			$tam_especimenesAlto = 1.5*($tam_font_Cells - 3);
 
 			$clave = 'CLAVE';
@@ -318,7 +318,7 @@
 										'tam_pesoAlto'				=>	$tam_pesoAlto,
 										
 										'rev'						=>	$rev,
-										'tam_revAncho'				=>	$tam_revAncho,
+										'tam_obraAncho'				=>	$tam_obraAncho,
 										'tam_revAlto'				=>	$tam_revAlto,
 
 										'especimenes'				=>	$especimenes,
@@ -341,7 +341,7 @@
 			 $this->arrayCampos = 	array(
 											$tam_fechaAncho,
 											$tam_claveAncho,
-											$tam_revAncho,
+											$tam_obraAncho,
 											$tam_pesoAncho,
 											$tam_edadAncho,
 											$tam_diametroAncho,
@@ -646,9 +646,9 @@
 
 			//Rev en cm
 			$this->SetY($posicion_y + $this->cellsTables['tam_revAlto']);	
-			$this->SetX($posicion_x - $this->cellsTables['tam_revAncho']);	
+			$this->SetX($posicion_x - $this->cellsTables['tam_obraAncho']);	
 			$posicion_x = $this->GetX();
-			$this->cell($this->cellsTables['tam_revAncho'],$this->cellsTables['tam_revAlto'],$this->cellsTables['rev'],1,2,'C');
+			$this->cell($this->cellsTables['tam_obraAncho'],$this->cellsTables['tam_revAlto'],$this->cellsTables['rev'],1,2,'C');
 			
 			//Especimenes
 			$this->SetY($posicion_y); 
@@ -712,8 +712,22 @@
 			//Imprimimos el "elemento muestreado"
 			$this->SetXY($posicion_x,$posicion_y);
 
-			$this->SetFont('Arial','',1);
-			$this->multicell($tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],'PRUEBA DE TEXTO linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1linea1','L,T','C');
+			//$this->SetFont('Arial','',$this->cellsTables['tam_font_CellsRows']);
+			$this->SetFont('Arial','',5);
+
+			$string = 'Frente: Foso Torre, Nivel: Planta Baja, Elemento: Muros para Elevador del Cubo A - B';
+
+			$resultado = $this->printInfoObraAndLocObra($this->cellsTables['tam_font_CellsRows'],$tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],$string,3);
+
+			if($resultado['error'] == 0){
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+				//echo $resultado['sizeFont'];
+			}else{
+				$arrayLoc[1] = $resultado['estatus'];
+				$this->SetFont('Arial','',$this->cellsTables['tam_font_CellsRows']);
+			}
+
+			$this->multicell($tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],$string,'L,T','C');
 			if($this->GetY() < $endDown_table){
 				$num_iteraciones = (($endDown_table - $this->GetY()) / $this->cellsTables['tam_cellsTablesAlto']);
 				for ($i=0; $i < $num_iteraciones; $i++) { 
@@ -1076,9 +1090,9 @@
 
 			//Rev en cm
 			$this->SetY($posicion_y + $this->cellsTables['tam_revAlto']);	
-			$this->SetX($posicion_x - $this->cellsTables['tam_revAncho']);	
+			$this->SetX($posicion_x - $this->cellsTables['tam_obraAncho']);	
 			$posicion_x = $this->GetX();
-			$this->cell($this->cellsTables['tam_revAncho'],$this->cellsTables['tam_revAlto'],$this->cellsTables['rev'],1,2,'C');
+			$this->cell($this->cellsTables['tam_obraAncho'],$this->cellsTables['tam_revAlto'],$this->cellsTables['rev'],1,2,'C');
 			
 			//Especimenes
 			$this->SetY($posicion_y); 
@@ -1144,6 +1158,15 @@
 				//Imprimimos el "elemento muestreado"
 				$this->SetXY($posicion_x,$posicion_y);
 
+				$resultado = $this->printInfoObraAndLocObra($this->cellsTables['tam_font_CellsRows'],$tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],$arrayLoc[1],3);
+
+				if($resultado['error'] == 0){
+					$this->SetFont('Arial','',$resultado['sizeFont']);
+				}else{
+					$arrayLoc[1] = $resultado['estatus'];
+					$this->SetFont('Arial','',$this->cellsTables['tam_font_CellsRows']);
+				}
+
 				$this->multicell($tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],utf8_decode($arrayLoc[1]),'L,T','C');
 				if($this->GetY() < $endDown_table){
 					$num_iteraciones = (($endDown_table - $this->GetY()) / $this->cellsTables['tam_cellsTablesAlto']);
@@ -1188,7 +1211,16 @@
 				//Imprimimos el "elemento muestreado"
 				$this->SetXY($posicion_x,$posicion_y);
 
-				$this->multicell($tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],utf8_decode($arrayLoc[1]),'L,T','C');
+				$resultado = $this->printInfoObraAndLocObra($this->cellsTables['tam_font_CellsRows'],$tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],$arrayLoc[2],3);
+
+				if($resultado['error'] == 0){
+					$this->SetFont('Arial','',$resultado['sizeFont']);
+				}else{
+					$arrayLoc[1] = $resultado['estatus'];
+					$this->SetFont('Arial','',$this->cellsTables['tam_font_CellsRows']);
+				}
+
+				$this->multicell($tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],utf8_decode($arrayLoc[2]),'L,T','C');
 				if($this->GetY() < $endDown_table){
 					$num_iteraciones = (($endDown_table - $this->GetY()) / $this->cellsTables['tam_cellsTablesAlto']);
 					for ($i=0; $i < $num_iteraciones; $i++) { 

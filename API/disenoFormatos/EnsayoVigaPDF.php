@@ -23,7 +23,10 @@
 		private $cellsDetails;
 
 
-		
+		function getCellsInfo(){
+			return $this->cellsInfo;
+		}
+
 		//Funcion que coloca una vista previa de la información
 		function generateCellsInfo(){
 			
@@ -69,7 +72,7 @@
 	
 			//Caja de texto
 
-			$tam_mrProyectoText = 269.4 - (226.5 + $tam_mrProyecto);
+			$tam_fprimaAncho = 269.4 - (226.5 + $tam_mrProyecto);
 			
 			//Direccion del cliente
 			$eleColado = 'ELEMENTO COLADO:';
@@ -102,10 +105,10 @@
 										'tam_tipoConcretoText'		=> $tam_tipoConcretoText,	
 										'mrProyecto'					=> $mrProyecto,	
 										'tam_mrProyecto'				=> $tam_mrProyecto,	
-										'tam_mrProyectoText'			=> $tam_mrProyectoText	
+										'tam_fprimaAncho'			=> $tam_fprimaAncho	
 
 
-								);
+			);
 
 		}
 
@@ -261,6 +264,143 @@
 			$this->Ln($tam_font_left);
 
 		}
+
+		function getCellsTables(){
+			return $this->cellsTables;
+		
+		}
+
+
+		function generateCellsCampos(){
+			$tam_font_Cells = 5;	
+			$this->SetFont('Arial','',$tam_font_Cells);//Fuente para clave
+
+
+			$iden = 'Identificacion de la ';
+			$tam_iden = $this->GetStringWidth($iden)+16;
+			
+			$fechaColado = 'Fecha de';
+			$tam_fechaColado = $this->GetStringWidth($fechaColado)+4;
+
+			$fechaEnsayo = 'Fecha de';
+			$tam_fechaEnsayo = $this->GetStringWidth($fechaEnsayo)+4;
+			
+			$edad = 'Edad';
+			$tam_edad = $this->GetStringWidth($edad)+2;
+
+			$condiciones = 'Condiciones';
+			$tam_condiciones = $this->GetStringWidth($condiciones)+2;
+
+			$apoyos = 'apoyos (si/no)';
+			$tam_apoyos = $this->GetStringWidth($apoyos)+2;
+			
+			$tam_lijado = $tam_cuero = $tam_apoyos/2;
+		
+			$ancho = 'Ancho';
+			$tam_ancho = $this->GetStringWidth($ancho)+8;
+			
+			$tam_lec1 = $tam_lec2 = $tam_ancho/2;
+
+			$peralte = 'Peralte';
+			$tam_peralte = $this->GetStringWidth($peralte)+8;
+
+			$tam_per_lec1 = $tam_per_lec2 = $tam_peralte/2;
+
+			$locFalla = 'Localizacion de la falla en mm';
+			$tam_locFalla = $this->GetStringWidth($locFalla)+3;
+			
+			$tam_l1 = $tam_l2 = $tam_l3 = $tam_prom = $tam_locFalla/4;
+
+			$distanciaApoyos = 'entre apoyos';
+			$tam_distanciaApoyos = $this->GetStringWidth($distanciaApoyos)+3;
+		
+			$distanciaPuntos = 'de carga(cm)';
+			$tam_distanciaPuntos = $this->GetStringWidth($distanciaPuntos)+3;
+			
+			$carga = 'aplicada';
+			$tam_carga = $this->GetStringWidth($carga)+4;
+			
+			$modulo = 'Modulo de';
+			$tam_modulo = $this->GetStringWidth($modulo)+3;
+			
+			$defEscpecimen = 'escpecimen';
+			$tam_defEscpecimen = $this->GetStringWidth($defEscpecimen)+3;
+			
+			$velocidad = 'kg/cm2 por minuto';
+			$tam_velocidad = $this->GetStringWidth($velocidad)+2;
+
+			$realizo = 'Realizó';
+			
+			$tam_realizo = 259.4 - (
+										$tam_iden + 
+										$tam_fechaColado + 
+										$tam_fechaEnsayo + 
+										$tam_edad + 
+										$tam_condiciones + 
+										$tam_apoyos + 
+										$tam_ancho + 
+										$tam_peralte + 
+										$tam_locFalla + 
+										$tam_distanciaApoyos + 
+										$tam_distanciaPuntos + 
+										$tam_carga + 
+										$tam_modulo + 
+										$tam_defEscpecimen + 
+										$tam_velocidad
+									);
+
+
+		
+			$tam_font_CellsRows = 5;
+			$tam_cellsTablesAlto = $tam_font_CellsRows - 2.5;
+
+
+			//Informacion del la prensa y flexo
+			$tam_font_inventario =6.5;	
+			$this->SetFont('Arial','B',$tam_font_inventario);//Fuente para clave
+
+			//Definimos el tamaño de las celdas que contiene la placa de las herramientas
+			$termo = 'Termómetro';
+			$tam_termo = $this->GetStringWidth($termo)+10;
+
+			$flexo = 'FLEXO';
+			$tam_flexo = $tam_termo;
+
+			$prensa = 'PRENSA';
+			$tam_prensa = $tam_termo;
+			
+			$this->cellsTables = array(
+										'tam_font_Cells'			=>	$tam_font_Cells,
+										'tam_font_CellsRows'		=>	$tam_font_CellsRows,
+										'tam_cellsTablesAlto'		=>	$tam_cellsTablesAlto,
+
+										'tam_iden' => $tam_iden,
+										'tam_fechaColado' => $tam_fechaColado,
+										'tam_fechaEnsayo' => $tam_fechaEnsayo,
+										'tam_edad' => $tam_edad,
+										'tam_condiciones' => $tam_condiciones,
+										'tam_lijado' => $tam_lijado,
+										'tam_cuero' => $tam_cuero,
+										'tam_lec1' => $tam_lec1,
+										'tam_lec2' => $tam_lec2,
+										'tam_per_lec1' => $tam_per_lec1,
+										'tam_per_lec2' => $tam_per_lec2,
+										'tam_l1' => $tam_l1,
+										'tam_l2' => $tam_l2,
+										'tam_l3' => $tam_l3,
+										'tam_prom' => $tam_prom,
+										'tam_distanciaApoyos' => $tam_distanciaApoyos,
+										'tam_distanciaPuntos' => $tam_distanciaPuntos,
+										'tam_carga' => $tam_carga,
+										'tam_modulo' => $tam_modulo,
+										'tam_defEscpecimen' => $tam_defEscpecimen,
+										'tam_velocidad' => $tam_velocidad,
+										'tam_realizo' => $tam_realizo,
+										'tam_flexo' => $tam_flexo,
+										'tam_prensa' => $tam_prensa
+									);	
+		}
+
 
 		function putTables($regisFormato){
 			$tam_font_head = 5;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
@@ -434,7 +574,7 @@
 									$tam_realizo
 							);
 
-			$tam_font_head = 5.5;	
+			$tam_font_head = 5;	
 			$tam_cellsTablesAlto = $tam_font_head - 2.5;
 			$this->SetFont('Arial','',$tam_font_head);
 			$grupos = 27;

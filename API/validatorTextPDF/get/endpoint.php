@@ -30,6 +30,20 @@
 			$validator = new ValidatorTextPDF();
 			echo $validator->validatedCamposEnsayoCubo($_GET['campo'],$_GET['string']);
 			break;
+
+		case 'validatedCamposEnsayoCilindros':
+			$validator = new ValidatorTextPDF();
+			echo $validator->validatedCamposEnsayoCilindros($_GET['campo'],$_GET['string']);
+			break;
+		case 'validatedCamposEnsayoVigas':
+			$validator = new ValidatorTextPDF();
+			echo $validator->validatedCamposEnsayoVigas($_GET['campo'],$_GET['string']);
+			break;
+		case 'validatedCamposRevenimiento':
+			$validator = new ValidatorTextPDF();
+			echo $validator->validatedCamposRevenimiento($_GET['campo'],$_GET['string']);
+			break;
+
 		
 
 	}

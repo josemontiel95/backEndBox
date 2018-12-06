@@ -187,6 +187,90 @@
 			return $this->cellsInfo;
 		}
 
+
+		function getCellsTables(){
+			return $this->cellsTables;
+		
+		}
+
+		function generateCellsCampos(){
+			$tam_font_Cells = 7;	
+			$this->SetFont('Arial','B',$tam_font_Cells);
+
+			$iden = 'Identificación de la ';
+			$tam_iden = $this->GetStringWidth($iden)+10;
+			
+			$fechaColado = 'Fecha de';
+			$tam_fechaColado = $this->GetStringWidth($fechaColado)+6;
+			
+			$edad = 'Edad de';
+			$tam_edad = $this->GetStringWidth($edad)+4;
+
+			$apoyos = 'Lijado/cuero';
+			$tam_apoyos = $this->GetStringWidth($apoyos)+4;
+
+			$condiCurado = 'Condiciones de';
+			$tam_condiCurado = $this->GetStringWidth($condiCurado)+4;
+
+			$anchoPromedio = 'promedio';
+			$tam_anchoPromedio = $this->GetStringWidth($anchoPromedio)+3;
+			
+			$peralPromedio = 'promedio';
+			$tam_peralPromedio = $this->GetStringWidth($peralPromedio)+3;
+			
+			$entreApoyos = 'entre apoyos';
+			$tam_entreApoyos = $this->GetStringWidth($entreApoyos)+3;
+
+			$cargaMaxima = 'Carga máxima';
+			$tam_cargaMaxima = $this->GetStringWidth($cargaMaxima)+3;
+			
+			$modRuptura = 'Modulo de Ruptura';
+			$tam_modRuptura = $this->GetStringWidth($modRuptura)+3;
+			
+			$modRuptura2 = 'Modulo de';
+			$tam_modRuptura2 = $this->GetStringWidth($modRuptura2)+4;
+
+			$defectos = 'Defectos del';
+			
+			$tam_defectos = 259.4 - (		$tam_iden +
+											$tam_fechaColado +
+											$tam_edad +
+											$tam_apoyos +
+											$tam_condiCurado +
+											$tam_anchoPromedio +
+											$tam_peralPromedio +
+											$tam_entreApoyos +
+											$tam_cargaMaxima +
+											$tam_modRuptura +
+											$tam_modRuptura2
+										);
+
+			$tam_font_CellsRows = 5;
+			$tam_cellsTablesAlto = $tam_font_CellsRows - 2.5;
+
+
+			
+			$this->cellsTables = array(
+
+											'tam_font_Cells'			=>	$tam_font_Cells,
+											'tam_font_CellsRows'		=>	$tam_font_CellsRows,
+											'tam_cellsTablesAlto'		=>	$tam_cellsTablesAlto,
+
+											'tam_iden' => $tam_iden,
+											'tam_fechaColado' => $tam_fechaColado,
+											'tam_edad' => $tam_edad,
+											'tam_apoyos' => $tam_apoyos,
+											'tam_condiCurado' => $tam_condiCurado,
+											'tam_anchoPromedio' => $tam_anchoPromedio,
+											'tam_peralPromedio' => $tam_peralPromedio,
+											'tam_entreApoyos' => $tam_entreApoyos,
+											'tam_cargaMaxima' => $tam_cargaMaxima,
+											'tam_modRuptura' => $tam_modRuptura,
+											'tam_modRuptura2' => $tam_modRuptura2,
+											'tam_defectos' => $tam_defectos
+										);
+		}
+
 		function putCaracInfo(){
 			
 			//Guardamos la posicion de x para posteriormente imprimir la siguiente celda
