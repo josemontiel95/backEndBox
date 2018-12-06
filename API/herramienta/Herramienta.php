@@ -76,7 +76,7 @@ class Herramienta{
 					 WHERE
 					 	HT.id_herramienta_tipo=H.herramienta_tipo_id AND
 					 	H.laboratorio_id= 1QQ AND
-					   	H.herramienta_tipo_id = 1005
+					   	H.herramienta_tipo_id IN (1005,1035,1036)
 			      ",
 			      array($laboratorio_id),
 			      "SELECT"
@@ -424,7 +424,7 @@ class Herramienta{
 					 	HT.id_herramienta_tipo=H.herramienta_tipo_id AND
 					   	HO.active > 1QQ AND
 					 	H.laboratorio_id= 1QQ AND
-					   	H.herramienta_tipo_id = 1002 AND
+					   	H.herramienta_tipo_id IN (1002,1030) AND
 					   	HO.ordenDeTrabajo_id = 1QQ
 			      ",
 			      array($status,$laboratorio_id,$id_ordenDeTrabajo),
@@ -517,7 +517,7 @@ class Herramienta{
 					 	HT.id_herramienta_tipo=H.herramienta_tipo_id AND
 					   	HO.active > 1QQ AND
 					 	H.laboratorio_id= 1QQ AND
-					   	H.herramienta_tipo_id = 1004 AND
+					   	H.herramienta_tipo_id IN (1004,1031,1032,1033,1034) AND
 					   	HO.ordenDeTrabajo_id = 1QQ
 			      ",
 			      array($status,$laboratorio_id,$id_ordenDeTrabajo),
