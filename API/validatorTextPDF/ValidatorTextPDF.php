@@ -173,7 +173,15 @@
 			$arrayInfoVigas = array_merge($arrayInfoVigas, $infoVigas->getcellsDetails());
 			//echo "Hola soy Vigas";
 			//print_r($arrayInfoVigas);
+
+
 			$arrayR = array_merge($arrayR, $r->getcellsDetails());
+
+			//Quitamos las obervaciones que existen en el formato Revenimiento ya que no tiene relacion con las observaciones de CCH
+			if(array_key_exists('tam_observacionAnchoTxt', $arrayR)){
+				unset($arrayR['tam_observacionAnchoTxt']);
+			}
+
 			//print_r($arrayR);
 
 
