@@ -276,7 +276,7 @@
 
 			//Definimos las propiedades de la segunda linea del titulo
 			$this->SetFont('Arial','B',$tam_font_titulo);
-			$titulo_linea2 = 'LACOCS S.A DE C.V';
+			$titulo_linea2 = 'LACOCS S.A. DE C.V.';
 			$tam_cell = $this->GetStringWidth($titulo_linea2);
 			$this->SetX((210-$tam_cell)/2);
 			$this->Cell($tam_cell,$tam_font_titulo - 3,utf8_decode($titulo_linea2),0,'C');
@@ -857,7 +857,7 @@
 
 				foreach ($registro as $campo) {
 	
-					$this->cell($array_campo[$j],$tam_cellsTablesAlto,$campo,1,0,'C');
+					$this->cell($array_campo[$j],$tam_cellsTablesAlto,utf8_decode($campo),1,0,'C');
 					$j++;
 				}
 				$num_rows++;

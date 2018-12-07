@@ -238,21 +238,40 @@
 
 			$totalRows = ($posiciony-$posIniY)/$tamaño_alto;
 
-			//Este ciclo decrementara el tamaño de fuente
-			while($posiciony > $limit && $sizeFont>=1){
-				//Decrementamos el tamaño de fuente
-				$sizeFont-=1;
 
-				//Configuramos el tamaño de fuente
-				$pdf->SetFont('Arial','',$sizeFont);
+			//Revisamos cuantos saltos de linea tiene la cadena
+			if(substr_count($string,"\n")<3){
+				//Este ciclo decrementara el tamaño de fuente
+				while($posiciony > $limit && $sizeFont>=1){
+					//Decrementamos el tamaño de fuente
+					$sizeFont-=1;
 
-				//Nos posicionamos en la posicion de "Y" que tenia inicialmente
-				$pdf->sety($posIniY);
+					//Configuramos el tamaño de fuente
+					$pdf->SetFont('Arial','',$sizeFont);
 
-				$pdf->multicell($tam,$tamaño_alto,$string,1,'C');
+					//Nos posicionamos en la posicion de "Y" que tenia inicialmente
+					$pdf->sety($posIniY);
 
-				$posiciony = $pdf->gety();
+					$pdf->multicell($tam,$tamaño_alto,$string,1,'C');
+
+					$posiciony = $pdf->gety();
+				}
+
+				if($posiciony <= $limit){
+					return array('sizeFont' => $sizeFont,'Total de renglones que serian' => $totalRows, 'estatus' => 'Texto valido','error' => 0);
+				}else{
+					$new_string = $this->truncMulticell($sizeFont,$tam,$tamaño_alto,$string,$numRows);
+					$tam_new_string = $pdf->GetStringWidth($new_string);
+					$tam_string = $this->GetStringWidth($string);
+					$arr = array('string' => $string,'tam_string' => $tam_string,'new_string' => $new_string,'tam_new_string' => $tam_new_string,'tam_campo aprox' => $tam,'estatus' => 'El texto excedió el tamaño permitido.','error' => 100);
+				}
+
+			}else{
+				$tam_string = $this->GetStringWidth($string);
+				return $arr = array('string' => $string,'tam_string' => $tam_string,'tam_campo aprox' => $tam,'estatus' => 'El texto contiene mas de dos saltos de linea. No se puede poner.','error' => 101);
 			}
+
+			
 
 
 
@@ -263,13 +282,7 @@
 
 			$pdf->output();*/
 
-			if($posiciony <= $limit){
-				return array('sizeFont' => $sizeFont,'Total de renglones que serian' => $totalRows, 'estatus' => 'Texto valido','error' => 0);
-			}else{
-				$new_string = $this->truncMulticell($sizeFont,$tam,$tamaño_alto,$string,$numRows);
-				$tam_new_string = $pdf->GetStringWidth($new_string);
-				$arr = array('string' => $string,'tam_string' => $tam_string,'new_string' => $new_string,'tam_new_string' => $tam_new_string,'tam_campo' => $min,'estatus' => 'El texto excedió el tamaño permitido.','error' => 100);
-			}
+			
 
 		}
 

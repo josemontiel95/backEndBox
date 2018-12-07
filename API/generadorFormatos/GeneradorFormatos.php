@@ -653,21 +653,25 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$info = $this->getInfoRev($token,$rol_usuario_id,$id_formatoRegistroRev);
-				if(!(array_key_exists('error', $info))){
-					$registros = $this->getRegRev($token,$rol_usuario_id,$id_formatoRegistroRev);
-					if(!(array_key_exists('error', $registros))){
-						$pdf = new Revenimiento();	
-						$pdf->CreateNew($info,$registros,$target_dir);
+				$infoU = $this->getInfoUser($token,$rol_usuario_id);
+				if(!(array_key_exists('error', $infoU))){
+					$info = $this->getInfoRev($token,$rol_usuario_id,$id_formatoRegistroRev);
+					if(!(array_key_exists('error', $info))){
+						$registros = $this->getRegRev($token,$rol_usuario_id,$id_formatoRegistroRev);
+						if(!(array_key_exists('error', $registros))){
+							$pdf = new Revenimiento();	
+							$pdf->CreateNew($info,$registros,$infoU,$target_dir);
+						}
+						else{
+							return json_encode($registros);
+						}
 					}
 					else{
-						return json_encode($registros);
+						return json_encode($info);
 					}
-				}
-				else{
-					return json_encode($info);
-				}
-				
+				}else{
+					return json_encode($infoU);
+				}				
 			}
 			else{
 				return json_encode($arr);
