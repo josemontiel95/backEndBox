@@ -42,16 +42,16 @@
 			$this->SetFont('Arial','B',$tam_font_left);
 			$tam_cellsAlto =  $tam_font_left - 3;
 
-			$obra 			= 'Nombre de la Obra:';
+			$obra 			= 'NOMBRE DE OBRA:';
 			$tam_obra 		= $this->GetStringWidth($obra)+2;
 
-			$locObra		= 'Localización de la Obra:';
+			$locObra		= 'LOCALIZACIÓN DE LA OBRA:';
 			$tam_locObra 	= $this->GetStringWidth($locObra)+2;
 
-			$nomCli 		= 'Nombre del Cliente:';
+			$nomCli 		= 'NOMBRE DE LA EMPRESA:';
 			$tam_nomCli		= $this->GetStringWidth($nomCli)+2;
 
-			$dirCliente 	= 'Dirección del Cliente:';
+			$dirCliente 	= 'DIRECCIÓN DE LA EMPRESA:';
 			$tam_dirCliente	= $this->GetStringWidth($nomCli)+2;
 
 			//Estilo y tamaño de la informacion de la DERECHA
@@ -60,11 +60,11 @@
 			$this->SetFont('Arial','B',$tam_font_right);
 			$tam_cellsRight = $tam_font_right - 3;
 			$informeNo 		= 'INFORME No.';
-			$tam_informeNo 	= $this->GetStringWidth($informeNo)+6;
+			$tam_informeNo 	= $this->GetStringWidth($informeNo)+2;
 
 			//Definimos el tamaño de la linea de toda la información
 			$tam_nomObraText = $tam_localizacionText = $tam_razonText = $tam_dirClienteText = 160;
-			$tam_informeText = 30;
+			$tam_informeText = 40;
 
 			$this->cellsInfo 	= 	array(
 											'tam_font_right'		=>	$tam_font_right,
@@ -82,7 +82,7 @@
 
 
 											'informeNo'				=> $informeNo,
-											'tam_informeNo'			=> $tam_locObra,
+											'tam_informeNo'			=> $tam_informeNo,
 
 											'nomCli'				=> $nomCli,
 											'tam_nomCli'			=> $tam_nomCli,
@@ -454,7 +454,7 @@
 		
 
 		function putInfo($infoFormato){
-			$this->ln(4);	
+			//$this->ln(2);	
 
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']);
 			/*
@@ -483,7 +483,8 @@
 			if($resultado['error'] == 0){
 				$this->SetFont('Arial','',$resultado['sizeFont']);
 			}else{
-				$string = $resultado['estatus'];
+				$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']);
+				$infoFormato['obra'] = $resultado['estatus'];
 			}
 
 
@@ -502,7 +503,7 @@
 
 			$this->SetX(50);
 			
-
+			//Guardamos esta posicion de "Y" para posteriormente imprimir el campo informe No.
 			$posiciony = $this->GetY();
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_cellsAlto'],$infoFormato['localizacion'],3);
@@ -511,7 +512,8 @@
 			if($resultado['error'] == 0){
 				$this->SetFont('Arial','',$resultado['sizeFont']);
 			}else{
-				$string = $resultado['estatus'];
+				$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']);
+				$infoFormato['localizacion'] = $resultado['estatus'];
 			}
 
 			$this->multicell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($infoFormato['localizacion']),'B','C');
@@ -519,12 +521,12 @@
 			$posicionyAux = $this->GetY();
 			
 
-			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_right']); 
+			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']); 
 
-			$this->SetY($posiciony);
+			//$this->SetY($posiciony);
 
 			//Numero del informe
-			$this->SetX(-($this->cellsInfo['tam_informeNo']+40));
+			$this->SetXY(-($this->cellsInfo['tam_informeNo']+$this->cellsInfo['tam_informeText'] + 10),$posiciony);
 			$this->Cell($this->cellsInfo['tam_informeNo'],$this->cellsInfo['tam_cellsAlto'],$this->cellsInfo['informeNo'],0,0,'C');
 
 			//Caja de texto
@@ -532,7 +534,7 @@
 		
 			$this->Cell($this->cellsInfo['tam_informeText'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($infoFormato['informeNo']),'B',0,'C');
 
-			$this->Ln($this->cellsInfo['tam_font_left'] - 2);
+			$this->SetY($posicionyAux + 1);
 
 			$this->SetFont('Arial','B',$this->cellsInfo['tam_font_left']); 
 			//Nombre del cliente
@@ -556,7 +558,7 @@
 			$this->Cell($this->cellsInfo['tam_dirClienteText'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($infoFormato['direccion']),'B',0);
 
 			//Divide la informacion del formato de la Tabla (Esta en funcion del tamaño de fuente de la informacion de la derecha)
-			$this->Ln(10);
+			$this->Ln(7);
 
 			//Titulo del CCH
 			$tam_font_tituloCCH = 12; //Definimos el tamaño de la fuente
@@ -656,7 +658,7 @@
 			$this->Cell($this->cellsInfo['tam_dirClienteText'],$this->cellsInfo['tam_cellsAlto'],$this->getMaxString($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_dirClienteText'],'tam_stringCarac'),'B',0);
 
 			//Divide la informacion del formato de la Tabla (Esta en funcion del tamaño de fuente de la informacion de la derecha)
-			$this->Ln(5);
+			$this->Ln(3);
 
 			//Titulo del CCH
 			$tam_font_tituloCCH = 12; //Definimos el tamaño de la fuente
@@ -664,8 +666,8 @@
 			$titulo_CHH = 'CONTROL DE CONCRETO HIDRÁULICO';
 			$tam_cell = $this->GetStringWidth($titulo_CHH);
 			$this->SetX((279-$tam_cell)/2);
-			$this->Cell($tam_cell,$tam_font_tituloCCH - 3,utf8_decode($titulo_CHH),0,2,'C');
-			$this->Ln(2);
+			$this->Cell($tam_cell,$tam_font_tituloCCH - 5,utf8_decode($titulo_CHH),0,2,'C');
+			
 
 		}
 
@@ -1162,7 +1164,19 @@
 				//Nos posicionamos abajo de la localizacion
 				$this->SetXY($posicion_x,$posicion_y);
 
+
+				$resultado = $this->printInfoObraAndLocObra($this->cellsTables['tam_font_CellsRows'],$tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],$arrayLoc[1],3);
+
+				if($resultado['error'] == 0){
+					$this->SetFont('Arial','',$resultado['sizeFont']);
+				}else{
+					$this->SetFont('Arial','B',$resultado['tam_font_CellsRows']);
+					$arrayLoc[1] = $resultado['estatus'];
+				}
+
+
 				$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],utf8_decode($arrayLoc[1]),'R,T');
+
 				$this->SetX($posicion_x);
 				if($this->GetY() < $endDown_table){
 					$num_iteraciones = (($endDown_table - $this->GetY()) / ($this->cellsTables['tam_cellsTablesAlto']));
@@ -1208,6 +1222,15 @@
 
 				//Nos posicionamos abajo de la localizacion
 				$this->SetXY($posicion_x,$posicion_y);
+
+				$resultado = $this->printInfoObraAndLocObra($this->cellsTables['tam_font_CellsRows'],$tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],$arrayLoc[2],3);
+
+				if($resultado['error'] == 0){
+					$this->SetFont('Arial','',$resultado['sizeFont']);
+				}else{
+					$this->SetFont('Arial','B',$resultado['tam_font_CellsRows']);
+					$arrayLoc[2] = $resultado['estatus'];
+				}
 
 				$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],utf8_decode($arrayLoc[2]),'R,T');
 				$this->SetX($posicion_x);
@@ -1256,6 +1279,16 @@
 				//Nos posicionamos abajo de la localizacion
 				$this->SetXY($posicion_x,$posicion_y);
 
+
+				$resultado = $this->printInfoObraAndLocObra($this->cellsTables['tam_font_CellsRows'],$tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],$arrayLoc[3],3);
+
+				if($resultado['error'] == 0){
+					$this->SetFont('Arial','',$resultado['sizeFont']);
+				}else{
+					$this->SetFont('Arial','B',$resultado['tam_font_CellsRows']);
+					$arrayLoc[3] = $resultado['estatus'];
+				}
+
 				$this->multicell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],utf8_decode($arrayLoc[3]),'R,T');
 				$this->SetX($posicion_x);
 				if($this->GetY() < $endDown_table){
@@ -1300,16 +1333,10 @@
 			if($grupos == 4){
 				$this->putRowsWithoutInfo(1,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
 				$this->SetXY($posicion_x,$posicion_y);
-				$this->cell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],'',1);
+				$this->cell($tam_localizacion,$this->cellsTables['tam_cellsTablesAlto'],'',1,1);
 			}
 			
-			
-
-			
-	
-			
-			
-			$this->Ln(10);
+			$this->Ln(5);
 		}
 
 		function putDetails($infoFormato,$infoU){
@@ -1434,7 +1461,7 @@
 
 			$tam_image = 15;
 
-			$this->Ln(12);	
+			$this->Ln(7);	
 			$this->SetX((279.4-$this->cellsDetails['tamCelda_firmaAncho'])/2);
 
 

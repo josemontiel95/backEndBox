@@ -354,7 +354,7 @@
 			$this->ln(8);
 
 
-			$tam_font_left = 8;	$this->SetFont('Arial','',$tam_font_left);
+			$tam_font_left = 7;	$this->SetFont('Arial','',$tam_font_left);
 			//Texto Adicional
 			$texto_adicional = 'SE DETERMINA EL REVENIMIENTO EN CONCRETO FRESCO TOMANDO COMO BASE LA NORMA MEXICANA NMX-C-156-ONNCCE-2010';
 			$tam_texto_adicional = $this->GetStringWidth($texto_adicional)+3;
@@ -453,7 +453,7 @@
 			$this->ln(8);
 
 
-			$tam_font_left = 8;	$this->SetFont('Arial','',$tam_font_left);
+			$tam_font_left = 7;	$this->SetFont('Arial','',$tam_font_left);
 			//Texto Adicional
 			$texto_adicional = 'SE DETERMINA EL REVENIMIENTO EN CONCRETO FRESCO TOMANDO COMO BASE LA NORMA MEXICANA NMX-C-156-ONNCCE-2010';
 			$tam_texto_adicional = $this->GetStringWidth($texto_adicional)+3;
