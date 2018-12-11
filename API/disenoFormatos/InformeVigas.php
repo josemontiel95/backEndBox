@@ -22,6 +22,9 @@
 		//Array que contiene los letreros de los detalles
 		private $cellsDetails;
 
+		//Variable que nos dira si ocurrio un error al generar el formato
+		private $error;
+
 
 		function generateCellsInfoForvalidation(){
 			$pdf  = new InformeVigas('L','mm','Letter');
@@ -456,9 +459,11 @@
 			//---Divide espacios entre el titulo del formato y la información del formato
 			$this->Ln($tam_font_tituloInforme - 2);
 		}
+
+
 		//Funcion que coloca la informacion del informe, como: el No. de informe, Obra, etc.
 		function putInfo($infoFormato){
-			//Guardamos la posicion de x para posteriormente imprimir la siguiente celda
+			//Guardamos la posicion de y para posteriormente imprimir la siguiente celda
 			$posicion_y = $this->GetY();
 
 			//Nombre de la obra
@@ -469,6 +474,16 @@
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['obra'],3);
+
+			$this->SetFont('Arial','',$resultado['sizeFont']);
+			$infoFormato['obra'] = $resultado['string'];
+
+			if($resultado['error'] == 100){
+				$this->error = $resultado;
+			}
+
+
+
 
 
 			if($resultado['error'] == 0){

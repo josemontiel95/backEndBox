@@ -187,7 +187,7 @@
 			$resultado = $this->printInfoObraAndLocObra($tam_font_left,170,$tam_font_left - 3,$infoFormato['razonSocial'],1);
 
 			$this->SetFont('Arial','',$resultado['sizeFont']);
-			$infoFormato['razonSocial'] = $resultado['string'];
+			$infoFormato['razonSocial'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
 				$this->error = $resultado;
@@ -293,8 +293,6 @@
 			//Caja de texto
 			$this->SetX(50);
 
-			$infoFormato['obraLocalizacion'] = 'HOLA COMO ESTAMOS COLEGA cuanto tiempo sin saber de ti cabron esto sigue siendo una prueba para ver que onda con los espacios y como es que encoje los renglones esta culero pero veamos'."\n".'bien y tu='."\n".'De maravilla';
-
 			$resultado = $this->printInfoObraAndLocObra($tam_font_left,170,$tam_font_left - 3,$infoFormato['obraLocalizacion'],3);
 
 			$this->SetFont('Arial','',$resultado['sizeFont']);
@@ -340,12 +338,10 @@
 			//Caja de texto
 			$this->SetX(50);
 
-			$infoFormato['eleColado'] = 'HOLA COMO ESTAMOS COLEGA'."\n".'bien y tu=';
-
 			$resultado = $this->printInfoObraAndLocObra($tam_font_left,170,$tam_font_left - 3,$infoFormato['eleColado'],3);
 			
 			$this->SetFont('Arial','',$resultado['sizeFont']);
-			$infoFormato['fprima'] = $resultado['new_string'];
+			$infoFormato['eleColado'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
 				$this->error = $resultado;
@@ -735,7 +731,7 @@
 
 			$this->Ln();
 
-			$aviso = 'ESTE DOCUMENTO SE REFIERE EXCLUSIVAMENTE AL CONCRETO ENSAYADO Y NO DEBE SER REPRODUCIDO EN FORMA PARCIAL SIN LA AUTORIZACIÓN POR ESCRITO DEL LABORATORIO LACOCS';
+			$aviso = 'ESTE DOCUMENTO SE REFIERE EXCLUSIVAMENTE AL CONCRETO ENSAYADO Y NO DEBE SER REPRODUCIDO EN FORMA PARCIAL SIN LA AUTORIZACIÓN POR ESCRITO DEL LABORATORIO LACOCS.';
 			$tam_aviso = $this->GetStringWidth($aviso);
 			$tam_font_head =5;	$this->SetFont('Arial','',$tam_font_head);//Fuente para clave
 			$this->Cell($tam_aviso,(($tam_font_head)),utf8_decode($aviso),'T',2);
@@ -746,6 +742,7 @@
 			$tam_font_head =8;	$this->SetFont('Arial','B',$tam_font_head);//Fuente para clave
 			$superviso = 'Supervisó:';
 			$this->SetX(70);
+
 
 			if($infoU['firmaLaboratorista'] != "null"){
 				$this->Cell($this->GetStringWidth($superviso)+2,(($tam_font_head)),utf8_decode($superviso.$this->Image($infoU['firmaLaboratorista'],$this->GetX()+($this->GetStringWidth($superviso)+10),$this->GetY()-3,$tam_image,$tam_image)),0,0);
