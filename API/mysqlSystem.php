@@ -5,8 +5,8 @@ class MySQLSystem{
 	private $dbname = "lacocs";
 	private $dbuser = "lacocsadmin";
 	private $dbpssw = "Septiembre2018#";
-	private $dbsrvr = "mysqlcluster14.registeredsite.com";
-	*/
+	private $dbsrvr = "mysqlcluster14.registeredsite.com";*/
+	
 
 	/* Variables de BDD  Nueva*/
 	private $dbname = "lacocspuedic";

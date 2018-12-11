@@ -1311,7 +1311,7 @@
 					revObtenido,
 					tamAgregado,
 					idenConcreto,
-					volumen,
+					ROUND(volumen,1) AS volumen,
 					horaDeterminacion,
 					unidad,
 					concretera,

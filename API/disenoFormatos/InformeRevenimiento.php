@@ -414,7 +414,7 @@
 			$this->ln(8);
 
 
-			$tam_font_left = 8;	$this->SetFont('Arial','',$tam_font_left);
+			$tam_font_left = 7;	$this->SetFont('Arial','',$tam_font_left);
 			//Texto Adicional
 			$texto_adicional = 'SE DETERMINA EL REVENIMIENTO EN CONCRETO FRESCO TOMANDO COMO BASE LA NORMA MEXICANA NMX-C-156-ONNCCE-2010';
 			$tam_texto_adicional = $this->GetStringWidth($texto_adicional)+3;
@@ -492,7 +492,7 @@
 			if($resultado['error'] == 0){
 				$this->SetFont('Arial','',$resultado['sizeFont']);
 			}else{
-				$this->SetFont('Arial','',$tam_font_left);
+				$this->SetFont('Arial','B',$tam_font_left);
 				$infoFormato['obra'] = $resultado['estatus'];
 			}
 
@@ -513,7 +513,7 @@
 			if($resultado['error'] == 0){
 				$this->SetFont('Arial','',$resultado['sizeFont']);
 			}else{
-				$this->SetFont('Arial','',$tam_font_left);
+				$this->SetFont('Arial','B',$tam_font_left);
 				$infoFormato['locObra'] = $resultado['estatus'];
 			}
 
@@ -542,12 +542,14 @@
 			$this->ln(8);
 
 
-			$tam_font_left = 8;	$this->SetFont('Arial','',$tam_font_left);
+			$tam_font_left = 7;	
+			$this->SetFont('Arial','',$tam_font_left);
+
 			//Texto Adicional
 			$texto_adicional = 'SE DETERMINA EL REVENIMIENTO EN CONCRETO FRESCO TOMANDO COMO BASE LA NORMA MEXICANA NMX-C-156-ONNCCE-2010';
 			$tam_texto_adicional = $this->GetStringWidth($texto_adicional)+3;
-			$this->Cell($tam_texto_adicional,$tam_font_left - 3,utf8_decode($texto_adicional),0);
-			$this->Ln(8);
+			//$this->Cell($tam_texto_adicional,$tam_font_left - 3,utf8_decode($texto_adicional),0);
+			//$this->Ln(8);
 
 			$localizacion = 'ELEMENTO COLADO:';
 			//Caja de texto
@@ -565,7 +567,7 @@
 			if($resultado['error'] == 0){
 				$this->SetFont('Arial','',$resultado['sizeFont']);
 			}else{
-				$this->SetFont('Arial','',$tam_font_left);
+				$this->SetFont('Arial','B',$tam_font_left);
 				$infoFormato['locRev'] = $resultado['estatus'];
 			}
 
@@ -904,8 +906,8 @@
 			$this->cell(0,$tam_observaciones,utf8_encode($infoFormato['observaciones']),'L,B,R',2);
 
 			//Metodos
-			$metodos = 'METODOS EMPLEADOS: NMX-C-161-ONNCCE-2013, NMX-C-159-ONNCCE-2016, NMX-C156-ONNCCE-2010';
-			$this->cell($this->GetStringWidth($metodos)+2,10,$metodos,1,0);
+			$metodos = 'METODOS EMPLEADOS: NMX-C-156-ONNCCE-2010, NMX-C-161-ONNCCE-2013';
+			$this->cell($this->GetStringWidth($metodos)+15,10,$metodos,1,0);
 
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 			
@@ -924,11 +926,11 @@
 
 
 			$this->SetXY($posicion_x+$this->GetStringWidth($simbologia)+2,$posicion_y);
-			$this->cell(0,10/3,'CA = CON ADITIVO','R',0);
+			$this->cell(0,10/3,'CA = Con aditivo','R',0);
 			$this->SetXY($posicion_x+$this->GetStringWidth($simbologia)+2,$posicion_y+10/3);
-			$this->cell(0,10/3,'RR = RESISTENCIA RAPIDA','R',0);
+			$this->cell(0,10/3,'RR = Resistencia Rapida','R',0);
 			$this->SetXY($posicion_x+$this->GetStringWidth($simbologia)+2,$posicion_y+2*(10/3));
-			$this->cell(0,10/3,'N = NORMAL','B,R',0);
+			$this->cell(0,10/3,'N = Normal','B,R',0);
 			$this->Ln(0);
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 

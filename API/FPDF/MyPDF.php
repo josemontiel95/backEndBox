@@ -80,7 +80,7 @@
 				for ($i=0; $i < ($grupos-$num_rows); $i++){
 				//Definimos la posicion de X para tomarlo como referencia
 				for ($j=0; $j < sizeof($arrayTamCells); $j++){ 
-						$this->cell($arrayTamCells[$j],$tamAltoCells,utf8_decode($campo),1,0,'C');
+						$this->cell($arrayTamCells[$j],$tamAltoCells,'',1,0,'C');
 				}	
 				$this->Ln();
 				}
@@ -213,6 +213,41 @@
 		}
 
 
+		function TruncSaltosLinea($string,$numRows){
+			//Contador de los saltos de linea
+			$contSalto = 0;
+
+			$error = 0;
+
+			//echo "Numero de caracteres:".strlen($string);
+			
+			//Realizamos un ciclo para contar los saltos de linea
+			for ($i=0; $i < strlen($string); $i++) { 
+				//Si encontramos un salto de linea aumentamos el contador
+				if($string[$i] == "\n"){
+					$contSalto++;
+					//Si el numero de saltos de linea llego al numero de renglones menos 1 rompemos el ciclo
+					if($contSalto == $numRows){
+						if($i == (strlen($string) - 1)){
+							$string = substr($string,0,$i);
+							//echo "Tamaño de cadena".strlen($string);
+						}else{
+							$string = substr($string,0,$i-2);
+							$string.='...';
+							$error = 1;
+						}		
+						break;
+					}
+				}
+
+			}
+			return array(
+						'string' => $string,
+						'error' => $error
+					);
+		}
+
+
 		function printInfoObraAndLocObra($sizeFont,$tam,$tamaño_alto,$string,$numRows){
 			//Creamos un objeto tipo MyPDF para hacer las operaciones que necesitamos
 			$pdf = new MyPDF('L','mm','Letter');
@@ -238,43 +273,43 @@
 
 			$totalRows = ($posiciony-$posIniY)/$tamaño_alto;
 
+			$resultado = $this->TruncSaltosLinea($string,$numRows);
 
-			//Revisamos cuantos saltos de linea tiene la cadena
-			if(substr_count($string,"\n")<3){
-				//Este ciclo decrementara el tamaño de fuente
-				while($posiciony > $limit && $sizeFont>=1){
-					//Decrementamos el tamaño de fuente
-					$sizeFont-=1;
+			$new_string = $resultado['string'];
 
-					//Configuramos el tamaño de fuente
-					$pdf->SetFont('Arial','',$sizeFont);
+			//Este ciclo decrementara el tamaño de fuente
+			while($posiciony > $limit && $sizeFont>1){
+				//Decrementamos el tamaño de fuente
+				$sizeFont-=1;
 
-					//Nos posicionamos en la posicion de "Y" que tenia inicialmente
-					$pdf->sety($posIniY);
+				//Configuramos el tamaño de fuente
+				$pdf->SetFont('Arial','',$sizeFont);
 
-					$pdf->multicell($tam,$tamaño_alto,$string,1,'C');
+				//Nos posicionamos en la posicion de "Y" que tenia inicialmente
+				$pdf->sety($posIniY);
 
-					$posiciony = $pdf->gety();
-				}
+				$pdf->multicell($tam,$tamaño_alto,$new_string,1,'C');
 
-				if($posiciony <= $limit){
-					return array('sizeFont' => $sizeFont,'Total de renglones que serian' => $totalRows, 'estatus' => 'Texto valido','error' => 0);
-				}else{
-					$new_string = $this->truncMulticell($sizeFont,$tam,$tamaño_alto,$string,$numRows);
-					$tam_new_string = $pdf->GetStringWidth($new_string);
-					$tam_string = $this->GetStringWidth($string);
-					$arr = array('string' => $string,'tam_string' => $tam_string,'new_string' => $new_string,'tam_new_string' => $tam_new_string,'tam_campo aprox' => $tam,'estatus' => 'El texto excedió el tamaño permitido.','error' => 100);
-				}
-
-			}else{
-				$tam_string = $this->GetStringWidth($string);
-				return $arr = array('string' => $string,'tam_string' => $tam_string,'tam_campo aprox' => $tam,'estatus' => 'El texto contiene mas de dos saltos de linea. No se puede poner.','error' => 101);
+				$posiciony = $pdf->gety();
 			}
 
-			
-
-
-
+			if($posiciony <= $limit){
+				if($resultado['error'] == 0){
+					$tam_string = $this->GetStringWidth($string);
+					$tam_new_string = $pdf->GetStringWidth($new_string);
+					return array('sizeFont' => $sizeFont,'string' => $string,'tam_string' => $tam_string,'new_string' => $new_string,'tam_new_string' => $tam_new_string,'Total de renglones que serian' => $totalRows, 'estatus' => 'Texto valido','error' => 0);
+				}else{
+					$tam_new_string = $pdf->GetStringWidth($new_string);
+					$tam_string = $this->GetStringWidth($string);
+					return array('sizeFont' => $sizeFont,'string' => $string,'tam_string' => $tam_string,'new_string' => $new_string,'tam_new_string' => $tam_new_string,'tam_campo aprox' => $tam,'estatus' => 'El texto excedió el tamaño permitido por saltos de linea.','error' => 100);
+				}
+				
+			}else{
+				$new_string = $this->truncMulticell($sizeFont,$tam,$tamaño_alto,$string,$numRows);
+				$tam_new_string = $pdf->GetStringWidth($new_string);
+				$tam_string = $this->GetStringWidth($string);
+				return array('sizeFont' => $sizeFont,'string' => $string,'tam_string' => $tam_string,'new_string' => $new_string,'tam_new_string' => $tam_new_string,'tam_campo aprox' => $tam,'estatus' => 'El texto excedió el tamaño permitido.','error' => 100);
+			}
 			/*
 			$pdf->sety(100);	
 
@@ -304,7 +339,7 @@
 
 			$pdf->multicell($tam,$tamaño_alto,$string,1,'C');
 
-
+			//ECHO "HOLA ESTOY EN truncMulticell";
 
 			$posiciony = $pdf->GetY();
 
