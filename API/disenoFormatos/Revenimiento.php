@@ -279,10 +279,21 @@
 			$this->cell($tam_regNo,$tam_font_right - 4,utf8_decode($regNo));
 
 			//Caja de texto
-			$this->SetFont('Arial','',$tam_font_right);
-			$this->Cell(0,$tam_font_right - 4,utf8_decode(	$infoFormato['regNo']	),'B',0,'C');
 
-			$this->Ln($tam_font_right - 2);
+
+			$resultado = $this->printInfoObraAndLocObra($tam_font_right,$tam_regNoText,$tam_font_right - 4,$infoFormato['regNo'],1);
+
+			$this->SetFont('Arial','',$resultado['sizeFont']);
+			$infoFormato['regNo'] = $resultado['new_string'];
+
+			if($resultado['error'] == 100){
+				$this->error = $resultado;
+			}
+
+
+			$this->multicell(0,$tam_font_right - 4,utf8_decode(	$infoFormato['regNo']	),'B','C');
+
+			$this->Ln(2);
 
 
 			//PARTE IZQUIERDA DEL FORMATO
@@ -297,14 +308,15 @@
 
 			//Caja de texto
 			$this->SetX($posicionCellsText);
-			$this->SetFont('Arial','',$tam_font_left);
+
+
 			$resultado = $this->printInfoObraAndLocObra($tam_font_left,$linea_Text,$tam_font_left - 4,$infoFormato['obra'],3);
 
-			if($resultado['error'] == 0){
-				$this->SetFont('Arial','',$resultado['sizeFont']);
-			}else{
-				$infoFormato['obra'] = $resultado['estatus'];
-				$this->SetFont('Arial','B',$tam_font_left);
+			$this->SetFont('Arial','',$resultado['sizeFont']);
+			$infoFormato['obra'] = $resultado['new_string'];
+
+			if($resultado['error'] == 100){
+				$this->error = $resultado;
 			}
 
 		
@@ -319,14 +331,13 @@
 
 			$this->SetX($posicionCellsText);
 
-			$this->SetFont('Arial','',$tam_font_left);
 			$resultado = $this->printInfoObraAndLocObra($tam_font_left,$linea_Text,$tam_font_left - 4,$infoFormato['locObra'],3);
 
-			if($resultado['error'] == 0){
-				$this->SetFont('Arial','',$resultado['sizeFont']);
-			}else{
-				$infoFormato['locObra'] = $resultado['estatus'];
-				$this->SetFont('Arial','B',$tam_font_left);
+			$this->SetFont('Arial','',$resultado['sizeFont']);
+			$infoFormato['locObra'] = $resultado['new_string'];
+
+			if($resultado['error'] == 100){
+				$this->error = $resultado;
 			}
 
 			$this->multicell($linea_Text,$tam_font_left - 4,utf8_decode(	$infoFormato['locObra']	),'B','C');
@@ -338,21 +349,39 @@
 			$this->Cell($this->GetStringWidth($nomCli)+2,$tam_font_left - 3,utf8_decode($nomCli),0);
 			//Caja de texto
 			$this->SetX($posicionCellsText);
-			$this->SetFont('Arial','',$tam_font_left);
-			$this->Cell($linea_Text,$tam_font_left - 4,utf8_decode(	$infoFormato['razonSocial']	),'B',0);
 
-			$this->Ln(4);
+			$resultado = $this->printInfoObraAndLocObra($tam_font_left,$linea_Text,$tam_font_left - 4,$infoFormato['razonSocial'],1);
+
+			$this->SetFont('Arial','',$resultado['sizeFont']);
+			$infoFormato['razonSocial'] = $resultado['new_string'];
+
+			if($resultado['error'] == 100){
+				$this->error = $resultado;
+			}
+
+			$this->multicell($linea_Text,$tam_font_left - 4,utf8_decode(	$infoFormato['razonSocial']	),'B','C');
+
+			$this->Ln(1);
 			//Direccion del cliente
 			$this->SetFont('Arial','B',$tam_font_left);
 			$dirCliente = 'DIRECCIÓN DEL CLIENTE:';
 			$this->Cell($this->GetStringWidth($nomCli)+2,$tam_font_left - 3,utf8_decode($dirCliente),0);
 			//Caja de texto
 			$this->SetX($posicionCellsText);
-			$this->SetFont('Arial','',$tam_font_left);
-			$this->Cell($linea_Text,$tam_font_left - 4,utf8_decode(	$infoFormato['direccion']	),'B',0);
 
-			$this->ln(8);
+			$resultado = $this->printInfoObraAndLocObra($tam_font_left,$linea_Text,$tam_font_left - 4,$infoFormato['direccion'],1);
 
+			$this->SetFont('Arial','',$resultado['sizeFont']);
+			$infoFormato['direccion'] = $resultado['new_string'];
+
+			if($resultado['error'] == 100){
+				$this->error = $resultado;
+			}
+
+
+			$this->multicell($linea_Text,$tam_font_left - 4,utf8_decode(	$infoFormato['direccion']	),'B','C');
+
+			$this->ln(4);
 
 			$tam_font_left = 7;	$this->SetFont('Arial','',$tam_font_left);
 			//Texto Adicional
@@ -373,11 +402,11 @@
 
 			$resultado = $this->printInfoObraAndLocObra($tam_font_left,$tam_localizacionText,$tam_font_left - 4,$infoFormato['locRev'],3);
 
+			$this->SetFont('Arial','',$resultado['sizeFont']);
+			$infoFormato['locRev'] = $resultado['new_string'];
 
-			if($resultado['error'] == 0){
-				$this->SetFont('Arial','',$resultado['sizeFont']);
-			}else{
-				$infoFormato['locRev'] = $resultado['estatus'];
+			if($resultado['error'] == 100){
+				$this->error = $resultado;
 			}
 
 			$this->multicell($tam_localizacionText,$tam_font_left - 4,utf8_decode(	$infoFormato['locRev']	),'B','C');
@@ -905,15 +934,35 @@
 			$tam_inventarioAlto = $tam_font_inventario-2;
 
 			//Tamaño de las herramientas, copie y pegue el mismo codigo que en el CCH para que esten del mismo tamaño
-
-
-			
-
 			$this->SetFont('Arial','B',$tam_font_details);
-			$observaciones = 'OBSERVACIONES: ';
-			$this->SetFont('Arial','',$tam_font_details);
-			$this->multicell(0,($tam_font_details - 2.5),utf8_decode($observaciones.$infoFormato['observaciones']),'B',2);
+			$observaciones = 'OBSERVACIONES:';
+			$tam_observacionesAncho = $this->GetStringWidth($observaciones)+2;
+			$tam_observacionAnchoTxt = 	196 - $tam_observacionesAncho;
 
+			//Observaciones
+			$this->Cell($tam_observacionesAncho,2*($tam_font_details - 2.5),$observaciones,'L,B,T',0,'C');
+
+			$alto_obsercaciones = ($tam_font_details - 2.5);
+
+
+			$resultado = $this->printInfoObraAndLocObra($tam_font_details,$tam_observacionAnchoTxt,$alto_obsercaciones,$infoFormato['observaciones'],2);
+
+
+			$this->SetFont('Arial','',$resultado['sizeFont']);
+			$infoFormato['observaciones'] = $resultado['new_string'];
+
+			if($resultado['error'] == 100){
+				$this->error = $resultado;
+			}
+
+			if(array_key_exists('Total de renglones que serian', $resultado)){
+				if($resultado['Total de renglones que serian'] == 1){
+					$alto_obsercaciones = $alto_obsercaciones*2;
+				}
+			}
+			
+			$this->multicell(0,$alto_obsercaciones,utf8_decode(	$infoFormato['observaciones']	),'T,R,B');
+		
 			$this->ln(4);
 
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
