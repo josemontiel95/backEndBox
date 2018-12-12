@@ -1841,9 +1841,9 @@ class footerEnsayo{
 					formatoCampo.preliminar AS preliminar,
 					preliminarGabs
 				FROM
-					footerEnsayo,
 					formatoCampo,
 					usuario,
+					footerEnsayo LEFT JOIN 
 					(
 						SELECT
 				  			id_herramienta,
@@ -1853,7 +1853,8 @@ class footerEnsayo{
 				  		WHERE
 				  			buscula_id = id_herramienta AND
 				  			id_footerEnsayo = 1QQ 
-					)AS basculas,
+					)AS basculas ON footerEnsayo.buscula_id = basculas.id_herramienta
+					LEFT JOIN 
 					(
 				  		SELECT
 				  			id_herramienta,
@@ -1863,7 +1864,8 @@ class footerEnsayo{
 				  		WHERE
 				  			prensa_id = id_herramienta AND
 				  			id_footerEnsayo = 1QQ
-				  	)AS prensas,
+				  	)AS prensas ON footerEnsayo.prensa_id = prensas.id_herramienta
+					LEFT JOIN 
 				  	(
 				  		SELECT
 				  			id_herramienta,
@@ -1873,14 +1875,11 @@ class footerEnsayo{
 				  		WHERE
 				  			regVerFle_id = id_herramienta AND
 				  			id_footerEnsayo = 1QQ
-				  	)AS regVerFle
+				  	)AS regVerFle  ON footerEnsayo.regVerFle_id = regVerFle.id_herramienta
 				WHERE
 					formatoCampo.id_formatoCampo = footerEnsayo.formatoCampo_id AND
 					encargado_id = id_usuario AND
 					footerEnsayo.active = 1 AND
-					buscula_id = basculas.id_herramienta AND
-					prensa_id = prensas.id_herramienta AND
-					regVerFle_id = regVerFle.id_herramienta AND
 					id_footerEnsayo = 1QQ
 			      ",
 			      array($id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo),

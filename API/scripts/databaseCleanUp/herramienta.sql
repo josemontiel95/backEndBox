@@ -561,7 +561,6 @@ INSERT INTO herramientas (herramienta_tipo_id,laboratorio_id,fechaDeCompra,placa
 (1011,1003,"2018-12-05","LCC-800"  ,"Buena"),
 (1003,1003,"2018-12-05","FLCC-01"  ,"Buena"),
 (1003,1003,"2018-12-05","FLCC-03"  ,"Buena"),
-(1003,1003,"2018-12-05","FLCC-02"  ,"Buena"),
 (1003,1003,"2018-12-05","FLCC-04"  ,"Buena"),
 (1003,1003,"2018-12-05","FLCC-05"  ,"Buena"),
 (1003,1003,"2018-12-05","FLCC-06"  ,"Buena"),
