@@ -755,9 +755,14 @@ INSERT INTO herramientas (id_herramienta,herramienta_tipo_id,laboratorio_id,fech
 (90,1006,1003,'0000-00-00','NO USARE REGLA,','REGULAR'),
 (1005,NULL,1003,'2018-08-03','TR-001','REGULAR'),
 (1006,NULL,1003,'2018-08-03','VR-001','REGULAR'),
-(1339,NULL,1003,'2018-11-12','FLCC-02','Buena'),
-(1008,NULL,1003,'2018-08-04','BAS-001','REGULAR'),
-(1331,NULL,1003,'2018-11-12','PLCC-11','Buena');
+(1008,1005,1003,'2018-08-04','BAS-001','REGULAR'),
+(1339,1003,1003,'2018-11-12','FLCC-02','Buena'),
+(1331,1008,1003,'2018-11-12','PLCC-11','Buena');
+
+UPDATE  herramientas SET herramienta_tipo_id = 1005 WHERE id_herramienta=1008;
+UPDATE  herramientas SET herramienta_tipo_id = 1003 WHERE id_herramienta=1339;
+UPDATE  herramientas SET herramienta_tipo_id = 1008 WHERE id_herramienta=1331;
+UPDATE footerEnsayo SET prensa_id = 1331 WHERE prensa_id=1008;
 
 INSERT INTO `usuario`(id_usuario,nombre,apellido,laboratorio_id,nss,email,fechaDeNac,foto,rol_usuario_id,contrasena,correo_alterno,firma) VALUES 
 (1001,'Marco','Cervantes',1003,'1814181499','marco.cervantes@lacocsmex.com.mx','1992-08-26','SystemData/UserData/1007/foto_perfil.jpg',1001,'ba3253876aed6bc22d4a6ff53d8406c6ad864195ed144ab5c87621b6c233b548baeae6956df346ec8c17f5ea10f35ee3cbc514797ed7ddd3145464e2a0bab413','','null'),
@@ -769,7 +774,7 @@ INSERT INTO `usuario`(id_usuario,nombre,apellido,laboratorio_id,nss,email,fechaD
 
 INSERT INTO `obra`(id_obra,obra,prefijo,fechaDeCreacion,descripcion,localizacion,nombre_residente,telefono_residente,correo_residente,cliente_id,concretera_id,tipo,revenimiento,incertidumbre,createdON,lastEditedON,active,cotizacion,consecutivoProbetaCCH_VIGA,consecutivoDocumentosCCH_VIGA,laboratorio_id,incertidumbreCilindro,incertidumbreCubo,incertidumbreVigas,correo_alterno,consecutivoDocumentosCCH_CILINDRO,consecutivoDocumentosCCH_CUBO,consecutivoDocumentosCCH_REV,consecutivoProbetaCCH_CILINDRO,consecutivoProbetaCCH_CUBO) VALUES
 (1027,'EDIFICIO ELEMENTA','EDE','2018-11-30','CONTROL DE CALIDAD DE CONCRETOS ','BOULEVARD AMERICA #308, SAN ANTONIO CACALOTEPEC','ARQ. ANDRES','2221236145','andres.elementa@gmail.com',1003,1004,1,20,3.12,'2018-10-10 16:17:50','2018-12-03 16:57:26',1,'186',0,0,1003,24.93,6.16,2.07,'arq.osvaldosanchez@gmail.com',196,21,198,834,63),
-(1031,'RECONSTRUCCION CON CONCRETO HIDRALICO DE LA TRONCAL DEL PERIFERICO ECOLOGICO DE LOS MUNICIPIOS DE SAN PEDRO CHOLULA Y SAN ANDRES CHOLULA, DEL DISTRIBUIDOR VIAL  BOULEVARD FORJADORES AL DISTRIBUIDOR VIAL BOULEVARD ATLIXCAYOTL, EN EL ESTADO DE PUEBLA','PVF','2018-05-31','Control de calidad de concreto hidrAulico ','Periferico Ecologico de la ciudad de Puebla','Adrian Sanchez Gonzalez','2721940755','ingmariorg@gmail.com',1002,1001,1,10,3.12,'2018-10-31 21:12:21','2018-12-04 03:38:23',1,'339',570,35,1003,24.93,6.17,2.07,'isanchez197617@yahoo.com.mx',2,1,4,5,1);
+(1031,'RECONSTRUCCION CON CONCRETO HIDRALICO DE LA TRONCAL DEL PERIFERICO ECOLOGICO DE LOS MUNICIPIOS DE SAN PEDRO CHOLULA Y SAN ANDRES CHOLULA, DEL DISTRIBUIDOR VIAL  BOULEVARD FORJADORES AL DISTRIBUIDOR VIAL BOULEVARD ATLIXCAYOTL, EN EL ESTADO DE PUEBLA','PVF','2018-05-31','Control de calidad de concreto hidraulico ','Periferico Ecologico de la ciudad de Puebla','Adrian Sanchez Gonzalez','2721940755','ingmariorg@gmail.com',1002,1001,1,10,3.12,'2018-10-31 21:12:21','2018-12-04 03:38:23',1,'339',570,35,1003,24.93,6.17,2.07,'isanchez197617@yahoo.com.mx',2,1,4,5,1);
 
 INSERT INTO `ordenDeTrabajo`(id_ordenDeTrabajo,obra_id,actividades,condicionesTrabajo,jefe_brigada_id,fechaInicio,fechaFin,horaInicio,horaFin,observaciones,lugar,laboratorio_id,createdON,lastEditedON,active,area,jefa_lab_id,status) VALUES 
 (1041,1031,'Prueba de Revenimiento y toma de muestras de concreto fresco ','optimas ',1059,'2018-10-31','2018-11-22','14:02:00','17:03:00','ninguna','Periferico Ecologico',1003,'2018-11-01 01:59:32','2018-11-26 05:55:30',0,'CONCRETO',1063,1),

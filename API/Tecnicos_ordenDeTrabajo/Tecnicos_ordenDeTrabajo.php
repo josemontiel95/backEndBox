@@ -431,9 +431,8 @@ class Tecnicos_ordenDeTrabajo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$arr= $dbS->qAll("
-					
-			      	SELECT
+			$arr= $dbS->qAll(
+				"   SELECT
 			      		id_tecnicos_ordenDeTrabajo,
 						id_usuario,
 						CONCAT(nombre,' ',apellido) AS nombre,
@@ -445,6 +444,7 @@ class Tecnicos_ordenDeTrabajo{
 						(SELECT * FROM listaAsistencia WHERE  CURDATE()=DATE(listaAsistencia.createdON)) AS T2 ON  id_tecnicos_ordenDeTrabajo=tecnicos_ordenDeTrabajo_id
 					WHERE
 						tecnico_id = id_usuario AND
+						tecnicos_ordenDeTrabajo.active=1 AND
 						tecnicos_ordenDeTrabajo.ordenDeTrabajo_id = 1QQ
 						
 			      ",

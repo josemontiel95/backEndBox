@@ -413,8 +413,8 @@ class Herramienta_ordenDeTrabajo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$s= $dbS->qAll("
-			      SELECT 
+			$s= $dbS->qAll(
+				"SELECT 
 			      	id_herramienta,
 					id_herramienta_tipo,
 			        tipo,

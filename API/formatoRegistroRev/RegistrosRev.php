@@ -26,22 +26,19 @@ class RegistrosRev{
 		if($arr['error'] == 0){
 			//Extraemos la informacion
 			$informacion = $dbS->qarrayA(
-											"
-												SELECT
-													revenimiento 
-												FROM
-													ordenDeTrabajo,
-													obra,
-													formatoRegistroRev
-												WHERE
-													id_obra = obra_id AND
-													id_ordenDeTrabajo =  formatoRegistroRev.ordenDeTrabajo_id AND
-													id_formatoRegistroRev = 1QQ
-											"
-											,
-											array($id_formatoRegistroRev),
-											"SELECT"
-										);
+				"	SELECT
+						revenimiento 
+					FROM
+						ordenDeTrabajo,
+						obra,
+						formatoRegistroRev
+					WHERE
+						id_obra = obra_id AND
+						id_ordenDeTrabajo =  formatoRegistroRev.ordenDeTrabajo_id AND
+						id_formatoRegistroRev = 1QQ
+				",array($id_formatoRegistroRev),
+				"SELECT"
+			);
 			if(!$dbS->didQuerydied && ($informacion != "empty")){
 				$dbS->squery("
 						INSERT INTO
