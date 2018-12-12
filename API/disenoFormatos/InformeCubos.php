@@ -376,7 +376,7 @@
 			$tam_incertidumbreAlto = $tam_font_details - 4;
 
 			//Metodos empleados
-			$metodos = 'METODOS EMPLEADOS: EL ENSAYO REALIZADO CUMPLE CON LAS NORMAS MEXICANAS NMX-C-161-ONNCCE-2013, NMX-C-156-ONNCCE-2010,'."\n".'NMX-C-159-ONNCCE-2016,NMX-C-109-ONNCCE-2013,NMX-C-083-ONNCCE-2014';
+			$metodos = 'MÉTODOS EMPLEADOS: EL ENSAYO REALIZADO CUMPLE CON LAS NORMAS MEXICANAS NMX-C-161-ONNCCE-2013, NMX-C-156-ONNCCE-2010,'."\n".'NMX-C-159-ONNCCE-2016,NMX-C-109-ONNCCE-2013,NMX-C-083-ONNCCE-2014';
 			$tam_metodosAncho = 259.3975 - $tam_incertidumbreAncho;
 			$tam_metodosAlto = $tam_font_details - 4;
 
@@ -486,8 +486,6 @@
 
 			//Caja de texto
 
-			//$infoFormato['informeNo'] = 'Linea1'."\n".'Linea2';
-
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_right'],$this->cellsInfo['tam_informeText'],$this->cellsInfo['tam_CellsRightAlto'],$infoFormato['informeNo'],1);
 
 			$this->SetFont('Arial','',$resultado['sizeFont']);
@@ -535,7 +533,6 @@
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
-			//$infoFormato['obra'] = 'Linea1'."\n".'Linea2'."\n".'Linea3';
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['obra'],3);
 
@@ -556,6 +553,7 @@
 
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
+
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['localizacion'],3);
 
@@ -602,7 +600,6 @@
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
-
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_dirClienteText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['direccion'],1);
 
@@ -946,14 +943,13 @@
 				//Imprimimos el "elemento muestreado"
 				$this->SetXY($posicion_x,$posicion_y);
 
-
 				$resultado = $this->printInfoObraAndLocObra($this->cellsTables['tam_font_CellsRows'],$tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],$arrayLoc[1],3);
 
-				if($resultado['error'] == 0){
-					$this->SetFont('Arial','',$resultado['sizeFont']);
-				}else{
-					$arrayLoc[1] = $resultado['estatus'];
-					$this->SetFont('Arial','',$this->cellsTables['tam_font_CellsRows']);
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+				$arrayLoc[1] = $resultado['new_string'];
+
+				if($resultado['error'] == 100){
+					$this->error = $resultado;
 				}
 
 				$this->multicell($tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],utf8_decode($arrayLoc[1]),'L,T','C');
@@ -998,11 +994,11 @@
 
 				$resultado = $this->printInfoObraAndLocObra($this->cellsTables['tam_font_CellsRows'],$tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],$arrayLoc[2],3);
 
-				if($resultado['error'] == 0){
-					$this->SetFont('Arial','',$resultado['sizeFont']);
-				}else{
-					$arrayLoc[1] = $resultado['estatus'];
-					$this->SetFont('Arial','',$this->cellsTables['tam_font_CellsRows']);
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+				$arrayLoc[2] = $resultado['new_string'];
+
+				if($resultado['error'] == 100){
+					$this->error = $resultado;
 				}
 
 				$this->multicell($tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],utf8_decode($arrayLoc[2]),'L,T','C');
@@ -1046,16 +1042,40 @@
 
 			//Observaciones
 			$observaciones = 'OBSERVACIONES:';
-			
-			$this->cell($this->GetStringWidth($observaciones)+2,2*($tam_font_footer - 4),$observaciones,'L,T,B',0);
+			$tam_observacionesAncho = $this->GetStringWidth($observaciones)+2;
+			$tam_observacionAnchoTxt = 	259.3975 - $tam_observacionesAncho;
+
+			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
+
+			$this->Cell($tam_observacionesAncho,2*($tam_font_footer - 3),$observaciones,'L,B,T',0,'C');
+
+			//Caja de texto
 			$this->SetFont('Arial','',$tam_font_footer);
-			$this->cell(0,2*($tam_font_footer - 4),utf8_decode(	$this->printInfo($tam_font_footer,259.3975,$infoFormato['observaciones'])	),'R,T,B',2);
+
+			$alto_obsercaciones = ($tam_font_footer - 3);
+
+			$resultado = $this->printInfoObraAndLocObra($tam_font_footer,258.4-$tam_observacionesAncho,$alto_obsercaciones,$infoFormato['observaciones'],2);
+
+			$this->SetFont('Arial','',$resultado['sizeFont']);
+			$infoFormato['observaciones'] = $resultado['new_string'];
+
+			if($resultado['error'] == 100){
+				$this->error = $resultado;
+			}
+
+			if(array_key_exists('Total de renglones que serian', $resultado)){
+				if($resultado['Total de renglones que serian'] == 1){
+					$alto_obsercaciones = $alto_obsercaciones*2;
+				}
+			}
+
+			//print_r($resultado);
+
+			$this->multicell(0,$alto_obsercaciones,utf8_decode(	$infoFormato['observaciones']	),'T,R,B');
+
 
 			$this->SetFont('Arial','B',$tam_font_footer);
-			//Metodos empleados
-			$metodos = 'METODOS EMPLEADOS: EL ENSAYO REALIZADO CUMPLE CON LAS NORMAS MEXICANAS NMX-C-161-ONNCCE-2013, NMX-C-156-ONNCCE-2010,'."\n".'NMX-C-159-ONNCCE-2016,NMX-C-109-ONNCCE-2013,NMX-C-083-ONNCCE-2014';
-			//$this->multicell(0,($tam_font_head - 2.5),$metodos,1,2);
-
+			
 			//Incertidumbre
 			$incertidumbre = 'INCERTIDUMBRE';
 			$tam_incertidumbre = $this->GetStringWidth($incertidumbre)+20;
@@ -1063,20 +1083,35 @@
 			//Guardamos las posiciones de esa linea
 			$posicion_x = $this->GetX();	$posicion_y = $this->GetY();
 
-			$this->multicell($tam_incertidumbre,($tam_font_footer - 4),$incertidumbre."\n".utf8_decode(	$this->printInfo($tam_font_footer,$tam_incertidumbre,$infoFormato['incertidumbreCubo'])	),1,'C');
+			$this->cell($tam_incertidumbre,($tam_font_footer - 3),$incertidumbre,'R',2,'C');
+
+			//Caja de texto
+			$resultado = $this->printInfoObraAndLocObra($tam_font_footer,$tam_incertidumbre,($tam_font_footer - 3),$infoFormato['incertidumbreCubo'],1);
+
+			$this->SetFont('Arial','',$resultado['sizeFont']);
+			$infoFormato['incertidumbreCubo'] = $resultado['new_string'];
+
+			if($resultado['error'] == 100){
+				$this->error = $resultado;
+			}
+
+			$this->cell($tam_incertidumbre,($tam_font_footer - 3),utf8_decode($infoFormato['incertidumbreCubo']),'B,R',1,'C');
 
 			//Metodos empleados
+			$this->SetFont('Arial','B',$tam_font_footer);
+
 			$this->SetY($posicion_y);
-			$metodos = 'METODOS EMPLEADOS: EL ENSAYO REALIZADO CUMPLE CON LAS NORMAS MEXICANAS NMX-C-161-ONNCCE-2013, NMX-C-156-ONNCCE-2010,'."\n".'NMX-C-159-ONNCCE-2016,NMX-C-109-ONNCCE-2013,NMX-C-083-ONNCCE-2014';
+			$metodos = 'MÉTODOS EMPLEADOS: EL ENSAYO REALIZADO CUMPLE CON LAS NORMAS MEXICANAS NMX-C-161-ONNCCE-2013, NMX-C-156-ONNCCE-2010,'."\n".'NMX-C-159-ONNCCE-2016, NMX-C-109-ONNCCE-2013 , NMX-C-083-ONNCCE-2014';
 			$tam_metodos = $this->GetStringWidth($metodos)+3;
-			$this->multicell($posicion_x -10,($tam_font_footer - 4),$metodos,1,2);
+			$this->multicell($posicion_x -10,($tam_font_footer - 3),utf8_decode($metodos),1,2);
 
 			$this->Ln(1);
 
 			
 
 			$tam_image = 20;
-			$tam_font_footer = 8; $this->SetFont('Arial','B',$tam_font_footer);
+			$tam_font_footer = 8; 
+			$this->SetFont('Arial','B',$tam_font_footer);
 			
 			$tam_boxElaboro = 259/3;	$tam_first = 10; $tam_second = 10;
 
@@ -1091,14 +1126,14 @@
 			$this->SetFont('Arial','',$tam_font_footer);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('SIGNATARIO/JEFE DE LABORATORIO')/2),$this->gety() - 3,utf8_decode('SIGNATARIO/JEFE DE LABORATORIO'));	
 			$this->SetFont('Arial','B',$tam_font_footer);
-			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreLaboratorista'])/2),$this->gety() - 12,utf8_decode($infoU['nombreLaboratorista']));	
+			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreLaboratorista'])/2),$this->gety() - 10,utf8_decode($infoU['nombreLaboratorista']));	
 			if($infoU['firmaLaboratorista'] != "null"){
 				
 				$this->Image($infoU['firmaLaboratorista'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 			}
 			else{
 
-				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 8,utf8_decode('NO HAY FIRMA'))	;	
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 7,utf8_decode('NO HAY FIRMA'))	;	
 
 			}
 
@@ -1113,21 +1148,18 @@
 			$this->SetFont('Arial','',$tam_font_footer);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('DIRECTOR GENERAL/GERENTE GENERAL')/2),$this->gety() - 3,utf8_decode('DIRECTOR GENERAL/GERENTE GENERAL'));	
 			$this->SetFont('Arial','B',$tam_font_footer);
-			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreG'])/2),$this->gety() - 12,utf8_decode($infoU['nombreG']));	
+			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreG'])/2),$this->gety() - 10,utf8_decode($infoU['nombreG']));	
 			if($infoU['firmaG'] != "null"){
 				$this->Image($infoU['firmaG'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 			}else{
-				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 8,utf8_decode('NO HAY FIRMA'));	
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 7,utf8_decode('NO HAY FIRMA'));	
 			}
-
-			
-			$this->SetFont('Arial','',$tam_font_footer);
-
 
 
 			$this->Ln(0);
 
-			$tam_font_footer = 6; $this->SetFont('Arial','',$tam_font_footer);
+			$tam_font_footer = 6; 
+			$this->SetFont('Arial','',$tam_font_footer);
 			$mensaje1 = 'ESTE INFORME DE RESULTADOS SE REFIERE EXCLUSIVAMENTE AL ENSAYE REALIZADO Y NO DEBE SER REPRODUCIDO EN FORMA PARCIAL SIN LA AUTORIZACIÓN POR ESCRITO DEL LABORATORIO LACOCS, Y SOLO TIENE VALIDEZ SI NO PRESENTA TACHADURAS O ENMIENDAS';
 			$this-> multicell(0,($tam_font_footer - 2.5),utf8_decode($mensaje1),0,2);
 		}
