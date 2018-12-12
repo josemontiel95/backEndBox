@@ -1683,12 +1683,12 @@
 								ELSE 'ERROR'
 							END AS puntosApoyo,
 							condiciones,
-							ROUND((ancho1 + ancho2)/2,3) AS anchoPromedio,
-							ROUND((per1 + per2)/2,3) AS perPromedio,
-							disApoyo,
-							carga,
-							mr AS modRuptura,
-							ROUND((mr/ensayo_def_MPa),2) AS modRuptura2,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((ancho1 + ancho2)/2, 1), 1), CHAR), ',', '  '), '.', ',') AS anchoPromedio,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((per1 + per2)/2, 1), 1), CHAR), ',', '  '), '.', ',') AS perPromedio,
+							ROUND(disApoyo,1) AS disApoyo,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(mr, 1), 1), CHAR), ',', '  '), '.', ',') AS modRuptura,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((mr/ensayo_def_MPa), 1), 1), CHAR), ',', '  '), '.', ',') AS modRuptura2,
 							defectos
 						FROM
 							ensayoViga,

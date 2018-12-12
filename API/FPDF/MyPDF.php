@@ -252,9 +252,11 @@
 			//Creamos un objeto tipo MyPDF para hacer las operaciones que necesitamos
 			$pdf = new MyPDF('L','mm','Letter');
 
-
-
 			$pdf->AddPage();
+
+			$resultado = $this->TruncSaltosLinea($string,$numRows);
+
+			$new_string = $resultado['string'];
 
 			//Guardamos la posicion inicial de "Y" para comprobar posteriormente que solo se crearon el numero de rows que se necesitaba
 			$posIniY = $pdf->GetY();
@@ -263,7 +265,7 @@
 
 			$pdf->SetFont('Arial','',$sizeFont);
 
-			$pdf->multicell($tam,$tamaño_alto,$string,1,'C');
+			$pdf->multicell($tam,$tamaño_alto,$new_string,1,'C');
 
 
 
@@ -273,9 +275,7 @@
 
 			$totalRows = ($posiciony-$posIniY)/$tamaño_alto;
 
-			$resultado = $this->TruncSaltosLinea($string,$numRows);
-
-			$new_string = $resultado['string'];
+			
 
 			//Este ciclo decrementara el tamaño de fuente
 			while($posiciony > $limit && $sizeFont>1){
@@ -305,7 +305,7 @@
 				}
 				
 			}else{
-				$new_string = $this->truncMulticell($sizeFont,$tam,$tamaño_alto,$string,$numRows);
+				$new_string = $this->truncMulticell($sizeFont,$tam,$tamaño_alto,$new_string,$numRows);
 				$tam_new_string = $pdf->GetStringWidth($new_string);
 				$tam_string = $this->GetStringWidth($string);
 				return array('sizeFont' => $sizeFont,'string' => $string,'tam_string' => $tam_string,'new_string' => $new_string,'tam_new_string' => $tam_new_string,'tam_campo aprox' => $tam,'estatus' => 'El texto excedió el tamaño permitido.','error' => 100);
