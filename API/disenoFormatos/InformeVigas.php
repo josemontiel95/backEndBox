@@ -1131,9 +1131,9 @@
 			$this->SetFont('Arial','',$tam_font_details);
 
 			$mensaje1 = 'ESTE DOCUMENTO SE REFIERE EXCLUSIVAMENTE A LAS PRUEBAS REALIZADAS Y NO DEBE SER REPRODUCIDO DE FORMA PARCIAL SIN LA AUTORIZACIÓN DEL LABORATORIO LACOCS, ASÍ MISMO';
-			$this->Cell($this->GetStringWidth($mensaje1),($tam_font_details- 2.5),utf8_decode($mensaje1),0,2);
+			$this->Cell($this->GetStringWidth($mensaje1),($tam_font_details - 4),utf8_decode($mensaje1),0,2);
 			$mensaje2 = 'ESTE DOCUMENTO NO TENDRÁ VALIDEZ SI PRESENTA TACHADURA O INMIENDA ALGUNA';
-			$this->Cell($this->GetStringWidth($mensaje2),($tam_font_details- 2.5),utf8_decode($mensaje2),0,0);
+			$this->Cell($this->GetStringWidth($mensaje2),($tam_font_details - 4),utf8_decode($mensaje2),0,0);
 
 			$this->Ln(8);
 			$tam_image = 20;
