@@ -533,7 +533,6 @@
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
-
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['obra'],3);
 
 			$this->SetFont('Arial','',$resultado['sizeFont']);
@@ -553,7 +552,6 @@
 
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
-
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['localizacion'],3);
 
@@ -1158,10 +1156,10 @@
 
 			$this->Ln(0);
 
-			$tam_font_footer = 6; 
-			$this->SetFont('Arial','',$tam_font_footer);
+			$tam_font_footer = 7; 
+			$this->SetFont('Arial','',$tam_font_footer-1);
 			$mensaje1 = 'ESTE INFORME DE RESULTADOS SE REFIERE EXCLUSIVAMENTE AL ENSAYE REALIZADO Y NO DEBE SER REPRODUCIDO EN FORMA PARCIAL SIN LA AUTORIZACIÓN POR ESCRITO DEL LABORATORIO LACOCS, Y SOLO TIENE VALIDEZ SI NO PRESENTA TACHADURAS O ENMIENDAS';
-			$this-> multicell(0,($tam_font_footer - 2.5),utf8_decode($mensaje1),0,2);
+			$this-> multicell(0,($tam_font_footer - 4),utf8_decode($mensaje1),0,2);
 		}
 
 		function putCaracCampos(){
