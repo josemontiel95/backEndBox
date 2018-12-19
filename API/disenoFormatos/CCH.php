@@ -22,6 +22,9 @@
 		//Array que contiene los letreros de los detalles
 		private $cellsDetails;
 
+
+		public $error = 0;
+
 		function getCellsTables(){
 			return $this->cellsTables;
 		}
@@ -48,10 +51,10 @@
 			$locObra		= 'LOCALIZACIÓN DE LA OBRA:';
 			$tam_locObra 	= $this->GetStringWidth($locObra)+2;
 
-			$nomCli 		= 'NOMBRE DE LA EMPRESA:';
+			$nomCli 		= 'NOMBRE DEL CLIENTE:';
 			$tam_nomCli		= $this->GetStringWidth($nomCli)+2;
 
-			$dirCliente 	= 'DIRECCIÓN DE LA EMPRESA:';
+			$dirCliente 	= 'DIRECCIÓN DEL CLIENTE:';
 			$tam_dirCliente	= $this->GetStringWidth($nomCli)+2;
 
 			//Estilo y tamaño de la informacion de la DERECHA
@@ -476,6 +479,8 @@
 
 			$this->SetX(50);
 
+			$infoFormato['obra'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_cellsAlto'],$infoFormato['obra'],3);
 
 
@@ -483,9 +488,8 @@
 			$infoFormato['obra'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
-
 
 			$this->multicell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($infoFormato['obra']),'B','C');
 			
@@ -505,6 +509,8 @@
 			//Guardamos esta posicion de "Y" para posteriormente imprimir el campo informe No.
 			$posiciony = $this->GetY();
 
+			$infoFormato['localizacion'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_cellsAlto'],$infoFormato['localizacion'],3);
 
 
@@ -512,7 +518,7 @@
 			$infoFormato['localizacion'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 			$this->multicell($this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($infoFormato['localizacion']),'B','C');
@@ -531,13 +537,15 @@
 			//Caja de texto
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_right']);
 
+			$infoFormato['informeNo'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_right'],$this->cellsInfo['tam_informeText'],$this->cellsInfo['tam_cellsAlto'],$infoFormato['informeNo'],1);
 
 			$this->SetFont('Arial','',$resultado['sizeFont']);
 			$infoFormato['informeNo'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 			$this->multicell($this->cellsInfo['tam_informeText'],$this->cellsInfo['tam_cellsAlto'],utf8_decode($infoFormato['informeNo']),'B','C');
@@ -552,6 +560,7 @@
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']); 
 			$this->SetX(50);
 
+			$infoFormato['razonSocial'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_razonText'],$this->cellsInfo['tam_cellsAlto'],$infoFormato['razonSocial'],1);
 
@@ -559,7 +568,7 @@
 			$infoFormato['razonSocial'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 			
@@ -574,13 +583,15 @@
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
 			$this->SetX(50);
 
+			$infoFormato['direccion'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_dirClienteText'],$this->cellsInfo['tam_cellsAlto'],$infoFormato['direccion'],1);
 
 			$this->SetFont('Arial','',$resultado['sizeFont']);
 			$infoFormato['direccion'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 
