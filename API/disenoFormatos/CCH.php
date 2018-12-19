@@ -150,7 +150,7 @@
 			$volumen = 'VOLUMEN';
 			$tam_volumenAncho = $this->GetStringWidth($volumen) + 3;
 			$tam_volumenAlto = (1.5*(2*($tam_font_Cells + 2) - 6))/2;
-			$volumen = $volumen."\n".'(mm)';
+			$volumen = $volumen."\n".'(m³)';
 			
 			//Tipo de concreto
 			$concreto = 'CONCRE';
@@ -1559,8 +1559,8 @@
 			$pdf->putTables($infoFormato,$regisFormato);
 			$pdf->generateCellsDetails();
 			$pdf->putDetails($infoFormato,$infoU);
-			$pdf->Output('F',$target_dir);
-			//$pdf->Output();
+			//$pdf->Output('F',$target_dir);
+			$pdf->Output();
 		}
 	
 		
