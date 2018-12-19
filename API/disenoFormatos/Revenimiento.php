@@ -21,6 +21,9 @@
 		//Array que contiene los letreros de los detalles
 		private $cellsDetails;
 
+
+		public $error;
+
 		function demo(){
 			$pdf  = new Revenimiento('P','mm','Letter');
 			$pdf->AddPage();
@@ -218,11 +221,11 @@
 			$tam_font_info = 7;
 			//Direccion
 			$this->SetFont('Arial','B',$tam_font_info);
-			$direccion_lacocs = '35 NORTE No.3023, UNIDAD HABITACIONAL AQUILES SERDAN, PUEBLA, PUE.';
+			$direccion_lacocs = '35 NORTE No.3023, UNIDAD HABITACIONAL AQUILES SERDÁN, PUEBLA, PUE.';
 			$tam_direccion = $this->GetStringWidth($direccion_lacocs)+6;
 			$this->SetX((210-$tam_direccion)/2);
 			//$this->SetX(-$tam_tituloInforme-10);
-			$this->Cell($tam_direccion,$tam_font_info - 3,$direccion_lacocs,0,'C');
+			$this->Cell($tam_direccion,$tam_font_info - 3,utf8_decode($direccion_lacocs),0,'C');
 
 			$this->Ln($tam_font_info - 3);
 			//Telefono y fax
@@ -286,9 +289,8 @@
 			$this->SetFont('Arial','',$resultado['sizeFont']);
 			$infoFormato['regNo'] = $resultado['new_string'];
 
-			if($resultado['error'] == 100){
-				$this->error = $resultado;
-			}
+			$this->error = $resultado['error'];
+			
 
 
 			$this->multicell(0,$tam_font_right - 4,utf8_decode(	$infoFormato['regNo']	),'B','C');
@@ -314,10 +316,8 @@
 
 			$this->SetFont('Arial','',$resultado['sizeFont']);
 			$infoFormato['obra'] = $resultado['new_string'];
-
-			if($resultado['error'] == 100){
-				$this->error = $resultado;
-			}
+			
+			$this->error = $resultado['error'];
 
 		
 			$this->multicell($linea_Text,$tam_font_left - 4,utf8_decode(	$infoFormato['obra']	),'B','C');
@@ -336,9 +336,7 @@
 			$this->SetFont('Arial','',$resultado['sizeFont']);
 			$infoFormato['locObra'] = $resultado['new_string'];
 
-			if($resultado['error'] == 100){
-				$this->error = $resultado;
-			}
+			$this->error = $resultado['error'];
 
 			$this->multicell($linea_Text,$tam_font_left - 4,utf8_decode(	$infoFormato['locObra']	),'B','C');
 
@@ -355,9 +353,8 @@
 			$this->SetFont('Arial','',$resultado['sizeFont']);
 			$infoFormato['razonSocial'] = $resultado['new_string'];
 
-			if($resultado['error'] == 100){
-				$this->error = $resultado;
-			}
+			$this->error = $resultado['error'];
+			
 
 			$this->multicell($linea_Text,$tam_font_left - 4,utf8_decode(	$infoFormato['razonSocial']	),'B','C');
 
@@ -374,9 +371,8 @@
 			$this->SetFont('Arial','',$resultado['sizeFont']);
 			$infoFormato['direccion'] = $resultado['new_string'];
 
-			if($resultado['error'] == 100){
-				$this->error = $resultado;
-			}
+			$this->error = $resultado['error'];
+	
 
 
 			$this->multicell($linea_Text,$tam_font_left - 4,utf8_decode(	$infoFormato['direccion']	),'B','C');
@@ -405,9 +401,8 @@
 			$this->SetFont('Arial','',$resultado['sizeFont']);
 			$infoFormato['locRev'] = $resultado['new_string'];
 
-			if($resultado['error'] == 100){
-				$this->error = $resultado;
-			}
+			$this->error = $resultado['error'];
+			
 
 			$this->multicell($tam_localizacionText,$tam_font_left - 4,utf8_decode(	$infoFormato['locRev']	),'B','C');
 
@@ -895,6 +890,16 @@
 				$j=0;
 
 				foreach ($registro as $campo) {
+
+					$resultado = $this->printInfoObraAndLocObra($tam_font_CellsRows,$array_campo[$j],$tam_cellsTablesAlto,$campo,1);
+
+
+					$this->SetFont('Arial','',$resultado['sizeFont']);
+					$campo = $resultado['new_string'];
+	
+					$this->error = $resultado['error'];
+					
+
 	
 					$this->cell($array_campo[$j],$tam_cellsTablesAlto,utf8_decode($campo),1,0,'C');
 					$j++;
@@ -951,9 +956,8 @@
 			$this->SetFont('Arial','',$resultado['sizeFont']);
 			$infoFormato['observaciones'] = $resultado['new_string'];
 
-			if($resultado['error'] == 100){
-				$this->error = $resultado;
-			}
+			$this->error = $resultado['error'];
+			
 
 			if(array_key_exists('Total de renglones que serian', $resultado)){
 				if($resultado['Total de renglones que serian'] == 1){
@@ -1044,11 +1048,25 @@
 			$tam_sig = $this->GetStringWidth('SIGNATARIO/LABORATORISTA');
 
 			$this->TextWithDirection((216 - $tam_sig)/2,$this->gety() - 3,utf8_decode('SIGNATARIO/LABORATORISTA'));	
+
 			if($infoU['nombreRealizo'] != "null"){
+				/*
+					-Restamos -2 a el ancho de la celda porque no contemple las negritas, entonces como esta vez imprimire negritas el espacio de la letra aumenta.
+					-Ponemos la altura de la celda del mismo tamaño que el de la letra ya que no existe una celda como tal en la que va el texto, y el alto de la celda no repercute en el resultado.
+				*/
+				$resultado = $this->printInfoObraAndLocObra($tam_font_details,$tam_boxElaboro-2,$tam_font_details,$infoU['nombreRealizo'],1);
+
+				$this->SetFont('Arial','B',$resultado['sizeFont']);
+				$infoU['nombreRealizo'] = $resultado['new_string'];
+
+				$this->error = $resultado['error'];
+
 				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreRealizo'])/2),$this->gety() - 12,utf8_decode($infoU['nombreRealizo']));		
 			}else{
 				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('No hay nombre.')/2),$this->gety() - 12,utf8_decode("No hay nombre."));	
 			}
+
+			$this->SetFont('Arial','B',$tam_font_details);
 
 			//Tamaño de la imagen
 			$tam_image = 25;
@@ -1063,18 +1081,16 @@
 
 			}
 			
-			
-
-			
 		}
 		
 		function Footer(){
 			$this->SetY(-15);
 		    $this->SetFont('Arial','',8);
-		    $tam_noPagina = $this->GetStringWidth('Page '.$this->PageNo().'/{nb}');
+		    $noPagina = 'Pág. '.$this->PageNo().' de {nb}';
+		    $tam_noPagina = $this->GetStringWidth($noPagina);
 		    $posicion_x = (216 - $tam_noPagina)/2;
 		    $this->SetX($posicion_x);
-		    $this->Cell($tam_noPagina,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+		    $this->Cell($tam_noPagina,10,utf8_decode($noPagina),0,0,'C');
 
 		    //Clave de validacion
 		    $clave = 'FI-02-LCC-02-0.1';
@@ -1092,8 +1108,9 @@
 			$pdf->AliasNbPages();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($infoFormato,$regisFormato,$infoU);
-			$pdf->Output('F',$target_dir);
-			//$pdf->Output();
+			//$pdf->Output('F',$target_dir);
+			$pdf->Output();
+			return $pdf->error;
 		}
 
 
