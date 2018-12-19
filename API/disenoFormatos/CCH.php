@@ -106,12 +106,12 @@
 
 			//Clave
 			$clave = 'CLAVE DEL ESPECIMEN';
-			$tam_claveAncho = $this->GetStringWidth($clave) + 10; 
+			$tam_claveAncho = $this->GetStringWidth($clave) + 7; 
 			$tam_claveAlto = 1.5*(2*($tam_font_Cells) - 6);
 
 			//Fecha
 			$fecha = 'FECHA';
-			$tam_fechaAncho = $this->GetStringWidth($fecha) + 7;
+			$tam_fechaAncho = $this->GetStringWidth($fecha) + 4;
 			$tam_fechaAlto = 1.5*(2*($tam_font_Cells) - 6);
 
 			//F´c
@@ -153,10 +153,10 @@
 			$volumen = $volumen."\n".'(m³)';
 			
 			//Tipo de concreto
-			$concreto = 'CONCRE';
+			$concreto = 'CONCRETO';
 			$tam_concretoAncho = $this->GetStringWidth($concreto) + 3;
-			$tam_concretoAlto = (1.5*(2*($tam_font_Cells + 2) - 6))/3;
-			$concreto = 'TIPO DE'."\n".$concreto."\n".'TO';
+			$tam_concretoAlto = (1.5*(2*($tam_font_Cells + 2) - 6))/2;
+			$concreto = 'TIPO DE'."\n".$concreto;
 
 			//Unidad
 			$unidad = 'UNIDAD';
