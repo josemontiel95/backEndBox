@@ -1535,10 +1535,11 @@
 		function Footer(){
 			$this->SetY(-15);
 		    $this->SetFont('Arial','',8);
-		    $tam_noPagina = $this->GetStringWidth('Page '.$this->PageNo().'/{nb}');
+		    $noPagina = 'Pág. '.$this->PageNo().' de {nb}';
+		    $tam_noPagina = $this->GetStringWidth($noPagina);
 		    $posicion_x = (279.4 - $tam_noPagina)/2;
 		    $this->SetX($posicion_x);
-		    $this->Cell($tam_noPagina,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+		    $this->Cell($tam_noPagina,10,utf8_decode($noPagina),0,0,'C');
 
 		    //Clave de validacion
 		    $clave = 'FI-05-LCC-02-6.5';
