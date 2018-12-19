@@ -963,7 +963,6 @@
 
 			//Caja de texto
 
-
 			$resultado = $this->printInfoObraAndLocObra($tam_font_details,$tam_observacionAnchoTxt,$alto_obsercaciones,$infoFormato['observaciones'],3);
 
 
