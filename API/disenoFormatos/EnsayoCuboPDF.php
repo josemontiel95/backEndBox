@@ -4,7 +4,7 @@
 	class EnsayoCuboPDF extends MyPDF{
 		public $arrayCampos;
 
-
+		public $error = 0;
 
 		function Header(){
 			//Espacio definido para los logotipos
@@ -282,7 +282,17 @@
 			$this->cell(0,($tam_font_head+3)/2,utf8_decode($resis),'L,B,R',2,'C');
 
 			
-			$tam_resis = $this->GetX() - $posicion_x;
+			$tam_resis = 196 - (
+												$tam_fechaColado+
+												$tam_infoNumero+
+												$tam_clave+
+												$tam_edad+
+												$tam_l1+
+												$tam_l2+
+												$tam_resisCompresion+
+												$tam_area+
+												$tam_velocidad
+											);
 			$this->lN(0);
 		
 
@@ -309,6 +319,16 @@
 			foreach ($regisFormato as $campo) {
 				$j = 0;
 				foreach ($campo as $registro) {
+
+					$resultado = $this->printInfoObraAndLocObra($tam_font_head,$array_campo[$j],$tam_cellsTablesAlto,$registro,1);
+
+					$this->SetFont('Arial','',$resultado['sizeFont']);
+					$registro = $resultado['new_string'];
+
+					if($resultado['error'] == 100){
+							$this->error = $resultado['error'];
+					}
+
 					$this->cell($array_campo[$j],$tam_cellsTablesAlto,$registro,1,0,'C');
 					$j++;
 				}
@@ -396,7 +416,28 @@
 
 			$this->TextWithDirection($posicion_x+20,$this->gety() - 5,utf8_decode('____________________________	'));	
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('Nombre y firma')/2),$this->gety() - 2,utf8_decode('Nombre y firma'));	
-			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth(utf8_decode($infoU['nombreRealizo']))/2),$this->gety() - 7,utf8_decode($infoU['nombreRealizo']));	
+
+			if($infoU['nombreRealizo'] != "null"){
+				/*
+					-Restamos -2 a el ancho de la celda porque no contemple las negritas, entonces como esta vez imprimire negritas el espacio de la letra aumenta.
+					-Ponemos la altura de la celda del mismo tamaño que el de la letra ya que no existe una celda como tal en la que va el texto, y el alto de la celda no repercute en el resultado.
+				*/	
+
+				$resultado = $this->printInfoObraAndLocObra($tam_font_footer,$tam_boxElaboro-3,$tam_font_footer,$infoU['nombreRealizo'],1);
+
+				$this->SetFont('Arial','B',$resultado['sizeFont']);
+				$infoU['nombreRealizo'] = $resultado['new_string'];
+
+				if($resultado['error'] == 100){
+					$this->error = $resultado['error'];
+				}
+
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreRealizo'])/2),$this->gety() - 7,utf8_decode($infoU['nombreRealizo']));		
+			}else{
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('No hay nombre.')/2),$this->gety() - 7,utf8_decode("No hay nombre."));	
+			}
+
+			$this->SetFont('Arial','B',$tam_font_footer);
 
 			if($infoU['firmaRealizo'] != "null"){
 				$this->Image($infoU['firmaRealizo'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
@@ -410,9 +451,29 @@
 			$posicion_x = $this->GetX();
 			$this->cell($tam_boxElaboro,$tam_second,'','L,B,R',2,'C');
 
-			$this->TextWithDirection($posicion_x+20,$this->gety() - 5,utf8_decode('___________________________________________'));	
+			$this->TextWithDirection($posicion_x+20,$this->gety() - 5,utf8_decode('____________________________'));	
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('Nombre y firma')/2),$this->gety() - 2,utf8_decode('Nombre y firma'));
-			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth(utf8_decode($infoU['nombreLaboratorista']))/2),$this->gety() - 7,utf8_decode($infoU['nombreLaboratorista']));		
+
+
+			if($infoU['nombreLaboratorista'] != "null"){
+				/*
+					-Restamos -2 a el ancho de la celda porque no contemple las negritas, entonces como esta vez imprimire negritas el espacio de la letra aumenta.
+					-Ponemos la altura de la celda del mismo tamaño que el de la letra ya que no existe una celda como tal en la que va el texto, y el alto de la celda no repercute en el resultado.
+				*/	
+
+				$resultado = $this->printInfoObraAndLocObra($tam_font_footer,$tam_boxElaboro-3,$tam_font_footer,$infoU['nombreLaboratorista'],1);
+
+				$this->SetFont('Arial','B',$resultado['sizeFont']);
+				$infoU['nombreLaboratorista'] = $resultado['new_string'];
+
+				if($resultado['error'] == 100){
+					$this->error = $resultado['error'];
+				}
+
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreLaboratorista'])/2),$this->gety() - 7,utf8_decode($infoU['nombreLaboratorista']));		
+			}else{
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('No hay nombre.')/2),$this->gety() - 7,utf8_decode("No hay nombre."));	
+			}
 
 			//print_r($infoU);
 
@@ -428,13 +489,14 @@
 		function Footer(){
 			$this->SetY(-15);
 		    $this->SetFont('Arial','',8);
-		    $tam_noPagina = $this->GetStringWidth('Page '.$this->PageNo().'/{nb}');
+		    $noPagina = 'Pág. '.$this->PageNo().' de {nb}';
+		    $tam_noPagina = $this->GetStringWidth($noPagina);
 		    $posicion_x = (216 - $tam_noPagina)/2;
 		    $this->SetX($posicion_x);
-		    $this->Cell($tam_noPagina,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+		    $this->Cell($tam_noPagina,10,utf8_decode($noPagina),0,0,'C');
 
 		    //Clave de validacion
-		    $clave = 'FI-05-LCC-04 0.0';
+		    $clave = 'F1-05-LCC-04 0.0';
 		    $tam_clave = $this->GetStringWidth($clave);
 		    $this->SetX(-($tam_clave + 10));
 		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');
@@ -447,8 +509,9 @@
 			$pdf->AliasNbPages();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($infoFormato,$regisFormato,$infoU);
-			$pdf->Output();
-			//$pdf->Output('F',$target_dir);
+			//$pdf->Output();
+			$pdf->Output('F',$target_dir);
+			return $pdf->error;
 		}
 
 

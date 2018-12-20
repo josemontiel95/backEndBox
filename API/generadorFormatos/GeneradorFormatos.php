@@ -1011,7 +1011,7 @@
 						$registros = $this->getRegEnsayoCubo($token,$rol_usuario_id,$id_footerEnsayo);
 						if(!(array_key_exists('error', $registros))){
 							$pdf = new EnsayoCuboPDF();	
-							$pdf->CreateNew($info,$registros,$infoU,$target_dir);
+							return $pdf->CreateNew($info,$registros,$infoU,$target_dir);
 						}else{
 							return json_encode($registros);
 						}
