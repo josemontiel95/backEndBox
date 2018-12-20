@@ -23,6 +23,8 @@
 		//Array que contiene los letreros de los detalles
 		private $cellsDetails;
 
+		public $error = 0;
+
 		//Funcion que coloca una vista previa de la información
 
 		function getArrayCampo(){
@@ -346,7 +348,21 @@
 			
 			$posicion_x = $this->GetX();
 			$this->cell(0,($tam_font_head+3),utf8_decode($falla),1,2,'C');
-			$tam_fallaAncho = $this->GetX() - $posicion_x;
+			$tam_fallaAncho = 196 - (
+										$tam_fechaColado +
+										$tam_infoNumero +
+										$tam_clave +
+										$tam_pesoAncho +
+										$tam_edad +
+										$tam_d1 +
+										$tam_d2 +
+										$tam_h1 +
+										$tam_h2 +
+										$tam_kgAncho +
+										$tam_area +
+										$tam_resis +
+										$tam_velocidad 
+									);
 		
 
 			$this->Ln(0);
@@ -377,6 +393,19 @@
 			foreach ($regisFormato as $campo) {
 				$j = 0;
 				foreach ($campo as $registro) {
+
+					$registro = 'Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 ';
+
+
+					$resultado = $this->printInfoObraAndLocObra($tam_font_head,$array_campo[$j],$tam_cellsTablesAlto,$registro,1);
+
+					$this->SetFont('Arial','',$resultado['sizeFont']);
+					$registro = $resultado['new_string'];
+
+					if($resultado['error'] == 100){
+							$this->error = $resultado['error'];
+					}
+
 					$this->cell($array_campo[$j],$tam_cellsTablesAlto,$registro,1,0,'C');
 					$j++;
 				}
@@ -498,10 +527,11 @@
 		function Footer(){
 			$this->SetY(-15);
 		    $this->SetFont('Arial','',8);
-		    $tam_noPagina = $this->GetStringWidth('Page '.$this->PageNo().'/{nb}');
+		    $noPagina = 'Pág. '.$this->PageNo().' de {nb}';
+		    $tam_noPagina = $this->GetStringWidth($noPagina);
 		    $posicion_x = (216 - $tam_noPagina)/2;
 		    $this->SetX($posicion_x);
-		    $this->Cell($tam_noPagina,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+		    $this->Cell($tam_noPagina,10,utf8_decode($noPagina),0,0,'C');
 
 		    //Clave de validacion
 		    $clave = 'FI-05-LCC-03-3.1';
