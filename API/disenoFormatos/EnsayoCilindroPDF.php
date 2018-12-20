@@ -517,8 +517,8 @@
 			$pdf->AliasNbPages();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTablesWithOutJefeLab($infoFormato,$regisFormato,$infoU);
-			//$pdf->Output();
-			$pdf->Output('F',$target_dir);
+			$pdf->Output();
+			//$pdf->Output('F',$target_dir);
 		}
 
 

@@ -1108,26 +1108,26 @@
 			if($arr['error'] == 0){
 				$s= $dbS->qAll(
 					"SELECT
-			      		registrosCampo.fecha AS fechaColado,
-			      		informeNo,
-			      		claveEspecimen,
-			      		peso,
-			      		CASE
-							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
-							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
-							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
-							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
-							ELSE 'Error, Contacta a soporte'
+						registrosCampo.fecha AS fechaColado,
+						informeNo,
+						claveEspecimen,
+						peso,
+						CASE
+						WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
+						WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
+						WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
+						WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
+						ELSE 'Error, Contacta a soporte'
 						END AS diasEnsayeFinal,
-						d1,
-			      		d2,
-			      		h1,
-			      		h2,
-			      		carga,
-			      		ROUND(((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4),3) AS area,
-			      		ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100),3)  AS porcentResis,
-			      		ROUND(velAplicacionExp,1),
-				    	falla
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(d1, 1), 1), CHAR), ',', '  '), '.', ',') AS d1,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(d2, 1), 1), CHAR), ',', '  '), '.', ',') AS d2,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(h1, 1), 1), CHAR), ',', '  '), '.', ',') AS h1,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(h2, 1), 1), CHAR), ',', '  '), '.', ',') AS h2,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4), 1), 1), CHAR), ',', '  '), '.', ',') AS area,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100), 0), 0), CHAR), ',', '  '), '.', ',') AS porcentResis,
+						ROUND(velAplicacionExp,1),
+						IF(falla = 0,'-',REPLACE(REPLACE(CONVERT(FORMAT(ROUND(falla, 0), 0), CHAR), ',', '  '), '.', ',')) AS falla
 					FROM 
 						ensayoCilindro,
 						registrosCampo,
