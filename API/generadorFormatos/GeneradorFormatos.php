@@ -1249,10 +1249,10 @@
 			if($arr['error'] == 0){
 				$s= $dbS->qAll("
 			      	SELECT
-			      		registrosCampo.fecha AS fechaColado,
-			      		informeNo,
-			      		claveEspecimen,
-			      		CASE
+							registrosCampo.fecha AS fechaColado,
+							informeNo,
+							claveEspecimen,
+							CASE
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
 							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
@@ -1263,12 +1263,12 @@
 							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
 							ELSE 'Error, Contacta a soporte'
 						END AS diasEnsayeFinal,
-						l1,
-						l2,
-						carga,
-						ROUND((l1*l2),3) AS area,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(l1, 1), 1), CHAR), ',', '  '), '.', ',') AS l1,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(l2, 1), 1), CHAR), ',', '  '), '.', ',') AS l2,	
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND((l1*l2), 1), 1), CHAR), ',', '  '), '.', ',') AS area,	
 						ROUND(velAplicacionExp,1),
-						ROUND((carga/(l1*l2)),3) AS kg
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND((carga/(l1*l2)), 0), 0), CHAR), ',', '  '), '.', ',') AS kg
 					FROM 
 						ensayoCubo,
 						registrosCampo,
