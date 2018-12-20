@@ -981,7 +981,7 @@
 						$registros = $this->getRegEnsayoCilindros($token,$rol_usuario_id,$id_footerEnsayo);
 						if(!(array_key_exists('error', $registros))){
 							$pdf = new EnsayoCilindroPDF();	
-							$pdf->CreateNew($info,$registros,$infoU,$target_dir);
+							return $pdf->CreateNew($info,$registros,$infoU,$target_dir);
 						}else{
 							return json_encode($registros);
 						}
@@ -1011,7 +1011,7 @@
 						$registros = $this->getRegEnsayoCubo($token,$rol_usuario_id,$id_footerEnsayo);
 						if(!(array_key_exists('error', $registros))){
 							$pdf = new EnsayoCuboPDF();	
-							$pdf->CreateNew($info,$registros,$infoU,$target_dir);
+							return $pdf->CreateNew($info,$registros,$infoU,$target_dir);
 						}else{
 							return json_encode($registros);
 						}
@@ -1108,26 +1108,26 @@
 			if($arr['error'] == 0){
 				$s= $dbS->qAll(
 					"SELECT
-			      		registrosCampo.fecha AS fechaColado,
-			      		informeNo,
-			      		claveEspecimen,
-			      		peso,
-			      		CASE
-							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
-							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
-							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
-							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
-							ELSE 'Error, Contacta a soporte'
+						registrosCampo.fecha AS fechaColado,
+						informeNo,
+						claveEspecimen,
+						peso,
+						CASE
+						WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
+						WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
+						WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
+						WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
+						ELSE 'Error, Contacta a soporte'
 						END AS diasEnsayeFinal,
-						d1,
-			      		d2,
-			      		h1,
-			      		h2,
-			      		carga,
-			      		ROUND(((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4),3) AS area,
-			      		ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100),3)  AS porcentResis,
-			      		ROUND(velAplicacionExp,1),
-				    	falla
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(d1, 1), 1), CHAR), ',', '  '), '.', ',') AS d1,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(d2, 1), 1), CHAR), ',', '  '), '.', ',') AS d2,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(h1, 1), 1), CHAR), ',', '  '), '.', ',') AS h1,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(h2, 1), 1), CHAR), ',', '  '), '.', ',') AS h2,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4), 1), 1), CHAR), ',', '  '), '.', ',') AS area,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100), 0), 0), CHAR), ',', '  '), '.', ',') AS porcentResis,
+						ROUND(velAplicacionExp,1),
+						IF(falla = 0,'-',REPLACE(REPLACE(CONVERT(FORMAT(ROUND(falla, 0), 0), CHAR), ',', '  '), '.', ',')) AS falla
 					FROM 
 						ensayoCilindro,
 						registrosCampo,
@@ -1249,10 +1249,10 @@
 			if($arr['error'] == 0){
 				$s= $dbS->qAll("
 			      	SELECT
-			      		registrosCampo.fecha AS fechaColado,
-			      		informeNo,
-			      		claveEspecimen,
-			      		CASE
+							registrosCampo.fecha AS fechaColado,
+							informeNo,
+							claveEspecimen,
+							CASE
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
 							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
@@ -1263,12 +1263,12 @@
 							WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
 							ELSE 'Error, Contacta a soporte'
 						END AS diasEnsayeFinal,
-						l1,
-						l2,
-						carga,
-						ROUND((l1*l2),3) AS area,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(l1, 1), 1), CHAR), ',', '  '), '.', ',') AS l1,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(l2, 1), 1), CHAR), ',', '  '), '.', ',') AS l2,	
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND((l1*l2), 1), 1), CHAR), ',', '  '), '.', ',') AS area,	
 						ROUND(velAplicacionExp,1),
-						ROUND((carga/(l1*l2)),3) AS kg
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND((carga/(l1*l2)), 0), 0), CHAR), ',', '  '), '.', ',') AS kg
 					FROM 
 						ensayoCubo,
 						registrosCampo,
