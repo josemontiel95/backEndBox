@@ -685,11 +685,12 @@
 			if($arr['error'] == 0){
 				$s= $dbS->qarrayA(
 					"SELECT
-				      	regNo,
-				      	obra.incertidumbre,
-				        obra,
-				        obra.localizacion AS locObra,
-				        nombre,
+					  	regNo,
+					  	IF( (ROUND((obra.incertidumbre - FLOOR(obra.incertidumbre)),1) = 0),REPLACE(REPLACE(CONVERT(FORMAT(ROUND(obra.incertidumbre, 0), 0), CHAR), ',', '  '), '.', ','),REPLACE(REPLACE(CONVERT(FORMAT(ROUND(obra.incertidumbre, 1), 1), CHAR), ',', '  '), '.', ',')) AS incertidumbreO,
+					  	obra.incertidumbre,
+					    obra,
+					    obra.localizacion AS locObra,
+					    nombre,
 						razonSocial,
 						CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion,
 
@@ -702,9 +703,9 @@
 						VARILLA,
 
 						FLEXOMETRO
-				      FROM 
-				        ordenDeTrabajo,cliente,obra,formatoRegistroRev,
-				        (
+					 FROM 
+					    ordenDeTrabajo,cliente,obra,formatoRegistroRev,
+					    (
 								SELECT
 									id_formatoRegistroRev,
 									IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS CONO
@@ -737,14 +738,14 @@
 								ON
 									formatoRegistroRev.flexometro_id = herramientas.id_herramienta
 							)AS flexometro
-				      WHERE 
-				      	obra_id = id_obra AND
-				      	cliente_id = id_cliente AND
-				      	cono.id_formatoRegistroRev = formatoRegistroRev.id_formatoRegistroRev AND
+					 WHERE 
+					  	obra_id = id_obra AND
+					  	cliente_id = id_cliente AND
+					  	cono.id_formatoRegistroRev = formatoRegistroRev.id_formatoRegistroRev AND
 						varilla.id_formatoRegistroRev = formatoRegistroRev.id_formatoRegistroRev AND
 						flexometro.id_formatoRegistroRev = formatoRegistroRev.id_formatoRegistroRev AND
 						ordenDeTrabajo.id_ordenDeTrabajo = formatoRegistroRev.ordenDeTrabajo_id AND
-				      	formatoRegistroRev.id_formatoRegistroRev = 1QQ
+					  	formatoRegistroRev.id_formatoRegistroRev = 1QQ
 				      ",
 				      array($id_formatoRegistroRev),
 				      "SELECT -- GeneradorFormatos :: getInfoRev : 1 "
