@@ -1136,6 +1136,7 @@
 			$this->Cell($this->GetStringWidth($mensaje2),($tam_font_details - 4),utf8_decode($mensaje2),0,0);
 
 			$this->Ln(8);
+			/*
 			$tam_image = 20;
 			$tam_font_footer = 8; $this->SetFont('Arial','',$tam_font_footer);
 			
@@ -1187,18 +1188,84 @@
 				$this->Image($infoU['firmaG'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
 			}else{
 				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 8,utf8_decode('NO HAY FIRMA'));	
-			}
+			}*/
 			//$this->Image($infoU['firmaG'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
-
+			
 		}
 		
 		function Footer(){
+			//Espacio para las firmas
+			$tam_image = 20;
+			$tam_font_footer = 8; $this->SetFont('Arial','',$tam_font_footer);
+			
+			$tam_boxElaboro = 259/3;	$tam_first = 12.5; $tam_second = 12.5;
+
+			//COnfiguramos las posiciones en donde estaran las firmas
+			$this->SetX($this->GetX() + $tam_boxElaboro/2);
+			$this->SetY(-($tam_first + $tam_second + 15)); //15 es el espcio de el numero de pagina
+
+			$posicion_y = $this->GetY();
+			$this->SetFont('Arial','B',$tam_font_footer);
+			$this->cell($tam_boxElaboro,$tam_first,'Realizo','L,T,R',2,'C');
+			$posicion_x = $this->GetX();
+			$this->cell($tam_boxElaboro,$tam_second,'','L,B,R',2,'C');
+
+			$infoU['nombreLaboratorista'] = "SOporte tecnico";
+
+			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('___________________________________________'));	
+			$this->SetFont('Arial','',$tam_font_footer);
+			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('SIGNATARIO/JEFE DE LABORATORIO')/2),$this->gety() - 3,utf8_decode('SIGNATARIO/JEFE DE LABORATORIO'));	
+			$this->SetFont('Arial','B',$tam_font_footer);
+			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreLaboratorista'])/2),$this->gety() - 12,utf8_decode($infoU['nombreLaboratorista']));	
+
+			$infoU['firmaLaboratorista'] = "null";
+
+
+			if($infoU['firmaLaboratorista'] != "null"){
+				
+				$this->Image($infoU['firmaLaboratorista'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+			}
+			else{
+
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 8,utf8_decode('NO HAY FIRMA'))	;	
+
+			}
+
+			//$this->Image($infoU['firmaLaboratorista'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+
+			$this->SetXY($posicion_x+$tam_boxElaboro,$posicion_y);
+			$this->SetFont('Arial','B',$tam_font_footer);
+			$this->cell($tam_boxElaboro,$tam_first,'Vo. Bo.','L,T,R',2,'C');
+			$posicion_x = $this->GetX();
+
+			$infoU['nombreG'] = "No hay";
+
+			$this->cell($tam_boxElaboro,$tam_second,'','L,B,R',2,'C');
+			$this->TextWithDirection($posicion_x+10,$this->gety() - 7,utf8_decode('___________________________________________'));	
+
+			$this->SetFont('Arial','',$tam_font_footer);
+			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('DIRECTOR GENERAL/GERENTE GENERAL')/2),$this->gety() - 3,utf8_decode('DIRECTOR GENERAL/GERENTE GENERAL'));	
+
+			$this->SetFont('Arial','B',$tam_font_footer);
+			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreG'])/2),$this->gety() - 12,utf8_decode($infoU['nombreG']));	
+
+			$infoU['firmaG'] = "null";
+
+			if($infoU['firmaG'] != "null"){
+				$this->Image($infoU['firmaG'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
+			}else{
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('NO HAY FIRMA')/2),$this->gety() - 8,utf8_decode('NO HAY FIRMA'));	
+			}
+
+
+			//--
 		    $this->SetY(-15);
 		    $this->SetFont('Arial','',8);
-		    $tam_noPagina = $this->GetStringWidth('Page '.$this->PageNo().'/{nb}');
+		    $noPagina = 'Pág. '.$this->PageNo().' de {nb}';
+		    $tam_noPagina = $this->GetStringWidth($noPagina);
 		    $posicion_x = (279.4 - $tam_noPagina)/2;
 		    $this->SetX($posicion_x);
-		    $this->Cell($tam_noPagina,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+		    $this->Cell($tam_noPagina,10,utf8_decode($noPagina),0,0,'C');
 
 		    //Clave de validacion
 		    $clave = 'FI-09-LCC-02-0.1';
