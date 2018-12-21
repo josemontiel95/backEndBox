@@ -975,14 +975,14 @@
 			$tam_cargaMaxima = $this->GetStringWidth($cargaMaxima)+3;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 			$this->Cell($tam_cargaMaxima,($tam_font_Cells+5)/2,utf8_decode($cargaMaxima),'L,T,R',2,'C');
-			$this->Cell($tam_cargaMaxima,($tam_font_Cells+5)/2,utf8_decode('aplicada (kg)'),'L,B,R',2,'C');
+			$this->Cell($tam_cargaMaxima,($tam_font_Cells+5)/2,utf8_decode('aplicada (kgf)'),'L,B,R',2,'C');
 			
 			$this->SetXY($posicion_x+$tam_cargaMaxima,$posicion_y);
 			$modRuptura = 'Modulo de Ruptura';
 			$tam_modRuptura = $this->GetStringWidth($modRuptura)+3;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 			$this->Cell($tam_modRuptura,($tam_font_Cells+5)/2,$modRuptura,'L,T,R',2,'C');
-			$this->Cell($tam_modRuptura,($tam_font_Cells+5)/2,utf8_decode('(kg/cm²)'),'L,B,R',2,'C');
+			$this->Cell($tam_modRuptura,($tam_font_Cells+5)/2,utf8_decode('(kgf/cm²)'),'L,B,R',2,'C');
 			
 			$this->SetXY($posicion_x+$tam_modRuptura,$posicion_y);
 			$modRuptura2 = 'Modulo de';
@@ -1217,8 +1217,8 @@
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($infoFormato,$regisFormato);
 			$pdf->putDetails($infoFormato,$infoU);
-			$pdf->Output('F',$target_dir);
-			//$pdf->Output();
+			//$pdf->Output('F',$target_dir);
+			$pdf->Output();
 		}
 		
 	}
