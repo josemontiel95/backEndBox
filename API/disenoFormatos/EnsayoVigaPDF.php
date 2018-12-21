@@ -23,7 +23,7 @@
 		private $cellsDetails;
 
 		//Variable que nos dira si ocurrio un error al generar el formato
-		private $error;
+		public $error = 0;
 
 
 		function getCellsInfo(){
@@ -182,7 +182,7 @@
 
 			$nomCli = 'CLIENTE:';
 			$this->Cell($this->GetStringWidth($nomCli)+2,$tam_font_left - 3,utf8_decode($nomCli),0);
-			
+		
 
 			$resultado = $this->printInfoObraAndLocObra($tam_font_left,170,$tam_font_left - 3,$infoFormato['razonSocial'],1);
 
@@ -190,7 +190,7 @@
 			$infoFormato['razonSocial'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 			//Caja de texto
@@ -216,6 +216,7 @@
 			$this->Cell($this->GetStringWidth($regNo)+.5,$tam_font_left - 3,utf8_decode($regNo),0);
 
 
+
 			$resultado = $this->printInfoObraAndLocObra($tam_font_left,22.415411111111,$tam_font_left - 3,$infoFormato['informeNo'],1);
 
 
@@ -223,7 +224,7 @@
 			$infoFormato['informeNo'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 			//print_r($resultado);
@@ -246,14 +247,15 @@
 			//Caja de texto
 			$this->SetX(50);
 
+
 			$resultado = $this->printInfoObraAndLocObra($tam_font_left,170,$tam_font_left - 3,$infoFormato['obra'],3);
 
 			$this->SetFont('Arial','',$resultado['sizeFont']);
 			$infoFormato['obra'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
-			}			
+				$this->error = $resultado['error'];
+			}		
 
 			$this->multicell(170,$tam_font_left - 3,utf8_decode($infoFormato['obra']),'B','C');
 
@@ -276,7 +278,7 @@
 			$infoFormato['tipoConcreto'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 			$this->multicell(0,$tam_font_left - 3,utf8_decode($infoFormato['tipoConcreto']),'B','C');
@@ -299,7 +301,7 @@
 			$infoFormato['obraLocalizacion'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 			$this->multicell(170,$tam_font_left - 3,utf8_decode($infoFormato['obraLocalizacion']),'B','C');
@@ -323,7 +325,7 @@
 			$infoFormato['fprima'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 			$this->multicell(0,$tam_font_left - 3,utf8_decode($infoFormato['fprima']),'B','C');
@@ -344,7 +346,7 @@
 			$infoFormato['eleColado'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 			$this->multicell(170,$tam_font_left - 3,utf8_decode($infoFormato['eleColado']),'B','C');
@@ -633,7 +635,29 @@
 			//$tam_realizo = $this->GetStringWidth($realizo)+8;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 			$this->Cell(0,(($tam_font_head+5)),utf8_decode($realizo),1,2,'C');
-			$tam_realizo = $this->GetX() - $posicion_x;
+			$tam_realizo = 259.4 - (
+										$tam_iden + 
+										$tam_fechaColado + 
+										$tam_fechaEnsayo + 
+										$tam_edad + 
+										$tam_condiciones + 
+										$tam_lijado + 
+										$tam_cuero + 
+										$tam_lec1 + 
+										$tam_lec2 + 
+										$tam_per_lec1 + 
+										$tam_per_lec2 + 
+										$tam_l1 + 
+										$tam_l2 + 
+										$tam_l3 + 
+										$tam_prom + 
+										$tam_distanciaApoyos + 
+										$tam_distanciaPuntos + 
+										$tam_carga + 
+										$tam_modulo + 
+										$tam_defEscpecimen + 
+										$tam_velocidad  
+									);
 
 			$this->Ln(0);
 
@@ -671,6 +695,16 @@
 			foreach ($regisFormato as $campo) {
 				$j = 0;
 				foreach ($campo as $registro) {
+
+					$resultado = $this->printInfoObraAndLocObra($tam_font_head,$array_campo[$j],$tam_cellsTablesAlto,$registro,1);
+
+					$this->SetFont('Arial','',$resultado['sizeFont']);
+					$registro = $resultado['new_string'];
+
+					if($resultado['error'] == 100){
+							$this->error = $resultado['error'];
+					}
+
 					$this->cell($array_campo[$j],$tam_cellsTablesAlto,$registro,1,0,'C');
 					$j++;
 				}
@@ -739,33 +773,57 @@
 			$this->Ln(10);
 
 			$tam_image = 15;
-			$tam_font_head =8;	$this->SetFont('Arial','B',$tam_font_head);//Fuente para clave
+			$tam_font_head =8;	
+			$this->SetFont('Arial','B',$tam_font_head);//Fuente para clave
 			$superviso = 'Supervisó:';
+			$tam_superviso = $this->GetStringWidth($superviso)+3;
 			$this->SetX(70);
 
+			$this->cell($tam_superviso,$tam_font_head-3,utf8_decode($superviso),0,0);
+
+			//Definimos el tamaño de la celda donde va el nombre del alboratorista
+			$tam_firmaAncho = 70;
+			if($infoU['nombreLaboratorista'] != "null"){
+				/*
+					-Restamos -2 a el ancho de la celda porque no contemple las negritas, entonces como esta vez imprimire negritas el espacio de la letra aumenta.
+					-Ponemos la altura de la celda del mismo tamaño que el de la letra ya que no existe una celda como tal en la que va el texto, y el alto de la celda no repercute en el resultado.
+				*/
+
+				$resultado = $this->printInfoObraAndLocObra($tam_font_head,$tam_firmaAncho,$tam_font_head-2,$infoU['nombreLaboratorista'],1);
+
+				$this->SetFont('Arial','B',$resultado['sizeFont']);
+				$infoU['nombreLaboratorista'] = $resultado['new_string'];
+
+				if($resultado['error'] == 100){
+					$this->error = $resultado['error'];
+				}
+				$this->Cell($tam_firmaAncho,($tam_font_head)-2,utf8_decode($infoU['nombreLaboratorista']),'B',2,'C');
+			}else{
+				$this->Cell($tam_firmaAncho,($tam_font_head)-2,utf8_decode('No hay nombre.'),'B',2,'C');
+			}
+
+			$this->SetFont('Arial','B',$tam_font_head);
 
 			if($infoU['firmaLaboratorista'] != "null"){
-				$this->Cell($this->GetStringWidth($superviso)+2,(($tam_font_head)),utf8_decode($superviso.$this->Image($infoU['firmaLaboratorista'],$this->GetX()+($this->GetStringWidth($superviso)+10),$this->GetY()-3,$tam_image,$tam_image)),0,0);
+				$this->Image($infoU['firmaLaboratorista'],(($this->GetX()+($tam_firmaAncho)/2)-($tam_image/2)),$this->GetY() - $tam_image,$tam_image,$tam_image);
 			}else{
-				$this->Cell($this->GetStringWidth($superviso)+2,(($tam_font_head)),utf8_decode($superviso."                                         NO HAY FIRMA"));
+				$this->TextWithDirection(($this->GetX() + ($tam_firmaAncho /2))-($this->GetStringWidth('No hay Firma.')/2),$this->gety() - 7,utf8_decode("No hay firma."));	
 			}
-			$this->Cell($this->GetStringWidth($superviso)+20,(($tam_font_head)-2),utf8_decode($infoU['nombreLaboratorista']),'B',2,'C');
-			$this->Cell($this->GetStringWidth($superviso)+20,(($tam_font_head)-2),'Nombre,firma y puesto',0,0);
-
-
+			$this->Cell($tam_firmaAncho,(($tam_font_head)-2),'Nombre,firma y puesto',0,0,'C');
 
 		}
 
 		function Footer(){
 			$this->SetY(-15);
 		    $this->SetFont('Arial','',8);
-		    $tam_noPagina = $this->GetStringWidth('Page '.$this->PageNo().'/{nb}');
+		    $noPagina = 'Pág. '.$this->PageNo().' de {nb}';
+		    $tam_noPagina = $this->GetStringWidth($noPagina);
 		    $posicion_x = (279.4 - $tam_noPagina)/2;
 		    $this->SetX($posicion_x);
-		    $this->Cell($tam_noPagina,10,'Page '.$this->PageNo().'/{nb}',0,0,'C');
+		    $this->Cell($tam_noPagina,10,utf8_decode($noPagina),0,0,'C');
 
 		    //Clave de validacion
-		    $clave = 'FI-09-LCC-01-0.2';
+		    $clave = 'F1-09-LCC-01-0.2';
 		    $tam_clave = $this->GetStringWidth($clave);
 		    $this->SetX(-($tam_clave + 10));
 		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');
@@ -779,8 +837,9 @@
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($regisFormato);
 			$pdf->Myfooter($infoFormato,$infoU);
-			$pdf->Output();
-			//$pdf->Output('F',$target_dir);
+			//$pdf->Output();
+			$pdf->Output('F',$target_dir);
+			return $pdf->error;
 		}
 
 	}
