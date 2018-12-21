@@ -806,7 +806,7 @@
 						$registros = $this->getRegEnsayoVigas($token,$rol_usuario_id,$id_footerEnsayo);
 						if(!(array_key_exists('error', $registros))){
 							$pdf = new EnsayoVigaPDF();	
-							$pdf->CreateNew($info,$registros,$infoU,$target_dir);
+							return $pdf->CreateNew($info,$registros,$infoU,$target_dir);
 						}else{
 							return json_encode($registros);
 						}
@@ -920,9 +920,9 @@
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(per1, 1), 1), CHAR), ',', '  '), '.', ',') AS per1,
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(per2, 1), 1), CHAR), ',', '  '), '.', ',') AS per2,
 						
-						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(l1, 1), 1), CHAR), ',', '  '), '.', ',') AS l1,
-						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(l2, 1), 1), CHAR), ',', '  '), '.', ',') AS l2,
-						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(l3, 1), 1), CHAR), ',', '  '), '.', ',') AS l3,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(l1, 0), 0), CHAR), ',', '  '), '.', ',') AS l1,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(l2, 0), 0), CHAR), ',', '  '), '.', ',') AS l2,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(l3, 0), 0), CHAR), ',', '  '), '.', ',') AS l3,
 
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((l1+l2+l3)/3), 0), 0), CHAR), ',', '  '), '.', ',') AS prom,
 						
