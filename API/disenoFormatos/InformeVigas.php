@@ -1365,8 +1365,8 @@
 			$pdf->putTables($infoFormato,$regisFormato);
 			$pdf->putDetails($infoFormato,$infoU);
 			$pdf->infoU = $infoU;
-			//$pdf->Output('F',$target_dir);
-			$pdf->Output();
+			$pdf->Output('F',$target_dir);
+			//$pdf->Output();
 			return $pdf->error;
 		}
 		
