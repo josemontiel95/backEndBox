@@ -1183,7 +1183,7 @@
 		    $this->Cell($tam_noPagina,10,utf8_decode($noPagina),0,0,'C');
 
 		    //Clave de validacion
-		    $clave = 'FI-02-LCC-01-1.4';
+		    $clave = 'F1-02-LCC-1.5';
 		    $tam_clave = $this->GetStringWidth($clave);
 		    $this->SetX(-($tam_clave + 10));
 		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');
