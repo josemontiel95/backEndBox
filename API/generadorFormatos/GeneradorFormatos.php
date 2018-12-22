@@ -21,77 +21,80 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-					$formato = new FormatoCampo();	
-					$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
-					if($infoFormato == "empty")
-						echo "No hay resultados del id solicitado";
-				switch ($infoFormato['tipo_especimen']) {
-					case 'CUBO':
-						//Obtenemos la informacion de quien esta realizando el pdf
-						$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
-						if(!(array_key_exists('error', $infoU))){
-							$infoFormato = $this->getInfoCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-							if(!(array_key_exists('error', $infoFormato))){
-								$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-								if(!(array_key_exists('error', $regisFormato))){
-									$pdf = new InformeCubos();	
-									$pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);
-								}
-								else{
-									return json_encode($regisFormato);
-								}
+				$formato = new FormatoCampo();	
+				$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
+				if(!(array_key_exists('error', $infoFormato))){
+					switch ($infoFormato['tipo_especimen']) {
+						case 'CUBO':
+							//Obtenemos la informacion de quien esta realizando el pdf
+							$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
+							if(!(array_key_exists('error', $infoU))){
+								$infoFormato = $this->getInfoCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+								if(!(array_key_exists('error', $infoFormato))){
+									$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+									if(!(array_key_exists('error', $regisFormato))){
+										$pdf = new InformeCubos();	
+										$pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);
+									}
+									else{
+										return json_encode($regisFormato);
+									}
+								}else{
+									return json_encode($infoFormato);
+								}	
 							}else{
-								return json_encode($infoFormato);
-							}	
-						}else{
-							return json_encode($infoU);
-						}
-						break;
-					case 'CILINDRO':
-						//Obtenemos la informacion de quien esta realizando el pdf
-						$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
-						if(!(array_key_exists('error', $infoU))){
-							$infoFormato = $this->getInfoCiliByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-							if(!(array_key_exists('error', $infoFormato))){
-								$regisFormato = $this->getRegCilindroByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-								if(!(array_key_exists('error', $regisFormato))){
-									$pdf = new InformeCilindros();	
-									$pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);
-								}
-								else{
-									return json_encode($regisFormato);
-								}
+								return json_encode($infoU);
+							}
+							break;
+						case 'CILINDRO':
+							//Obtenemos la informacion de quien esta realizando el pdf
+							$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
+							if(!(array_key_exists('error', $infoU))){
+								$infoFormato = $this->getInfoCiliByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+								if(!(array_key_exists('error', $infoFormato))){
+									$regisFormato = $this->getRegCilindroByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+									if(!(array_key_exists('error', $regisFormato))){
+										$pdf = new InformeCilindros();	
+										$pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);
+									}
+									else{
+										return json_encode($regisFormato);
+									}
 
-							}
-							else{
-								return json_encode($infoFormato);
-							}
-						}else{
-							return json_encode($infoU);
-						}
-						break;
-					case 'VIGAS':
-						//Obtenemos la informacion de quien esta realizando el pdf
-						$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
-						if(!(array_key_exists('error', $infoU))){
-							$infoFormato = $this->getInfoViga($token,$rol_usuario_id,$id_formatoCampo);
-							if(!(array_key_exists('error', $infoFormato))){
-								$regisFormato = $this->getRegVigaByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-								if(!(array_key_exists('error', $regisFormato))){
-									$pdf  = new InformeVigas();
-									return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);	
 								}
 								else{
-									return json_encode($regisFormato);
+									return json_encode($infoFormato);
 								}
 							}else{
-								return json_encode($infoFormato);
+								return json_encode($infoU);
 							}
-						}else{
-							return json_encode($infoU);
-						}
-						break;
+							break;
+						case 'VIGAS':
+							//Obtenemos la informacion de quien esta realizando el pdf
+							$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
+							if(!(array_key_exists('error', $infoU))){
+								$infoFormato = $this->getInfoViga($token,$rol_usuario_id,$id_formatoCampo);
+								if(!(array_key_exists('error', $infoFormato))){
+									$regisFormato = $this->getRegVigaByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+									if(!(array_key_exists('error', $regisFormato))){
+										$pdf  = new InformeVigas();
+										return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);	
+									}
+									else{
+										return json_encode($regisFormato);
+									}
+								}else{
+									return json_encode($infoFormato);
+								}
+							}else{
+								return json_encode($infoU);
+							}
+							break;
+					}
 				}
+				else{
+					return json_encode($infoFormato);
+				}	
 			}
 			else{
 				return json_encode($arr);
