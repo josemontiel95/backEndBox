@@ -1603,27 +1603,27 @@
 			if($arr['error'] == 0){
 				$s= $dbS->qAll(
 					"	SELECT
-				    		ensayoCilindro.fecha AS fechaEnsaye,
-				    		claveEspecimen,
-				    		revObra,
-				    		peso,
-				    		CASE
+							ensayoCilindro.fecha AS fechaEnsaye,
+							claveEspecimen,
+							revObra,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(peso, 3), 3), CHAR), ',', '  '), '.', ',') AS peso,
+							CASE
 								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
 								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
 								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
 								ELSE 'Error, Contacta a soporte'
 							END AS diasEnsaye,
-							ROUND (d1+d2)/2 AS diametro,
-							ROUND (h1+h2)/2 AS altura,
-							ROUND(((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4),3) AS area,
-				    		ROUND(((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn),3) AS kn,
-				    		carga,
-				    		ROUND(((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/var_system.ensayo_def_MPa),3)  AS mpa,
-				    		ROUND((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4)),3) AS kg,
-				    		fprima,
-				    		ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100),3)  AS porcentResis,
-				    		falla,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((d1+d2)/2), 1), 1), CHAR), ',', '  '), '.', ',') AS diametro,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((h1+h2)/2), 1), 1), CHAR), ',', '  '), '.', ',') AS altura,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4)), 1), 1), CHAR), ',', '  '), '.', ',') AS area,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn)), 1), 1), CHAR), ',', '  '), '.', ',') AS kn,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/var_system.ensayo_def_MPa)), 1), 1), CHAR), ',', '  '), '.', ',') AS mpa,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))), 0), 0), CHAR), ',', '  '), '.', ',') AS kgcm,
+							fprima,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100)), 1), 1), CHAR), ',', '  '), '.', ',') AS porcentResis,
+							IF(falla = 0,'-',REPLACE(REPLACE(CONVERT(FORMAT(ROUND(falla, 0), 0), CHAR), ',', '  '), '.', ',')) AS falla,
 							grupo,
 							registrosCampo.localizacion
 						FROM

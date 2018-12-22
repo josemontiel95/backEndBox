@@ -376,8 +376,8 @@
 			
 
 			//Incertidumbre
-			$incertidumbre = 'INCERTIDUMBRE';
-			$tam_incertidumbreAncho = $this->GetStringWidth($incertidumbre)+20;
+			$incertidumbre = 'INCERTIDUMBRE kg/cm²';
+			$tam_incertidumbreAncho = $this->GetStringWidth($incertidumbre)+15;
 			$tam_incertidumbreAlto = $tam_font_details - 3;
 
 			//Metodos empleados
@@ -1321,7 +1321,7 @@
 			$this->SetXY($posicion_x,$posicion_y);
 			
 			//Incertidumbre
-			$this->cell($this->cellsDetails['tam_incertidumbreAncho'],$this->cellsDetails['tam_incertidumbreAlto'],$this->cellsDetails['incertidumbre'],'L,R,T',2,'C');
+			$this->cell($this->cellsDetails['tam_incertidumbreAncho'],$this->cellsDetails['tam_incertidumbreAlto'],utf8_decode($this->cellsDetails['incertidumbre']),'L,R,T',2,'C');
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsDetails['tam_font_details'],$this->cellsDetails['tam_incertidumbreAncho'],$this->cellsDetails['tam_incertidumbreAlto'],$infoFormato['incertidumbreCilindro'],1);
 
@@ -1433,8 +1433,8 @@
 			$pdf->generateCellsCampos();
 			$pdf->generateCellsDetails();
 			$pdf->putTables($infoFormato,$regisFormato,$infoU);
-			$pdf->Output('F',$target_dir);
-			//$pdf->Output();
+			//$pdf->Output('F',$target_dir);
+			$pdf->Output();
 		}
 		
 	}
