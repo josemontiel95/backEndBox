@@ -371,8 +371,8 @@
 			
 
 			//Incertidumbre
-			$incertidumbre = 'INCERTIDUMBRE';
-			$tam_incertidumbreAncho = $this->GetStringWidth($incertidumbre)+20;
+			$incertidumbre = 'INCERTIDUMBRE kg/cm²';
+			$tam_incertidumbreAncho = $this->GetStringWidth($incertidumbre)+15;
 			$tam_incertidumbreAlto = $tam_font_details - 4;
 
 			//Metodos empleados
@@ -1075,13 +1075,13 @@
 			$this->SetFont('Arial','B',$tam_font_footer);
 			
 			//Incertidumbre
-			$incertidumbre = 'INCERTIDUMBRE';
-			$tam_incertidumbre = $this->GetStringWidth($incertidumbre)+20;
+			$incertidumbre = 'INCERTIDUMBRE kg/cm²';
+			$tam_incertidumbre = $this->GetStringWidth($incertidumbre)+15;
 			$this->SetX(-($tam_incertidumbre + 10));
 			//Guardamos las posiciones de esa linea
 			$posicion_x = $this->GetX();	$posicion_y = $this->GetY();
 
-			$this->cell($tam_incertidumbre,($tam_font_footer - 3),$incertidumbre,'R',2,'C');
+			$this->cell($tam_incertidumbre,($tam_font_footer - 3),utf8_decode($incertidumbre),'R',2,'C');
 
 			//Caja de texto
 			$resultado = $this->printInfoObraAndLocObra($tam_font_footer,$tam_incertidumbre,($tam_font_footer - 3),$infoFormato['incertidumbreCubo'],1);
@@ -1453,8 +1453,8 @@
 			$pdf->putInfo($infoFormato);
 			$pdf->generateCellsCampos();
 			$pdf->putTables($infoFormato,$regisFormato,$infoU);
-			$pdf->Output('F',$target_dir);
-			//$pdf->Output();
+			//$pdf->Output('F',$target_dir);
+			$pdf->Output();
 		}
 
 	}
