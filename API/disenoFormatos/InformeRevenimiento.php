@@ -453,6 +453,8 @@
 
 			//Caja de texto
 
+			$infoFormato['regNo'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+
 			$resultado = $this->printInfoObraAndLocObra($tam_font_right,$tam_regNoText,$tam_font_right - 4,$infoFormato['regNo'],1);
 
 			$this->SetFont('Arial','',$resultado['sizeFont']);
@@ -478,6 +480,8 @@
 			$this->cell($tam_incertidumbre,$tam_font_right - 4,utf8_decode($incertidumbre));
 
 			//Caja de texto
+
+			$infoFormato['incertidumbreO'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
 
 			$resultado = $this->printInfoObraAndLocObra($tam_font_right,$tam_incertidumbreText,$tam_font_right - 4,$infoFormato['incertidumbreO'],1);
 
@@ -507,6 +511,8 @@
 			//Caja de texto
 			$this->SetX($posicionCellsText);
 
+			$infoFormato['obra'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+
 			$resultado = $this->printInfoObraAndLocObra($tam_font_left,$linea_Text,$tam_font_left - 4,$infoFormato['obra'],3);
 
 			$this->SetFont('Arial','',$resultado['sizeFont']);
@@ -528,6 +534,8 @@
 
 			$this->SetX($posicionCellsText);
 
+			$infoFormato['locObra'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+
 			$resultado = $this->printInfoObraAndLocObra($tam_font_left,$linea_Text,$tam_font_left - 4,$infoFormato['locObra'],3);
 
 			$this->SetFont('Arial','',$resultado['sizeFont']);
@@ -547,6 +555,8 @@
 			//Caja de texto
 			$this->SetX($posicionCellsText);
 
+			$infoFormato['razonSocial'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+
 			$resultado = $this->printInfoObraAndLocObra($tam_font_left,$linea_Text,$tam_font_left - 4,$infoFormato['razonSocial'],1);
 
 			$this->SetFont('Arial','',$resultado['sizeFont']);
@@ -565,6 +575,8 @@
 			$this->Cell($this->GetStringWidth($nomCli)+2,$tam_font_left - 3,utf8_decode($dirCliente),0);
 			//Caja de texto
 			$this->SetX($posicionCellsText);
+
+			$infoFormato['direccion'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
 
 			$resultado = $this->printInfoObraAndLocObra($tam_font_left,$linea_Text,$tam_font_left - 4,$infoFormato['direccion'],1);
 
@@ -600,6 +612,7 @@
 			//Caja de texto
 			$this->SetFont('Arial','',$tam_font_left);
 
+			$infoFormato['locRev'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
 
 			$resultado = $this->printInfoObraAndLocObra($tam_font_left,$tam_localizacionText,$tam_font_left - 4,$infoFormato['locRev'],3);
 
