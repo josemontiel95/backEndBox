@@ -156,6 +156,7 @@
 				$this->SetX($positionPrint);
 				foreach ($registro as $campo) {
 
+					$campo = 'Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 ';
 
 					$resultado = $this->printInfoObraAndLocObra($tam_font,$arrayTamCells[$j],$tamAltoCells,$campo,1);
 
