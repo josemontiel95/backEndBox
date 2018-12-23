@@ -1190,20 +1190,20 @@
 
 			//Nos posicionamos al final de la celda "Elemento muestreado" para imprimir ahi todos los rows
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY(); // Guardamos las posiciones iniciales para cuando tengamos que imprimir el "Elemento muestreado"
-			$grupos = 8;
+			$grupos = 7;
 			if(count($arrayGrupo1)!=0){
 				$this->error = $this->putInfoTablesWithPositionInformes($tam_elementoAncho + 10,$arrayGrupo1,$grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
 				$endDown_table = $this->GetY();
 				//Imprimimos el "elemento muestreado"
 				$this->SetXY($posicion_x,$posicion_y);
 
-				$resultado = $this->printInfoObraAndLocObra($this->cellsTables['tam_font_CellsRows'],$tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],$arrayLoc[1],3);
+				$resultado = $this->printInfoObraAndLocObra($this->cellsTables['tam_font_CellsRows'],$tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],$arrayLoc[1],7);
 
-				if($resultado['error'] == 0){
-					$this->SetFont('Arial','',$resultado['sizeFont']);
-				}else{
-					$arrayLoc[1] = $resultado['estatus'];
-					$this->SetFont('Arial','',$this->cellsTables['tam_font_CellsRows']);
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+				$arrayLoc[1] = $resultado['new_string'];
+
+				if($resultado['error'] == 100){
+						$this->error = $resultado['error'];
 				}
 
 				$this->multicell($tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],utf8_decode($arrayLoc[1]),'L,T','C');
@@ -1250,15 +1250,15 @@
 				//Imprimimos el "elemento muestreado"
 				$this->SetXY($posicion_x,$posicion_y);
 
-				$resultado = $this->printInfoObraAndLocObra($this->cellsTables['tam_font_CellsRows'],$tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],$arrayLoc[2],3);
+				$resultado = $this->printInfoObraAndLocObra($this->cellsTables['tam_font_CellsRows'],$tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],$arrayLoc[2],7);
 
-				if($resultado['error'] == 0){
-					$this->SetFont('Arial','',$resultado['sizeFont']);
-				}else{
-					$arrayLoc[1] = $resultado['estatus'];
-					$this->SetFont('Arial','',$this->cellsTables['tam_font_CellsRows']);
+				$this->SetFont('Arial','',$resultado['sizeFont']);
+				$arrayLoc[2] = $resultado['new_string'];
+
+				if($resultado['error'] == 100){
+						$this->error = $resultado['error'];
 				}
-
+			
 				$this->multicell($tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],utf8_decode($arrayLoc[2]),'L,T','C');
 				if($this->GetY() < $endDown_table){
 					$num_iteraciones = (($endDown_table - $this->GetY()) / $this->cellsTables['tam_cellsTablesAlto']);
@@ -1490,8 +1490,8 @@
 			$pdf->generateCellsCampos();
 			$pdf->generateCellsDetails();
 			$pdf->putTables($infoFormato,$regisFormato,$infoU);
-			$pdf->Output('F',$target_dir);
-			//$pdf->Output();
+			//$pdf->Output('F',$target_dir);
+			$pdf->Output();
 			return $pdf->error;
 		}
 		
