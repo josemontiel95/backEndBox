@@ -366,10 +366,10 @@
 			//Observaciones
 			$observaciones = 'OBSERVACIONES:';
 			$tam_observacionesAncho = $this->GetStringWidth($observaciones)+2;
-			$tam_observacionesAlto = 2*($tam_font_details - 3); //Este alto lo comparten la caja de texto y las observaciones
+			$tam_observacionesAlto = 5; //Este alto lo comparten la caja de texto y las observaciones
 
 			//Tamaño de la celda donde va el texto de observaciones
-			$tam_observacionAnchoTxt = 259.3975 - $tam_observacionesAncho;
+			$tam_observacionAnchoTxt = 259.3975;
 			
 
 			$this->SetFont('Arial','B',$tam_font_details);
@@ -1191,7 +1191,7 @@
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY(); // Guardamos las posiciones iniciales para cuando tengamos que imprimir el "Elemento muestreado"
 			$grupos = 8;
 			if(count($arrayGrupo1)!=0){
-				$this->putInfoTablesWithPositionInformes($tam_elementoAncho + 10,$arrayGrupo1,$grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
+				$this->error = $this->putInfoTablesWithPositionInformes($tam_elementoAncho + 10,$arrayGrupo1,$grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
 				$endDown_table = $this->GetY();
 				//Imprimimos el "elemento muestreado"
 				$this->SetXY($posicion_x,$posicion_y);
@@ -1244,7 +1244,7 @@
 
 
 			if(count($arrayGrupo2)!=0){
-				$this->putInfoTablesWithPositionInformes($tam_elementoAncho + 10,$arrayGrupo2,$grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
+				$this->error = $this->putInfoTablesWithPositionInformes($tam_elementoAncho + 10,$arrayGrupo2,$grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
 				$endDown_table = $this->GetY();
 				//Imprimimos el "elemento muestreado"
 				$this->SetXY($posicion_x,$posicion_y);
@@ -1289,16 +1289,14 @@
 	
 			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
 			//Observaciones
-
-			$this->cell($this->cellsDetails['tam_observacionesAncho'],$this->cellsDetails['tam_observacionesAlto'],$this->cellsDetails['observaciones'],'L,T,B',0,'C');
-
-			//Caja de Texto
+			$this->cell(0,$this->cellsDetails['tam_observacionesAlto'],$this->cellsDetails['observaciones'],'R,T,L',2);
 
 
 			//Caja de texto
-			$this->cellsDetails['tam_observacionesAlto'] = $this->cellsDetails['tam_observacionesAlto']/2;
 
-			$resultado = $this->printInfoObraAndLocObra($this->cellsDetails['tam_font_details'],$this->cellsDetails['tam_observacionAnchoTxt'],$this->cellsDetails['tam_observacionesAlto'],$infoFormato['observaciones'],2);
+			$infoFormato['observaciones'] = 'Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 '."\n".'HOLA'."\n".'Linea3'."\n".'Linea4';
+
+			$resultado = $this->printInfoObraAndLocObra($this->cellsDetails['tam_font_details'],$this->cellsDetails['tam_observacionAnchoTxt'],$this->cellsDetails['tam_observacionesAlto'],$infoFormato['observaciones'],3);
 
 			$this->SetFont('Arial','',$resultado['sizeFont']);
 			$infoFormato['observaciones'] = $resultado['new_string'];
@@ -1307,15 +1305,9 @@
 				$this->error = $resultado;
 			}
 
-			if(array_key_exists('Total de renglones que serian', $resultado)){
-				if($resultado['Total de renglones que serian'] == 1){
-					$this->cellsDetails['tam_observacionesAlto'] = $this->cellsDetails['tam_observacionesAlto']*2;
-				}
-			}
-
-			//print_r($resultado);
-
-			$this->multicell(0,$this->cellsDetails['tam_observacionesAlto'],utf8_decode(	$infoFormato['observaciones']	),'T,R,B');
+			//Por motivos de cambio a 3 renglones 22/12/2018 el tamaño de las lineas se cambio a 3, este numero esta en todos los formatos que contienen observaiones a tres renglones
+			//En esta celda se pone 0 porque debe cubrir todo el ancho, a su vez en el algortimo pusimos  una medida previamente calculada pero tiene la misma medida que al ponerle la celda en su parametro with = 0
+			$this->multicell(0,3,utf8_decode(	$infoFormato['observaciones']	),'R,L','J');
 			//---
 	
 			//$this->cell($this->cellsDetails['tam_observacionAnchoTxt'],$this->cellsDetails['tam_observacionesAlto'],utf8_decode($infoFormato['observaciones'] )	,'R,T,B',2);
@@ -1364,8 +1356,34 @@
 			$this->SetFont('Arial','',$this->cellsDetails['tam_font_details']);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('SIGNATARIO/JEFE DE LABORATORIO')/2),$this->gety() - 3,utf8_decode('SIGNATARIO/JEFE DE LABORATORIO'));	
 			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
-			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreLaboratorista'])/2),$this->gety() - 10,utf8_decode($infoU['nombreLaboratorista']));	
 
+			//Nombre del laboratorista
+			if($infoU['nombreLaboratorista'] != "null"){
+				/*
+					-Restamos -2 a el ancho de la celda porque no contemple las negritas, entonces como esta vez imprimire negritas el espacio de la letra aumenta.
+					-Ponemos la altura de la celda del mismo tamaño que el de la letra ya que no existe una celda como tal en la que va el texto, y el alto de la celda no repercute en el resultado.
+				*/
+
+
+				$infoU['nombreLaboratorista'] = 'Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 ';
+
+				$resultado = $this->printInfoObraAndLocObra($this->cellsDetails['tam_font_details'],$tam_boxElaboro-3,$this->cellsDetails['tam_font_details'],$infoU['nombreLaboratorista'],1);
+
+				$this->SetFont('Arial','B',$resultado['sizeFont']);
+				$infoU['nombreLaboratorista'] = $resultado['new_string'];
+
+				if($resultado['error'] == 100){
+					$this->error = $resultado['error'];
+				}
+
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreLaboratorista'])/2),$this->gety() - 10,utf8_decode($infoU['nombreLaboratorista']));	
+		
+			}else{
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('No hay nombre.')/2),$this->gety() - 10,utf8_decode("No hay nombre."));	
+			}
+
+			//Firma del laboratorista
+			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
 			if($infoU['firmaLaboratorista'] != "null"){
 				
 				$this->Image($infoU['firmaLaboratorista'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
@@ -1392,7 +1410,35 @@
 			$this->SetFont('Arial','',$this->cellsDetails['tam_font_details']);
 			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('DIRECTOR GENERAL/GERENTE GENERAL')/2),$this->gety() - 3,utf8_decode('DIRECTOR GENERAL/GERENTE GENERAL'));	
 			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
-			$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreG'])/2),$this->gety() - 10,utf8_decode($infoU['nombreG']));	
+
+			//Nombre del Gerente
+			if($infoU['nombreG'] != "null"){
+				/*
+					-Restamos -2 a el ancho de la celda porque no contemple las negritas, entonces como esta vez imprimire negritas el espacio de la letra aumenta.
+					-Ponemos la altura de la celda del mismo tamaño que el de la letra ya que no existe una celda como tal en la que va el texto, y el alto de la celda no repercute en el resultado.
+				*/
+
+				$infoU['nombreG'] = 'Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 ';
+
+				$resultado = $this->printInfoObraAndLocObra($this->cellsDetails['tam_font_details'],$tam_boxElaboro-3,$this->cellsDetails['tam_font_details'],$infoU['nombreG'],1);
+
+				$this->SetFont('Arial','B',$resultado['sizeFont']);
+				$infoU['nombreG'] = $resultado['new_string'];
+
+				if($resultado['error'] == 100){
+					$this->error = $resultado['error'];
+				}	
+
+
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth($infoU['nombreG'])/2),$this->gety() - 10,utf8_decode($infoU['nombreG']));	
+		
+			}else{
+				$this->TextWithDirection(($posicion_x + ($tam_boxElaboro /2))-($this->GetStringWidth('No hay nombre.')/2),$this->gety() - 10,utf8_decode("No hay nombre."));	
+			}
+
+
+			//Firma del Gerente
+			$this->SetFont('Arial','B',$this->cellsDetails['tam_font_details']);
 
 			if($infoU['firmaG'] != "null"){
 				$this->Image($infoU['firmaG'],(($posicion_x+($tam_boxElaboro)/2)-($tam_image/2)),($posicion_y + (($tam_first + $tam_second)/2))-($tam_image/2),$tam_image,$tam_image);
