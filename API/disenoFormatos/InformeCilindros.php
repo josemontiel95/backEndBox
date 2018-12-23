@@ -83,16 +83,16 @@
 			$tam_CellsLeftAlto = $tam_font_left - 4;
 			$this->SetFont('Arial','',$tam_font_left);
 			
-			$obra = 'Nombre de la Obra:';
+			$obra = 'NOMBRE DE LA OBRA:';
 			$tam_obra = $this->GetStringWidth($obra)+2;
 
-			$locObra = 'Localización de la Obra:';
+			$locObra = 'LOCALIZACIÓN DE LA OBRA:';
 			$tam_locObra = $this->GetStringWidth($locObra)+2;
 
-			$nomCli = 'Nombre del Cliente:';
+			$nomCli = 'NOMBRE DEL CLIENTE:';
 			$tam_nomCli = $this->GetStringWidth($nomCli)+2;
 			
-			$dirCliente = 'Dirección del Cliente:';
+			$dirCliente = 'DIRECCIÓN DEL CLIENTE:';
 			$tam_dirCliente = $this->GetStringWidth($nomCli)+2;
 
 			$tam_nomObraText = $tam_localizacionText = $tam_razonText = $tam_dirClienteText = 279.3975 - ($posicionCellsText+10);
@@ -1419,7 +1419,7 @@
 		    $this->Cell($tam_noPagina,10,utf8_decode($noPagina),0,0,'C');
 
 		    //Clave de validacion
-		    $clave = 'FI-05-LCC-01-6.1';
+		    $clave = 'F1-05-LCC-01-6.1';
 		    $tam_clave = $this->GetStringWidth($clave);
 		    $this->SetX(-($tam_clave + 10));
 		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');
