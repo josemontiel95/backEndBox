@@ -21,6 +21,8 @@
 		//Array que contiene los letreros de los detalles
 		private $cellsDetails;
 
+		public $error = 0;
+
 		function generateCellsInfoForvalidation(){
 			$pdf  = new InformeCilindros('L','mm','Letter');
 			$pdf->AddPage();
@@ -886,7 +888,6 @@
 
 			//Caja de texto
 
-			$infoFormato['informeNo'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_right'],$this->cellsInfo['tam_informeText'],$this->cellsInfo['tam_CellsRightAlto'],$infoFormato['informeNo'],1);
 
@@ -894,7 +895,7 @@
 			$infoFormato['informeNo'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 
@@ -936,7 +937,7 @@
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
 
-			$infoFormato['obra'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+			
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['obra'],3);
 
@@ -944,7 +945,7 @@
 			$infoFormato['obra'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 			$this->multicell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],utf8_decode(	$infoFormato['obra']	),'B','C');
@@ -958,7 +959,7 @@
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
-			$infoFormato['localizacion'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+			
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['localizacion'],3);
 
@@ -966,7 +967,7 @@
 			$infoFormato['localizacion'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+					$this->error = $resultado['error'];
 			}
 
 
@@ -982,7 +983,7 @@
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
-			$infoFormato['razonSocial'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+			
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_razonText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['razonSocial'],1);
 
@@ -990,7 +991,7 @@
 			$infoFormato['razonSocial'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+					$this->error = $resultado['error'];
 			}
 
 			$this->multicell($this->cellsInfo['tam_razonText'],$this->cellsInfo['tam_CellsLeftAlto'],utf8_decode(	$infoFormato['razonSocial']	),'B','C');
@@ -1007,7 +1008,7 @@
 
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
 
-			$infoFormato['direccion'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+			
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_dirClienteText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['direccion'],1);
 
@@ -1015,7 +1016,7 @@
 			$infoFormato['direccion'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+					$this->error = $resultado['error'];
 			}
 
 
@@ -1294,7 +1295,7 @@
 
 			//Caja de texto
 
-			$infoFormato['observaciones'] = 'Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 '."\n".'HOLA'."\n".'Linea3'."\n".'Linea4';
+			
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsDetails['tam_font_details'],$this->cellsDetails['tam_observacionAnchoTxt'],$this->cellsDetails['tam_observacionesAlto'],$infoFormato['observaciones'],3);
 
@@ -1302,7 +1303,7 @@
 			$infoFormato['observaciones'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+					$this->error = $resultado['error'];
 			}
 
 			//Por motivos de cambio a 3 renglones 22/12/2018 el tamaño de las lineas se cambio a 3, este numero esta en todos los formatos que contienen observaiones a tres renglones
@@ -1330,7 +1331,7 @@
 			$infoFormato['incertidumbreCilindro'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+					$this->error = $resultado['error'];
 			}
 
 
@@ -1365,7 +1366,7 @@
 				*/
 
 
-				$infoU['nombreLaboratorista'] = 'Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 ';
+				
 
 				$resultado = $this->printInfoObraAndLocObra($this->cellsDetails['tam_font_details'],$tam_boxElaboro-3,$this->cellsDetails['tam_font_details'],$infoU['nombreLaboratorista'],1);
 
@@ -1418,7 +1419,7 @@
 					-Ponemos la altura de la celda del mismo tamaño que el de la letra ya que no existe una celda como tal en la que va el texto, y el alto de la celda no repercute en el resultado.
 				*/
 
-				$infoU['nombreG'] = 'Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 ';
+				
 
 				$resultado = $this->printInfoObraAndLocObra($this->cellsDetails['tam_font_details'],$tam_boxElaboro-3,$this->cellsDetails['tam_font_details'],$infoU['nombreG'],1);
 
@@ -1489,8 +1490,9 @@
 			$pdf->generateCellsCampos();
 			$pdf->generateCellsDetails();
 			$pdf->putTables($infoFormato,$regisFormato,$infoU);
-			//$pdf->Output('F',$target_dir);
-			$pdf->Output();
+			$pdf->Output('F',$target_dir);
+			//$pdf->Output();
+			return $pdf->error;
 		}
 		
 	}
