@@ -148,12 +148,24 @@
 		}
 
 		function putInfoTablesWithPositionInformes($positionPrint,$regisFormato,$grupos,$tam_font,$arrayTamCells,$tamAltoCells){
+			$error = 0;
 			$this->SetFont('Arial','',$tam_font);
 			$num_rows = 0;
 			foreach ($regisFormato as $registro) {
 				$j=0;
 				$this->SetX($positionPrint);
 				foreach ($registro as $campo) {
+
+
+					$resultado = $this->printInfoObraAndLocObra($tam_font,$arrayTamCells[$j],$tamAltoCells,$campo,1);
+
+					$this->SetFont('Arial','',$resultado['sizeFont']);
+					$campo = $resultado['new_string'];
+
+					if($resultado['error'] == 100){
+						$error = $resultado['error'];
+					}
+
 					$this->cell($arrayTamCells[$j],$tamAltoCells,utf8_decode($campo),1,0,'C');
 					$j++;
 				}
@@ -172,6 +184,8 @@
 					$this->Ln();
 				}
 			}
+
+			return $error;
 		}
 
 		function putMaxString($sizeString,$totalCharacters){

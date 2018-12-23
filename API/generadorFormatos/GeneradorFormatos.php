@@ -21,77 +21,80 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-					$formato = new FormatoCampo();	
-					$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
-					if($infoFormato == "empty")
-						echo "No hay resultados del id solicitado";
-				switch ($infoFormato['tipo_especimen']) {
-					case 'CUBO':
-						//Obtenemos la informacion de quien esta realizando el pdf
-						$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
-						if(!(array_key_exists('error', $infoU))){
-							$infoFormato = $this->getInfoCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-							if(!(array_key_exists('error', $infoFormato))){
-								$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-								if(!(array_key_exists('error', $regisFormato))){
-									$pdf = new InformeCubos();	
-									$pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);
-								}
-								else{
-									return json_encode($regisFormato);
-								}
+				$formato = new FormatoCampo();	
+				$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
+				if(!(array_key_exists('error', $infoFormato))){
+					switch ($infoFormato['tipo_especimen']) {
+						case 'CUBO':
+							//Obtenemos la informacion de quien esta realizando el pdf
+							$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
+							if(!(array_key_exists('error', $infoU))){
+								$infoFormato = $this->getInfoCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+								if(!(array_key_exists('error', $infoFormato))){
+									$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+									if(!(array_key_exists('error', $regisFormato))){
+										$pdf = new InformeCubos();	
+										return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);
+									}
+									else{
+										return json_encode($regisFormato);
+									}
+								}else{
+									return json_encode($infoFormato);
+								}	
 							}else{
-								return json_encode($infoFormato);
-							}	
-						}else{
-							return json_encode($infoU);
-						}
-						break;
-					case 'CILINDRO':
-						//Obtenemos la informacion de quien esta realizando el pdf
-						$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
-						if(!(array_key_exists('error', $infoU))){
-							$infoFormato = $this->getInfoCiliByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-							if(!(array_key_exists('error', $infoFormato))){
-								$regisFormato = $this->getRegCilindroByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-								if(!(array_key_exists('error', $regisFormato))){
-									$pdf = new InformeCilindros();	
-									$pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);
-								}
-								else{
-									return json_encode($regisFormato);
-								}
+								return json_encode($infoU);
+							}
+							break;
+						case 'CILINDRO':
+							//Obtenemos la informacion de quien esta realizando el pdf
+							$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
+							if(!(array_key_exists('error', $infoU))){
+								$infoFormato = $this->getInfoCiliByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+								if(!(array_key_exists('error', $infoFormato))){
+									$regisFormato = $this->getRegCilindroByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+									if(!(array_key_exists('error', $regisFormato))){
+										$pdf = new InformeCilindros();	
+										return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);
+									}
+									else{
+										return json_encode($regisFormato);
+									}
 
-							}
-							else{
-								return json_encode($infoFormato);
-							}
-						}else{
-							return json_encode($infoU);
-						}
-						break;
-					case 'VIGAS':
-						//Obtenemos la informacion de quien esta realizando el pdf
-						$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
-						if(!(array_key_exists('error', $infoU))){
-							$infoFormato = $this->getInfoViga($token,$rol_usuario_id,$id_formatoCampo);
-							if(!(array_key_exists('error', $infoFormato))){
-								$regisFormato = $this->getRegVigaByFCCH($token,$rol_usuario_id,$id_formatoCampo);
-								if(!(array_key_exists('error', $regisFormato))){
-									$pdf  = new InformeVigas();
-									return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);	
 								}
 								else{
-									return json_encode($regisFormato);
+									return json_encode($infoFormato);
 								}
 							}else{
-								return json_encode($infoFormato);
+								return json_encode($infoU);
 							}
-						}else{
-							return json_encode($infoU);
-						}
-						break;
+							break;
+						case 'VIGAS':
+							//Obtenemos la informacion de quien esta realizando el pdf
+							$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
+							if(!(array_key_exists('error', $infoU))){
+								$infoFormato = $this->getInfoViga($token,$rol_usuario_id,$id_formatoCampo);
+								if(!(array_key_exists('error', $infoFormato))){
+									$regisFormato = $this->getRegVigaByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+									if(!(array_key_exists('error', $regisFormato))){
+										$pdf  = new InformeVigas();
+										return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);	
+									}
+									else{
+										return json_encode($regisFormato);
+									}
+								}else{
+									return json_encode($infoFormato);
+								}
+							}else{
+								return json_encode($infoU);
+							}
+							break;
+					}
 				}
+				else{
+					return json_encode($infoFormato);
+				}	
 			}
 			else{
 				return json_encode($arr);
@@ -1600,27 +1603,27 @@
 			if($arr['error'] == 0){
 				$s= $dbS->qAll(
 					"	SELECT
-				    		ensayoCilindro.fecha AS fechaEnsaye,
-				    		claveEspecimen,
-				    		revObra,
-				    		peso,
-				    		CASE
+							ensayoCilindro.fecha AS fechaEnsaye,
+							claveEspecimen,
+							revObra,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(peso, 3), 3), CHAR), ',', '  '), '.', ',') AS peso,
+							CASE
 								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
 								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
 								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
 								ELSE 'Error, Contacta a soporte'
 							END AS diasEnsaye,
-							ROUND (d1+d2)/2 AS diametro,
-							ROUND (h1+h2)/2 AS altura,
-							ROUND(((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4),3) AS area,
-				    		ROUND(((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn),3) AS kn,
-				    		carga,
-				    		ROUND(((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/var_system.ensayo_def_MPa),3)  AS mpa,
-				    		ROUND((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4)),3) AS kg,
-				    		fprima,
-				    		ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100),3)  AS porcentResis,
-				    		falla,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((d1+d2)/2), 1), 1), CHAR), ',', '  '), '.', ',') AS diametro,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((h1+h2)/2), 1), 1), CHAR), ',', '  '), '.', ',') AS altura,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4)), 1), 1), CHAR), ',', '  '), '.', ',') AS area,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn)), 1), 1), CHAR), ',', '  '), '.', ',') AS kn,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/var_system.ensayo_def_MPa)), 1), 1), CHAR), ',', '  '), '.', ',') AS mpa,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))), 0), 0), CHAR), ',', '  '), '.', ',') AS kgcm,
+							fprima,
+							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100)), 1), 1), CHAR), ',', '  '), '.', ',') AS porcentResis,
+							IF(falla = 0,'-',REPLACE(REPLACE(CONVERT(FORMAT(ROUND(falla, 0), 0), CHAR), ',', '  '), '.', ',')) AS falla,
 							grupo,
 							registrosCampo.localizacion
 						FROM
