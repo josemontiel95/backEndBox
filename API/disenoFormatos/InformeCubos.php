@@ -73,18 +73,18 @@
 			$tam_CellsLeftAlto = $tam_font_left - 4;
 			$this->SetFont('Arial','B',$tam_font_left);
 			
-			$obra = 'Nombre de la Obra:';
+			$obra = 'NOMBRE DE LA OBRA:';
 			$tam_obra = $this->GetStringWidth($obra)+2;
 
-			$locObra = 'Localización de la Obra:';
+			$locObra = 'LOCALIZACIÓN DE LA OBRA:';
 			$tam_locObra = $this->GetStringWidth($locObra)+2;
 
-			$nomCli = 'Nombre del Cliente:';
+			$nomCli = 'NOMBRE DEL CLIENTE:';
 			$tam_nomCli = $this->GetStringWidth($nomCli)+2;
 			
 
 		
-			$dirCliente = 'Dirección del Cliente:';
+			$dirCliente = 'DIRECCIÓN DEL CLIENTE:';
 			$tam_dirCliente = $this->GetStringWidth($nomCli)+2;
 
 			$tam_nomObraText = $tam_localizacionText = $tam_razonText = $tam_dirClienteText = 279.3975 - ($posicionCellsText+10);
@@ -486,6 +486,8 @@
 
 			//Caja de texto
 
+			$infoFormato['informeNo'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_right'],$this->cellsInfo['tam_informeText'],$this->cellsInfo['tam_CellsRightAlto'],$infoFormato['informeNo'],1);
 
 			$this->SetFont('Arial','',$resultado['sizeFont']);
@@ -533,6 +535,8 @@
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
+			$infoFormato['obra'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['obra'],3);
 
 			$this->SetFont('Arial','',$resultado['sizeFont']);
@@ -552,6 +556,8 @@
 
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
+
+			$infoFormato['localizacion'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['localizacion'],3);
 
@@ -575,6 +581,7 @@
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
+			$infoFormato['razonSocial'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_razonText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['razonSocial'],1);
 
@@ -598,6 +605,8 @@
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
+
+			$infoFormato['direccion'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_dirClienteText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['direccion'],1);
 
