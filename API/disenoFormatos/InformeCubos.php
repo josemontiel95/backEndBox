@@ -22,6 +22,8 @@
 		//Array que contiene los letreros de los detalles
 		private $cellsDetails;
 
+		public $error = 0;
+
 		public $infoU;
 		
 		function generateCellsInfoForvalidation(){
@@ -488,7 +490,7 @@
 
 			//Caja de texto
 
-			$infoFormato['informeNo'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+			
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_right'],$this->cellsInfo['tam_informeText'],$this->cellsInfo['tam_CellsRightAlto'],$infoFormato['informeNo'],1);
 
@@ -496,7 +498,7 @@
 			$infoFormato['informeNo'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 
@@ -537,7 +539,7 @@
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
-			$infoFormato['obra'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+			
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['obra'],3);
 
@@ -545,7 +547,7 @@
 			$infoFormato['obra'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 			$this->multicell($this->cellsInfo['tam_nomObraText'],$this->cellsInfo['tam_CellsLeftAlto'],utf8_decode(	$infoFormato['obra']	),'B','C');
@@ -559,7 +561,7 @@
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
-			$infoFormato['localizacion'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+			
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_localizacionText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['localizacion'],3);
 
@@ -567,7 +569,7 @@
 			$infoFormato['localizacion'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 
@@ -583,7 +585,7 @@
 			//Caja de texto
 			$this->SetX($this->cellsInfo['posicionCellsText']);
 
-			$infoFormato['razonSocial'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+			
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_razonText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['razonSocial'],1);
 
@@ -591,7 +593,7 @@
 			$infoFormato['razonSocial'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 			$this->multicell($this->cellsInfo['tam_razonText'],$this->cellsInfo['tam_CellsLeftAlto'],utf8_decode(	$infoFormato['razonSocial']	),'B','C');
@@ -608,7 +610,7 @@
 
 			$this->SetFont('Arial','',$this->cellsInfo['tam_font_left']);
 
-			$infoFormato['direccion'] = 'Linea1'."\n".'Linea2'."\n".'Linea3'."\n".'Linea4';
+			
 
 			$resultado = $this->printInfoObraAndLocObra($this->cellsInfo['tam_font_left'],$this->cellsInfo['tam_dirClienteText'],$this->cellsInfo['tam_CellsLeftAlto'],$infoFormato['direccion'],1);
 
@@ -616,7 +618,7 @@
 			$infoFormato['direccion'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 
@@ -780,6 +782,7 @@
 
 		function putTables($infoFormato,$regisFormato,$infoU){
 			
+			$this->SetY(90);
 
 			//Guardamos la posicion de la Y para alinear todas las celdas a la misma altura
 			$posicion_y = $this->GetY();
@@ -945,20 +948,21 @@
 
 			//Nos posicionamos al final de la celda "Elemento muestreado" para imprimir ahi todos los rows
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY(); // Guardamos las posiciones iniciales para cuando tengamos que imprimir el "Elemento muestreado"
-			$grupos = 8;
+			$grupos = 7;
 			if(count($arrayGrupo1)!=0){
-				$this->putInfoTablesWithPositionInformes($tam_elementoAncho + 10,$arrayGrupo1,$grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
+				$this->error = $this->putInfoTablesWithPositionInformes($tam_elementoAncho + 10,$arrayGrupo1,$grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
+
 				$endDown_table = $this->GetY();
 				//Imprimimos el "elemento muestreado"
 				$this->SetXY($posicion_x,$posicion_y);
 
-				$resultado = $this->printInfoObraAndLocObra($this->cellsTables['tam_font_CellsRows'],$tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],$arrayLoc[1],3);
+				$resultado = $this->printInfoObraAndLocObra($this->cellsTables['tam_font_CellsRows'],$tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],$arrayLoc[1],7);
 
 				$this->SetFont('Arial','',$resultado['sizeFont']);
 				$arrayLoc[1] = $resultado['new_string'];
 
 				if($resultado['error'] == 100){
-					$this->error = $resultado;
+					$this->error = $resultado['error'];
 				}
 
 				$this->multicell($tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],utf8_decode($arrayLoc[1]),'L,T','C');
@@ -996,18 +1000,18 @@
 
 
 			if(count($arrayGrupo2)!=0){
-				$this->putInfoTablesWithPositionInformes($tam_elementoAncho + 10,$arrayGrupo2,$grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
+				$this->error = $this->putInfoTablesWithPositionInformes($tam_elementoAncho + 10,$arrayGrupo2,$grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
 				$endDown_table = $this->GetY();
 				//Imprimimos el "elemento muestreado"
 				$this->SetXY($posicion_x,$posicion_y);
 
-				$resultado = $this->printInfoObraAndLocObra($this->cellsTables['tam_font_CellsRows'],$tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],$arrayLoc[2],3);
+				$resultado = $this->printInfoObraAndLocObra($this->cellsTables['tam_font_CellsRows'],$tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],$arrayLoc[2],7);
 
 				$this->SetFont('Arial','',$resultado['sizeFont']);
 				$arrayLoc[2] = $resultado['new_string'];
 
 				if($resultado['error'] == 100){
-					$this->error = $resultado;
+					$this->error = $resultado['error'];
 				}
 
 				$this->multicell($tam_elementoAncho,$this->cellsTables['tam_cellsTablesAlto'],utf8_decode($arrayLoc[2]),'L,T','C');
@@ -1065,7 +1069,7 @@
 
 			//Por motivos de cambio a 3 renglones 22/12/2018 el tamaño de las lineas se cambio a 3, este numero esta en todos los formatos que contienen observaiones a tres renglones
 
-			$infoFormato['observaciones'] = 'Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 '."\n".'HOLA'."\n".'Linea3 '."\n".'Linea4';
+			
 
 			$resultado = $this->printInfoObraAndLocObra($tam_font_footer,259.3975,3,$infoFormato['observaciones'],3);
 
@@ -1073,7 +1077,7 @@
 			$infoFormato['observaciones'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 			$this->multicell(0,3,utf8_decode(	$infoFormato['observaciones']	),'R,L','J');
@@ -1097,7 +1101,7 @@
 			$infoFormato['incertidumbreCubo'] = $resultado['new_string'];
 
 			if($resultado['error'] == 100){
-				$this->error = $resultado;
+				$this->error = $resultado['error'];
 			}
 
 			$this->cell($tam_incertidumbre,($tam_font_footer - 3),utf8_decode($infoFormato['incertidumbreCubo']),'B,R',1,'C');
@@ -1419,7 +1423,7 @@
 				*/
 
 
-				$infoU['nombreLaboratorista'] = 'Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 ';
+				
 
 				$resultado = $this->printInfoObraAndLocObra($tam_font_footer,$tam_boxElaboro-3,$tam_font_footer,$infoU['nombreLaboratorista'],1);
 
@@ -1468,7 +1472,7 @@
 				*/
 
 
-				$infoU['nombreG'] = 'Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 Linea1 ';
+				
 
 				$resultado = $this->printInfoObraAndLocObra($tam_font_footer,$tam_boxElaboro-3,$tam_font_footer,$infoU['nombreG'],1);
 
@@ -1530,8 +1534,9 @@
 			$pdf->generateCellsCampos();
 			$pdf->putTables($infoFormato,$regisFormato,$infoU);
 			$pdf->infoU = $infoU;
-			//$pdf->Output('F',$target_dir);
-			$pdf->Output();
+			$pdf->Output('F',$target_dir);
+			//$pdf->Output();
+			return $pdf->error;
 		}
 
 	}

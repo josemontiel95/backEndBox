@@ -34,7 +34,7 @@
 									$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
 									if(!(array_key_exists('error', $regisFormato))){
 										$pdf = new InformeCubos();	
-										$pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);
+										return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);
 									}
 									else{
 										return json_encode($regisFormato);
