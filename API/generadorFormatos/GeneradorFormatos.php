@@ -1442,6 +1442,7 @@
 			if($arr['error'] == 0){
 				$s= $dbS->qAll("
 			      SELECT
+			      	id_registrosRev,
 			      	fecha,
 					revProyecto,	
 					revObtenido,
@@ -1461,6 +1462,8 @@
 			      	concretera_id = id_concretera AND 
 			      	registrosRev.active = 1 AND
 			      	formatoRegistroRev_id = 1QQ
+			      ORDER BY
+						id_registrosRev
 			      ",
 			      array($id_formatoRegistroRev),
 			      "SELECT -- GeneradorFormatos :: getRegRev : 1 "
