@@ -1247,7 +1247,7 @@
 						registrosCampo.fecha AS fechaColado,
 						informeNo,
 						claveEspecimen,
-						peso,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(peso, 3), 3), CHAR), ',', '  '), '.', ',') AS peso,
 						CASE
 						WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
 						WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
