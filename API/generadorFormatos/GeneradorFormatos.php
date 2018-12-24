@@ -24,6 +24,7 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
+				//Obtenemos la informacion del Formato de Campo
 				$formato = new FormatoCampo();	
 				$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
 				if(!(array_key_exists('error', $infoFormato))){
@@ -81,7 +82,7 @@
 									$regisFormato = $this->getRegVigaByFCCH($token,$rol_usuario_id,$id_formatoCampo);
 									if(!(array_key_exists('error', $regisFormato))){
 										$pdf  = new InformeVigas();
-										return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);	
+										return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir,$id_registrosCampo);	
 									}
 									else{
 										return json_encode($regisFormato);
@@ -106,6 +107,8 @@
 		}
 
 		*/
+
+		
 
 		//FUNCION QUE SIRVE CON id_registrosCampo
 		function generateInformeCampo($token,$rol_usuario_id,$id_registrosCampo,$target_dir){
