@@ -136,7 +136,7 @@
 										$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
 										if(!(array_key_exists('error', $regisFormato))){
 											$pdf = new InformeCubos();	
-											return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);
+											return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir,$id_registrosCampo);
 										}
 										else{
 											return json_encode($regisFormato);
@@ -1666,48 +1666,96 @@
 			if($arr['error'] == 0){
 				$s= $dbS->qAll(
 					"SELECT
-				    		ensayoCubo.fecha AS fechaEnsaye,
-				    		claveEspecimen,
-				    		revObra,
-				    		CASE
-								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
-								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
-								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
-								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
-								ELSE 'Error, Contacta a soporte'
-							END AS diasEnsaye,
-							l1,
-							l2,
-							ROUND((l1*l2),3) AS area,
-							ROUND(((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn),3) AS kn,
-							carga,
-							ROUND(((carga/(l1*l2))/var_system.ensayo_def_MPa),3)  AS mpa,
-							ROUND((carga/(l1*l2)),3) AS kg,
-							fprima,
-				    		ROUND((((carga/(l1*l2))/fprima)*100),3)  AS porcentResis,
-							grupo,
-							registrosCampo.localizacion
-						FROM
-							ensayoCubo,
-							registrosCampo,
-							formatoCampo,
-							(
-								SELECT
-									ensayo_def_pi
-									ensayo_def_kN,
-									ensayo_def_MPa,
-									ensayo_def_divisorKn
-								FROM
-									systemstatus
-								ORDER BY id_systemstatus DESC LIMIT 1
-							)AS var_system
-						WHERE
-							id_registrosCampo = ensayoCubo.registrosCampo_id AND
-							id_formatoCampo = ensayoCubo.formatoCampo_id AND 
-							ensayoCubo.status <> 0 AND
-							ensayoCubo.formatoCampo_id = 1QQ
+						t.id_registrosCampo,
+						e.status,
+						e.fechaEnsaye,
+						t.claveEspecimen,
+						e.revObra,
+						t.diasEnsaye,
+						e.l1,
+						e.l2,
+						e.area,
+						e.kn,
+						e.carga,
+						e.mpa,
+						e.kg,
+						e.fprima,
+						e.porcentResis,
+						e.grupo,
+						e.localizacion
+					FROM
+						(
+							SELECT
+								r.id_registrosCampo,
+								r.claveEspecimen,
+								r.fecha,
+								r.status,
+								CASE
+									WHEN MOD(r.diasEnsaye,3) = 1 THEN f.prueba1  
+									WHEN MOD(r.diasEnsaye,3) = 2 THEN f.prueba2  
+									WHEN MOD(r.diasEnsaye,3) = 0 THEN f.prueba3  
+									ELSE 'Error, Contacta a soporte'
+								END AS diasEnsaye
+							FROM
+								registrosCampo AS r,
+								formatoCampo AS f
+							WHERE
+								r.formatoCampo_id = f.id_formatoCampo AND
+								f.id_formatoCampo = 1QQ
+						)AS t 
+						LEFT JOIN
+						(
+							SELECT
+								ensayoCubo.status,
+								registrosCampo.id_registrosCampo,
+								ensayoCubo.fecha AS fechaEnsaye,
+								claveEspecimen,
+								revObra,
+								CASE
+									WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
+									WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
+									WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
+									WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
+									ELSE 'Error, Contacta a soporte'
+								END AS diasEnsaye,
+								l1,
+								l2,
+								ROUND((l1*l2),3) AS area,
+								ROUND(((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn),3) AS kn,
+								carga,
+								ROUND(((carga/(l1*l2))/var_system.ensayo_def_MPa),3)  AS mpa,
+								ROUND((carga/(l1*l2)),3) AS kg,
+								fprima,
+								ROUND((((carga/(l1*l2))/fprima)*100),3)  AS porcentResis,
+								grupo,
+								registrosCampo.localizacion
+							FROM
+								ensayoCubo,
+								registrosCampo,
+								formatoCampo,
+								(
+									SELECT
+										ensayo_def_pi
+										ensayo_def_kN,
+										ensayo_def_MPa,
+										ensayo_def_divisorKn
+									FROM
+										systemstatus
+									ORDER BY id_systemstatus DESC LIMIT 1
+								)AS var_system
+							WHERE
+								id_registrosCampo = ensayoCubo.registrosCampo_id AND
+								id_formatoCampo = ensayoCubo.formatoCampo_id AND 
+								ensayoCubo.status <> 0 AND
+								ensayoCubo.formatoCampo_id = 1QQ 
+						)AS e
+
+						ON t.id_registrosCampo = e.id_registrosCampo
+
+					ORDER BY
+						t.id_registrosCampo
 				      ",
-				      array($id_formatoCampo),
+				      array($id_formatoCampo,$id_formatoCampo),
 				      "SELECT -- GeneradorFormatos :: getRegCuboByFCCH : 1 "
 				      );
 				

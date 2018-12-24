@@ -1620,8 +1620,8 @@
 			$pdf->generateCellsDetails();
 			$pdf->putTables($infoFormato,$regisFormato,$infoU,$id_registrosCampo);
 			$pdf->infoU = $infoU;
-			//$pdf->Output('F',$target_dir);
-			$pdf->Output();
+			$pdf->Output('F',$target_dir);
+			//$pdf->Output();
 			return $pdf->error;
 		}
 		

@@ -1433,8 +1433,8 @@
 			$pdf->putTables($infoFormato,$regisFormato,$id_registrosCampo);
 			$pdf->putDetails($infoFormato,$infoU);
 			$pdf->infoU = $infoU;
-			//$pdf->Output('F',$target_dir);
-			$pdf->Output();
+			$pdf->Output('F',$target_dir);
+			//$pdf->Output();
 			return $pdf->error;
 		}
 		
