@@ -929,7 +929,7 @@
 		}
 
 
-		function putTables($infoFormato,$regisFormato){
+		function putTables($infoFormato,$regisFormato,$id_registrosCampo){
 
 			$this->SetY(85);
 
@@ -1064,31 +1064,92 @@
 
 			$this->SetFont('Arial','',$tam_font_CellsRows);
 			$num_rows = 0;
+			$num_rowsExtra = 0;
 			if(!array_key_exists('error',$regisFormato)){
 				foreach ($regisFormato as $registro) {
+
+					//Bandera con la que sabremos si el registro que llego es bueno o no.
+					$good = true;
+
+					//Contador de las iteraciones
 					$j=0;
+
+					//Verificamos si el arreglo que vamos a imprimir esta autorizado o no
+					if($registro['status'] != 4 && $registro['id_registrosCampo'] != $id_registrosCampo){
+						//Declaramos una bandera para saber como debemos imprimir
+						$good = false;
+
+						//Declaramos las posiciones en donde debemos imprimir lo que tenemos permitido
+						$posicionClave = 0;
+						$posicionFechaColado = 1;
+						$posicionEdad = 2;
+					}
+
+					//Quitamos la informacion que no necesitamos y que viene en el arreglo (id_registroCampo y status)
+					unset($registro['status']);
+					unset($registro['id_registrosCampo']);
+
 					foreach ($registro as $campo) {
 
-						$resultado = $this->printInfoObraAndLocObra($tam_font_CellsRows,$this->arrayCampos[$j],$tam_cellsTablesAlto,$campo,1);
+						if($good == true){
 
-						$this->SetFont('Arial','',$resultado['sizeFont']);
-						$campo = $resultado['new_string'];
+							//Algoritmo que encoje y trunca
 
-						if($resultado['error'] == 100){
-							$this->error = $resultado['error'];
+							$resultado = $this->printInfoObraAndLocObra($tam_font_CellsRows,$this->arrayCampos[$j],$tam_cellsTablesAlto,$campo,1);
+
+							$this->SetFont('Arial','',$resultado['sizeFont']);
+							$campo = $resultado['new_string'];
+
+
+							if($resultado['error'] == 100){
+								$this->error = $resultado['error'];
+							}
+
+
+							$this->cell($this->arrayCampos[$j],$tam_cellsTablesAlto,utf8_decode($campo),1,0,'C');
+
+						}else{
+
+							if($j == $posicionClave || $j == $posicionFechaColado || $j == $posicionEdad){
+
+								//Algoritmo que encoje y trunca
+
+								$resultado = $this->printInfoObraAndLocObra($tam_font_CellsRows,$this->arrayCampos[$j],$tam_cellsTablesAlto,$campo,1);
+
+								$this->SetFont('Arial','',$resultado['sizeFont']);
+								$campo = $resultado['new_string'];
+
+
+								if($resultado['error'] == 100){
+									$this->error = $resultado['error'];
+								}
+
+								$this->cell($this->arrayCampos[$j],$tam_cellsTablesAlto,utf8_decode($campo),1,0,'C');
+
+							}else{
+								$this->cell($this->arrayCampos[$j],$tam_cellsTablesAlto,'-',1,0,'C');
+				
+							}
 						}
 
-
-						$this->cell($this->arrayCampos[$j],$tam_cellsTablesAlto,utf8_decode($campo),1,0,'C');
 						$j++;
 					}
 					$num_rows++;
+					if($num_rows % 3 == 0){
+						$this->Ln();
+						$posicion_x = $this->GetX();
+						$posicion_y = $this->GetY();
+						for ($k=0; $k < sizeof($this->arrayCampos); $k++){ 
+							$this->cell($this->arrayCampos[$k],$tam_cellsTablesAlto,'',1,0,'C');
+						}
+						$num_rowsExtra++;
+					}
 					$this->Ln();
+					
 				}
 			}
+			$num_rows = $num_rows + $num_rowsExtra;
 			if($num_rows<$grupos){
-				$posicion_x = $this->GetX();
-				$posicion_y = $this->GetY();
 				for ($i=0; $i < ($grupos-$num_rows); $i++){
 				//Definimos la posicion de X para tomarlo como referencia
 				for ($j=0; $j < sizeof($this->arrayCampos); $j++){ 
@@ -1098,6 +1159,7 @@
 				}
 				$this->Line($posicion_x,$posicion_y,269.3975,$this->GetY());
 			}
+			$this->Line($posicion_x,$posicion_y,269.3975,$this->GetY());
 		}
 
 		function putDetails($infoFormato,$infoU){
@@ -1138,11 +1200,11 @@
 			$this->SetFont('Arial','',$tam_font_details);
 			$this->Cell($this->GetStringWidth($metodos_usuados)+40,($tam_font_details),utf8_decode($metodos_usuados),'R,T,B',0);
 
-			$incertidumbre = 'INCERTIDUMBRE:';
+			$incertidumbre = 'INCERTIDUMBRE kg/cm²:';
 			$tam_incertidumbre = $this->GetStringWidth($incertidumbre)+2;
 
 			$this->SetFont('Arial','B',$tam_font_details);
-			$this->Cell($tam_incertidumbre,($tam_font_details),$incertidumbre,'L,B,T',0);
+			$this->Cell($tam_incertidumbre,($tam_font_details),utf8_decode($incertidumbre),'L,B,T',0);
 
 			$tam_incertidumbreText = 269.3975 - $this->GetX(); //Obtenemos el tamaño de la incertidumbre, restando la posicion en donde quedo al imprimir la ultima celda
 
@@ -1355,18 +1417,18 @@
 		
 
 		//Funcion que crea un nuevo formato
-		function CreateNew($infoFormato,$regisFormato,$infoU,$target_dir){
+		function CreateNew($infoFormato,$regisFormato,$infoU,$target_dir,$id_registrosCampo){
 
 			$pdf  = new InformeVigas('L','mm','Letter');
 			$pdf->AddPage();
 			$pdf->AliasNbPages();
 			$pdf->generateCellsInfo();
 			$pdf->putInfo($infoFormato);
-			$pdf->putTables($infoFormato,$regisFormato);
+			$pdf->putTables($infoFormato,$regisFormato,$id_registrosCampo);
 			$pdf->putDetails($infoFormato,$infoU);
 			$pdf->infoU = $infoU;
-			$pdf->Output('F',$target_dir);
-			//$pdf->Output();
+			//$pdf->Output('F',$target_dir);
+			$pdf->Output();
 			return $pdf->error;
 		}
 		
