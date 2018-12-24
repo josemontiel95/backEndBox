@@ -899,6 +899,9 @@
 			foreach ($regisFormato as $registro) {
 				$j=0;
 
+				//En la query lo ordenamos por id pero aqui ya no lo ocuparemos entonces lo borramos
+				unset($registro['id_registrosRev']);
+
 				foreach ($registro as $campo) {
 
 					$resultado = $this->printInfoObraAndLocObra($tam_font_CellsRows,$array_campo[$j],$tam_cellsTablesAlto,$campo,1);
