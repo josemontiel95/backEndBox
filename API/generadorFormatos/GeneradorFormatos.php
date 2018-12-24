@@ -1721,15 +1721,15 @@
 									WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
 									ELSE 'Error, Contacta a soporte'
 								END AS diasEnsaye,
-								l1,
-								l2,
-								ROUND((l1*l2),3) AS area,
-								ROUND(((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn),3) AS kn,
-								carga,
-								ROUND(((carga/(l1*l2))/var_system.ensayo_def_MPa),3)  AS mpa,
-								ROUND((carga/(l1*l2)),3) AS kg,
+								REPLACE(REPLACE(CONVERT(FORMAT(ROUND(l1, 1), 1), CHAR), ',', '  '), '.', ',') AS l1,
+								REPLACE(REPLACE(CONVERT(FORMAT(ROUND(l2, 1), 1), CHAR), ',', '  '), '.', ',') AS l2,	
+								REPLACE(REPLACE(CONVERT(FORMAT(ROUND(area, 1), 1), CHAR), ',', '  '), '.', ',') AS area,
+								REPLACE(REPLACE(CONVERT(FORMAT(ROUND(( ((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn) ), 1), 1), CHAR), ',', '  '), '.', ',') AS kn,	
+								REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
+								REPLACE(REPLACE(CONVERT(FORMAT(ROUND(( ((carga/(l1*l2))/var_system.ensayo_def_MPa) ), 1), 1), CHAR), ',', '  '), '.', ',') AS mpa,
+								REPLACE(REPLACE(CONVERT(FORMAT(ROUND( ( (carga/(l1*l2)) ), 1), 1), CHAR), ',', '  '), '.', ',') AS kg,
 								fprima,
-								ROUND((((carga/(l1*l2))/fprima)*100),3)  AS porcentResis,
+								REPLACE(REPLACE(CONVERT(FORMAT(ROUND(( (((carga/(l1*l2))/fprima)*100) ), 1), 1), CHAR), ',', '  '), '.', ',') AS porcentResis,
 								grupo,
 								registrosCampo.localizacion
 							FROM
@@ -1750,7 +1750,7 @@
 								id_registrosCampo = ensayoCubo.registrosCampo_id AND
 								id_formatoCampo = ensayoCubo.formatoCampo_id AND 
 								ensayoCubo.status <> 0 AND
-								ensayoCubo.formatoCampo_id = 1QQ 
+								ensayoCubo.formatoCampo_id = 1QQ  
 						)AS e
 
 						ON t.id_registrosCampo = e.id_registrosCampo
