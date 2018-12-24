@@ -1075,7 +1075,11 @@
 					$j=0;
 
 					//Verificamos si el arreglo que vamos a imprimir esta autorizado o no
-					if($registro['status'] != 4 && $registro['id_registrosCampo'] != $id_registrosCampo){
+					if($registro['id_registrosCampo'] == $id_registrosCampo){
+						$good = true;
+					}else if($registro['status'] == 4 && $registro['id_registrosCampo'] != $id_registrosCampo){
+						$good = true;
+					}else if($registro['status'] != 4 && $registro['id_registrosCampo'] != $id_registrosCampo){
 						//Declaramos una bandera para saber como debemos imprimir
 						$good = false;
 
@@ -1083,6 +1087,8 @@
 						$posicionClave = 0;
 						$posicionFechaColado = 1;
 						$posicionEdad = 2;
+					}else{
+						return array('id_registrosCampo'=> $registro['id_registrosCampo'],'estatus'=>'No se pudo imprimir este id.','error'=>201);
 					}
 
 					//Quitamos la informacion que no necesitamos y que viene en el arreglo (id_registroCampo y status)

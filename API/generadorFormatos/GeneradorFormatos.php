@@ -108,7 +108,7 @@
 
 		*/
 
-		
+
 
 		//FUNCION QUE SIRVE CON id_registrosCampo
 		function generateInformeCampo($token,$rol_usuario_id,$id_registrosCampo,$target_dir){
@@ -157,7 +157,7 @@
 										$regisFormato = $this->getRegCilindroByFCCH($token,$rol_usuario_id,$id_formatoCampo);
 										if(!(array_key_exists('error', $regisFormato))){
 											$pdf = new InformeCilindros();	
-											return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);
+											return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir,$id_registrosCampo);
 										}
 										else{
 											return json_encode($regisFormato);
@@ -1735,50 +1735,104 @@
 			if($arr['error'] == 0){
 				$s= $dbS->qAll(
 					"	SELECT
-							ensayoCilindro.fecha AS fechaEnsaye,
-							claveEspecimen,
-							revObra,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(peso, 3), 3), CHAR), ',', '  '), '.', ',') AS peso,
-							CASE
-								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
-								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
-								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
-								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
-								ELSE 'Error, Contacta a soporte'
-							END AS diasEnsaye,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((d1+d2)/2), 1), 1), CHAR), ',', '  '), '.', ',') AS diametro,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((h1+h2)/2), 1), 1), CHAR), ',', '  '), '.', ',') AS altura,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4)), 1), 1), CHAR), ',', '  '), '.', ',') AS area,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn)), 1), 1), CHAR), ',', '  '), '.', ',') AS kn,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/var_system.ensayo_def_MPa)), 1), 1), CHAR), ',', '  '), '.', ',') AS mpa,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))), 0), 0), CHAR), ',', '  '), '.', ',') AS kgcm,
-							fprima,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100)), 1), 1), CHAR), ',', '  '), '.', ',') AS porcentResis,
-							IF(falla = 0,'-',REPLACE(REPLACE(CONVERT(FORMAT(ROUND(falla, 0), 0), CHAR), ',', '  '), '.', ',')) AS falla,
-							grupo,
-							registrosCampo.localizacion
+							t.id_registrosCampo,
+							e.status,
+							e.fechaEnsaye,
+							t.claveEspecimen,
+							e.revObra,
+							e.peso,
+							t.diasEnsaye,
+
+							e.diametro,
+							e.altura,
+							e.area,
+							e.kn,
+							e.carga,
+							e.mpa,
+							e.kgcm,
+							e.porcentResis,
+
+							e.fprima,
+							e.porcentResis,
+							e.falla,
+							e.grupo,
+							e.localizacion
+
 						FROM
-							ensayoCilindro,
-							registrosCampo,
-							formatoCampo,
 							(
 								SELECT
-									ensayo_def_pi,
-									ensayo_def_kN,
-									ensayo_def_MPa,
-									ensayo_def_divisorKn
+									r.id_registrosCampo,
+									r.claveEspecimen,
+									r.fecha,
+									r.status,
+									CASE
+										WHEN MOD(r.diasEnsaye,3) = 1 THEN f.prueba1  
+										WHEN MOD(r.diasEnsaye,3) = 2 THEN f.prueba2  
+										WHEN MOD(r.diasEnsaye,3) = 0 THEN f.prueba3  
+										ELSE 'Error, Contacta a soporte'
+									END AS diasEnsaye
 								FROM
-									systemstatus
-								ORDER BY id_systemstatus DESC LIMIT 1
-							)AS var_system
-						WHERE
-							ensayoCilindro.status <> 0 AND
-							id_registrosCampo = ensayoCilindro.registrosCampo_id AND
-							id_formatoCampo = ensayoCilindro.formatoCampo_id AND 
-							ensayoCilindro.formatoCampo_id = 1QQ
+									registrosCampo AS r,
+									formatoCampo AS f
+								WHERE
+									r.formatoCampo_id = f.id_formatoCampo AND
+									f.id_formatoCampo = 1QQ
+							)AS t 
+							LEFT JOIN
+							(
+								SELECT
+									ensayoCilindro.status,
+									registrosCampo.id_registrosCampo,
+									ensayoCilindro.fecha AS fechaEnsaye,
+									claveEspecimen,
+									revObra,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(peso, 3), 3), CHAR), ',', '  '), '.', ',') AS peso,
+									CASE
+										WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
+										WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
+										WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
+										WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
+										ELSE 'Error, Contacta a soporte'
+									END AS diasEnsaye,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((d1+d2)/2), 1), 1), CHAR), ',', '  '), '.', ',') AS diametro,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((h1+h2)/2), 1), 1), CHAR), ',', '  '), '.', ',') AS altura,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4)), 1), 1), CHAR), ',', '  '), '.', ',') AS area,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn)), 1), 1), CHAR), ',', '  '), '.', ',') AS kn,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/var_system.ensayo_def_MPa)), 1), 1), CHAR), ',', '  '), '.', ',') AS mpa,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))), 0), 0), CHAR), ',', '  '), '.', ',') AS kgcm,
+									fprima,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100)), 1), 1), CHAR), ',', '  '), '.', ',') AS porcentResis,
+									IF(falla = 0,'-',REPLACE(REPLACE(CONVERT(FORMAT(ROUND(falla, 0), 0), CHAR), ',', '  '), '.', ',')) AS falla,
+									grupo,
+									registrosCampo.localizacion
+								FROM
+									ensayoCilindro,
+									registrosCampo,
+									formatoCampo,
+									(
+										SELECT
+											ensayo_def_pi,
+											ensayo_def_kN,
+											ensayo_def_MPa,
+											ensayo_def_divisorKn
+										FROM
+											systemstatus
+										ORDER BY id_systemstatus DESC LIMIT 1
+									)AS var_system
+								WHERE
+									ensayoCilindro.status <> 0 AND
+									id_registrosCampo = ensayoCilindro.registrosCampo_id AND
+									id_formatoCampo = ensayoCilindro.formatoCampo_id AND 
+									ensayoCilindro.formatoCampo_id = 1QQ 
+							)AS e
+
+							ON t.id_registrosCampo = e.id_registrosCampo
+
+						ORDER BY
+							t.id_registrosCampo
 				      ",
-				      array($id_formatoCampo),
+				      array($id_formatoCampo,$id_formatoCampo),
 				      "SELECT -- GeneradorFormatos :: getRegCilindroByFCCH : 1 "
 				      );
 				
