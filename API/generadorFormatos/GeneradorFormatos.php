@@ -16,11 +16,15 @@
 	include_once("./../../disenoFormatos/EnsayoVigaPDF.php");
 
 	class GeneradorFormatos{
+
+		/*	FUNCION QUE SIRVE CON id_formatoCampo
+
 		function generateInformeCampo($token,$rol_usuario_id,$id_formatoCampo,$target_dir){
 			global $dbS;
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
+				//Obtenemos la informacion del Formato de Campo
 				$formato = new FormatoCampo();	
 				$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
 				if(!(array_key_exists('error', $infoFormato))){
@@ -78,7 +82,7 @@
 									$regisFormato = $this->getRegVigaByFCCH($token,$rol_usuario_id,$id_formatoCampo);
 									if(!(array_key_exists('error', $regisFormato))){
 										$pdf  = new InformeVigas();
-										return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir);	
+										return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir,$id_registrosCampo);	
 									}
 									else{
 										return json_encode($regisFormato);
@@ -100,6 +104,134 @@
 				return json_encode($arr);
 			}
 
+		}
+
+		*/
+
+
+
+		//FUNCION QUE SIRVE CON id_registrosCampo
+		function generateInformeCampo($token,$rol_usuario_id,$id_registrosCampo,$target_dir){
+			global $dbS;
+			$usuario = new Usuario();
+			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+			if($arr['error'] == 0){
+				//Obtenemos el formato de Campo
+				$r = $this->getFormatoCampoByIDRC($id_registrosCampo);
+				if(!(array_key_exists('error', $r))){
+
+					$id_formatoCampo = $r['formatoCampo_id'];
+
+					//Obtenemos la informacion del Formato de Campo
+					$formato = new FormatoCampo();	
+					$infoFormato = json_decode($formato->getInfoByID($token,$rol_usuario_id,$id_formatoCampo),true);
+					if(!(array_key_exists('error', $infoFormato))){
+						switch ($infoFormato['tipo_especimen']) {
+							case 'CUBO':
+								//Obtenemos la informacion de quien esta realizando el pdf
+								$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
+								if(!(array_key_exists('error', $infoU))){
+									$infoFormato = $this->getInfoCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+									if(!(array_key_exists('error', $infoFormato))){
+										$regisFormato = $this->getRegCuboByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+										if(!(array_key_exists('error', $regisFormato))){
+											$pdf = new InformeCubos();	
+											return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir,$id_registrosCampo);
+										}
+										else{
+											return json_encode($regisFormato);
+										}
+									}else{
+										return json_encode($infoFormato);
+									}	
+								}else{
+									return json_encode($infoU);
+								}
+								break;
+							case 'CILINDRO':
+								//Obtenemos la informacion de quien esta realizando el pdf
+								$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
+								if(!(array_key_exists('error', $infoU))){
+									$infoFormato = $this->getInfoCiliByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+									if(!(array_key_exists('error', $infoFormato))){
+										$regisFormato = $this->getRegCilindroByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+										if(!(array_key_exists('error', $regisFormato))){
+											$pdf = new InformeCilindros();	
+											return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir,$id_registrosCampo);
+										}
+										else{
+											return json_encode($regisFormato);
+										}
+
+									}
+									else{
+										return json_encode($infoFormato);
+									}
+								}else{
+									return json_encode($infoU);
+								}
+								break;
+							case 'VIGAS':
+								//Obtenemos la informacion de quien esta realizando el pdf
+								$infoU = $this->getInfoUserFinal($token,$rol_usuario_id,$id_formatoCampo);
+								if(!(array_key_exists('error', $infoU))){
+									$infoFormato = $this->getInfoViga($token,$rol_usuario_id,$id_formatoCampo);
+									if(!(array_key_exists('error', $infoFormato))){
+										$regisFormato = $this->getRegVigaByFCCH($token,$rol_usuario_id,$id_formatoCampo);
+										if(!(array_key_exists('error', $regisFormato))){
+											$pdf  = new InformeVigas();
+											return $pdf->CreateNew($infoFormato,$regisFormato,$infoU,$target_dir,$id_registrosCampo);	
+										}
+										else{
+											return json_encode($regisFormato);
+										}
+									}else{
+										return json_encode($infoFormato);
+									}
+								}else{
+									return json_encode($infoU);
+								}
+								break;
+						}
+					}
+					else{
+						return json_encode($infoFormato);
+					}
+				}else{
+					return json_encode($r);
+				}	
+			}
+			else{
+				return json_encode($arr);
+			}
+
+		}
+
+		function getFormatoCampoByIDRC($id_registrosCampo){
+			global $dbS;
+			$s= $dbS->qarrayA(
+					" 	SELECT
+							formatoCampo_id
+						FROM
+							registrosCampo
+						WHERE
+							registrosCampo.id_registrosCampo  = 1QQ
+				      ",
+				      array($id_registrosCampo),
+				      "SELECT -- GeneradorFormatos :: getFormatoCampoByIDRC : 1"
+				      );
+			if(!$dbS->didQuerydied){
+				if($s=="empty"){
+					$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => 'Error no se encontro ese id','error' => 5);
+				}
+				else{
+					return $s;
+				}
+			}
+			else{
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getInfoByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+			}
+			return $arr;
 		}
 
 		function getInfoUser($token,$rol_usuario_id){
@@ -1534,48 +1666,96 @@
 			if($arr['error'] == 0){
 				$s= $dbS->qAll(
 					"SELECT
-				    		ensayoCubo.fecha AS fechaEnsaye,
-				    		claveEspecimen,
-				    		revObra,
-				    		CASE
-								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
-								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
-								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
-								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
-								ELSE 'Error, Contacta a soporte'
-							END AS diasEnsaye,
-							l1,
-							l2,
-							ROUND((l1*l2),3) AS area,
-							ROUND(((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn),3) AS kn,
-							carga,
-							ROUND(((carga/(l1*l2))/var_system.ensayo_def_MPa),3)  AS mpa,
-							ROUND((carga/(l1*l2)),3) AS kg,
-							fprima,
-				    		ROUND((((carga/(l1*l2))/fprima)*100),3)  AS porcentResis,
-							grupo,
-							registrosCampo.localizacion
-						FROM
-							ensayoCubo,
-							registrosCampo,
-							formatoCampo,
-							(
-								SELECT
-									ensayo_def_pi
-									ensayo_def_kN,
-									ensayo_def_MPa,
-									ensayo_def_divisorKn
-								FROM
-									systemstatus
-								ORDER BY id_systemstatus DESC LIMIT 1
-							)AS var_system
-						WHERE
-							id_registrosCampo = ensayoCubo.registrosCampo_id AND
-							id_formatoCampo = ensayoCubo.formatoCampo_id AND 
-							ensayoCubo.status <> 0 AND
-							ensayoCubo.formatoCampo_id = 1QQ
+						t.id_registrosCampo,
+						e.status,
+						e.fechaEnsaye,
+						t.claveEspecimen,
+						e.revObra,
+						t.diasEnsaye,
+						e.l1,
+						e.l2,
+						e.area,
+						e.kn,
+						e.carga,
+						e.mpa,
+						e.kg,
+						e.fprima,
+						e.porcentResis,
+						e.grupo,
+						e.localizacion
+					FROM
+						(
+							SELECT
+								r.id_registrosCampo,
+								r.claveEspecimen,
+								r.fecha,
+								r.status,
+								CASE
+									WHEN MOD(r.diasEnsaye,3) = 1 THEN f.prueba1  
+									WHEN MOD(r.diasEnsaye,3) = 2 THEN f.prueba2  
+									WHEN MOD(r.diasEnsaye,3) = 0 THEN f.prueba3  
+									ELSE 'Error, Contacta a soporte'
+								END AS diasEnsaye
+							FROM
+								registrosCampo AS r,
+								formatoCampo AS f
+							WHERE
+								r.formatoCampo_id = f.id_formatoCampo AND
+								f.id_formatoCampo = 1QQ
+						)AS t 
+						LEFT JOIN
+						(
+							SELECT
+								ensayoCubo.status,
+								registrosCampo.id_registrosCampo,
+								ensayoCubo.fecha AS fechaEnsaye,
+								claveEspecimen,
+								revObra,
+								CASE
+									WHEN MOD(diasEnsaye,4) = 1 THEN prueba1
+									WHEN MOD(diasEnsaye,4) = 2 THEN prueba2
+									WHEN MOD(diasEnsaye,4) = 3 THEN prueba3
+									WHEN MOD(diasEnsaye,4) = 0 THEN prueba4
+									ELSE 'Error, Contacta a soporte'
+								END AS diasEnsaye,
+								l1,
+								l2,
+								ROUND((l1*l2),3) AS area,
+								ROUND(((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn),3) AS kn,
+								carga,
+								ROUND(((carga/(l1*l2))/var_system.ensayo_def_MPa),3)  AS mpa,
+								ROUND((carga/(l1*l2)),3) AS kg,
+								fprima,
+								ROUND((((carga/(l1*l2))/fprima)*100),3)  AS porcentResis,
+								grupo,
+								registrosCampo.localizacion
+							FROM
+								ensayoCubo,
+								registrosCampo,
+								formatoCampo,
+								(
+									SELECT
+										ensayo_def_pi
+										ensayo_def_kN,
+										ensayo_def_MPa,
+										ensayo_def_divisorKn
+									FROM
+										systemstatus
+									ORDER BY id_systemstatus DESC LIMIT 1
+								)AS var_system
+							WHERE
+								id_registrosCampo = ensayoCubo.registrosCampo_id AND
+								id_formatoCampo = ensayoCubo.formatoCampo_id AND 
+								ensayoCubo.status <> 0 AND
+								ensayoCubo.formatoCampo_id = 1QQ 
+						)AS e
+
+						ON t.id_registrosCampo = e.id_registrosCampo
+
+					ORDER BY
+						t.id_registrosCampo
 				      ",
-				      array($id_formatoCampo),
+				      array($id_formatoCampo,$id_formatoCampo),
 				      "SELECT -- GeneradorFormatos :: getRegCuboByFCCH : 1 "
 				      );
 				
@@ -1603,50 +1783,104 @@
 			if($arr['error'] == 0){
 				$s= $dbS->qAll(
 					"	SELECT
-							ensayoCilindro.fecha AS fechaEnsaye,
-							claveEspecimen,
-							revObra,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(peso, 3), 3), CHAR), ',', '  '), '.', ',') AS peso,
-							CASE
-								WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
-								WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
-								WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
-								WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
-								ELSE 'Error, Contacta a soporte'
-							END AS diasEnsaye,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((d1+d2)/2), 1), 1), CHAR), ',', '  '), '.', ',') AS diametro,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((h1+h2)/2), 1), 1), CHAR), ',', '  '), '.', ',') AS altura,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4)), 1), 1), CHAR), ',', '  '), '.', ',') AS area,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn)), 1), 1), CHAR), ',', '  '), '.', ',') AS kn,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/var_system.ensayo_def_MPa)), 1), 1), CHAR), ',', '  '), '.', ',') AS mpa,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))), 0), 0), CHAR), ',', '  '), '.', ',') AS kgcm,
-							fprima,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100)), 1), 1), CHAR), ',', '  '), '.', ',') AS porcentResis,
-							IF(falla = 0,'-',REPLACE(REPLACE(CONVERT(FORMAT(ROUND(falla, 0), 0), CHAR), ',', '  '), '.', ',')) AS falla,
-							grupo,
-							registrosCampo.localizacion
+							t.id_registrosCampo,
+							e.status,
+							e.fechaEnsaye,
+							t.claveEspecimen,
+							e.revObra,
+							e.peso,
+							t.diasEnsaye,
+
+							e.diametro,
+							e.altura,
+							e.area,
+							e.kn,
+							e.carga,
+							e.mpa,
+							e.kgcm,
+							e.porcentResis,
+
+							e.fprima,
+							e.porcentResis,
+							e.falla,
+							e.grupo,
+							e.localizacion
+
 						FROM
-							ensayoCilindro,
-							registrosCampo,
-							formatoCampo,
 							(
 								SELECT
-									ensayo_def_pi,
-									ensayo_def_kN,
-									ensayo_def_MPa,
-									ensayo_def_divisorKn
+									r.id_registrosCampo,
+									r.claveEspecimen,
+									r.fecha,
+									r.status,
+									CASE
+										WHEN MOD(r.diasEnsaye,3) = 1 THEN f.prueba1  
+										WHEN MOD(r.diasEnsaye,3) = 2 THEN f.prueba2  
+										WHEN MOD(r.diasEnsaye,3) = 0 THEN f.prueba3  
+										ELSE 'Error, Contacta a soporte'
+									END AS diasEnsaye
 								FROM
-									systemstatus
-								ORDER BY id_systemstatus DESC LIMIT 1
-							)AS var_system
-						WHERE
-							ensayoCilindro.status <> 0 AND
-							id_registrosCampo = ensayoCilindro.registrosCampo_id AND
-							id_formatoCampo = ensayoCilindro.formatoCampo_id AND 
-							ensayoCilindro.formatoCampo_id = 1QQ
+									registrosCampo AS r,
+									formatoCampo AS f
+								WHERE
+									r.formatoCampo_id = f.id_formatoCampo AND
+									f.id_formatoCampo = 1QQ
+							)AS t 
+							LEFT JOIN
+							(
+								SELECT
+									ensayoCilindro.status,
+									registrosCampo.id_registrosCampo,
+									ensayoCilindro.fecha AS fechaEnsaye,
+									claveEspecimen,
+									revObra,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(peso, 3), 3), CHAR), ',', '  '), '.', ',') AS peso,
+									CASE
+										WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
+										WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
+										WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
+										WHEN MOD(diasEnsaye,4) = 0 THEN prueba4  
+										ELSE 'Error, Contacta a soporte'
+									END AS diasEnsaye,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((d1+d2)/2), 1), 1), CHAR), ',', '  '), '.', ',') AS diametro,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((h1+h2)/2), 1), 1), CHAR), ',', '  '), '.', ',') AS altura,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4)), 1), 1), CHAR), ',', '  '), '.', ',') AS area,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn)), 1), 1), CHAR), ',', '  '), '.', ',') AS kn,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/var_system.ensayo_def_MPa)), 1), 1), CHAR), ',', '  '), '.', ',') AS mpa,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))), 0), 0), CHAR), ',', '  '), '.', ',') AS kgcm,
+									fprima,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100)), 1), 1), CHAR), ',', '  '), '.', ',') AS porcentResis,
+									IF(falla = 0,'-',REPLACE(REPLACE(CONVERT(FORMAT(ROUND(falla, 0), 0), CHAR), ',', '  '), '.', ',')) AS falla,
+									grupo,
+									registrosCampo.localizacion
+								FROM
+									ensayoCilindro,
+									registrosCampo,
+									formatoCampo,
+									(
+										SELECT
+											ensayo_def_pi,
+											ensayo_def_kN,
+											ensayo_def_MPa,
+											ensayo_def_divisorKn
+										FROM
+											systemstatus
+										ORDER BY id_systemstatus DESC LIMIT 1
+									)AS var_system
+								WHERE
+									ensayoCilindro.status <> 0 AND
+									id_registrosCampo = ensayoCilindro.registrosCampo_id AND
+									id_formatoCampo = ensayoCilindro.formatoCampo_id AND 
+									ensayoCilindro.formatoCampo_id = 1QQ 
+							)AS e
+
+							ON t.id_registrosCampo = e.id_registrosCampo
+
+						ORDER BY
+							t.id_registrosCampo
 				      ",
-				      array($id_formatoCampo),
+				      array($id_formatoCampo,$id_formatoCampo),
 				      "SELECT -- GeneradorFormatos :: getRegCilindroByFCCH : 1 "
 				      );
 				
@@ -1673,48 +1907,93 @@
 			if($arr['error'] == 0){
 				$s= $dbS->qAll(
 					"	SELECT
-							claveEspecimen,
-							registrosCampo.fecha,
-							CASE
-								WHEN MOD(diasEnsaye,3) = 1 THEN prueba1  
-								WHEN MOD(diasEnsaye,3) = 2 THEN prueba2  
-								WHEN MOD(diasEnsaye,3) = 0 THEN prueba3  
-								ELSE 'Error, Contacta a soporte'
-							END AS diasEnsaye,
-							CASE
-								WHEN lijado = 'SI' THEN 'LIJADO'  
-								WHEN cuero = 'SI' THEN 'CUERO'
-								ELSE 'ERROR'
-							END AS puntosApoyo,
-							condiciones,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((ancho1 + ancho2)/2, 1), 1), CHAR), ',', '  '), '.', ',') AS anchoPromedio,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((per1 + per2)/2, 1), 1), CHAR), ',', '  '), '.', ',') AS perPromedio,
-							ROUND(disApoyo,1) AS disApoyo,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND(mr, 1), 1), CHAR), ',', '  '), '.', ',') AS modRuptura,
-							REPLACE(REPLACE(CONVERT(FORMAT(ROUND((mr/ensayo_def_MPa), 1), 1), CHAR), ',', '  '), '.', ',') AS modRuptura2,
-							defectos
+							t.id_registrosCampo,
+							e.status,
+							t.claveEspecimen,
+							t.fecha,
+							t.diasEnsaye,
+							e.puntosApoyo,
+							e.condiciones,
+							e.anchoPromedio,
+							e.perPromedio,
+							e.disApoyo,
+							e.carga,
+							e.modRuptura,
+							e.modRuptura2,
+							e.defectos
 						FROM
-							ensayoViga,
-							registrosCampo,
-							formatoCampo,
 							(
 								SELECT
-									ensayo_def_pi,
-									ensayo_def_kN,
-									ensayo_def_MPa,
-									ensayo_def_divisorKn
+									r.id_registrosCampo,
+									r.claveEspecimen,
+									r.fecha,
+									r.status,
+									CASE
+										WHEN MOD(r.diasEnsaye,3) = 1 THEN f.prueba1  
+										WHEN MOD(r.diasEnsaye,3) = 2 THEN f.prueba2  
+										WHEN MOD(r.diasEnsaye,3) = 0 THEN f.prueba3  
+										ELSE 'Error, Contacta a soporte'
+									END AS diasEnsaye
 								FROM
-									systemstatus
-								ORDER BY id_systemstatus DESC LIMIT 1
-							)AS var_system
-						WHERE
-							ensayoViga.status <> 0 AND
-							id_registrosCampo = ensayoViga.registrosCampo_id AND
-							id_formatoCampo = ensayoViga.formatoCampo_id AND 
-							ensayoViga.formatoCampo_id = 1QQ 
+									registrosCampo AS r,
+									formatoCampo AS f
+								WHERE
+									r.formatoCampo_id = f.id_formatoCampo AND
+									f.id_formatoCampo = 1QQ
+							)AS t 
+							LEFT JOIN
+							(
+								SELECT
+									ensayoViga.status,
+									registrosCampo.id_registrosCampo,
+									claveEspecimen,
+									registrosCampo.fecha,
+									CASE
+										WHEN MOD(diasEnsaye,3) = 1 THEN prueba1  
+										WHEN MOD(diasEnsaye,3) = 2 THEN prueba2  
+										WHEN MOD(diasEnsaye,3) = 0 THEN prueba3  
+										ELSE 'Error, Contacta a soporte'
+									END AS diasEnsaye,
+									CASE
+										WHEN lijado = 'SI' THEN 'LIJADO'  
+										WHEN cuero = 'SI' THEN 'CUERO'
+										ELSE 'ERROR'
+									END AS puntosApoyo,
+									condiciones,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND((ancho1 + ancho2)/2, 1), 1), CHAR), ',', '  '), '.', ',') AS anchoPromedio,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND((per1 + per2)/2, 1), 1), CHAR), ',', '  '), '.', ',') AS perPromedio,
+									ROUND(disApoyo,1) AS disApoyo,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(mr, 1), 1), CHAR), ',', '  '), '.', ',') AS modRuptura,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND((mr/ensayo_def_MPa), 1), 1), CHAR), ',', '  '), '.', ',') AS modRuptura2,
+									defectos
+								FROM
+									ensayoViga,
+									registrosCampo,
+									formatoCampo,
+									(
+										SELECT
+											ensayo_def_pi,
+											ensayo_def_kN,
+											ensayo_def_MPa,
+											ensayo_def_divisorKn
+										FROM
+											systemstatus
+										ORDER BY id_systemstatus DESC LIMIT 1
+									)AS var_system
+								WHERE
+									ensayoViga.status <> 0 AND
+									id_registrosCampo = ensayoViga.registrosCampo_id AND
+									id_formatoCampo = ensayoViga.formatoCampo_id AND 
+									ensayoViga.formatoCampo_id = 1QQ 
+							)AS e
+
+							ON t.id_registrosCampo = e.id_registrosCampo
+
+						ORDER BY
+							t.id_registrosCampo
 				      ",
-				      array($id_formatoCampo),
+				      array($id_formatoCampo,$id_formatoCampo),
 				      "SELECT -- GeneradorFormatos :: getRegVigaByFCCH : 1 "
 				      );
 				
@@ -1727,7 +2006,7 @@
 					}
 				}
 				else{
-						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 6);
+						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getRegVigaByFCCH , verifica tus datos y vuelve a intentarlo','error' => 6);
 				}
 			}
 			return $arr;

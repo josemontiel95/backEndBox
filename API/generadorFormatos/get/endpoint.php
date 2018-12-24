@@ -13,10 +13,20 @@
 	include_once("./../GeneradorFormatos.php");
 
 	switch ($function) {
+		/*			FUNCIONA CON id_formatoCampo
 		case 'generateInformeCampo':
 			$generador = new GeneradorFormatos();
 			echo $generador->generateInformeCampo($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_formatoCampo'],$_GET['target_dir']);
 			break;
+		*/
+
+		//FUNCION QUE SIRVE CON id_registrosCampo
+		case 'generateInformeCampo':
+			$generador = new GeneradorFormatos();
+			echo $generador->generateInformeCampo($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_registrosCampo'],$_GET['target_dir']);
+			break;
+
+
 		case 'generateCCH':
 		
 			$generador = new GeneradorFormatos();

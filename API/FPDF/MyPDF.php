@@ -147,32 +147,99 @@
 			}
 		}
 
-		function putInfoTablesWithPositionInformes($positionPrint,$regisFormato,$grupos,$tam_font,$arrayTamCells,$tamAltoCells){
+		function putInfoTablesWithPositionInformes($positionPrint,$regisFormato,$grupos,$tam_font,$arrayTamCells,$tamAltoCells,$id_registrosCampo,$band){
 			$error = 0;
 			$this->SetFont('Arial','',$tam_font);
 			$num_rows = 0;
-			foreach ($regisFormato as $registro) {
-				$j=0;
-				$this->SetX($positionPrint);
-				foreach ($registro as $campo) {
+			$num_rowsExtra = 0;
+			if(!array_key_exists('error',$regisFormato)){
+				foreach ($regisFormato as $registro) {
+					$this->SetX($positionPrint);
 
+					//Bandera con la que sabremos si el registro que llego es bueno o no.
+					$good = true;
 
-					$resultado = $this->printInfoObraAndLocObra($tam_font,$arrayTamCells[$j],$tamAltoCells,$campo,1);
+					//Contador de las iteraciones
+					$j=0;
 
-					$this->SetFont('Arial','',$resultado['sizeFont']);
-					$campo = $resultado['new_string'];
+					//Verificamos si el arreglo que vamos a imprimir esta autorizado o no
 
-					if($resultado['error'] == 100){
-						$error = $resultado['error'];
+					if($registro['id_registrosCampo'] == $id_registrosCampo){
+						$good = true;
+					}else if($registro['status'] == 4 && $registro['id_registrosCampo'] != $id_registrosCampo){
+						$good = true;
+					}else if($registro['status'] != 4 && $registro['id_registrosCampo'] != $id_registrosCampo){
+						//Declaramos una bandera para saber como debemos imprimir
+						$good = false;
+
+						//Declaramos las posiciones en donde debemos imprimir lo que tenemos permitido
+						$posicionClave = 1;
+						if($band == 'cilindros'){
+							$posicionEdad = 4;
+						}else{
+							$posicionEdad = 3;
+						}
+						
+					}else{
+						return array('id_registrosCampo'=> $registro['id_registrosCampo'],'estatus'=>'No se pudo imprimir este id.','error'=>201);
 					}
 
-					$this->cell($arrayTamCells[$j],$tamAltoCells,utf8_decode($campo),1,0,'C');
-					$j++;
+					//Quitamos la informacion que no necesitamos y que viene en el arreglo (id_registroCampo y status)
+					unset($registro['status']);
+					unset($registro['id_registrosCampo']);
+
+
+					foreach ($registro as $campo) {
+
+						if($good == true){
+							//Algoritmo que encoje y trunca
+							$resultado = $this->printInfoObraAndLocObra($tam_font,$arrayTamCells[$j],$tamAltoCells,$campo,1);
+
+							$this->SetFont('Arial','',$resultado['sizeFont']);
+							$campo = $resultado['new_string'];
+
+							if($resultado['error'] == 100){
+								$error = $resultado['error'];
+							}
+
+							$this->cell($arrayTamCells[$j],$tamAltoCells,utf8_decode($campo),1,0,'C');
+						}else{
+							if($j == $posicionClave || $j == $posicionEdad){
+
+								//Algoritmo que encoje y trunca
+								$resultado = $this->printInfoObraAndLocObra($tam_font,$arrayTamCells[$j],$tamAltoCells,$campo,1);
+
+								$this->SetFont('Arial','',$resultado['sizeFont']);
+								$campo = $resultado['new_string'];
+
+								if($resultado['error'] == 100){
+									$error = $resultado['error'];
+								}
+
+								$this->cell($arrayTamCells[$j],$tamAltoCells,utf8_decode($campo),1,0,'C');
+
+							}else{
+								$this->cell($arrayTamCells[$j],$tamAltoCells,'-',1,0,'C');
+					
+							}
+						}
+						$j++;	
+					}
+					$num_rows++;
+					$this->Ln();
+					if($num_rows<=3){
+						$this->SetX($positionPrint);
+						//Definimos la posicion de X para tomarlo como referencia
+						for ($k=0; $k < sizeof($arrayTamCells); $k++){ 
+								$this->cell($arrayTamCells[$k],$tamAltoCells,'',1,0,'C');
+						}	
+						$this->Ln();
+						$num_rowsExtra++;
+					}
 				}
-				$num_rows++;
-				$this->Ln();
 			}
-			
+
+			$num_rows = $num_rows + $num_rowsExtra;
 			if($num_rows<$grupos){
 				
 				for ($i=0; $i < ($grupos-$num_rows); $i++){

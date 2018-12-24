@@ -1027,7 +1027,7 @@
 			
 		}
 
-		function putTables($infoFormato,$regisFormato,$infoU){
+		function putTables($infoFormato,$regisFormato,$infoU,$id_registrosCampo){
 			
 			$this->SetY(85);
 
@@ -1196,7 +1196,7 @@
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY(); // Guardamos las posiciones iniciales para cuando tengamos que imprimir el "Elemento muestreado"
 			$grupos = 7;
 			if(count($arrayGrupo1)!=0){
-				$this->error = $this->putInfoTablesWithPositionInformes($tam_elementoAncho + 10,$arrayGrupo1,$grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
+				$this->error = $this->putInfoTablesWithPositionInformes($tam_elementoAncho + 10,$arrayGrupo1,$grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto'],$id_registrosCampo,'cilindros');
 				$endDown_table = $this->GetY();
 				//Imprimimos el "elemento muestreado"
 				$this->SetXY($posicion_x,$posicion_y);
@@ -1249,7 +1249,7 @@
 
 
 			if(count($arrayGrupo2)!=0){
-				$this->error = $this->putInfoTablesWithPositionInformes($tam_elementoAncho + 10,$arrayGrupo2,$grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto']);
+				$this->error = $this->putInfoTablesWithPositionInformes($tam_elementoAncho + 10,$arrayGrupo2,$grupos,$this->cellsTables['tam_font_CellsRows'],$this->arrayCampos,$this->cellsTables['tam_cellsTablesAlto'],$id_registrosCampo,'cilindros');
 				$endDown_table = $this->GetY();
 				//Imprimimos el "elemento muestreado"
 				$this->SetXY($posicion_x,$posicion_y);
@@ -1610,7 +1610,7 @@
 		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');
 		}
 		//Funcion que crea un nuevo formato
-		function CreateNew($infoFormato,$regisFormato,$infoU,$target_dir){			
+		function CreateNew($infoFormato,$regisFormato,$infoU,$target_dir,$id_registrosCampo){			
 			$pdf  = new InformeCilindros('L','mm','Letter');
 			$pdf->AddPage();
 			$pdf->AliasNbPages();
@@ -1618,7 +1618,7 @@
 			$pdf->putInfo($infoFormato);
 			$pdf->generateCellsCampos();
 			$pdf->generateCellsDetails();
-			$pdf->putTables($infoFormato,$regisFormato,$infoU);
+			$pdf->putTables($infoFormato,$regisFormato,$infoU,$id_registrosCampo);
 			$pdf->infoU = $infoU;
 			$pdf->Output('F',$target_dir);
 			//$pdf->Output();
