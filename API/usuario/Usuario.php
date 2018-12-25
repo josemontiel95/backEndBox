@@ -546,36 +546,36 @@ class Usuario{
 			if($rol_usuario_id==$this->rol_usuario_id){
 				$arr= $dbS->qAll(
 					"SELECT 
-						id_usuario,
-						CONCAT(nombre,' ',apellido) AS nombre,
-						laboratorio,
-						rol,
-						email,
-						consultasAlBack,
-						CASE
-							WHEN DATE_SUB(NOW(), INTERVAL 20 MINUTE)<sesion.lastEditedON THEN 'Activa'   
-							WHEN DATE_SUB(NOW(), INTERVAL 20 MINUTE)>sesion.lastEditedON THEN 'Vencida'    
-						END AS estatus,
-						CASE
-							WHEN DAYOFWEEK(sesion.createdON) = 4 THEN CONCAT('Miercoles',' ',DAYOFWEEK(sesion.createdON),' de ',MONTHNAME(sesion.createdON),' de ',YEAR(sesion.createdON))
-							WHEN DAYOFWEEK(sesion.createdON) = 7 THEN CONCAT('Sabado',' ',DAYOFWEEK(sesion.createdON),' de ',MONTHNAME(sesion.createdON),' de ',YEAR(sesion.createdON))
-							ELSE CONCAT(DAYNAME(sesion.createdON),' ',DAYOFWEEK(sesion.createdON),' de ',MONTHNAME(sesion.createdON),' de ',YEAR(sesion.createdON))
-						END AS fechaIni,
-						TIME(sesion.createdON) AS horaIni,
-						CASE
-							WHEN DAYOFWEEK(sesion.lastEditedON) = 4 THEN CONCAT('Miercoles',' ',DAYOFWEEK(sesion.lastEditedON),' de ',MONTHNAME(sesion.lastEditedON),' de ',YEAR(sesion.lastEditedON))
-							WHEN DAYOFWEEK(sesion.lastEditedON) = 7 THEN CONCAT('Sabado',' ',DAYOFWEEK(sesion.lastEditedON),' de ',MONTHNAME(sesion.lastEditedON),' de ',YEAR(sesion.lastEditedON))
-							ELSE CONCAT(DAYNAME(sesion.lastEditedON),' ',DAYOFWEEK(sesion.lastEditedON),' de ',MONTHNAME(sesion.lastEditedON),' de ',YEAR(sesion.lastEditedON))
-						END AS fechaUlt,
-						TIME(sesion.lastEditedON) AS horaUlt
-					FROM 
-						usuario LEFT JOIN sesion ON usuario_id= id_usuario
-						LEFT JOIN rol_usuario ON rol_usuario_id = id_rol_usuario
-						LEFT JOIN laboratorio ON laboratorio_id = id_laboratorio
-					WHERE
-						usuario.active = 1 AND
-						sesion.active = 1 AND
-						rol_usuario_id < 1007
+					id_usuario,
+					CONCAT(nombre,' ',apellido) AS nombre,
+					laboratorio,
+					rol,
+					email,
+					consultasAlBack,
+					CASE
+						WHEN DATE_SUB(NOW(), INTERVAL 20 MINUTE)<sesion.lastEditedON THEN 'Activa'   
+						WHEN DATE_SUB(NOW(), INTERVAL 20 MINUTE)>sesion.lastEditedON THEN 'Vencida'    
+					END AS estatus,
+					CASE
+						WHEN DAYOFWEEK(sesion.createdON) = 4 THEN CONCAT('Miercoles',' ',DAYOFWEEK(sesion.createdON),' de ',MONTHNAME(sesion.createdON),' de ',YEAR(sesion.createdON))
+						WHEN DAYOFWEEK(sesion.createdON) = 7 THEN CONCAT('Sabado',' ',DAYOFWEEK(sesion.createdON),' de ',MONTHNAME(sesion.createdON),' de ',YEAR(sesion.createdON))
+						ELSE CONCAT(DAYNAME(sesion.createdON),' ',DAYOFWEEK(sesion.createdON),' de ',MONTHNAME(sesion.createdON),' de ',YEAR(sesion.createdON))
+					END AS fechaIni,
+					TIME(sesion.createdON) AS horaIni,
+					CASE
+						WHEN DAYOFWEEK(sesion.lastEditedON) = 4 THEN CONCAT('Miercoles',' ',DAYOFWEEK(sesion.lastEditedON),' de ',MONTHNAME(sesion.lastEditedON),' de ',YEAR(sesion.lastEditedON))
+						WHEN DAYOFWEEK(sesion.lastEditedON) = 7 THEN CONCAT('Sabado',' ',DAYOFWEEK(sesion.lastEditedON),' de ',MONTHNAME(sesion.lastEditedON),' de ',YEAR(sesion.lastEditedON))
+						ELSE CONCAT(DAYNAME(sesion.lastEditedON),' ',DAYOFWEEK(sesion.lastEditedON),' de ',MONTHNAME(sesion.lastEditedON),' de ',YEAR(sesion.lastEditedON))
+					END AS fechaUlt,
+					TIME(sesion.lastEditedON) AS horaUlt
+				FROM 
+					usuario LEFT JOIN sesion ON usuario_id= id_usuario
+					LEFT JOIN rol_usuario ON rol_usuario_id = id_rol_usuario
+					LEFT JOIN laboratorio ON laboratorio_id = id_laboratorio
+				WHERE
+					usuario.active = 1 AND
+					sesion.active = 1 AND
+					rol_usuario_id < 1007
 			      ",
 			      array(),
 			      "SELECT"

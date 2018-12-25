@@ -1,0 +1,61 @@
+Nomeclatura de estados de las entidades relacionadas con los formatos.
+Autor: Jose M.
+Esbirro: Bryan T. 
+
+CCH 
+    formatoCampo
+        +---------------+-------------+
+        |    Status     | Significado |
+        +---------------+-------------+
+        |  0            |  E   JB     |
+        |  1            |  C   JB     |
+        |  2            |  A   JL     |
+        +---------------+-------------+
+
+    registrosCampo
+        +---------------+-------------+
+        |    Status     | Significado |
+        +---------------+-------------+
+        |  0            |  E   JB     |
+        |  1            |  SC  JB     |
+        |  2            |  CC  JB     |
+        |  3            |  E   JL     |
+        |  4            |  AUT JL     |
+        +---------------+-------------+
+
+    ensayos
+        +---------------+-------------+
+        |    Status     | Significado |
+        +---------------+-------------+
+        |  0            |  E   TMU    |
+        |  1            |  SC  TMU    |
+        |  2            |  E   JL     |
+        |  3            |  C   JL     |
+        |  4            |  AUT JL     |
+        +---------------+-------------+
+Rev
+    formatoRegistroRev
+        +---------------+-------------+
+        |    Status     | Significado |
+        +---------------+-------------+
+        |  0            |  E   JB     |
+        |  1            |  C   JB     |
+        |  2            |  A   JL     |
+        +---------------+-------------+
+        
+    registrosRev
+        +---------------+-------------+
+        |    Status     | Significado |
+        +---------------+-------------+
+        |  0            |  E   JB     |
+        |  1            |  SC  JB     |
+        |  2            |  CC  JB     |
+        |  3            |  E   JL     |
+        |  4            |  AUT JL     |
+        +---------------+-------------+
+
+
+E   = Edicion
+SC  = Semi-completado 
+CC  = Completado
+AUT = Autorizado por...
