@@ -50,7 +50,7 @@ CREATE TABLE `systemstatus` (
   `cch_vigaDef_prueba3` int(11) NOT NULL,
   `maxNoOfRegistrosCCH_VIGAS` int(11) NOT NULL,
   `multiplosNoOfRegistrosCCH_VIGAS` int(11) NOT NULL,
-  `nombreG` varchar(30) NOT NULL,
+  `nombreG` varchar(70) NOT NULL,
   `firmaG` varchar(120) DEFAULT 'null',
   `createdON` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `lastEditedON` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
