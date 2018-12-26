@@ -1729,7 +1729,7 @@
 								REPLACE(REPLACE(CONVERT(FORMAT(ROUND(( ((carga*var_system.ensayo_def_kN)/var_system.ensayo_def_divisorKn) ), 1), 1), CHAR), ',', '  '), '.', ',') AS kn,	
 								REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
 								REPLACE(REPLACE(CONVERT(FORMAT(ROUND(( ((carga/(l1*l2))/var_system.ensayo_def_MPa) ), 1), 1), CHAR), ',', '  '), '.', ',') AS mpa,
-								REPLACE(REPLACE(CONVERT(FORMAT(ROUND( ( (carga/(l1*l2)) ), 1), 1), CHAR), ',', '  '), '.', ',') AS kg,
+								REPLACE(REPLACE(CONVERT(FORMAT(ROUND( ( (carga/(l1*l2)) ), 0), 0), CHAR), ',', '  '), '.', ',') AS kg,
 								fprima,
 								REPLACE(REPLACE(CONVERT(FORMAT(ROUND(( (((carga/(l1*l2))/fprima)*100) ), 1), 1), CHAR), ',', '  '), '.', ',') AS porcentResis,
 								grupo,
