@@ -759,6 +759,15 @@
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 			$this->Cell($tam_termo,(($tam_font_head))/2,$flexo,1,2,'C');
 			$this->Cell($tam_termo,(($tam_font_head))/2,utf8_decode($infoFormato['regVerFle_id_placas']),'L,B,R',0,'C');
+
+			$this->SetXY($posicion_x+$tam_termo,$posicion_y);
+			$cronometro = 'CRONÓMETRO';
+			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
+			$this->Cell($tam_termo,(($tam_font_head))/2,utf8_decode($cronometro),1,2,'C');
+			$this->Cell($tam_termo,(($tam_font_head))/2,utf8_decode($infoFormato['cronometro_placas']),'L,B,R',0,'C');
+
+
+
 			//Aqui van las notas
 			$this->SetXY($posicion_x+$tam_termo,$posicion_y);
 			$this->Cell(0,(($tam_font_head)),'',1,0,'C');
@@ -837,8 +846,8 @@
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($regisFormato);
 			$pdf->Myfooter($infoFormato,$infoU);
-			//$pdf->Output();
-			$pdf->Output('F',$target_dir);
+			$pdf->Output();
+			//$pdf->Output('F',$target_dir);
 			return $pdf->error;
 		}
 
