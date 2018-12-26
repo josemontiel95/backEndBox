@@ -1263,7 +1263,7 @@
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4), 1), 1), CHAR), ',', '  '), '.', ',') AS area,
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100), 0), 0), CHAR), ',', '  '), '.', ',') AS porcentResis,
 						ROUND(velAplicacionExp,1),
-						IF(falla = 0,'-',REPLACE(REPLACE(CONVERT(FORMAT(ROUND(falla, 0), 0), CHAR), ',', '  '), '.', ',')) AS falla
+						IF(falla = 0,'-',1) AS falla
 					FROM 
 						ensayoCilindro,
 						registrosCampo,
@@ -1684,8 +1684,8 @@
 						e.kg,
 						e.fprima,
 						e.porcentResis,
-						e.grupo,
-						e.localizacion
+						t.grupo,
+						t.localizacion
 					FROM
 						(
 							SELECT
@@ -1693,6 +1693,8 @@
 								r.claveEspecimen,
 								r.fecha,
 								r.status,
+								r.grupo,
+								r.localizacion,
 								CASE
 									WHEN MOD(r.diasEnsaye,3) = 1 THEN f.prueba1  
 									WHEN MOD(r.diasEnsaye,3) = 2 THEN f.prueba2  
@@ -1801,13 +1803,11 @@
 							e.carga,
 							e.mpa,
 							e.kgcm,
-							e.porcentResis,
-
 							e.fprima,
 							e.porcentResis,
 							e.falla,
-							e.grupo,
-							e.localizacion
+							t.grupo,
+							t.localizacion
 
 						FROM
 							(
@@ -1816,6 +1816,8 @@
 									r.claveEspecimen,
 									r.fecha,
 									r.status,
+									r.grupo,
+									r.localizacion,
 									CASE
 										WHEN MOD(r.diasEnsaye,3) = 1 THEN f.prueba1  
 										WHEN MOD(r.diasEnsaye,3) = 2 THEN f.prueba2  
@@ -1854,7 +1856,7 @@
 									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))), 0), 0), CHAR), ',', '  '), '.', ',') AS kgcm,
 									fprima,
 									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((((carga/((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4))/fprima)*100)), 1), 1), CHAR), ',', '  '), '.', ',') AS porcentResis,
-									IF(falla = 0,'-',REPLACE(REPLACE(CONVERT(FORMAT(ROUND(falla, 0), 0), CHAR), ',', '  '), '.', ',')) AS falla,
+									IF(falla = 0,'-',1) AS falla,
 									grupo,
 									registrosCampo.localizacion
 								FROM

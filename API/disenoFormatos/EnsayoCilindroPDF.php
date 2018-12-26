@@ -223,7 +223,7 @@
 			//Titulo del informe
 			$tam_font_tituloInforme = 7;
 			$this->SetFont('Arial','B',$tam_font_tituloInforme);
-			$titulo_informe = '"ENSAYO A COMPRESIÓN DE CILINROS DE CONCRETO HIDRÁULICO"';
+			$titulo_informe = '"ENSAYO A COMPRESIÓN DE CILINDROS DE CONCRETO HIDRÁULICO"';
 			$tam_titulo_informe = $this->GetStringWidth($titulo_informe)+3;
 			$this->SetX((216-$tam_titulo_informe)/2);
 			$this->Cell($titulo_informe,$tam_font_tituloInforme - 3,utf8_decode($titulo_informe),0,'C');
