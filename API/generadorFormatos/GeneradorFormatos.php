@@ -1684,8 +1684,8 @@
 						e.kg,
 						e.fprima,
 						e.porcentResis,
-						e.grupo,
-						e.localizacion
+						t.grupo,
+						t.localizacion
 					FROM
 						(
 							SELECT
@@ -1693,6 +1693,8 @@
 								r.claveEspecimen,
 								r.fecha,
 								r.status,
+								r.grupo,
+								r.localizacion,
 								CASE
 									WHEN MOD(r.diasEnsaye,3) = 1 THEN f.prueba1  
 									WHEN MOD(r.diasEnsaye,3) = 2 THEN f.prueba2  
