@@ -638,7 +638,8 @@ class FormatoRegistroRev{
 					formatoRegistroRev.flexometro_id,
 					FLEXOMETRO,
 					preliminar,
-					pdfFinal
+					pdfFinal,
+					formatoRegistroRev.localizacion AS localizacion
 			      FROM 
 			        ordenDeTrabajo,cliente,obra,formatoRegistroRev,
 			        (
@@ -702,7 +703,7 @@ class FormatoRegistroRev{
 		return json_encode($arr);
 	}
 
-	public function updateFooter($token,$rol_usuario_id,$id_formatoRegistroRev,$observaciones,$cono_id,$varilla_id,$flexometro_id){
+	public function updateFooter($token,$rol_usuario_id,$id_formatoRegistroRev,$observaciones,$cono_id,$varilla_id,$flexometro_id,$localizacion){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
@@ -713,12 +714,13 @@ class FormatoRegistroRev{
 								observaciones ='1QQ',
 								cono_id = 1QQ,
 								varilla_id = 1QQ,
-								flexometro_id = 1QQ
+								flexometro_id = 1QQ,
+								localizacion='1QQ'
 							WHERE
 								active=1 AND
 								id_formatoRegistroRev = 1QQ
 					 "
-					,array($observaciones,$cono_id,$varilla_id,$flexometro_id,$id_formatoRegistroRev),"UPDATE"
+					,array($observaciones,$cono_id,$varilla_id,$flexometro_id,$localizacion,$id_formatoRegistroRev),"UPDATE"
 			      	);
 			$arr = array('id_formatoRegistroRev' => $id_formatoRegistroRev,'estatus' => 'Exito de actualizacion de footer','error' => 0);	
 			if($dbS->didQuerydied){
