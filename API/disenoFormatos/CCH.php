@@ -1397,7 +1397,11 @@
 			$posicion_x = $this->GetX();
 			//Lo dejamos en 0 para que ocupe todo el espacio de la hoja
 
+			$infoFormato['observaciones'] = 'ñoño';
+
 			$resultado = $this->printInfoObraAndLocObra($this->cellsDetails['tam_font_details'],258.4,$this->cellsDetails['tam_observacionesAltoTxt'],$infoFormato['observaciones'],3);
+
+
 
 			$this->SetFont('Arial','',$resultado['sizeFont']);
 			$infoFormato['observaciones'] = $resultado['new_string'];
@@ -1406,7 +1410,7 @@
 				$this->error = $resultado['error'];
 			}
 
-			$this->multicell(0,$this->cellsDetails['tam_observacionesAltoTxt'],utf8_encode($infoFormato['observaciones']),'R,L','J');
+			$this->multicell(0,$this->cellsDetails['tam_observacionesAltoTxt'],utf8_decode($infoFormato['observaciones']),'R,L','J');
 
 
 
@@ -1582,8 +1586,8 @@
 			$pdf->putTables($infoFormato,$regisFormato);
 			$pdf->generateCellsDetails();
 			$pdf->putDetails($infoFormato,$infoU);
-			$pdf->Output('F',$target_dir);
-			//$pdf->Output();
+			//$pdf->Output('F',$target_dir);
+			$pdf->Output();
 			return $pdf->error;
 		}
 	
