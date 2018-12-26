@@ -112,11 +112,11 @@
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 
 
-			$velocidad = 'kg/cm2 por minuto';
+			$velocidad = 'kg/cm² por minuto';
 			$tam_velocidad = $this->GetStringWidth($velocidad)+2;
 			$posicion_x = $this->GetX();
 			$this->Cell($tam_velocidad,($tam_font_head+3)/2,utf8_decode('Vel. Aplicación'),'L,T,R',2,'C');
-			$this->cell($tam_velocidad,($tam_font_head+3)/2,utf8_decode('kg/cm2 por minuto'),'L,B,R',2,'C');
+			$this->cell($tam_velocidad,($tam_font_head+3)/2,utf8_decode('kg/cm² por minuto'),'L,B,R',2,'C');
 
 			$this->SetXY($posicion_x + $tam_velocidad,$posicion_y);
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
@@ -336,11 +336,11 @@
 			$this->SetXY($posicion_x + $tam_resis,$posicion_y);
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
 
-			$velocidad = 'kg/cm2 por minuto';
+			$velocidad = 'kg/cm² por minuto';
 			$tam_velocidad = $this->GetStringWidth($velocidad)+2;
 			$posicion_x = $this->GetX();
 			$this->Cell($tam_velocidad,($tam_font_head+3)/2,utf8_decode('Vel. Aplicación'),'L,T,R',2,'C');
-			$this->cell($tam_velocidad,($tam_font_head+3)/2,utf8_decode('kg/cm2 por minuto'),'L,B,R',2,'C');
+			$this->cell($tam_velocidad,($tam_font_head+3)/2,utf8_decode('kg/cm² por minuto'),'L,B,R',2,'C');
 
 			$this->SetXY($posicion_x + $tam_velocidad,$posicion_y);
 			$posicion_y = $this->GetY(); $posicion_x = $this->GetX();
