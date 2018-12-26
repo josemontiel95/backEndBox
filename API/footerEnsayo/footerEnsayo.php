@@ -362,6 +362,21 @@ class footerEnsayo{
 					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato','error' => 20);
 					return json_encode($arr);
 				}
+				$registrosCampo_id = $dbS->qvalue(
+					"	SELECT
+							registrosCampo_id
+						FROM
+							1QQ
+						WHERE
+							1QQ =1QQ
+					",array($table,$id,$id_ensayo),
+					"SELECT -- FooterEnsayo :: generatePDFFinal : 1"
+				);
+				if($dbS->didQuerydied || ($registrosCampo_id == "empty")){
+					$dbS->rollbackTransaction();
+					$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato','error' => 20);
+					return json_encode($arr);
+				}
 				$hora_de_creacion = getdate();
 				$target_dir = "./../../../SystemData/FormatosFinalesData/".$a['tipo']."/".$id_formatoCampo."/";
 				$dirDatabase = $var_system['apiRoot']."SystemData/FormatosFinalesData/".$a['tipo']."/".$id_formatoCampo."/"."Final".$a['tipo']."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
@@ -371,7 +386,7 @@ class footerEnsayo{
 				$target_dir=$target_dir."Final".$a['tipo']."(".$hora_de_creacion['hours']."-".$hora_de_creacion['minutes']."-".$hora_de_creacion['seconds'].")".".pdf";
 				//Cachamos la excepcion
 				try{
-					$arr=json_decode( $generador->generateInformeCampo($token,$rol_usuario_id,$id_formatoCampo,$target_dir),true);
+					$arr=json_decode( $generador->generateInformeCampo($token,$rol_usuario_id,$registrosCampo_id,$target_dir),true);
 						
 					if($arr['error'] > 0){
 						$dbS->rollbackTransaction();

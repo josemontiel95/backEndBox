@@ -25,7 +25,7 @@
 		break;
 		case 'updateFooter':
 			$formato = new FormatoRegistroRev();
-			echo $formato->updateFooter($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev'],$_POST['observaciones'],$_POST['cono_id'],$_POST['varilla_id'],$_POST['flexometro_id']);
+			echo $formato->updateFooter($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_formatoRegistroRev'],$_POST['observaciones'],$_POST['cono_id'],$_POST['varilla_id'],$_POST['flexometro_id'],$_POST['localizacion']);
 		break;
 		case 'updateHeader':
 			$formato = new FormatoRegistroRev();
