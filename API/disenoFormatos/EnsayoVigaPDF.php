@@ -846,8 +846,8 @@
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($regisFormato);
 			$pdf->Myfooter($infoFormato,$infoU);
-			$pdf->Output();
-			//$pdf->Output('F',$target_dir);
+			//$pdf->Output();
+			$pdf->Output('F',$target_dir);
 			return $pdf->error;
 		}
 

@@ -475,7 +475,7 @@
 			$tam_cronometro = $this->GetStringWidth($cronometro)+10;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 			$this->Cell($tam_cronometro,(($tam_font_head)-1)/2,utf8_decode($cronometro),1,2,'C');
-			$this->Cell($tam_cronometro,(($tam_font_head)-1)/2,utf8_decode('PENDIENTE'),'L,B,R',1,'C');
+			$this->Cell($tam_cronometro,(($tam_font_head)-1)/2,utf8_decode($infoFormato['cronometro_placas']),'L,B,R',1,'C');
 
 
 			$this->SetY($posicion_y);
@@ -596,8 +596,8 @@
 			$pdf->AliasNbPages();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTablesWithOutJefeLab($infoFormato,$regisFormato,$infoU);
-			$pdf->Output();
-			//$pdf->Output('F',$target_dir);
+			//$pdf->Output();
+			$pdf->Output('F',$target_dir);
 			return $pdf->error;
 		}
 
