@@ -335,13 +335,25 @@
 				$num_rows++;
 				$this->Ln();
 			}
+
+
+
 			if($num_rows<$grupos){
+				//Guardamos la posicion de la X y Y para poner la linea que cancela
+				$posicion_x = $this->GetX();
+				$posicion_y = $this->GetY();
+
+
 				for ($i=0; $i < ($grupos-$num_rows); $i++){
 					for ($j=0; $j < sizeof($array_campo); $j++){ 
 						$this->cell($array_campo[$j],$tam_cellsTablesAlto,'',1,0,'C');
 					}
 					$this->Ln();
 				}
+
+				//Linea que cancela
+				$this->Line($posicion_x,$posicion_y,206,$this->GetY());
+
 			}
 
 
@@ -509,8 +521,8 @@
 			$pdf->AliasNbPages();
 			$pdf->putInfo($infoFormato);
 			$pdf->putTables($infoFormato,$regisFormato,$infoU);
-			//$pdf->Output();
-			$pdf->Output('F',$target_dir);
+			$pdf->Output();
+			//$pdf->Output('F',$target_dir);
 			return $pdf->error;
 		}
 
