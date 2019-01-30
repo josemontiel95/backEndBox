@@ -28,16 +28,10 @@ class Mailer{
 					<p>Consulta el preliminar <a href="'.$pdf.'">aqui</a></p>
 					<p></p>
 					<p><b>IMPORTANTE</b></p>
-					<p><b>Este es solo un informe preliminar. Este documento no tiene valides son las firmas autogramas de los signatarios autorizados por LACOCS</b></p>
+					<p><b>Este es solo un informe preliminar. Este documento no tiene validez sin las firmas aut&oacute;grafas de los signatarios de LACOCS autorizados por EMA</b></p>
 					<p></p>
 					<p><b>Aviso de Privacidad</b></p>
 					<p><b>Consulta nuestro aviso de privacidad <a href="http://lacocsmex.com.mx/#/privacidad">aqu&iacute;</a></b></p>
-					<p></p>
-					<p><b>Aviso de Confidencialidad</b></p>
-					<p><b>Esta tranmicion de correo electrónico, cuanquier documento, archivos o correos electronicos adjuntos al presente contienen información confidencial legalmente protegida. Si no eres el destinatario, o una persona encargada de entregarlo al destinatario, se te notifica que cualquier revelación, proceso de copiado, distribución o uso alguno de la información contenida o adjunta a esta transmisión esta ESTRICTAMENTE PROHIBIDA. Si has recibido esta transmisión por error, notifique al remitente de inmediato. Borre la transmisión original y sus adjuntos sin hacer lectura y sin almacenar copia alguna.</b></p>
-					<p></p>
-					<p><b>CONFIDENTIALITY NOTICE</b></p>
-					<p><b>This e-mail transmission, and any documents, files or previous e-mail messages attached to it may contain confidential information that is legally privileged. If you are not the intended recipient, or a person responsible for delivering it to the intended recipient, you are hereby notified that any disclosure, copying, distribution or use of any of the information contained in or attached to this transmission is STRICTLY PROHIBITED. If you have received this transmission in error, please immediately notify the sender. Please destroy the original transmission and its attachments without reading or saving in any manner.</b></p>
 					<p></p>
 					<br><br><br><br>
 					<div style="text-align:center;width:100%;">
@@ -74,12 +68,6 @@ class Mailer{
 					<p></p>
 					<p><b>Aviso de Privacidad</b></p>
 					<p><b>Consulta nuestro aviso de privacidad <a href="http://lacocsmex.com.mx/#/privacidad">aqu&iacute;</a></b></p>
-					<p></p>
-					<p><b>Aviso de Confidencialidad</b></p>
-					<p><b>Esta tranmicion de correo electrónico, cuanquier documento, archivos o correos electronicos adjuntos al presente contienen información confidencial legalmente protegida. Si no eres el destinatario, o una persona encargada de entregarlo al destinatario, se te notifica que cualquier revelación, proceso de copiado, distribución o uso alguno de la información contenida o adjunta a esta transmisión esta ESTRICTAMENTE PROHIBIDA. Si has recibido esta transmisión por error, notifique al remitente de inmediato. Borre la transmisión original y sus adjuntos sin hacer lectura y sin almacenar copia alguna.</b></p>
-					<p></p>
-					<p><b>CONFIDENTIALITY NOTICE</b></p>
-					<p><b>This e-mail transmission, and any documents, files or previous e-mail messages attached to it may contain confidential information that is legally privileged. If you are not the intended recipient, or a person responsible for delivering it to the intended recipient, you are hereby notified that any disclosure, copying, distribution or use of any of the information contained in or attached to this transmission is STRICTLY PROHIBITED. If you have received this transmission in error, please immediately notify the sender. Please destroy the original transmission and its attachments without reading or saving in any manner.</b></p>
 					<p></p>
 					<br><br><br><br>
 					<div style="text-align:center;width:100%;">
@@ -144,12 +132,6 @@ class Mailer{
 			<p></p>
 			<p><b>Aviso de Privacidad</b></p>
 			<p><b>Consulta nuestro aviso de privacidad <a href="http://lacocsmex.com.mx/#/privacidad">aqu&iacute;</a></b></p>
-			<p></p>
-			<p><b>Aviso de Confidencialidad</b></p>
-			<p><b>Esta tranmici&oacute;n de correo electr&oacute;nico, cuanquier documento, archivos o correos electronicos adjuntos al presente contienen informaci&oacute;n confidencial legalmente protegida. Si no eres el destinatario, o una persona encargada de entregarlo al destinatario, se te notifica que cualquier revelaci&oacute;n, proceso de copiado, distribuci&oacute;n o uso alguno de la informaci&oacute;n contenida o adjunta a esta transmisi&oacute;n esta ESTRICTAMENTE PROHIBIDA. Si has recibido esta transmisi&oacute;n por error, notifique al remitente de inmediato. Borre la transmisi&oacute;n original y sus adjuntos sin hacer lectura y sin almacenar copia alguna.</b></p>
-			<p></p>
-			<p><b>CONFIDENTIALITY NOTICE</b></p>
-			<p><b>This e-mail transmission, and any documents, files or previous e-mail messages attached to it may contain confidential information that is legally privileged. If you are not the intended recipient, or a person responsible for delivering it to the intended recipient, you are hereby notified that any disclosure, copying, distribution or use of any of the information contained in or attached to this transmission is STRICTLY PROHIBITED. If you have received this transmission in error, please immediately notify the sender. Please destroy the original transmission and its attachments without reading or saving in any manner.</b></p>
 			<p></p>
 			<br><br><br><br>
 			<div style="text-align:center;width:100%;">
@@ -236,12 +218,6 @@ class Mailer{
 			<p><b>Aviso de Privacidad</b></p>
 			<p><b>Consulta nuestro aviso de privacidad <a href="http://lacocsmex.com.mx/#/privacidad">aqu&iacute;</a></b></p>
 			<p></p>
-			<p><b>Aviso de Confidencialidad</b></p>
-			<p><b>Esta tranmici&oacute;n de correo electr&oacute;nico, cuanquier documento, archivos o correos electronicos adjuntos al presente contienen informaci&oacute;n confidencial legalmente protegida. Si no eres el destinatario, o una persona encargada de entregarlo al destinatario, se te notifica que cualquier revelaci&oacute;n, proceso de copiado, distribuci&oacute;n o uso alguno de la informaci&oacute;n contenida o adjunta a esta transmisi&oacute;n esta ESTRICTAMENTE PROHIBIDA. Si has recibido esta transmisi&oacute;n por error, notifique al remitente de inmediato. Borre la transmisi&oacute;n original y sus adjuntos sin hacer lectura y sin almacenar copia alguna.</b></p>
-			<p></p>
-			<p><b>CONFIDENTIALITY NOTICE</b></p>
-			<p><b>This e-mail transmission, and any documents, files or previous e-mail messages attached to it may contain confidential information that is legally privileged. If you are not the intended recipient, or a person responsible for delivering it to the intended recipient, you are hereby notified that any disclosure, copying, distribution or use of any of the information contained in or attached to this transmission is STRICTLY PROHIBITED. If you have received this transmission in error, please immediately notify the sender. Please destroy the original transmission and its attachments without reading or saving in any manner.</b></p>
-			<p></p>
 			<br><br><br><br>
 			<div style="text-align:center;width:100%;">
 				<p><b>Desarrollado por T4U Black <a href=""></a></b></p>
@@ -280,12 +256,6 @@ class Mailer{
 					<p></p>
 					<p><b>Aviso de Privacidad</b></p>
 					<p><b>Consulta nuestro aviso de privacidad <a href="http://lacocsmex.com.mx/#/privacidad">aqu&iacute;</a></b></p>
-					<p></p>
-					<p><b>Aviso de Confidencialidad</b></p>
-					<p><b>Esta tranmicion de correo electrónico, cuanquier documento, archivos o correos electronicos adjuntos al presente contienen información confidencial legalmente protegida. Si no eres el destinatario, o una persona encargada de entregarlo al destinatario, se te notifica que cualquier revelación, proceso de copiado, distribución o uso alguno de la información contenida o adjunta a esta transmisión esta ESTRICTAMENTE PROHIBIDA. Si has recibido esta transmisión por error, notifique al remitente de inmediato. Borre la transmisión original y sus adjuntos sin hacer lectura y sin almacenar copia alguna.</b></p>
-					<p></p>
-					<p><b>CONFIDENTIALITY NOTICE</b></p>
-					<p><b>This e-mail transmission, and any documents, files or previous e-mail messages attached to it may contain confidential information that is legally privileged. If you are not the intended recipient, or a person responsible for delivering it to the intended recipient, you are hereby notified that any disclosure, copying, distribution or use of any of the information contained in or attached to this transmission is STRICTLY PROHIBITED. If you have received this transmission in error, please immediately notify the sender. Please destroy the original transmission and its attachments without reading or saving in any manner.</b></p>
 					<p></p>
 					<br><br><br><br>
 					<div style="text-align:center;width:100%;">

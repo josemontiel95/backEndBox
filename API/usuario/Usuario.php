@@ -557,15 +557,15 @@ class Usuario{
 						WHEN DATE_SUB(NOW(), INTERVAL 20 MINUTE)>sesion.lastEditedON THEN 'Vencida'    
 					END AS estatus,
 					CASE
-						WHEN DAYOFWEEK(sesion.createdON) = 4 THEN CONCAT('Miercoles',' ',DAYOFWEEK(sesion.createdON),' de ',MONTHNAME(sesion.createdON),' de ',YEAR(sesion.createdON))
-						WHEN DAYOFWEEK(sesion.createdON) = 7 THEN CONCAT('Sabado',' ',DAYOFWEEK(sesion.createdON),' de ',MONTHNAME(sesion.createdON),' de ',YEAR(sesion.createdON))
-						ELSE CONCAT(DAYNAME(sesion.createdON),' ',DAYOFWEEK(sesion.createdON),' de ',MONTHNAME(sesion.createdON),' de ',YEAR(sesion.createdON))
+						WHEN DAYOFWEEK(sesion.createdON) = 4 THEN CONCAT('Miercoles',' ',DAYOFMONTH(sesion.createdON),' de ',MONTHNAME(sesion.createdON),' de ',YEAR(sesion.createdON))
+						WHEN DAYOFWEEK(sesion.createdON) = 7 THEN CONCAT('Sabado',' ',DAYOFMONTH(sesion.createdON),' de ',MONTHNAME(sesion.createdON),' de ',YEAR(sesion.createdON))
+						ELSE CONCAT(DAYNAME(sesion.createdON),' ',DAYOFMONTH(sesion.createdON),' de ',MONTHNAME(sesion.createdON),' de ',YEAR(sesion.createdON))
 					END AS fechaIni,
 					TIME(sesion.createdON) AS horaIni,
 					CASE
-						WHEN DAYOFWEEK(sesion.lastEditedON) = 4 THEN CONCAT('Miercoles',' ',DAYOFWEEK(sesion.lastEditedON),' de ',MONTHNAME(sesion.lastEditedON),' de ',YEAR(sesion.lastEditedON))
-						WHEN DAYOFWEEK(sesion.lastEditedON) = 7 THEN CONCAT('Sabado',' ',DAYOFWEEK(sesion.lastEditedON),' de ',MONTHNAME(sesion.lastEditedON),' de ',YEAR(sesion.lastEditedON))
-						ELSE CONCAT(DAYNAME(sesion.lastEditedON),' ',DAYOFWEEK(sesion.lastEditedON),' de ',MONTHNAME(sesion.lastEditedON),' de ',YEAR(sesion.lastEditedON))
+						WHEN DAYOFWEEK(sesion.lastEditedON) = 4 THEN CONCAT('Miercoles',' ',DAYOFMONTH(sesion.lastEditedON),' de ',MONTHNAME(sesion.lastEditedON),' de ',YEAR(sesion.lastEditedON))
+						WHEN DAYOFWEEK(sesion.lastEditedON) = 7 THEN CONCAT('Sabado',' ',DAYOFMONTH(sesion.lastEditedON),' de ',MONTHNAME(sesion.lastEditedON),' de ',YEAR(sesion.lastEditedON))
+						ELSE CONCAT(DAYNAME(sesion.lastEditedON),' ',DAYOFMONTH(sesion.lastEditedON),' de ',MONTHNAME(sesion.lastEditedON),' de ',YEAR(sesion.lastEditedON))
 					END AS fechaUlt,
 					TIME(sesion.lastEditedON) AS horaUlt
 				FROM 

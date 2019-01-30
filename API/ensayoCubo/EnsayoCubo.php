@@ -38,7 +38,6 @@ class EnsayoCubo{
 						UPDATE
 							ensayoCubo
 						SET
-							fecha = CURDATE(),
 							1QQ = '1QQ'
 						WHERE
 							id_ensayoCubo = 1QQ
@@ -146,8 +145,8 @@ class EnsayoCubo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$s= $dbS->qarrayA("
-			    	SELECT
+			$s= $dbS->qarrayA(
+				"   SELECT
 						id_ensayoCubo,
 						ensayoCubo.formatoCampo_id AS formatoCampo_id,
 						IF(registrosCampo.status = 3,'SI','NO') AS completado,
@@ -461,7 +460,6 @@ class EnsayoCubo{
 							"UPDATE
 								ensayoCubo
 							SET
-								fecha = CURDATE(),
 								status = 1
 							WHERE
 								id_ensayoCubo = 1QQ

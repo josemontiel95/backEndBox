@@ -1490,9 +1490,9 @@ class footerEnsayo{
 			if(!$dbS->didQuerydied){
 				$dbS->squery("
 					INSERT INTO
-						ensayoCilindro(registrosCampo_id,formatoCampo_id,footerEnsayo_id,peso,d1,d2,h1,h2,carga,falla)
+						ensayoCilindro(fecha,registrosCampo_id,formatoCampo_id,footerEnsayo_id,peso,d1,d2,h1,h2,carga,falla)
 					VALUES
-						(1QQ,1QQ,1QQ,0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0)
+						(CURDATE(),1QQ,1QQ,1QQ,0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0)
 					",array($id_RegistroCCH, $a['formatoCampo_id'],$id ),
 					"INSERT -- footerEnsayo :: initInsert :: initEnsayoCilindro : 4"
 				);
@@ -1553,9 +1553,9 @@ class footerEnsayo{
 			if(!$dbS->didQuerydied){
 				$dbS->squery("
 					INSERT INTO
-						ensayoCubo(registrosCampo_id,formatoCampo_id,footerEnsayo_id)
+						ensayoCubo(fecha,registrosCampo_id,formatoCampo_id,footerEnsayo_id)
 					VALUES
-						(1QQ,1QQ,1QQ)
+						(CURDATE(),1QQ,1QQ,1QQ)
 					",array($id_RegistroCCH, $a['formatoCampo_id'],$id ),
 					"INSERT -- footerEnsayo :: initInsert :: initEnsayoCubo : 4"
 				);
@@ -1626,9 +1626,9 @@ class footerEnsayo{
 			if(!$dbS->didQuerydied){
 				$dbS->squery("
 					INSERT INTO
-						ensayoViga(registrosCampo_id,formatoCampo_id,footerEnsayo_id,fecha,disApoyo)
+						ensayoViga(fecha,registrosCampo_id,formatoCampo_id,footerEnsayo_id,fecha,disApoyo)
 					VALUES
-						(1QQ,1QQ,1QQ,CURDATE(),'1QQ')
+						(CURDATE(),1QQ,1QQ,1QQ,CURDATE(),'1QQ')
 					",array($id_RegistroCCH, $a['formatoCampo_id'],$id,$disApoyo),
 					"INSERT -- footerEnsayo :: initInsert :: initEnsayoViga : 4"
 				);

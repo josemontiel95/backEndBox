@@ -360,7 +360,7 @@ class ordenDeTrabajo{
 					jefa_lab_id,
 					obra_id,
 					obra.obra,
-
+					CONCAT(nombre,' ',apellido) AS nombre_jefe_brigada_id,
 					actividades,
 					condicionesTrabajo,
 					CONCAT(fechaInicio,' ',horaInicio) AS fechaInicio,
@@ -402,9 +402,9 @@ class ordenDeTrabajo{
 						ELSE 4
 					END AS color
 				FROM
-					ordenDeTrabajo,obra,laboratorio
+					obra,laboratorio,
+					ordenDeTrabajo LEFT JOIN usuario ON jefe_brigada_id=id_usuario
 				WHERE
-					CURDATE() >= ordenDeTrabajo.fechaInicio AND
 					obra_id = id_obra AND
 					ordenDeTrabajo.laboratorio_id = id_laboratorio AND
 					ordenDeTrabajo.laboratorio_id = 1QQ AND

@@ -667,7 +667,12 @@ class formatoCampo{
 			//Llamada a el generador de formatos
 			//Cachamos la excepcion
 			try{
-				$generador->generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir);
+				$arr=json_decode( $generador->generateCCH($token,$rol_usuario_id,$id_formatoCampo,$target_dir),true);
+				if($arr['error'] > 0){
+					$dbS->rollbackTransaction();
+					return json_encode($arr);
+				}
+
 			}catch(Exception $e){
 				$dbS->rollbackTransaction();
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la generacion del formato:'.$e->getMessage(),'error' => 8);
@@ -689,6 +694,7 @@ class formatoCampo{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , no se pudo enviar el correo al cliente','error' => 40);
 				return json_encode($arr);
 			}else{
+				$arr = array('id_formatoCampo' => $id_formatoCampo,'estatus' => 'Exito Formato generado','error' => 0);	
 				$dbS->commitTransaction();
 				return json_encode($arr);
 			}
