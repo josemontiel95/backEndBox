@@ -1068,7 +1068,7 @@
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(mr, 1), 1), CHAR), ',', '  '), '.', ',') AS modRuptura,
 						defectos,
-						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(velAplicacionExp, 2), 2), CHAR), ',', '  '), '.', ',') AS velAplicacionExp,
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(velAplicacionExp, 1), 1), CHAR), ',', '  '), '.', ',') AS velAplicacionExp,
 						CONCAT(nombre,' ',apellido) AS realizo
 					FROM 
 						usuario,
@@ -1264,7 +1264,7 @@
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(((( ((d1+d2)/2) * ((d1+d2)/2))*var_system.ensayo_def_pi)/4), 1), 1), CHAR), ',', '  '), '.', ',') AS area,
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(resistencia, 0), 0), CHAR), ',', '  '), '.', ',') AS porcentResis,
-						ROUND(velAplicacionExp,1),
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(velAplicacionExp, 1), 1), CHAR), ',', '  '), '.', ',') AS velAplicacionExp,
 						IF(falla = 0,'-',1) AS falla
 					FROM 
 						formatoCampo
@@ -1412,7 +1412,7 @@
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(l2, 1), 1), CHAR), ',', '  '), '.', ',') AS l2,	
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND((l1*l2), 1), 1), CHAR), ',', '  '), '.', ',') AS area,	
-						ROUND(velAplicacionExp,1),
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(velAplicacionExp, 1), 1), CHAR), ',', '  '), '.', ',') AS velAplicacionExp,
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND((carga/(l1*l2)), 0), 0), CHAR), ',', '  '), '.', ',') AS kg
 					FROM 
 						formatoCampo 
@@ -1987,7 +1987,7 @@
 									condiciones,
 									REPLACE(REPLACE(CONVERT(FORMAT(ROUND((ancho1 + ancho2)/2, 1), 1), CHAR), ',', '  '), '.', ',') AS anchoPromedio,
 									REPLACE(REPLACE(CONVERT(FORMAT(ROUND((per1 + per2)/2, 1), 1), CHAR), ',', '  '), '.', ',') AS perPromedio,
-									ROUND(disApoyo,1) AS disApoyo,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(disApoyo, 1), 1), CHAR), ',', '  '), '.', ',') AS disApoyo,
 									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(carga, 0), 0), CHAR), ',', '  '), '.', ',') AS carga,
 									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(mr, 1), 1), CHAR), ',', '  '), '.', ',') AS modRuptura,
 									REPLACE(REPLACE(CONVERT(FORMAT(ROUND((mr/ensayo_def_MPa), 1), 1), CHAR), ',', '  '), '.', ',') AS modRuptura2,
