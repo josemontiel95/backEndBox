@@ -613,7 +613,7 @@
 						nombre,
 						razonSocial,
 						CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion,
-						incertidumbreCubo
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(incertidumbreCubo, 2), 2), CHAR), ',', '  '), '.', ',') AS incertidumbreCubo
 				      FROM 
 				        ordenDeTrabajo,cliente,obra,formatoCampo
 				      WHERE 
@@ -655,7 +655,7 @@
 						nombre,
 						razonSocial,
 						CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion,
-						incertidumbreCilindro
+						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(incertidumbreCilindro, 2), 2), CHAR), ',', '  '), '.', ',') AS incertidumbreCilindro
 				      FROM 
 				        ordenDeTrabajo,cliente,obra,formatoCampo
 				      WHERE 
@@ -1040,8 +1040,8 @@
 				$s= $dbS->qAll(
 					"SELECT
 			      		claveEspecimen,
-			      		registrosCampo.fecha AS fechaColado,
-			      		ensayoViga.fecha AS fechaEnsayo,
+						DATE_FORMAT(registrosCampo.fecha, '%y-%m-%d') AS fechaColado,
+						DATE_FORMAT(ensayoViga.fecha, '%y-%m-%d') AS fechaEnsayo,
 			      		CASE
 							WHEN MOD(diasEnsaye,3) = 1 THEN prueba1  
 							WHEN MOD(diasEnsaye,3) = 2 THEN prueba2  
@@ -1083,6 +1083,7 @@
 						id_registrosCampo = ensayoViga.registrosCampo_id AND
 						ensayoViga.footerEnsayo_id = footerEnsayo.id_footerEnsayo AND
 						footerEnsayo.id_footerEnsayo = 1QQ
+					ORDER BY id_registrosCampo
 			      ",
 			      array($id_footerEnsayo),
 			      "SELECT -- GeneradorFormatos :: getRegEnsayoVigas : 1 "
@@ -1171,7 +1172,7 @@
 				$s= $dbS->qarrayA(
 					"   SELECT
 							ensayoCilindro.footerEnsayo_id,
-							ensayoCilindro.fecha AS fechaEnsayo,
+							DATE_FORMAT(ensayoCilindro.fecha, '%y-%m-%d') AS fechaEnsayo,
 							basculas.placas AS buscula_placas,
 							regVerFle.placas AS regVerFle_id_placas,		
 							prensas.placas AS prensa_placas,
@@ -1217,6 +1218,7 @@
 							footerEnsayo.active = 1 AND
 							ensayoCilindro.footerEnsayo_id = footerEnsayo.id_footerEnsayo AND
 							ensayoCilindro.footerEnsayo_id = 1QQ
+						ORDER BY ensayoCilindro.fecha DESC
 				      ",
 				      array($id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo),
 				      "SELECT  --GeneradorFormatos :: getInfoEnsayoCilindros : 1"
@@ -1244,7 +1246,7 @@
 			if($arr['error'] == 0){
 				$s= $dbS->qAll(
 					"SELECT
-						registrosCampo.fecha AS fechaColado,
+						DATE_FORMAT(registrosCampo.fecha, '%y-%m-%d') AS fechaColado,
 						informeNo,
 						claveEspecimen,
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(peso, 3), 3), CHAR), ',', '  '), '.', ',') AS peso,
@@ -1265,9 +1267,18 @@
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(velAplicacionExp, 1), 1), CHAR), ',', '  '), '.', ',') AS velAplicacionExp,
 						IF(falla = 0,'-',1) AS falla
 					FROM 
-						ensayoCilindro,
-						registrosCampo,
-						formatoCampo,
+						formatoCampo
+						INNER JOIN ensayoCilindro ON id_formatoCampo = ensayoCilindro.formatoCampo_id
+						INNER JOIN registrosCampo ON id_registrosCampo = ensayoCilindro.registrosCampo_id
+						INNER JOIN (
+							SELECT 
+								ensayoCilindro.fecha AS daux
+							FROM 
+								ensayoCilindro
+							WHERE 
+								ensayoCilindro.footerEnsayo_id = 1QQ
+							ORDER BY ensayoCilindro.fecha DESC LIMIT 1
+						) AS taux ON ensayoCilindro.fecha = taux.daux,
 						(
 								SELECT
 									ensayo_def_pi,
@@ -1279,11 +1290,11 @@
 								ORDER BY id_systemstatus DESC LIMIT 1
 						)AS var_system
 					WHERE
-						id_formatoCampo = ensayoCilindro.formatoCampo_id AND
-						id_registrosCampo = ensayoCilindro.registrosCampo_id AND
 						ensayoCilindro.footerEnsayo_id = 1QQ
+					ORDER BY id_registrosCampo
+
 			      ",
-			      array($id_footerEnsayo),
+			      array($id_footerEnsayo,$id_footerEnsayo),
 			      "SELECT -- GeneradorFormatos :: getRegEnsayoCilindros : 1 "
 			      );
 				if(!$dbS->didQuerydied){
@@ -1309,10 +1320,10 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qarrayA("
-				      	SELECT
+				$s= $dbS->qarrayA(
+					"SELECT
 							ensayoCubo.footerEnsayo_id,
-							ensayoCubo.fecha AS fechaEnsayo,
+							DATE_FORMAT(ensayoCubo.fecha, '%y-%m-%d') AS fechaEnsayo,
 							basculas.placas AS buscula_placas,
 							regVerFle.placas AS regVerFle_id_placas,		
 							prensas.placas AS prensa_placas,
@@ -1358,6 +1369,8 @@
 							footerEnsayo.active = 1 AND
 							ensayoCubo.footerEnsayo_id = footerEnsayo.id_footerEnsayo AND
 							ensayoCubo.footerEnsayo_id = 1QQ
+						ORDER BY ensayoCubo.fecha DESC
+
 				      ",
 				      array($id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo),
 				      "SELECT  --GeneradorFormatos :: getInfoEnsayoCubo : 1"
@@ -1385,10 +1398,10 @@
 			if($arr['error'] == 0){
 				$s= $dbS->qAll(
 					"SELECT
-							registrosCampo.fecha AS fechaColado,
-							informeNo,
-							claveEspecimen,
-							CASE
+						DATE_FORMAT(registrosCampo.fecha, '%y-%m-%d') AS fechaColado,
+						informeNo,
+						claveEspecimen,
+						CASE
 							WHEN MOD(diasEnsaye,4) = 1 THEN prueba1  
 							WHEN MOD(diasEnsaye,4) = 2 THEN prueba2  
 							WHEN MOD(diasEnsaye,4) = 3 THEN prueba3  
@@ -1402,15 +1415,23 @@
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND(velAplicacionExp, 1), 1), CHAR), ',', '  '), '.', ',') AS velAplicacionExp,
 						REPLACE(REPLACE(CONVERT(FORMAT(ROUND((carga/(l1*l2)), 0), 0), CHAR), ',', '  '), '.', ',') AS kg
 					FROM 
-						ensayoCubo,
-						registrosCampo,
-						formatoCampo
+						formatoCampo 
+						INNER JOIN ensayoCubo ON id_formatoCampo = ensayoCubo.formatoCampo_id
+						INNER JOIN registrosCampo ON id_registrosCampo = ensayoCubo.registrosCampo_id
+						INNER JOIN (
+							SELECT 
+								ensayoCubo.fecha AS daux
+							FROM 
+								ensayoCubo
+							WHERE 
+								ensayoCubo.footerEnsayo_id = 1QQ
+							ORDER BY ensayoCubo.fecha DESC LIMIT 1
+						) AS taux ON ensayoCubo.fecha = taux.daux
 					WHERE
-						id_formatoCampo = ensayoCubo.formatoCampo_id AND
-						id_registrosCampo = ensayoCubo.registrosCampo_id AND
 						ensayoCubo.footerEnsayo_id = 1QQ
+					ORDER BY id_registrosCampo 
 			      ",
-			      array($id_footerEnsayo),
+			      array($id_footerEnsayo,$id_footerEnsayo),
 			      "SELECT -- GeneradorFormatos :: getRegEnsayoCubo : 1 "
 			      );
 				if(!$dbS->didQuerydied){
@@ -1436,10 +1457,10 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qAll("
-			      SELECT
+				$s= $dbS->qAll(
+				"SELECT
 			      	id_registrosRev,
-			      	fecha,
+					DATE_FORMAT(fecha, '%y-%m-%d') AS fecha,
 					revProyecto,	
 					revObtenido,
 					tamAgregado,
@@ -1615,10 +1636,10 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qAll("
-				    	SELECT
+				$s= $dbS->qAll(
+					"SELECT
 							claveEspecimen,
-							fecha,
+							DATE_FORMAT(fecha, '%y-%m-%d') AS fecha,
 							fprima,
 							revProyecto,
 							revObra,
@@ -1626,7 +1647,7 @@
 							volumen,
 							tipoConcreto,
 							unidad,
-							horaMuestreo,
+							TIME_FORMAT(horaMuestreo,'%H:%i') AS horaMuestreo,
 							tempMuestreo,
 							tempRecoleccion,
 							grupo,
@@ -1667,7 +1688,7 @@
 					"SELECT
 						t.id_registrosCampo,
 						e.status,
-						e.fechaEnsaye,
+						DATE_FORMAT(e.fechaEnsaye, '%y-%m-%d') AS fechaEnsaye,
 						t.claveEspecimen,
 						e.revObra,
 						t.diasEnsaye,
@@ -1692,9 +1713,10 @@
 								r.grupo,
 								r.localizacion,
 								CASE
-									WHEN MOD(r.diasEnsaye,3) = 1 THEN f.prueba1  
-									WHEN MOD(r.diasEnsaye,3) = 2 THEN f.prueba2  
-									WHEN MOD(r.diasEnsaye,3) = 0 THEN f.prueba3  
+									WHEN MOD(r.diasEnsaye,4) = 1 THEN f.prueba1  
+									WHEN MOD(r.diasEnsaye,4) = 2 THEN f.prueba2  
+									WHEN MOD(r.diasEnsaye,4) = 3 THEN f.prueba3  
+									WHEN MOD(r.diasEnsaye,4) = 0 THEN f.prueba4  
 									ELSE 'Error, Contacta a soporte'
 								END AS diasEnsaye
 							FROM
@@ -1786,7 +1808,7 @@
 					"	SELECT
 							t.id_registrosCampo,
 							e.status,
-							e.fechaEnsaye,
+							DATE_FORMAT(e.fechaEnsaye, '%y-%m-%d') AS fechaEnsaye,
 							t.claveEspecimen,
 							e.revObra,
 							e.peso,
@@ -1815,9 +1837,10 @@
 									r.grupo,
 									r.localizacion,
 									CASE
-										WHEN MOD(r.diasEnsaye,3) = 1 THEN f.prueba1  
-										WHEN MOD(r.diasEnsaye,3) = 2 THEN f.prueba2  
-										WHEN MOD(r.diasEnsaye,3) = 0 THEN f.prueba3  
+										WHEN MOD(r.diasEnsaye,4) = 1 THEN f.prueba1  
+										WHEN MOD(r.diasEnsaye,4) = 2 THEN f.prueba2  
+										WHEN MOD(r.diasEnsaye,4) = 3 THEN f.prueba3  
+										WHEN MOD(r.diasEnsaye,4) = 0 THEN f.prueba4  
 										ELSE 'Error, Contacta a soporte'
 									END AS diasEnsaye
 								FROM
@@ -1911,7 +1934,7 @@
 							t.id_registrosCampo,
 							e.status,
 							t.claveEspecimen,
-							t.fecha,
+							DATE_FORMAT(e.ensayofecha, '%y-%m-%d') AS fecha,
 							t.diasEnsaye,
 							e.puntosApoyo,
 							e.condiciones,
@@ -1949,6 +1972,7 @@
 									registrosCampo.id_registrosCampo,
 									claveEspecimen,
 									registrosCampo.fecha,
+									ensayoViga.fecha AS ensayofecha,
 									CASE
 										WHEN MOD(diasEnsaye,3) = 1 THEN prueba1  
 										WHEN MOD(diasEnsaye,3) = 2 THEN prueba2  
@@ -2063,16 +2087,16 @@
 			$usuario = new Usuario();
 			$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 			if($arr['error'] == 0){
-				$s= $dbS->qarrayA("
-			     				SELECT
+				$s= $dbS->qarrayA(
+					"SELECT
 									informeNo,
 									obra.obra,
 									obra.localizacion AS obraLocalizacion,
 									cliente.razonSocial,
 									CONCAT(calle,' ',noExt,' ',noInt,', ',col,', ',municipio,', ',estado) AS direccion,
 									formatoCampo.observaciones,
-									incertidumbreVigas,
-									ensayoViga.fecha,
+									REPLACE(REPLACE(CONVERT(FORMAT(ROUND(incertidumbreVigas, 2), 2), CHAR), ',', '  '), '.', ',') AS incertidumbreVigas,
+									DATE_FORMAT(registrosCampo.fecha, '%y-%m-%d') AS fecha,
 									registrosCampo.localizacion,
 									formatoCampo.tipoConcreto,
 									registrosCampo.fprima

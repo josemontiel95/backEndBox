@@ -191,7 +191,7 @@
 			$tam_cargaAncho = $this->GetStringWidth($carga) + 12;
 			$tam_cargaAlto = 1.5*($tam_font_Cells - 3);
 
-			$kg = '(kg)';
+			$kg = '(kgf)';
 			$tam_kgAncho = $tam_cargaAncho/2;
 			$tam_kgAlto = 1.5*($tam_font_Cells - 3);
 
@@ -1604,7 +1604,7 @@
 		    $this->Cell($tam_noPagina,10,utf8_decode($noPagina),0,0,'C');
 
 		    //Clave de validacion
-		    $clave = 'F1-05-LCC-01-6.1';
+		    $clave = 'FI-05-LCC-01-6.1';
 		    $tam_clave = $this->GetStringWidth($clave);
 		    $this->SetX(-($tam_clave + 10));
 		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');

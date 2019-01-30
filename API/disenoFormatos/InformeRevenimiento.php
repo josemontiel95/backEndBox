@@ -62,7 +62,7 @@
 
 			//Incertidumbre
 			$this->SetFont('Arial','B',$tam_font_right);
-			$incertidumbre = 'INCERTIDUMBRE:';
+			$incertidumbre = 'INCERTIDUMBRE(mm):';
 			$tam_incertidumbre = $this->GetStringWidth($incertidumbre)+3;
 			$tam_incertidumbreText = $separacion - 10;
 
@@ -350,7 +350,7 @@
 
 			//Incertidumbre
 			$this->SetFont('Arial','B',$tam_font_right);
-			$incertidumbre = 'INCERTIDUMBRE:';
+			$incertidumbre = 'INCERTIDUMBRE (mm):';
 			$tam_incertidumbre = $this->GetStringWidth($incertidumbre)+3;
 			$tam_incertidumbreText = $separacion - 10;
 
@@ -473,7 +473,7 @@
 
 			//Incertidumbre
 			$this->SetFont('Arial','B',$tam_font_right);
-			$incertidumbre = 'INCERTIDUMBRE:';
+			$incertidumbre = 'INCERTIDUMBRE (mm):';
 			$tam_incertidumbre = $this->GetStringWidth($incertidumbre)+3;
 			$tam_incertidumbreText = $separacion - 10;
 
@@ -1246,7 +1246,7 @@
 		    $this->Cell($tam_noPagina,10,utf8_decode($noPagina),0,0,'C');
 
 		    //Clave de validacion
-		    $clave = 'F1-02-LCC-1.5';
+		    $clave = 'FI-02-LCC-1.5';
 		    $tam_clave = $this->GetStringWidth($clave);
 		    $this->SetX(-($tam_clave + 10));
 		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');

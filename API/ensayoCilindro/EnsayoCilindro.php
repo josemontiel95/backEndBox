@@ -13,7 +13,10 @@ class EnsayoCilindro{
 		return $data;	
 	}
 
-
+	/*
+		WARNING	
+		This method is deprecated and out of use. Is was replaced by initInsert() on footerEnsayo Class. 
+	*/
 	public function initInsert($token,$rol_usuario_id,$registrosCampo_id,$formatoCampo_id,$footerEnsayo_id){
 		global $dbS;
 		$usuario = new Usuario();
@@ -21,10 +24,10 @@ class EnsayoCilindro{
 		if($arr['error'] == 0){
 			$dbS->squery("
 						INSERT INTO
-							ensayoCilindro(registrosCampo_id,formatoCampo_id,footerEnsayo_id)
+							ensayoCilindro(registrosCampo_id,formatoCampo_id,footerEnsayo_id,fecha)
 
 						VALUES
-							(1QQ,1QQ,1QQ)
+							(1QQ,1QQ,1QQ,CURDATE())
 				",array($registrosCampo_id,$formatoCampo_id,$footerEnsayo_id),"INSERT");
 			if(!$dbS->didQuerydied){
 				$id=$dbS->lastInsertedID;
@@ -81,7 +84,6 @@ class EnsayoCilindro{
 						UPDATE
 							ensayoCilindro
 						SET
-							fecha = CURDATE(),
 							1QQ = '1QQ'
 						WHERE
 							id_ensayoCilindro = 1QQ
@@ -96,7 +98,6 @@ class EnsayoCilindro{
 						FROM
 							ensayoCilindro
 						WHERE
-							fecha = CURDATE() AND
 							id_ensayoCilindro = 1QQ
 					",
 					array($id_ensayoCilindro),
@@ -167,7 +168,6 @@ class EnsayoCilindro{
 							"UPDATE
 								ensayoCilindro
 							SET
-								fecha = CURDATE(),
 								area = '1QQ',
 								resistencia = '1QQ',
 								velAplicacionExp = '1QQ'
@@ -538,7 +538,6 @@ class EnsayoCilindro{
 							"UPDATE
 								ensayoCilindro
 							SET
-								fecha = CURDATE(),
 								status = 1
 							WHERE
 								id_ensayoCilindro = 1QQ

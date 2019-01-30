@@ -92,7 +92,7 @@
 			$informeNo = 'INFORME:';
 			$tam_informeNo = $this->GetStringWidth($informeNo)+6;
 
-			$fechaEnsaye = 'FECHA DE ENSAYE:';
+			$fechaEnsaye = 'FECHA DE COLADO:'; // UPDATE:  era ensaye y ahora es colado
 			$tam_fechaEnsaye = $this->GetStringWidth($fechaEnsaye)+6;
 
 			$tipoConcreto = 'TIPO DE CONCRETO:';
@@ -723,7 +723,7 @@
 			$tam_fechaColado = $this->GetStringWidth($fechaColado)+6;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 			$this->Cell($tam_fechaColado,($tam_font_Cells+5)/2,$fechaColado,'L,T,R',2,'C');
-			$this->Cell($tam_fechaColado,($tam_font_Cells+5)/2,'Colado','L,B,R',0,'C');
+			$this->Cell($tam_fechaColado,($tam_font_Cells+5)/2,'Ensaye','L,B,R',0,'C');
 
 			$this->SetXY($posicion_x+$tam_fechaColado,$posicion_y);
 			$edad = 'Edad de';
@@ -947,7 +947,7 @@
 			$tam_fechaColado = $this->GetStringWidth($fechaColado)+6;
 			$posicion_x = $this->GetX(); $posicion_y = $this->GetY();
 			$this->Cell($tam_fechaColado,($tam_font_Cells+5)/2,$fechaColado,'L,T,R',2,'C');
-			$this->Cell($tam_fechaColado,($tam_font_Cells+5)/2,'Colado','L,B,R',0,'C');
+			$this->Cell($tam_fechaColado,($tam_font_Cells+5)/2,'Ensaye','L,B,R',0,'C');
 
 			$this->SetXY($posicion_x+$tam_fechaColado,$posicion_y);
 			$edad = 'Edad de';
@@ -1414,7 +1414,8 @@
 		    $this->Cell($tam_noPagina,10,utf8_decode($noPagina),0,0,'C');
 
 		    //Clave de validacion
-		    $clave = 'F1-09-LCC-02-0.2';
+		    $clave = 'FI-09-LCC-02-0.2';
+
 		    $tam_clave = $this->GetStringWidth($clave);
 		    $this->SetX(-($tam_clave + 10));
 		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');

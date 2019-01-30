@@ -358,7 +358,7 @@
 
 			//Letrero debajo de la firma
 
-			$laboratorista = 'LABORATORISTA/ASIGNATARIO';
+			$laboratorista = 'LABORATORISTA/SIGNATARIO';
 			$tam_laboratoristaAncho = $tamCelda_firmaAncho;
 			$tam_laboratoristaAlto = $tam_font_details - 3;
 
@@ -1567,7 +1567,7 @@
 		    $this->Cell($tam_noPagina,10,utf8_decode($noPagina),0,0,'C');
 
 		    //Clave de validacion
-		    $clave = 'F1-05-LCC-02-6.5';
+		    $clave = 'FI-05-LCC-02-6.5';
 		    $tam_clave = $this->GetStringWidth($clave);
 		    $this->SetX(-($tam_clave + 10));
 		    $this->Cell($tam_noPagina,10,$clave,0,0,'C');

@@ -24,7 +24,6 @@ class EnsayoViga{
 					"   UPDATE
 							ensayoViga
 						SET
-							fecha = CURDATE(),
 							lijado = 'SI',
 							cuero = 'NO'
 						WHERE
@@ -35,7 +34,6 @@ class EnsayoViga{
 					"   UPDATE
 							ensayoViga
 						SET
-							fecha = CURDATE(),
 							lijado = 'NO',
 							cuero = 'SI'
 						WHERE
@@ -152,7 +150,6 @@ class EnsayoViga{
 					UPDATE
 						ensayoViga
 					SET
-						fecha = CURDATE(),
 						1QQ = '1QQ'
 					WHERE
 						id_ensayoViga = 1QQ
@@ -784,7 +781,6 @@ class EnsayoViga{
 							"UPDATE
 								ensayoViga
 							SET
-								fecha = CURDATE(),
 								mr = '1QQ',
 								velAplicacionExp = '1QQ',
 								prom = '1QQ'
@@ -841,7 +837,6 @@ class EnsayoViga{
 					"UPDATE
 						ensayoViga
 					SET
-						fecha = CURDATE(),
 						prom = '1QQ'
 					WHERE
 						id_ensayoViga = 1QQ
