@@ -118,7 +118,7 @@ CREATE TABLE `laboratorio` (
   `laboratorio` varchar(40) NOT NULL,
   `estado` varchar(30) NOT NULL,
   `municipio` varchar(30) NOT NULL,
-  `nombreG` varchar(30) NOT NULL,
+  `nombreG` varchar(70) NOT NULL,
   `firmaG` varchar(120) DEFAULT 'null',
   `createdON` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `lastEditedON` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -640,7 +640,7 @@ CREATE TABLE `correoDeLote` (
 //=================//=================//=================//=================
 
 INSERT INTO `systemstatus`(id_systemstatus,cch_def_prueba1,cch_def_prueba2,cch_def_prueba3,createdON,lastEditedON,active,ensayo_def_buscula_id,ensayo_def_prensa_id,ensayo_def_regVerFle_id,cch_def_prueba4,ensayo_def_observaciones,ensayo_def_pi,ensayo_def_distanciaApoyos,ensayo_def_kN,ensayo_def_MPa,ensayo_def_divisorKn,maxNoOfRegistrosCCH,multiplosNoOfRegistrosCCH,apiRoot,maxNoOfRegistrosRev,cch_vigaDef_prueba1,cch_vigaDef_prueba2,cch_vigaDef_prueba3,maxNoOfRegistrosCCH_VIGAS,multiplosNoOfRegistrosCCH_VIGAS,nombreG,firmaG) VALUES
-(1017,7,14,28,'2018-09-08 20:54:31','2018-09-08 20:54:31',1,1005,1008,1006,28,'NO HAY OBSERVACIONES',3.141593,45,102,10,1000,8,4,'http://qualitycontrol.lacocsmex.com.mx/',10,14,28,28,9,3,'','null');
+(1017,7,14,28,'2018-09-08 20:54:31','2018-09-08 20:54:31',1,1005,1331,1006,28,'NO HAY OBSERVACIONES',3.141593,45,102,10,1000,8,4,'http://qualitycontrol.lacocsmex.com.mx/',10,14,28,28,9,3,'','null');
 
 INSERT INTO `rol_usuario`(id_rol_usuario,rol,root) VALUES
 (1001,'Administrador','administrador'),
@@ -662,8 +662,8 @@ INSERT INTO `concretera` (concretera) VALUES
 ('CATSA'),('CEMEX'),
 ('CRUZ AZUL'),('CONCRETOS ARA');
 
-INSERT INTO laboratorio (laboratorio,estado,municipio,nombreG,firmaG) VALUES
-("LABORATORIO CENTRAL"      , "Puebla", "Puebla"   ,"M en I. MARCO ANTONIO CERVANTE","./../../disenoFormatos/firmas/firma.png");
+INSERT INTO laboratorio (id_laboratorio,laboratorio,estado,municipio,nombreG,firmaG) VALUES
+(1003,"LABORATORIO CENTRAL"      , "Puebla", "Puebla"   ,"M en I. MARCO ANTONIO CERVANTE","./../../disenoFormatos/firmas/firma.png");
 
 INSERT INTO `laboratorio_cliente`(id_laboratorio_cliente,laboratorio_id,cliente_id,createdON,lastEditedON,active) VALUES 
 (1018,1003,1002,'2018-10-31 18:45:01','2018-10-31 18:45:01',1),(1019,1003,1003,'2018-11-30 16:20:10','2018-11-30 16:20:10',1);
@@ -753,9 +753,8 @@ INSERT INTO herramientas (id_herramienta,herramienta_tipo_id,laboratorio_id,fech
 (70,1011,1003,'2018-01-01','No usare cilindro','REGULAR'),
 (80,NULL,1003,'0000-00-00','No usare herramienta','REGULAR'),
 (90,1006,1003,'0000-00-00','NO USARE REGLA,','REGULAR'),
-(1005,NULL,1003,'2018-08-03','TR-001','REGULAR'),
-(1006,NULL,1003,'2018-08-03','VR-001','REGULAR'),
-(1008,1005,1003,'2018-08-04','BAS-001','REGULAR'),
+(1005,1005,1003,'2018-08-03','BAS-001','REGULAR'),
+(1006,1006,1003,'2018-08-03','VR-001','REGULAR'),
 (1339,1003,1003,'2018-11-12','FLCC-02','Buena'),
 (1331,1008,1003,'2018-11-12','PLCC-11','Buena');
 
@@ -902,6 +901,18 @@ INSERT INTO `correoDeLote` (id_correoDeLote,loteCorreos_id,pdf,status,createdON,
 (47,6,NULL,1,'2018-11-27 20:18:59','2018-11-27 20:22:16',1,1551,NULL),
 (48,6,NULL,1,'2018-11-27 20:18:59','2018-11-27 20:22:16',1,1554,NULL),
 (49,6,NULL,1,'2018-11-27 20:18:59','2018-11-27 20:22:16',1,1557,NULL);
+
+UPDATE laboratorio SET firmaG="./../../disenoFormatos/firmas/laboratorio/1003/gerente.png";
+UPDATE usuario SET firma="./../../disenoFormatos/firmas/usuario/1063/LauraCastillo.png" WHERE id_usuario=1063;
+UPDATE usuario SET firma="./../../disenoFormatos/firmas/usuario/1061/EnriqueAlonso.png" WHERE id_usuario=1061;
+UPDATE usuario SET firma="./../../disenoFormatos/firmas/usuario/1059/serafin28.png" WHERE id_usuario=1059;
+UPDATE usuario SET firma="./../../disenoFormatos/firmas/usuario/2002/AlejandroPena.png" WHERE id_usuario=2002;
+UPDATE usuario SET firma="./../../disenoFormatos/firmas/usuario/2007/EstebanDeCasa.png" WHERE id_usuario=2007;
+UPDATE usuario SET firma="./../../disenoFormatos/firmas/usuario/1062/GabinoMena.png" WHERE id_usuario=1062;
+UPDATE usuario SET firma="./../../disenoFormatos/firmas/usuario/2008/GustavoLara.png" WHERE id_usuario=2008;
+UPDATE usuario SET firma="./../../disenoFormatos/firmas/usuario/2009/MiguelCastillo.png" WHERE id_usuario=2009;
+UPDATE usuario SET firma="./../../disenoFormatos/firmas/usuario/2009/MiguelCastillo.png" WHERE id_usuario=2009;
+
 
 
 //// ============= DELETE DB

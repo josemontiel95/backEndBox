@@ -118,25 +118,25 @@ class Cliente{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token,$rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
-			$arr= $dbS->qAll("
-			      SELECT 
+			$arr= $dbS->qAll(
+				"SELECT 
 			        id_cliente,
 					nombre
-			      FROM 
+			    FROM 
 			        cliente, laboratorio_cliente
-			      WHERE
+			    WHERE
 			      	id_cliente = cliente_id AND
-			      	cliente.active=1 AND 
+			      	cliente.active = 1 AND 
 			      	laboratorio_cliente.active =1 AND
 			      	laboratorio_id= 1QQ 
-			      ORDER BY
+			    ORDER BY
 			      	nombre
-			      ",
-			      array($laboratorio_id),
-			      "SELECT"
-			      );
+				",array($laboratorio_id),
+				"SELECT -- Cliente :: getForDroptdownAdmin : 1",$usuario_id
+			);
 
 			if(!$dbS->didQuerydied){
 						if(count($arr) == 0)

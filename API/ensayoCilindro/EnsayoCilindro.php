@@ -390,6 +390,9 @@ class EnsayoCilindro{
 						$arr = array('ensayoCilindro' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del TMU, el jefe de laboratorio ha revocado tus permisos de escritura','error' => 50);
 						return json_encode($arr);
 					}
+					/*
+					 ensayadoFin signals globally that an ensayo is still not completed by the TMU, its used to signal JL that she cannot yet compleate a format.
+					*/
 					$dbS->squery(
 						"UPDATE
 							formatoCampo
@@ -406,6 +409,10 @@ class EnsayoCilindro{
 						$arr = array('ensayoCilindro' => 'NULL','token' => $token,	'estatus' => 'Error en la actualizacion del registro TMU, verifica tus datos y vuelve a intentarlo','error' => 41);
 						return json_encode($arr);
 					}
+					/*
+					 pendingEnsayos signals locally that an ensayo is still not completed by the TMU and should apear on TMU 'pendientes' secction therefore lies on footerEnsayo
+
+					*/
 					$dbS->squery(
 						"UPDATE
 							footerEnsayo

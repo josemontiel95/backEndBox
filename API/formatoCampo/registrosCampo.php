@@ -39,6 +39,7 @@ class registrosCampo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			/*Obtenemos las configuraciones globales del systema*/
@@ -52,7 +53,8 @@ class registrosCampo{
 						systemstatus
 					ORDER BY id_systemstatus DESC;
 				",array(),
-				"SELECT -- registrosCampo :: initInsert : 1");
+				"SELECT -- registrosCampo :: initInsert : 1",$usuario_id
+			);
 			if(!$dbS->didQuerydied && ($var_system != "empty")){
 				/*Consultamos cuantos registros exiten actualemnte*/
 				$rows = $dbS->qarrayA(
@@ -65,7 +67,7 @@ class registrosCampo{
 					"
 					,
 					array($formatoCampo_id),
-					"SELECT -- registrosCampo :: initInsert : 2"
+					"SELECT -- registrosCampo :: initInsert : 2",$usuario_id
 				);
 
 				if($dbS->didQuerydied || ($rows=="empty")){
@@ -85,7 +87,7 @@ class registrosCampo{
 					"
 					,
 					array($formatoCampo_id),
-					"SELECT -- registrosCampo :: initInsert : 3"
+					"SELECT -- registrosCampo :: initInsert : 3",$usuario_id
 				);
 				if($dbS->didQuerydied || ($tipo=="empty")){
 					$dbS->rollbackTransaction();
@@ -147,7 +149,7 @@ class registrosCampo{
 							id_obra = ordenDeTrabajo.obra_id
 						",
 						array($tipo['ordenDeTrabajo_id']),
-						"SELECT -- registrosCampo :: initInsert : 4"
+						"SELECT -- registrosCampo :: initInsert : 4",$usuario_id
 					);
 					if($dbS->didQuerydied || ($infoObra=="empty")){
 						$dbS->rollbackTransaction();
@@ -165,7 +167,7 @@ class registrosCampo{
 							id_formatoCampo = 1QQ
 							
 						",array($infoNo,$formatoCampo_id)
-						,"UPDATE  -- registrosCampo :: initInsert : 5"
+						,"UPDATE  -- registrosCampo :: initInsert : 5",$usuario_id
 					);
 					if($dbS->didQuerydied){
 						$dbS->rollbackTransaction();
@@ -180,7 +182,7 @@ class registrosCampo{
 						WHERE
 							id_obra = 1QQ
 						",array($consecutivoTipo,$consecutivoTipo,$infoObra['id_obra'])
-						,"UPDATE  -- registrosCampo :: initInsert : 6"
+						,"UPDATE  -- registrosCampo :: initInsert : 6",$usuario_id
 					);
 					if($dbS->didQuerydied){
 						$dbS->rollbackTransaction();
@@ -220,7 +222,7 @@ class registrosCampo{
 								id_formatoCampo = 1QQ
 							",
 							array($formatoCampo_id),
-							"SELECT"
+							"SELECT -- registrosCampo :: initInsert : 7",$usuario_id
 						);
 						if(!$dbS->didQuerydied && !($a=="empty")){
 							//Hacemos la clave
@@ -241,7 +243,7 @@ class registrosCampo{
 									id_formatoCampo = 1QQ
 								",
 								array($formatoCampo_id),
-								"SELECT"
+								"SELECT -- registrosCampo :: initInsert : 8",$usuario_id
 							);
 							if(!$dbS->didQuerydied && !($b=="empty")){
 								//obtenemos datos de registros de CCH que tiene el systema.
@@ -256,7 +258,7 @@ class registrosCampo{
 										formatoCampo_id = 1QQ
 									",
 									array($formatoCampo_id),
-									"SELECT"
+									"SELECT-- registrosCampo :: initInsert : 9",$usuario_id
 								);
 								if(!$dbS->didQuerydied && !($c=="empty")){
 									/*Creamos arrego que contenga los dias de prueba para iterarlo despues*/
@@ -310,8 +312,9 @@ class registrosCampo{
 
 										VALUES
 											('1QQ',1QQ, CURDATE(),'1QQ','1QQ','1QQ','1QQ')
-									",array($clave,$formatoCampo_id, $a['revenimiento'], $diasEnsaye,$a[$consecutivoProbetaTipo],$grupo),
-									"INSERT -- RegistrosCampo :: initInsert : insert ragNo=".$j." diasEnsaye=".$diasEnsaye." valueR=".$valueR." count(pruebas)=".count($pruebas));
+										",array($clave,$formatoCampo_id, $a['revenimiento'], $diasEnsaye,$a[$consecutivoProbetaTipo],$grupo),
+										"INSERT -- RegistrosCampo :: initInsert : 10",$usuario_id
+									);
 									if(!$dbS->didQuerydied){
 										$id = $dbS->lastInsertedID;
 										$dbS->squery(
@@ -325,7 +328,7 @@ class registrosCampo{
 											"
 											,
 											array($consecutivoProbetaTipo,$consecutivoProbetaTipo,$a['id_obra']),
-											"UPDATE"
+											"UPDATE -- registrosCampo :: initInsert : 11",$usuario_id
 										);
 										if(!$dbS->didQuerydied){
 											array_push($ids,$id);
@@ -352,7 +355,9 @@ class registrosCampo{
 
 											VALUES
 												('1QQ',1QQ, CURDATE(),'1QQ',1,'1QQ','1QQ')
-										",array($clave,$formatoCampo_id, $a['revenimiento'],$a[$consecutivoProbetaTipo],$grupo),"INSERT");
+											",array($clave,$formatoCampo_id, $a['revenimiento'],$a[$consecutivoProbetaTipo],$grupo),
+											"INSERT -- registrosCampo :: initInsert : 12",$usuario_id
+										);
 										if(!$dbS->didQuerydied){
 											$id = $dbS->lastInsertedID;
 											$dbS->squery(
@@ -366,7 +371,7 @@ class registrosCampo{
 												"
 												,
 												array($consecutivoProbetaTipo,$consecutivoProbetaTipo,$a['id_obra']),
-												"UPDATE"
+												"UPDATE -- registrosCampo :: initInsert : 13",$usuario_id
 											);
 											if(!$dbS->didQuerydied){
 												array_push($ids,$id);
@@ -459,6 +464,7 @@ class registrosCampo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			$info = $dbS->qarrayA(
@@ -472,7 +478,7 @@ class registrosCampo{
 				"
 				,
 				array($id_registrosCampo),
-				"SELECT -- registrosCampo :: insertRegistroJefaLaboratorio : 1"
+				"SELECT -- registrosCampo :: insertRegistroJefaLaboratorio : 1 ",$usuario_id
 			);
 
 			if($dbS->didQuerydied || $info == "empty"){
@@ -544,7 +550,7 @@ class registrosCampo{
 					  WHERE 
 					  	id_registrosCampo = 1QQ
 					  ", array($id_registrosCampo),
-					  "SELECT -- RegistrosRev :: insertRegistroJefaLaboratorio : 2"
+					  "SELECT -- RegistrosRev :: insertRegistroJefaLaboratorio : 2",$usuario_id
 					  );
 				if($dbS->didQuerydied || ($tipo=="empty")){
 					$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' =>20);
@@ -566,56 +572,54 @@ class registrosCampo{
 					break;
 				}
 				$dbS->squery(
-						"UPDATE
-							1QQ
-						SET
-							pdfFinal = NULL
-						WHERE
-							registrosCampo_id = 1QQ
-
-				",array($table,$id_registrosCampo),
-				"UPDATE -- registrosCampo :: insertRegistroJefaLaboratorio : 3");
+					"UPDATE
+						1QQ
+					SET
+						pdfFinal = NULL
+					WHERE
+						registrosCampo_id = 1QQ
+					",array($table,$id_registrosCampo),
+					"UPDATE -- registrosCampo :: insertRegistroJefaLaboratorio : 3",$usuario_id
+				);
 			}
 			if($campo == 'herramienta_id'){
 				$herramienta = $dbS->qarrayA(
-									"
-										SELECT
-											id_herramienta,
-											placas
-										FROM
-											herramientas
-										WHERE
-											id_herramienta = 1QQ
-									"
-									,
-									array($valor),
-									"SELECT -- registrosCampo :: insertRegistroJefaLaboratorio : 4 "
-								);
+					"SELECT
+							id_herramienta,
+							placas
+						FROM
+							herramientas
+						WHERE
+							id_herramienta = 1QQ
+					"
+					,
+					array($valor),
+					"SELECT -- registrosCampo :: insertRegistroJefaLaboratorio : 4 ",$usuario_id
+				);
 				if(!$dbS->didQuerydied && $herramienta != "empty"){
 					$a = $dbS->qarrayA(
-								"
-									SELECT
-									id_obra,
-									revenimiento, 
-									prefijo,
-									registrosCampo.consecutivoProbeta,
-									MONTH(NOW()) AS mes,
-									DAY(NOW()) AS dia
-									FROM
-										ordenDeTrabajo,
-										obra,
-										formatoCampo,
-										registrosCampo
-									WHERE
-										id_obra = obra_id AND
-										id_ordenDeTrabajo =  formatoCampo.ordenDeTrabajo_id AND
-										id_formatoCampo = formatoCampo_id AND
-										id_registrosCampo = 1QQ
-								"
-								,
-								array($id_registrosCampo),
-								"SELECT -- registrosCampo :: insertRegistroJefaLaboratorio : 5 "
-							);
+						"SELECT
+							id_obra,
+							revenimiento, 
+							prefijo,
+							registrosCampo.consecutivoProbeta,
+							MONTH(NOW()) AS mes,
+							DAY(NOW()) AS dia
+							FROM
+								ordenDeTrabajo,
+								obra,
+								formatoCampo,
+								registrosCampo
+							WHERE
+								id_obra = obra_id AND
+								id_ordenDeTrabajo =  formatoCampo.ordenDeTrabajo_id AND
+								id_formatoCampo = formatoCampo_id AND
+								id_registrosCampo = 1QQ
+						"
+						,
+						array($id_registrosCampo),
+						"SELECT -- registrosCampo :: insertRegistroJefaLaboratorio : 5 ",$usuario_id
+					);
 					if(!$dbS->didQuerydied && $herramienta != "empty"){
 						$mes = $this->numberToRomanRepresentation($a['mes']);
 						$placa;
@@ -635,8 +639,9 @@ class registrosCampo{
 								id_registrosCampo = 1QQ AND
 								status > 1
 
-						",array($new_clave,$campo,$valor,$id_registrosCampo),
-						"UPDATE -- registrosCampo :: insertRegistroJefaLaboratorio :6");
+							",array($new_clave,$campo,$valor,$id_registrosCampo),
+							"UPDATE -- registrosCampo :: insertRegistroJefaLaboratorio :6",$usuario_id
+						);
 						if(!$dbS->didQuerydied){
 							$dbS->commitTransaction();
 							$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => '¡Exito en la inserccion de un registro!','clave'=>$new_clave,'error' => 0);
@@ -662,8 +667,8 @@ class registrosCampo{
 				}	
 			}
 			if($isGroupProperty){
-				$dbS->squery("
-					UPDATE
+				$dbS->squery(
+					"UPDATE
 						registrosCampo
 					SET
 						1QQ = '1QQ'
@@ -673,7 +678,7 @@ class registrosCampo{
 						status > 1
 
 					",array($campo,$valor,$info['formatoCampo_id'],$info['grupo']),
-					"UPDATE -- registrosCampo :: insertRegistroJefeBrigada"
+					"UPDATE -- registrosCampo :: insertRegistroJefaLaboratorio : 7",$usuario_id
 				);
 			}else{
 				$dbS->squery("
@@ -686,7 +691,7 @@ class registrosCampo{
 						status > 1
 
 					",array($campo,$valor,$id_registrosCampo),
-					"UPDATE -- registrosCampo :: insertRegistroJefeBrigada"
+					"UPDATE -- registrosCampo :: insertRegistroJefaLaboratorio : 8",$usuario_id
 				);
 			}
 			
@@ -707,6 +712,7 @@ class registrosCampo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			$info = $dbS->qarrayA("
@@ -720,7 +726,7 @@ class registrosCampo{
 				"
 				,
 				array($id_registrosCampo),
-				"SELECT -- registrosCampo :: insertRegistroJefeBrigada"
+				"SELECT -- registrosCampo :: insertRegistroJefeBrigada : 1",$usuario_id
 			);
 
 			if($dbS->didQuerydied || $info == "empty"){
@@ -785,44 +791,38 @@ class registrosCampo{
 			}
 			if($campo == 'herramienta_id'){
 				$herramienta = $dbS->qarrayA(
-									"
-										SELECT
-											id_herramienta,
-											placas
-										FROM
-											herramientas
-										WHERE
-											id_herramienta = 1QQ
-									"
-									,
-									array($valor),
-									"SELECT"
-								);
+					"SELECT
+						id_herramienta,
+						placas
+					FROM
+						herramientas
+					WHERE
+						id_herramienta = 1QQ
+					",array($valor),
+					"SELECT-- registrosCampo :: insertRegistroJefeBrigada : 2 ",$usuario_id
+				);
 				if(!$dbS->didQuerydied && $herramienta != "empty"){
 					$a = $dbS->qarrayA(
-								"
-									SELECT
-									id_obra,
-									revenimiento, 
-									prefijo,
-									registrosCampo.consecutivoProbeta,
-									MONTH(NOW()) AS mes,
-									DAY(NOW()) AS dia
-									FROM
-										ordenDeTrabajo,
-										obra,
-										formatoCampo,
-										registrosCampo
-									WHERE
-										id_obra = obra_id AND
-										id_ordenDeTrabajo =  formatoCampo.ordenDeTrabajo_id AND
-										id_formatoCampo = formatoCampo_id AND
-										id_registrosCampo = 1QQ
-								"
-								,
-								array($id_registrosCampo),
-								"SELECT -- registrosCampo :: insertRegistroJefeBrigada"
-							);
+						"SELECT
+							id_obra,
+							revenimiento, 
+							prefijo,
+							registrosCampo.consecutivoProbeta,
+							MONTH(NOW()) AS mes,
+							DAY(NOW()) AS dia
+							FROM
+								ordenDeTrabajo,
+								obra,
+								formatoCampo,
+								registrosCampo
+							WHERE
+								id_obra = obra_id AND
+								id_ordenDeTrabajo =  formatoCampo.ordenDeTrabajo_id AND
+								id_formatoCampo = formatoCampo_id AND
+								id_registrosCampo = 1QQ
+						",array($id_registrosCampo),
+						"SELECT -- registrosCampo :: insertRegistroJefeBrigada : 3 ",$usuario_id
+					);
 					if(!$dbS->didQuerydied && $herramienta != "empty"){
 						$mes = $this->numberToRomanRepresentation($a['mes']);
 						$placa;
@@ -832,8 +832,8 @@ class registrosCampo{
 							$placa = $herramienta['placas'];
 						}
 						$new_clave = $a['prefijo']."-".$mes."-".$a['dia']."-".$placa."-".$a['consecutivoProbeta'];
-						$dbS->squery("
-							UPDATE
+						$dbS->squery(
+							"UPDATE
 								registrosCampo
 							SET
 								claveEspecimen = '1QQ',
@@ -841,9 +841,9 @@ class registrosCampo{
 							WHERE
 								id_registrosCampo = 1QQ AND
 								status < 2
-
-						",array($new_clave,$campo,$valor,$id_registrosCampo),
-						"UPDATE -- registrosCampo :: insertRegistroJefeBrigada");
+							",array($new_clave,$campo,$valor,$id_registrosCampo),
+							"UPDATE -- registrosCampo :: insertRegistroJefeBrigada : 4 ",$usuario_id
+						);
 						if(!$dbS->didQuerydied){
 							$dbS->commitTransaction();
 							$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => '¡Exito en la inserccion de un registro!','clave'=>$new_clave,'error' => 0);
@@ -869,8 +869,8 @@ class registrosCampo{
 				}	
 			}
 			if($isGroupProperty){
-				$dbS->squery("
-					UPDATE
+				$dbS->squery(
+					"UPDATE
 						registrosCampo
 					SET
 						1QQ = '1QQ'
@@ -878,22 +878,20 @@ class registrosCampo{
 						formatoCampo_id = 1QQ AND 
 						grupo = 1QQ AND
 						status < 2
-
 					",array($campo,$valor,$info['formatoCampo_id'],$info['grupo']),
-					"UPDATE -- registrosCampo :: insertRegistroJefeBrigada"
+					"UPDATE -- registrosCampo :: insertRegistroJefeBrigada : 5 ",$usuario_id
 				);
 			}else{
-				$dbS->squery("
-					UPDATE
+				$dbS->squery(
+					"UPDATE
 						registrosCampo
 					SET
 						1QQ = '1QQ'
 					WHERE
 						id_registrosCampo = 1QQ AND
 						status < 2
-
 					",array($campo,$valor,$id_registrosCampo),
-					"UPDATE -- registrosCampo :: insertRegistroJefeBrigada"
+					"UPDATE -- registrosCampo :: insertRegistroJefeBrigada : 6 ",$usuario_id
 				);
 			}
 			
@@ -914,9 +912,10 @@ class registrosCampo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
-			$a= $dbS->qarrayA("
-				SELECT
+			$a= $dbS->qarrayA(
+				"SELECT
 					rc.id_registrosCampo,
 					rc.formatoCampo_id,
 					rc.claveEspecimen,
@@ -945,14 +944,14 @@ class registrosCampo{
 					id_registrosCampo = 1QQ
 				",
 				array($id_registrosCampo),
-				"SELECT"
+				"SELECT -- registrosCampo :: getRegistrosByID : 1 ",$usuario_id
 			);
 			if($dbS->didQuerydied || $s=="empty"){
 				$arr = array('No existen registro relacionados con el id_registrosCampo'=>$id_registrosCampo,'error' => 7);
 				return json_encode($arr);
 			}
-			$s= $dbS->qAll("
-				SELECT
+			$s= $dbS->qAll(
+				"SELECT
 					rc.id_registrosCampo,
 					rc.formatoCampo_id,
 					rc.claveEspecimen,
@@ -971,7 +970,7 @@ class registrosCampo{
 				ORDER BY rc.id_registrosCampo ASC
 				",
 				array($a['formatoCampo_id'],$a['grupo']),
-				"SELECT"
+				"SELECT -- registrosCampo :: getRegistrosByID : 2 ",$usuario_id
 			);
 			
 			if(!$dbS->didQuerydied){
@@ -1020,32 +1019,33 @@ class registrosCampo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$var_system = $dbS->qarrayA(
-				"	SELECT
-						maxNoOfRegistrosCCH,
-						multiplosNoOfRegistrosCCH_VIGAS,
-						multiplosNoOfRegistrosCCH,
-						maxNoOfRegistrosCCH_VIGAS
-					FROM
-						systemstatus
-					ORDER BY id_systemstatus DESC;
-				",array(),"SELECT");
+				"SELECT
+					maxNoOfRegistrosCCH,
+					multiplosNoOfRegistrosCCH_VIGAS,
+					multiplosNoOfRegistrosCCH,
+					maxNoOfRegistrosCCH_VIGAS
+				FROM
+					systemstatus
+				ORDER BY id_systemstatus DESC;
+				",array(),
+				"SELECT -- registrosCampo :: getAllRegistrosByID : 1 ",$usuario_id
+			);
 			if($dbS->didQuerydied || ($var_system == "empty")){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 7);
 				return json_encode($arr);
 			}
 			$tipo = $dbS->qarrayA(
-				"   SELECT
-						tipo
-					FROM
-						formatoCampo
-					WHERE
-						id_formatoCampo = 1QQ
-				"
-				,
-				array($id_formatoCampo),
-				"SELECT"
+				"SELECT
+					tipo
+				FROM
+					formatoCampo
+				WHERE
+					id_formatoCampo = 1QQ
+				",array($id_formatoCampo),
+				"SELECT -- registrosCampo :: getAllRegistrosByID : 2 ",$usuario_id
 			);
 			if($dbS->didQuerydied || ($tipo=="empty")){
 				$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error, verifica tus datos y vuelve a intentarlo','error' => 8);
@@ -1115,7 +1115,7 @@ class registrosCampo{
 				      	rc.formatoCampo_id = 1QQ
 				      ",
 					array($id_formatoCampo),
-					"SELECT"
+					"SELECT -- registrosCampo :: getAllRegistrosByID : 3 ",$usuario_id
 			    );
 			}else if($tipo['tipo']=="CILINDRO"){
 				$s= $dbS->qAll(
@@ -1183,7 +1183,7 @@ class registrosCampo{
 				      	rc.formatoCampo_id = 1QQ
 				      ",
 					array($id_formatoCampo),
-					"SELECT"
+					"SELECT -- registrosCampo :: getAllRegistrosByID : 4 ",$usuario_id
 			    );
 			}else if($tipo['tipo']=="CUBO"){
 				$s= $dbS->qAll(
@@ -1251,7 +1251,7 @@ class registrosCampo{
 				      	rc.formatoCampo_id = 1QQ
 				      ",
 					array($id_formatoCampo),
-					"SELECT"
+					"SELECT -- registrosCampo :: getAllRegistrosByID : 5 ",$usuario_id
 			    );
 			}else{
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getAllRegistrosByID , verifica tus datos y vuelve a intentarlo','error' => 20);
@@ -1278,17 +1278,19 @@ class registrosCampo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
-			$dbS->squery("	UPDATE
-							registrosCampo
-						SET
-							active = 1QQ
-						WHERE
-							active=1 AND
-							id_registrosCampo = 1QQ
-					 "
-					,array(0,$id_registrosCampo),"UPDATE"
-			      	);
+			$dbS->squery(
+				"UPDATE
+					registrosCampo
+				SET
+					active = 1QQ
+				WHERE
+					active=1 AND
+					id_registrosCampo = 1QQ
+				",array(0,$id_registrosCampo),
+				"UPDATE -- registrosCampo :: deactivate : 1 ",$usuario_id
+			);
 		//PENDIENTE por la herramienta_tipo_id para poderla imprimir tengo que cargar las variables de la base de datos?
 			if(!$dbS->didQuerydied){
 				$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => 'Registro se desactivo','error' => 0);
@@ -1305,17 +1307,20 @@ class registrosCampo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
-			$dbS->squery("	UPDATE
-								registrosCampo
-							SET
-								status = 1
-							WHERE
-								active = 1 AND
-								id_registrosCampo = 1QQ
-					 "
-					,array($id_registrosCampo),"UPDATE"
-			      	);
+			$dbS->squery(
+				"UPDATE
+					registrosCampo
+				SET
+					status = 1
+				WHERE
+					active = 1 AND
+					id_registrosCampo = 1QQ
+				"
+				,array($id_registrosCampo),
+				"UPDATE -- registrosCampo :: completeRegistro : 1 ",$usuario_id
+			);
 			$arr = array('id_registrosCampo' => $id_registrosCampo,'estatus' => 'Exito Registro completado','error' => 0);	
 			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar Registro , verifica tus datos y vuelve a intentarlo','error' => 5);
@@ -1331,6 +1336,7 @@ class registrosCampo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		$laboratorioUser=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$a= $dbS->qAll(
@@ -1408,7 +1414,7 @@ class registrosCampo{
 					DATE_ADD(fecha, INTERVAL diasEnsaye DAY) <= CURDATE()
 				",
 				array($usuario->laboratorio_id),
-				"SELECT --registrosCampo :: getRegistrosForToday : 1"
+				"SELECT --registrosCampo :: getRegistrosForToday : 1",$usuario_id
 			);
 			if($dbS->didQuerydied){
 				$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la funcion getHerramientaByID , verifica tus datos y vuelve a intentarlo','error' => 7);
@@ -1480,7 +1486,7 @@ class registrosCampo{
 					DATE_ADD(fecha, INTERVAL diasEnsaye DAY) <= CURDATE()
 				",
 				array($usuario->laboratorio_id),
-				"SELECT --registrosCampo :: getRegistrosForToday : 2"
+				"SELECT --registrosCampo :: getRegistrosForToday : 2",$usuario_id
 			);
 			if(!$dbS->didQuerydied){
 				if($a != "empty" && $b != "empty"){
@@ -1516,6 +1522,7 @@ class registrosCampo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			/*Obtenemos las configuraciones globales del systema*/
@@ -1528,7 +1535,9 @@ class registrosCampo{
 					FROM
 						systemstatus
 					ORDER BY id_systemstatus DESC;
-				",array(),"SELECT");
+				",array(),
+				"SELECT -- registrosCampo :: getDaysPruebasForCompletition : 1 ",$usuario_id
+			);
 
 			if($dbS->didQuerydied || ($var_system=="empty")){
 				$dbS->rollbackTransaction();
@@ -1537,17 +1546,14 @@ class registrosCampo{
 			}
 			/*Consultamos cuantos registros exiten actualemnte*/
 			$rows = $dbS->qarrayA(
-				"
-					SELECT
+				"SELECT
 						COUNT(*) AS numRows
 					FROM
 						registrosCampo
 					WHERE
 						formatoCampo_id = 1QQ
-				"
-				,
-				array($id_formato),
-				"SELECT"
+				",array($id_formato),
+				"SELECT -- registrosCampo :: getDaysPruebasForCompletition : 2 ",$usuario_id
 			);
 
 			if($dbS->didQuerydied || ($rows=="empty")){
@@ -1557,17 +1563,14 @@ class registrosCampo{
 			}
 			/*Obtenemos el tipo del formato para tratar diferente a las Vigas que a los Cubos y cilindros*/
 			$tipo = $dbS->qarrayA(
-				"
-					SELECT
-						tipo
-					FROM
-						formatoCampo
-					WHERE
-						id_formatoCampo = 1QQ
-				"
-				,
-				array($id_formato),
-				"SELECT"
+				"SELECT
+					tipo
+				FROM
+					formatoCampo
+				WHERE
+					id_formatoCampo = 1QQ
+				",array($id_formato),
+				"SELECT -- registrosCampo :: getDaysPruebasForCompletition : 3 ",$usuario_id
 			);
 			if($dbS->didQuerydied || ($tipo=="empty")){
 				$dbS->rollbackTransaction();
@@ -1589,8 +1592,8 @@ class registrosCampo{
 			$numRows=$rows['numRows']+$NoDeRegistros;
 			$grupo=(floor($rows['numRows']/$NoDeRegistros)+1);
 
-			$a= $dbS->qarrayA("
-		      	SELECT 
+			$a= $dbS->qarrayA(
+				"SELECT 
 					tipoConcreto,
 					prueba1,
 					prueba2,
@@ -1602,11 +1605,11 @@ class registrosCampo{
 					id_formatoCampo = 1QQ
 				",
 				array($id_formato),
-				"SELECT"
+				"SELECT -- registrosCampo :: getDaysPruebasForCompletition : 4 ",$usuario_id
 			);
 			if(!$dbS->didQuerydied && !($a=="empty")){
-				$b= $dbS->qAll("
-			      	SELECT 
+				$b= $dbS->qAll(
+					"SELECT 
 						diasEnsaye,
 						formatoCampo_id
 					FROM
@@ -1616,7 +1619,7 @@ class registrosCampo{
 						formatoCampo_id = 1QQ
 					",
 					array($id_formato),
-					"SELECT"
+					"SELECT -- registrosCampo :: getDaysPruebasForCompletition : 5 ",$usuario_id
 				);
 				if(!$dbS->didQuerydied && !($b=="empty")){
 					$pruebas=array();
@@ -1666,6 +1669,7 @@ class registrosCampo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		$dbS->beginTransaction();
 		if($arr['error'] == 0){
 			/*Obtenemos las configuraciones globales del systema*/
@@ -1678,7 +1682,9 @@ class registrosCampo{
 					FROM
 						systemstatus
 					ORDER BY id_systemstatus DESC;
-				",array(),"SELECT");
+				",array(),
+				"SELECT -- registrosCampo :: getDaysPruebasForDropDown : 1 ",$usuario_id
+			);
 
 			if($dbS->didQuerydied || ($var_system=="empty")){
 				$dbS->rollbackTransaction();
@@ -1687,19 +1693,15 @@ class registrosCampo{
 			}
 			/*Consultamos cuantos registros exiten actualemnte*/
 			$rows = $dbS->qarrayA(
-				"
-					SELECT
-						COUNT(*) AS numRows
-					FROM
-						registrosCampo
-					WHERE
-						formatoCampo_id = 1QQ
-				"
-				,
-				array($id_formato),
-				"SELECT"
+				"SELECT
+					COUNT(*) AS numRows
+				FROM
+					registrosCampo
+				WHERE
+					formatoCampo_id = 1QQ
+				",array($id_formato),
+				"SELECT -- registrosCampo :: getDaysPruebasForDropDown : 2 ",$usuario_id
 			);
-
 			if($dbS->didQuerydied || ($rows=="empty")){
 				$dbS->rollbackTransaction();
 				$arr = array('id_registrosCampo' => 'NULL','token' => $token,	'estatus' => 'Error en la insersion, verifica tus datos y vuelve a intentarlo','error' => 20);
@@ -1707,17 +1709,14 @@ class registrosCampo{
 			}
 			/*Obtenemos el tipo del formato para tratar diferente a las Vigas que a los Cubos y cilindros*/
 			$tipo = $dbS->qarrayA(
-				"
-					SELECT
-						tipo
-					FROM
-						formatoCampo
-					WHERE
-						id_formatoCampo = 1QQ
-				"
-				,
-				array($id_formato),
-				"SELECT"
+				"SELECT
+					tipo
+				FROM
+					formatoCampo
+				WHERE
+					id_formatoCampo = 1QQ
+				",array($id_formato),
+				"SELECT -- registrosCampo :: getDaysPruebasForDropDown : 3 ",$usuario_id
 			);
 			if($dbS->didQuerydied || ($tipo=="empty")){
 				$dbS->rollbackTransaction();
@@ -1739,8 +1738,8 @@ class registrosCampo{
 			$numRows=$rows['numRows']+$NoDeRegistros;
 			$grupo=(floor($rows['numRows']/$NoDeRegistros)+1);
 
-			$a= $dbS->qarrayA("
-		      	SELECT 
+			$a= $dbS->qarrayA(
+				"SELECT 
 					tipoConcreto,
 					prueba1,
 					prueba2,
@@ -1752,11 +1751,11 @@ class registrosCampo{
 					id_formatoCampo = 1QQ
 				",
 				array($id_formato),
-				"SELECT"
+				"SELECT -- registrosCampo :: getDaysPruebasForDropDown : 4 ",$usuario_id
 			);
 			if(!$dbS->didQuerydied && !($a=="empty")){
-				$b= $dbS->qAll("
-			      	SELECT 
+				$b= $dbS->qAll(
+					"SELECT 
 						diasEnsaye,
 						formatoCampo_id
 					FROM
@@ -1766,7 +1765,7 @@ class registrosCampo{
 						formatoCampo_id = 1QQ
 					",
 					array($id_formato),
-					"SELECT"
+					"SELECT -- registrosCampo :: getDaysPruebasForDropDown : 5 ",$usuario_id
 				);
 				if(!$dbS->didQuerydied && !($b=="empty")){
 					$pruebas=array();
@@ -1829,25 +1828,26 @@ class registrosCampo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		$laboratorioUser=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
-			$s= $dbS->qarrayA("
-			      	SELECT 
-						id_registrosCampo,
-						fecha,
-						informeNo,
-						claveEspecimen,
-						diasEnsaye,
-						tipo
-					FROM
-						registrosCampo,formatoCampo
-					WHERE
-						id_formatoCampo = formatoCampo_id AND
-						id_registrosCampo = 1QQ
-			      ",
-			      array($id_registrosCampo),
-			      "SELECT"
-			      );
+			$s= $dbS->qarrayA(
+				"SELECT 
+					id_registrosCampo,
+					fecha,
+					informeNo,
+					claveEspecimen,
+					diasEnsaye,
+					tipo
+				FROM
+					registrosCampo,formatoCampo
+				WHERE
+					id_formatoCampo = formatoCampo_id AND
+					id_registrosCampo = 1QQ
+				",
+				array($id_registrosCampo),
+				"SELECT -- registrosCampo :: getRegistrosForTodayByID : 1 ",$usuario_id
+			);
 			
 			if(!$dbS->didQuerydied){
 				if($s=="empty"){

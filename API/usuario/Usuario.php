@@ -62,37 +62,35 @@ class Usuario{
 	public function setToken(){
 		global $dbS;
 		$token= $this->getToken();
-		$s= $dbS->squery("
-			      INSERT INTO sesion (
-			        usuario_id,
-			        token,
-			        active
-			        )
-			      VALUES (
-			        1QQ,
-			        '1QQ',
-			        1
-			        )
-			      ",
-			      array($this->id_usuario,$token),
-			      "INSERT"
-			      );
+		$s= $dbS->squery(
+			"INSERT INTO sesion (
+				usuario_id,
+				token,
+				active
+				)
+			VALUES (
+				1QQ,
+				'1QQ',
+				1
+			)",
+			array($this->id_usuario,$token),
+			"INSERT -- Usuario :: setToken : 1",$this->id_usuario
+		);
 		return $token;
 	}
 
 	public function deactivateAllSesions(){
 		global $dbS;
-		$s= $dbS->squery("
-			      UPDATE 
-			      	sesion
-			      SET 
-			      	active=0
-			      WHERE
-			        usuario_id=1QQ
-			      ",
-			      array($this->id_usuario),
-			      "UPDATE"
-			      );
+		$s= $dbS->squery(
+			"UPDATE 
+				sesion
+			SET 
+				active=0
+			WHERE
+				usuario_id=1QQ
+			",array($this->id_usuario),
+			"UPDATE -- Usuario :: deactivateAllSesions : 1",$this->id_usuario
+		);
 	}
 
 	public function getToken(){
@@ -107,27 +105,26 @@ class Usuario{
 			qarray: Realiza un query con un array Asociativo
 					Verfica que no exista una inyeccion SQL en el campo $email
 		*/
-		$s= $dbS->qarrayA("
-			      SELECT 
-			        id_usuario,
-			        nombre,
-			        apellido,
-			        email,
-			        fechaDeNac,
-			        foto,
-			        rol_usuario_id,
-			        contrasena,
-			        root
-			      FROM 
-			        usuario, rol_usuario
-			      WHERE 
-			      	id_rol_usuario=rol_usuario_id AND
-			      	usuario.active=1 AND
-			        email = '1QQ'
-			      ",
-			      array($email),
-			      "SELECT"
-			      );
+		$s= $dbS->qarrayA(
+			"SELECT 
+				id_usuario,
+				nombre,
+				apellido,
+				email,
+				fechaDeNac,
+				foto,
+				rol_usuario_id,
+				contrasena,
+				root
+			FROM 
+				usuario, rol_usuario
+			WHERE 
+				id_rol_usuario=rol_usuario_id AND
+				usuario.active=1 AND
+				email = '1QQ'
+			",array($email),
+			"SELECT -- Usuario :: getByEmail : 1"
+		);
 		if($s=="empty"){
 			return "empty";
 		}
@@ -233,16 +230,16 @@ class Usuario{
 
 	public function tokenUpDateLive($token){
 		global $dbS;
-		$resultado = $dbS->squery(" 
-									UPDATE
-										sesion
-									SET
-										consultasAlBack = consultasAlBack+1
-									WHERE 
-										token = '1QQ'
-
-									",
-									array($token),"UPDATE");
+		$resultado = $dbS->squery(
+			"UPDATE
+				sesion
+			SET
+				consultasAlBack = consultasAlBack+1
+			WHERE 
+				token = '1QQ'
+			",array($token),
+			"UPDATE -- Usuario :: tokenUpDateLive : 1",$this->id_usuario
+		);
 	}
 
 	/*
@@ -252,36 +249,35 @@ class Usuario{
 //Devuelve el valor del toke, si esta activo, si esta muerta o si no esta activa
 	public function getIDByTokenAndValidate($token){
 		global $dbS;
-		$s= $dbS->qarrayA("
-			      SELECT 
-			        id_sesion,
-					usuario_id,
-					active
-			      FROM 
-			        sesion 
-			      WHERE 
-			        token = '1QQ'
-			      ",
-			      array($token),
-			      "SELECT"
-			      );
+		$s= $dbS->qarrayA(
+			"SELECT 
+				id_sesion,
+				usuario_id,
+				active
+			FROM 
+				sesion 
+			WHERE 
+				token = '1QQ'
+			",array($token),
+			"SELECT -- Usuario :: getIDByTokenAndValidate : 1"
+		);
 		//echo json_encode($s);
 		if($s=="empty"){
 			return "empty";
 		}
 		else{
 			if($s['active']==1){	//Sesion activa 	Valida que la secion no haya expirado por mas de 10 minutos
-				$u=$dbS->qvalue("
-						SELECT 
-							IF(
-								DATE_SUB(NOW(), INTERVAL 20 MINUTE)<lastEditedON,1, 0) 
-						FROM 
-							sesion 
-						WHERE 
-							id_sesion=1QQ"
-					,
-					array($s['id_sesion']),
-					"SELECT");
+				$u=$dbS->qvalue(
+					"SELECT 
+						IF(
+							DATE_SUB(NOW(), INTERVAL 20 MINUTE)<lastEditedON,1, 0) 
+					FROM 
+						sesion 
+					WHERE 
+						id_sesion=1QQ"
+					,array($s['id_sesion']),
+					"SELECT -- Usuario :: getIDByTokenAndValidate : 2"
+				);
 				//echo "<br>".$u;
 				if($u==1){	//Sesion Valida en tiempo.
 					$this->id_usuario=$s['usuario_id'];
@@ -302,8 +298,8 @@ class Usuario{
 	public function getAllAdmin($token){
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token)=="success"){
-			$arr= $dbS->qAll("
-			      SELECT 
+			$arr= $dbS->qAll(
+				"SELECT 
 					id_usuario,
 					CONCAT(nombre,' ',apellido) AS nombre,
 			        laboratorio_id,
@@ -325,7 +321,7 @@ class Usuario{
 			      	rol_usuario_id < 1007
 			      ",
 			      array(),
-			      "SELECT"
+			      "SELECT -- Usuario :: getAllAdmin : 2"
 			      );
 			return json_encode($arr);
 		}else{
@@ -340,37 +336,37 @@ class Usuario{
 
 	public function getByID($id_usuario){
 		global $dbS;
-		$s= $dbS->qarrayA("
-			      SELECT 
-			        id_usuario,
-			        nombre,
-			        apellido,
-			        laboratorio_id,
-			        laboratorio,
-			        nss,
-			        email,
-			        fechaDeNac,
-			        foto,
-			        rol_usuario_id,
-			        rol,
-			        rol_usuario.active AS isRolActive,
-			        laboratorio.active AS isLaboratorioActive,
-			        usuario.createdON,
-					usuario.lastEditedON,
-					usuario.active,
-			        contrasena
-			      FROM 
-			        usuario,
-			        rol_usuario,
-			        laboratorio
-			      WHERE 
-			      	laboratorio_id = id_laboratorio AND
-			      	rol_usuario_id = id_rol_usuario AND
-			        id_usuario = 1QQ
-			      ",
-			      array($id_usuario),
-			      "SELECT"
-			      );
+		$s= $dbS->qarrayA(
+			"SELECT 
+				id_usuario,
+				nombre,
+				apellido,
+				laboratorio_id,
+				laboratorio,
+				nss,
+				email,
+				fechaDeNac,
+				foto,
+				rol_usuario_id,
+				rol,
+				rol_usuario.active AS isRolActive,
+				laboratorio.active AS isLaboratorioActive,
+				usuario.createdON,
+				usuario.lastEditedON,
+				usuario.active,
+				contrasena
+			FROM 
+				usuario,
+				rol_usuario,
+				laboratorio
+			WHERE 
+				laboratorio_id = id_laboratorio AND
+				rol_usuario_id = id_rol_usuario AND
+				id_usuario = 1QQ
+			",
+			array($id_usuario),
+			"SELECT -- Usuario :: getByID : 1"
+		);
 		if($s=="empty"){
 			return "empty";
 		}
@@ -405,15 +401,16 @@ class Usuario{
 
 	public function emailValidate($email){
 		global $dbS;
-		$query_resultado = $dbS->qarrayA("
-						SELECT
-							email
-						FROM 
-							usuario
-						WHERE
-							email = '1QQ'
-						
-						",array($email),"SELECT");				
+		$query_resultado = $dbS->qarrayA(
+			"SELECT
+				email
+			FROM 
+				usuario
+			WHERE
+				email = '1QQ'
+			",array($email),
+			"SELECT -- Usuario :: emailValidate : 1"
+		);				
 		if($query_resultado == "empty")
 			return true;
 		else
@@ -423,16 +420,17 @@ class Usuario{
 
 	public function emailValidateUpDate($email,$id_usuario){
 		global $dbS;
-		$query_resultado = $dbS->qarrayA("
-						SELECT
-							id_usuario,
-							email
-						FROM 
-							usuario
-						WHERE
-							email = '1QQ'
-						
-						",array($email),"SELECT");				
+		$query_resultado = $dbS->qarrayA(
+			"SELECT
+				id_usuario,
+				email
+			FROM 
+				usuario
+			WHERE
+				email = '1QQ'
+			",array($email),
+			"SELECT -- Usuario :: emailValidateUpDate : 1"
+		);				
 		if($query_resultado == "empty")
 			return true;
 		else
@@ -448,20 +446,19 @@ class Usuario{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$arr= $dbS->qAll("
-			      SELECT 
+			$arr= $dbS->qAll(
+				"SELECT 
 			        id_usuario,
 					nombre
-			      FROM 
+			    FROM 
 			        usuario
-			      WHERE
+			    WHERE
 			      	active = 1
-			      ORDER BY 
+			    ORDER BY 
 			      	nombre
-			      ",
-			      array(),
-			      "SELECT"
-			      );
+			    ",array(),
+			    "SELECT -- Usuario :: getForDroptdownAdmin : 1"
+			);
 
 			if(!$dbS->didQuerydied){
 				if(count($arr) == 0)
@@ -480,22 +477,21 @@ class Usuario{
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$lab=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
-			$arr= $dbS->qAll("
-			      SELECT 
-			        id_usuario,
+			$arr= $dbS->qAll(
+				"SELECT 
+					id_usuario,
 					CONCAT(nombre, ' ',apellido) AS nombre 
-			      FROM 
-			        usuario
-			      WHERE
-			      	active = 1 AND 
+				FROM 
+					usuario
+				WHERE
+					active = 1 AND 
 					rol_usuario_id = 1003 AND
 					laboratorio_id= 1QQ  
-			      ORDER BY 
-			      	nombre
-			      ",
-			      array($lab),
-			      "SELECT -- Usuario :: getJefesBrigadaForDroptdown"
-			      );
+				ORDER BY 
+					nombre
+				",array($lab),
+				"SELECT -- Usuario :: getJefesBrigadaForDroptdown"
+			);
 
 			if(!$dbS->didQuerydied){
 				if($arr == "empty")
@@ -513,21 +509,20 @@ class Usuario{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$arr= $dbS->qAll("
-			      SELECT 
-			        id_usuario,
+			$arr= $dbS->qAll(
+				"SELECT 
+					id_usuario,
 					nombre
-			      FROM 
-			        usuario
-			      WHERE
-			      	active = 1 AND 
-			      	rol_usuario_id = 1002
-			      ORDER BY 
-			      	nombre
-			      ",
-			      array(),
-			      "SELECT"
-			      );
+				FROM 
+					usuario
+				WHERE
+					active = 1 AND 
+					rol_usuario_id = 1002
+				ORDER BY 
+					nombre
+				",array(),
+				"SELECT -- Usuario :: getJefesLabForDroptdown : 1"
+			);
 
 			if(!$dbS->didQuerydied){
 				if($arr == "empty")
@@ -547,6 +542,7 @@ class Usuario{
 				$arr= $dbS->qAll(
 					"SELECT 
 					id_usuario,
+					token,
 					CONCAT(nombre,' ',apellido) AS nombre,
 					laboratorio,
 					rol,
@@ -636,21 +632,22 @@ class Usuario{
 			if($rol_usuario_id==$this->rol_usuario_id){
 				$email =  strtolower($email);
 				if($this->emailValidateUpDate($email,$id_usuario)){
-					$dbS->squery("	UPDATE
-								usuario
-							SET
-								nombre = '1QQ',
-								apellido = '1QQ',
-								laboratorio_id = 1QQ,
-								nss = '1QQ',
-								email = '1QQ',
-								fechaDeNac = '1QQ',
-								rol_usuario_id = 1QQ
-							WHERE
-								id_usuario = 1QQ
-					 	"
-						,array($nombre,$apellido,$laboratorio_id,$nss,$email,$fechaDeNac,$rol_usuario_id_new,$id_usuario),"UPDATE"
-			      		);
+					$dbS->squery(
+						"UPDATE
+							usuario
+						SET
+							nombre = '1QQ',
+							apellido = '1QQ',
+							laboratorio_id = 1QQ,
+							nss = '1QQ',
+							email = '1QQ',
+							fechaDeNac = '1QQ',
+							rol_usuario_id = 1QQ
+						WHERE
+							id_usuario = 1QQ
+						 ",array($nombre,$apellido,$laboratorio_id,$nss,$email,$fechaDeNac,$rol_usuario_id_new,$id_usuario),
+						 "UPDATE  -- Usuario :: upDateAdmin : 1",$this->id_usuario
+			      	);
 					if(!$dbS->didQuerydied){
 						$id=$dbS->lastInsertedID;
 						$arr = array('id_usuario' => $id, 'nombre' => $nombre, 'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
@@ -684,15 +681,16 @@ class Usuario{
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){
 				$contrasenaValida = hash('sha512', $constrasena);
-				$dbS->squery("	UPDATE
-							usuario
-						SET
-							contrasena = '1QQ'
-						WHERE
-							id_usuario = 1QQ
-					 "
-					,array($contrasenaValida,$id_usuario),"UPDATE"
-			      	);
+				$dbS->squery(
+					"UPDATE
+						usuario
+					SET
+						contrasena = '1QQ'
+					WHERE
+						id_usuario = 1QQ
+					",array($contrasenaValida,$id_usuario),
+					"UPDATE -- Usuario :: upDateContrasena : 1",$this->id_usuario
+			    );
 				if(!$dbS->didQuerydied){
 					$arr = array('id_usuario' => $id_usuario,'token' => $token,	'estatus' => '¡Exito!, redireccionando...','error' => 0);
 					return json_encode($arr);
@@ -718,16 +716,17 @@ class Usuario{
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){
-				$dbS->squery("	UPDATE
-							usuario
-						SET
-							active = '1QQ'
-						WHERE
-							active=1 AND
-							id_usuario = 1QQ
-					 "
-					,array(0,$id_usuario),"UPDATE"
-			      	);
+				$dbS->squery(
+					"UPDATE
+						usuario
+					SET
+						active = '1QQ'
+					WHERE
+						active=1 AND
+						id_usuario = 1QQ
+					",array(0,$id_usuario),
+					"UPDATE -- Usuario :: deactivate : 1",$this->id_usuario
+				);
 
 				if(!$dbS->didQuerydied){
 						$id=$dbS->lastInsertedID;
@@ -754,15 +753,16 @@ class Usuario{
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){
-				$dbS->squery("	UPDATE
-							usuario
-						SET
-							active = '1QQ'
-						WHERE
-							active=0 AND
-							id_usuario = 1QQ
-					 "
-					,array(1,$id_usuario),"UPDATE"
+				$dbS->squery(
+					"UPDATE
+						usuario
+					SET
+						active = '1QQ'
+					WHERE
+						active=0 AND
+						id_usuario = 1QQ
+					",array(1,$id_usuario),
+					"UPDATE -- Usuario :: activate : 1",$this->id_usuario
 			      	);
 
 				if(!$dbS->didQuerydied){
@@ -792,16 +792,16 @@ class Usuario{
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){
-				$resultado = $dbS->squery("
-						UPDATE
-							usuario
-						SET
-							foto = '1QQ'
-						WHERE
-							id_usuario = 1QQ
-						",
-						array($foto,$id_usuario),"UPDATE"
-
+				$resultado = $dbS->squery(
+					"UPDATE
+						usuario
+					SET
+						foto = '1QQ'
+					WHERE
+						id_usuario = 1QQ
+					",
+					array($foto,$id_usuario),
+					"UPDATE -- Usuario :: upLoadFoto : 1"
 					);
 				if(!$dbS->didQuerydied){
 						$id=$dbS->lastInsertedID;
@@ -907,21 +907,20 @@ class Usuario{
 		global $dbS;
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){
-				$arr= $dbS->qAll("
-							      SELECT 
-							        id_usuario,
-									nombre
-							      FROM 
-							        usuario
-							      WHERE
-							      	active = 1 AND 
-							      	rol_usuario_id = 1004
-							      ORDER BY 
-							      	nombre
-							      ",
-							      array(),
-							      "SELECT"
-			     			 );
+				$arr= $dbS->qAll(
+					"SELECT 
+						id_usuario,
+						nombre
+					FROM 
+						usuario
+					WHERE
+						active = 1 AND 
+						rol_usuario_id = 1004
+					ORDER BY 
+						nombre
+					",array(),
+					"SELECT -- Usuario :: getTecnicosForDroptdown : 1",$this->id_usuario
+				);
 
 				if(!$dbS->didQuerydied){
 					if($arr == "empty"){
@@ -952,22 +951,21 @@ class Usuario{
 		if($this->getIDByTokenAndValidate($token) == 'success'){
 			if($rol_usuario_id==$this->rol_usuario_id){
 				$fechasOrden = $dbS->qarrayA(
-							"
-								SELECT
-									laboratorio_id,
-									fechaInicio,
-									fechaFin,
-									horaInicio,
-									horaFin
-								FROM
-									ordenDeTrabajo
-								WHERE
-									id_ordenDeTrabajo = 1QQ
-							"
-							,
-							array($id_ordenDeTrabajo),
-							"SELECT -- Usuario :: getTecnicosAvailableForLab : 1"
-						);
+					"SELECT
+							laboratorio_id,
+							fechaInicio,
+							fechaFin,
+							horaInicio,
+							horaFin
+						FROM
+							ordenDeTrabajo
+						WHERE
+							id_ordenDeTrabajo = 1QQ
+					"
+					,
+					array($id_ordenDeTrabajo),
+					"SELECT -- Usuario :: getTecnicosAvailableForLab : 1",$this->id_usuario
+				);
 				
 				if(!$dbS->didQuerydied && !($fechasOrden=="empty")){
 					$fechaInicio = $fechasOrden['fechaInicio'];
@@ -975,34 +973,33 @@ class Usuario{
 					$horaInicio = $fechasOrden['horaInicio'];
 					$horaFin = $fechasOrden['horaFin'];
 
-					$arr= $dbS->qAll("
-							      	SELECT 
-									    id_usuario,
-									    CONCAT(nombre,' ',apellido) AS nombre
-									FROM 
-										usuario LEFT JOIN
-										(
-											SELECT
-												todt.tecnico_id
-											FROM
-												tecnicos_ordenDeTrabajo AS todt,
-												ordenDeTrabajo  AS odt
-											WHERE
-												(TIMESTAMP(CONCAT('1QQ', ' ','1QQ')) >= TIMESTAMP(CONCAT(odt.fechaInicio,' ',odt.horaInicio)) AND TIMESTAMP(CONCAT('1QQ', ' ','1QQ')) <= TIMESTAMP(CONCAT(odt.fechaFin,' ',odt.horaFin)) OR
-												TIMESTAMP(CONCAT('1QQ', ' ','1QQ')) >= TIMESTAMP(CONCAT(odt.fechaInicio,' ',odt.horaInicio)) AND TIMESTAMP(CONCAT('1QQ', ' ','1QQ')) <= TIMESTAMP(CONCAT(odt.fechaFin,' ',odt.horaFin)) ) AND
-												todt.active=1 AND
-												todt.ordenDeTrabajo_id = odt.id_ordenDeTrabajo 
-										) AS estado_tec
-										ON usuario.id_usuario = estado_tec.tecnico_id
-									WHERE
-									  	usuario.active = 1 AND
-									  	rol_usuario_id = 1004 AND
-									  	estado_tec.tecnico_id IS NULL AND
-									  	laboratorio_id = 1QQ 
-							      ",
-							      array($fechaInicio, $horaInicio,  $fechaInicio, $horaInicio, $fechaFin, $horaFin, $fechaFin, $horaFin,$fechasOrden['laboratorio_id']),
-							      "SELECT -- Usuario :: getTecnicosAvailableForLab : 2"
-			     			 );
+					$arr= $dbS->qAll(
+						"SELECT 
+							id_usuario,
+							CONCAT(nombre,' ',apellido) AS nombre
+						FROM 
+							usuario LEFT JOIN
+							(
+								SELECT
+									todt.tecnico_id
+								FROM
+									tecnicos_ordenDeTrabajo AS todt,
+									ordenDeTrabajo  AS odt
+								WHERE
+									(TIMESTAMP(CONCAT('1QQ', ' ','1QQ')) >= TIMESTAMP(CONCAT(odt.fechaInicio,' ',odt.horaInicio)) AND TIMESTAMP(CONCAT('1QQ', ' ','1QQ')) <= TIMESTAMP(CONCAT(odt.fechaFin,' ',odt.horaFin)) OR
+									TIMESTAMP(CONCAT('1QQ', ' ','1QQ')) >= TIMESTAMP(CONCAT(odt.fechaInicio,' ',odt.horaInicio)) AND TIMESTAMP(CONCAT('1QQ', ' ','1QQ')) <= TIMESTAMP(CONCAT(odt.fechaFin,' ',odt.horaFin)) ) AND
+									todt.active=1 AND
+									todt.ordenDeTrabajo_id = odt.id_ordenDeTrabajo 
+							) AS estado_tec
+							ON usuario.id_usuario = estado_tec.tecnico_id
+						WHERE
+							usuario.active = 1 AND
+							rol_usuario_id = 1004 AND
+							estado_tec.tecnico_id IS NULL AND
+							laboratorio_id = 1QQ 
+						",array($fechaInicio, $horaInicio,  $fechaInicio, $horaInicio, $fechaFin, $horaFin, $fechaFin, $horaFin,$fechasOrden['laboratorio_id']),
+						"SELECT -- Usuario :: getTecnicosAvailableForLab : 2",$this->id_usuario
+					);
 					if(!$dbS->didQuerydied){
 						if($arr == "empty"){
 						  $arr = array('estatus' =>"No hay registros de Tecnicos disponibles", "error" =>0, "registros" => 0);

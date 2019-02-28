@@ -22,6 +22,7 @@ class ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$arrayCCH = $dbS->qAll(
 							"SELECT
@@ -36,7 +37,7 @@ class ordenDeTrabajo{
 									ordenDeTrabajo_id = 1QQ
 							",
 							array($id_ordenDeTrabajo),
-							"SELECT"
+							"SELECT -- ordenDeTrabajo :: getAllFormatosOLD : 1",$usuario_id
 						);
 			
 			if(!$dbS->didQuerydied){
@@ -53,7 +54,7 @@ class ordenDeTrabajo{
 									ordenDeTrabajo_id = 1QQ
 							",
 							array($id_ordenDeTrabajo),
-							"SELECT"
+							"SELECT -- ordenDeTrabajo :: getAllFormatosOLD : 2",$usuario_id
 						);
 				if(!$dbS->didQuerydied){
 					if($arrayRev != "empty" && $arrayCCH != "empty"){
@@ -88,6 +89,7 @@ class ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$arr = $dbS->qAll(
 				"SELECT 
@@ -108,13 +110,13 @@ class ordenDeTrabajo{
 						notVistoJLForBrigadaApproval,
 						CASE
 							WHEN formatoCampo.status = 0 THEN 'JB: editar'
-							WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval = 0      THEN 'JL: Revisar cambios del JB'
-							WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval IS NULL  THEN 'JL: Revisar cambios del JB'
-							WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval IS NULL  THEN 'TMU: Ensayos pendientes'
-							WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval > 0      THEN 'JL: Generar PDF y autorizar'
-							WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval > 0      THEN 'JL: Generar PDF y autorizar'
-							WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval = 0 AND formatoCampo.registrosNo > 0 THEN 'TMU: Ensayos pendientes'
-							WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval = 0 AND formatoCampo.registrosNo = 0 THEN 'JL: Completar Formato'
+							WHEN formatoCampo.status = 1 AND notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval = 0      THEN 'JL: Revisar cambios del JB'
+							WHEN formatoCampo.status = 1 AND notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval IS NULL  THEN 'JL: Revisar cambios del JB'
+							WHEN formatoCampo.status = 1 AND notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval IS NULL  THEN 'TMU: Ensayos pendientes'
+							WHEN formatoCampo.status = 1 AND notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval > 0      THEN 'JL: Generar PDF y autorizar'
+							WHEN formatoCampo.status = 1 AND notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval > 0      THEN 'JL: Generar PDF y autorizar'
+							WHEN formatoCampo.status = 1 AND notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval = 0 AND formatoCampo.ensayadoFin > 0 THEN 'TMU: Ensayos pendientes'
+							WHEN formatoCampo.status = 1 AND notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval = 0 AND formatoCampo.ensayadoFin = 0 THEN 'JL: Completar Informe'
 							WHEN formatoCampo.status = 2       THEN 'Autorizado & Completado'
 							ELSE 'Error, contacte a soporte'
 						END AS accReq,
@@ -163,7 +165,7 @@ class ordenDeTrabajo{
 				ORDER BY createdON DESC
 				",
 				array($id_ordenDeTrabajo,$id_ordenDeTrabajo),
-				"SELECT -- ordenDeTrabajo :: getAllFormatos : 1"
+				"SELECT -- ordenDeTrabajo :: getAllFormatos : 1",$usuario_id
 			);
 				
 			if(!$dbS->didQuerydied){
@@ -183,6 +185,7 @@ class ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll("
 			      SELECT 
@@ -197,7 +200,7 @@ class ordenDeTrabajo{
 			      	obra
 			      ",
 			      array(),
-			      "SELECT"
+			      "SELECT -- ordenDeTrabajo :: getForDroptdownAdmin : 1",$usuario_id
 			      );
 
 			if(!$dbS->didQuerydied){
@@ -222,6 +225,7 @@ class ordenDeTrabajo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$laboratorio_id= $usuario->laboratorio_id;
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll(
 				"SELECT 
@@ -262,7 +266,7 @@ class ordenDeTrabajo{
 					ordenDeTrabajo.laboratorio_id = 1QQ
 				",
 				array($laboratorio_id),
-				"SELECT --OrdenDeTrabajo :: getAllAdmin :1 "
+				"SELECT --OrdenDeTrabajo :: getAllAdmin :1 ",$usuario_id
 			);
 
 			if(!$dbS->didQuerydied){
@@ -280,6 +284,7 @@ class ordenDeTrabajo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$laboratorio_id= $usuario->laboratorio_id;
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll(
 				"SELECT 
@@ -334,7 +339,7 @@ class ordenDeTrabajo{
 					AND id_obra = 1QQ
 				",
 				array($id_obra),
-				"SELECT -- OrdenDeTrabajo :: getAllJefaLab : 1"
+				"SELECT -- OrdenDeTrabajo :: getAllJefaLab : 1",$usuario_id
 			);
 
 			if(!$dbS->didQuerydied){
@@ -353,6 +358,7 @@ class ordenDeTrabajo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$laboratorio_id= $usuario->laboratorio_id;
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll(
 				"SELECT 
@@ -411,7 +417,7 @@ class ordenDeTrabajo{
 					ordenDeTrabajo.status = 1QQ
 				",
 				array($laboratorio_id, $status),
-				"SELECT -- OrdenDeTrabajo :: getAllJefaLab : 1"
+				"SELECT -- OrdenDeTrabajo :: getAllJefaLab : 1",$usuario_id
 			);
 
 			if(!$dbS->didQuerydied){
@@ -427,6 +433,7 @@ class ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll(
 				"SELECT 
@@ -487,7 +494,7 @@ class ordenDeTrabajo{
 				ORDER BY fechaInicio ASC
 			",
 			array($arr['id_usuario']),
-			"SELECT"
+			"SELECT -- ordenDeTrabajo :: getFULLByJefeBrigada : 1",$usuario_id
 			);
 
 			if(!$dbS->didQuerydied){
@@ -505,6 +512,7 @@ class ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll(
 				"SELECT 
@@ -563,7 +571,7 @@ class ordenDeTrabajo{
 					jefe_brigada_id = 1QQ
 			",
 			array($arr['id_usuario']),
-			"SELECT"
+			"SELECT -- ordenDeTrabajo :: getAllByJefeBrigada : 1",$usuario_id
 			);
 
 			if(!$dbS->didQuerydied){
@@ -582,15 +590,16 @@ class ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
-		$id_JefaLab=$usuario->id_usuario;
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
-			$dbS->squery("
-						INSERT INTO
-						ordenDeTrabajo(jefa_lab_id,area,obra_id,actividades,condicionesTrabajo,fechaInicio,fechaFin,horaInicio,horaFin,observaciones,lugar,jefe_brigada_id,laboratorio_id)
-
-						VALUES
-						('1QQ','1QQ',1QQ,'1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ',1QQ,1QQ)
-				",array($id_JefaLab,$area,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefe_brigada_id,$laboratorio_id),"INSERT");
+			$dbS->squery(
+				"INSERT INTO
+					ordenDeTrabajo(jefa_lab_id,area,obra_id,actividades,condicionesTrabajo,fechaInicio,fechaFin,horaInicio,horaFin,observaciones,lugar,jefe_brigada_id,laboratorio_id)
+				VALUES
+					('1QQ','1QQ',1QQ,'1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ',1QQ,1QQ)
+				",array($id_JefaLab,$area,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefe_brigada_id,$laboratorio_id),
+				"INSERT -- ordenDeTrabajo :: insertAdmin : 1",$usuario_id
+			);
 			if(!$dbS->didQuerydied){
 				$arr = array('id_ordenDeTrabajo' => 'No disponible, esto NO es un error','estatus' => 'Exito en insercion', 'error' => 0);
 			}
@@ -605,24 +614,27 @@ class ordenDeTrabajo{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$id_JefaLab=$usuario->id_usuario;
-
-		$a=$dbS->qarrayA("
-			SELECT 
+		$usuario_id=$usuario->id_usuario;
+		$a=$dbS->qarrayA(
+			"SELECT 
 				laboratorio_id
 			FROM 
 				obra
 			WHERE 
 				id_obra=1QQ
-		",array($obra_id),"SELECT");
+			",array($obra_id),"SELECT -- ordenDeTrabajo :: insertJefeLabo : 1",$usuario_id
+		);
 
 		if(!$dbS->didQuerydied && !($a=="empty")){
 			if($arr['error'] == 0){
-				$dbS->squery("
-							INSERT INTO
-								ordenDeTrabajo(jefa_lab_id,area,obra_id,actividades,condicionesTrabajo,fechaInicio,fechaFin,horaInicio,horaFin,observaciones,lugar,jefe_brigada_id,laboratorio_id)
-							VALUES
-							('1QQ','1QQ',1QQ,'1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ',1QQ,1QQ)
-					",array($id_JefaLab,$area,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefe_brigada_id,$a['laboratorio_id']),"INSERT");
+				$dbS->squery(
+					"INSERT INTO
+						ordenDeTrabajo(jefa_lab_id,area,obra_id,actividades,condicionesTrabajo,fechaInicio,fechaFin,horaInicio,horaFin,observaciones,lugar,jefe_brigada_id,laboratorio_id)
+					VALUES
+						('1QQ','1QQ',1QQ,'1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ','1QQ',1QQ,1QQ)
+					",array($id_JefaLab,$area,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefe_brigada_id,$a['laboratorio_id']),
+					"INSERT -- ordenDeTrabajo :: insertJefeLabo : 2",$usuario_id
+				);
 				if(!$dbS->didQuerydied){
 					$arr = array('id_ordenDeTrabajo' => $dbS->lastInsertedID,'estatus' => 'Exito en insercion', 'error' => 0);
 				}
@@ -640,6 +652,7 @@ class ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$dbS->squery("	UPDATE
 							ordenDeTrabajo
@@ -659,7 +672,8 @@ class ordenDeTrabajo{
 						WHERE
 							id_ordenDeTrabajo = 1QQ
 					 "
-					,array($area,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefe_brigada_id,$laboratorio_id,$id_ordenDeTrabajo),"UPDATE"
+					,array($area,$obra_id,$actividades,$condicionesTrabajo,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$lugar,$jefe_brigada_id,$laboratorio_id,$id_ordenDeTrabajo),
+					"UPDATE -- ordenDeTrabajo :: updateJefeLabo : 1",$usuario_id
 			      	);
 			if(!$dbS->didQuerydied){
 				$arr = array('id_ordenDeTrabajo' => 'No disponible, esto NO es un error','estatus' => 'Exito en actualizacion', 'error' => 0);
@@ -675,6 +689,7 @@ class ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$dbS->squery("	UPDATE
 							ordenDeTrabajo
@@ -693,7 +708,8 @@ class ordenDeTrabajo{
 						WHERE
 							id_ordenDeTrabajo = 1QQ
 					 "
-					,array($area,$obra_id,$lugar,$actividades,$condicionesTrabajo,$jefe_brigada_id,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$id_ordenDeTrabajo),"UPDATE"
+					,array($area,$obra_id,$lugar,$actividades,$condicionesTrabajo,$jefe_brigada_id,$fechaInicio,$fechaFin,$horaInicio,$horaFin,$observaciones,$id_ordenDeTrabajo),
+					"UPDATE -- ordenDeTrabajo :: updateJefeLabo : 1",$usuario_id
 			      	);
 			if(!$dbS->didQuerydied){
 				$arr = array('id_ordenDeTrabajo' => 'No disponible, esto NO es un error','estatus' => 'Exito en actualizacion', 'error' => 0);
@@ -710,44 +726,44 @@ class ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
-			$s= $dbS->qarrayA("
-			        SELECT 
-							id_ordenDeTrabajo,
-							actividades,
-							condicionesTrabajo,
-							fechaInicio,
-							fechaFin,
-							horaInicio,
-							horaFin,
-							observaciones,
-							id_cliente,
-							razonSocial,
-							cliente.nombre,
-							nombreContacto,
-							telefonoDeContacto,
-							obra_id,
-							obra.obra,
-							ordenDeTrabajo.status,
-							lugar,
-							area,
-							ordenDeTrabajo.laboratorio_id,
-							laboratorio,
-							usuario.nombre AS nombre_jefe_brigada_id,
-							jefe_brigada_id,
-							IF(ordenDeTrabajo.active = 1,'Si','No') AS active
-						from
-							usuario,ordenDeTrabajo,obra,laboratorio,cliente
-						WHERE
-							obra_id = id_obra AND
-							ordenDeTrabajo.laboratorio_id = id_laboratorio AND
-							id_usuario = jefe_brigada_id AND
-							obra.cliente_id = id_cliente AND
-							id_ordenDeTrabajo = 1QQ
-			      ",
-			      array($id_ordenDeTrabajo),
-			      "SELECT"
-			      );
+			$s= $dbS->qarrayA(
+				"SELECT 
+					id_ordenDeTrabajo,
+					actividades,
+					condicionesTrabajo,
+					fechaInicio,
+					fechaFin,
+					horaInicio,
+					horaFin,
+					observaciones,
+					id_cliente,
+					razonSocial,
+					cliente.nombre,
+					nombreContacto,
+					telefonoDeContacto,
+					obra_id,
+					obra.obra,
+					ordenDeTrabajo.status,
+					lugar,
+					area,
+					ordenDeTrabajo.laboratorio_id,
+					laboratorio,
+					usuario.nombre AS nombre_jefe_brigada_id,
+					jefe_brigada_id,
+					IF(ordenDeTrabajo.active = 1,'Si','No') AS active
+				from
+					usuario,ordenDeTrabajo,obra,laboratorio,cliente
+				WHERE
+					obra_id = id_obra AND
+					ordenDeTrabajo.laboratorio_id = id_laboratorio AND
+					id_usuario = jefe_brigada_id AND
+					obra.cliente_id = id_cliente AND
+					id_ordenDeTrabajo = 1QQ
+			      ",array($id_ordenDeTrabajo),
+			      "SELECT -- ordenDeTrabajo :: getByIDAdmin : 1", $usuario_id
+			);
 			
 			if(!$dbS->didQuerydied){
 				if($s=="empty"){
@@ -768,6 +784,7 @@ class ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$dbS->squery("	UPDATE
 							ordenDeTrabajo
@@ -777,7 +794,7 @@ class ordenDeTrabajo{
 							active=1 AND
 							id_ordenDeTrabajo = 1QQ
 					 "
-					,array(0,$id_ordenDeTrabajo),"UPDATE"
+					,array(0,$id_ordenDeTrabajo),"UPDATE -- ordenDeTrabajo :: deactivate : 1",$usuario_id
 			      	);
 		//PENDIENTE por la herramienta_tipo_id para poderla imprimir tengo que cargar las variables de la base de datos?
 			if(!$dbS->didQuerydied){
@@ -795,6 +812,7 @@ class ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$dbS->squery("	UPDATE
 							ordenDeTrabajo
@@ -804,7 +822,7 @@ class ordenDeTrabajo{
 							active=0 AND
 							id_ordenDeTrabajo = 1QQ
 					 "
-					,array(1,$id_ordenDeTrabajo),"UPDATE"
+					,array(1,$id_ordenDeTrabajo),"UPDATE -- ordenDeTrabajo :: activate : 1",$usuario_id
 			      	);
 			if(!$dbS->didQuerydied){
 				$arr = array('id_ordenDeTrabajo' => $id_ordenDeTrabajo,'estatus' => 'Orden de Trabajo se activo','error' => 0);
@@ -824,34 +842,35 @@ class ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
-			$dbS->squery("	UPDATE
-							ordenDeTrabajo
-							SET
-								status = status+1
-							WHERE
-								active=1 AND
-								id_ordenDeTrabajo = 1QQ
-					 "
-					,array($id_ordenDeTrabajo),"UPDATE"
-			      	);
+			$dbS->squery(
+				"UPDATE
+					ordenDeTrabajo
+				SET
+					status = status+1
+				WHERE
+					active=1 AND
+					id_ordenDeTrabajo = 1QQ
+				",array($id_ordenDeTrabajo),"UPDATE -- ordenDeTrabajo :: upStatusByID : 1",$usuario_id
+			);
 			if(!$dbS->didQuerydied){
-				$a = $dbS->qarrayA("	SELECT
-											status
-										FROM
-											ordenDeTrabajo
-										WHERE
-											active=1 AND
-											id_ordenDeTrabajo = 1QQ
-					 "
-					,array($id_ordenDeTrabajo),"SELECT"
-			      	);
+				$a = $dbS->qarrayA(
+					"SELECT
+						status
+					FROM
+						ordenDeTrabajo
+					WHERE
+						active=1 AND
+						id_ordenDeTrabajo = 1QQ
+					 ",array($id_ordenDeTrabajo),"SELECT -- ordenDeTrabajo :: upStatusByID : 2",$usuario_id
+			    );
 				if(!$dbS->didQuerydied && ($a != "empty")){
 					$arr = array('id_ordenDeTrabajo' => $id_ordenDeTrabajo,'estatus' => 'Se cambio exitosamente el status de la ordenDeTrabajo.','status'=>$a['status'],'error' => 0);
 				}
 				else{
 					if($a == "empty"){
-						$arr = array('estatus' => 'No se encontro ordenDeTrabajo con id:'.$id_ordenDeTrabajo,'error' => 5);
+						$arr = array('estatus' => 'No se encontro una orden de trabajo activa con id:'.$id_ordenDeTrabajo,'error' => 5);
 					}
 					else{
 						$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en la consulta del status, verifica tus datos y vuelve a intentarlo','error' => 6);
@@ -871,106 +890,116 @@ class ordenDeTrabajo{
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		if($arr['error'] == 0){
 			$dbS->beginTransaction(); //Iniciamos la transacción
 			//Validamos que no existan formatos incompletos con un count para contar los formatos que esten
 			$rows = $dbS->qarrayA(
-										"
-											SELECT 
-												COUNT(*) As No,
-												status
-											FROM 
-												formatoCampo
-											WHERE
-												(status = 0 OR status = 2) AND 
-												ordenDeTrabajo_id = 1QQ
+				"   SELECT 
+						COUNT(*) As No
+					FROM 
+						formatoCampo
+					WHERE
+						status IN (0,1,3) AND 
+						ordenDeTrabajo_id = 1QQ
 
-										"
-										,
-										array($id_ordenDeTrabajo)
-										,
-										"SELECT"
-
-									);
+				",array($id_ordenDeTrabajo),
+				"SELECT -- ordenDeTrabajo :: completeOrden : 1",$usuario_id
+				);
 			if(!$dbS->didQuerydied && ($rows['No'] == 0)){
 				$dbS->squery(
-								"
-									UPDATE
-										ordenDeTrabajo
-									SET
-										status = 3
-									WHERE
-										id_ordenDeTrabajo = 1QQ
-								"
-								,
-								array($id_ordenDeTrabajo)
-								,
-								"UPDATE"
-
-							);
+					"   UPDATE
+							ordenDeTrabajo
+						SET
+							status = 3
+						WHERE
+							id_ordenDeTrabajo = 1QQ
+					",array($id_ordenDeTrabajo),
+					"UPDATE -- ordenDeTrabajo :: completeOrden : 2",$usuario_id
+					);
 
 				if(!$dbS->didQuerydied){
 					//Realizamos el cambio de los formatos
 					$dbS->squery(
-									"
-										UPDATE 
-											formatoCampo
-										SET
-											status = 2
-										WHERE
-											ordenDeTrabajo_id = 1QQ
-									"
-									,
-									array($id_ordenDeTrabajo)
-									,
-									"UPDATE"
-								);
+					"   UPDATE 
+							formatoCampo
+						SET
+							status = 3
+						WHERE
+							ordenDeTrabajo_id = 1QQ
+					",array($id_ordenDeTrabajo),
+					"UPDATE -- ordenDeTrabajo :: completeOrden : 3",$usuario_id
+					);
 					if(!$dbS->didQuerydied){ 
 						//Buscamos los formatos incompletos
 						$formatos = $dbS->qAll(
-															"
-																SELECT
-																	id_formatoCampo
-																FROM
-																	formatoCampo
-																WHERE
-																	status = 2 AND
-																	ordenDeTrabajo_id = 1QQ
-															"
-															,
-															array($id_ordenDeTrabajo)
-															,
-															"SELECT"
-														);
+						"   SELECT
+								id_formatoCampo,
+								tipo
+							FROM
+								formatoCampo
+							WHERE
+								ordenDeTrabajo_id = 1QQ
+						",array($id_ordenDeTrabajo),
+						"SELECT -- ordenDeTrabajo :: completeOrden : 4",$usuario_id
+						);
 						if(!$dbS->didQuerydied){
-								//Realizamos un foreach para cambiar el status de todos los registros que estan relacionados a esos formatos de campo
-								foreach ($formatos as $formato) {
-									$dbS->squery(
-											"
-												UPDATE 
-													registrosCampo
-												SET
-													status = 3
-												WHERE
-													formatoCampo_id = 1QQ
-											"
-											,
-											array($formato['id_formatoCampo'])
-											,
-											"UPDATE"
-										);
-									//Por cada iteracion validamos si no ocurrio algun error en la query y devolvemos el id de donde ocurrio el error
-									if($dbS->didQuerydied){
-										$dbS->rollbackTransaction();
-										$arr = array('id_formatoCampo' => $formato['id_formatoCampo'],'estatus' => 'Ocurrio un error en ese id, con respecto a la actualizacion del registro','error' => 6); //Error pendiente
-										return json_encode($arr); //Hacemos un return para romper el ciclo y regresar la respuesta
-									}
-									
+							//Realizamos un foreach para cambiar el status de todos los registros que estan relacionados a esos formatos de campo
+							foreach ($formatos as $formato) {
+								$table = "";
+								$id ="";
+								switch($formato['tipo']){
+									case "CILINDRO":
+										$id= "id_ensayoCilindro";
+										$table="ensayoCilindro";
+									break;
+									case "CUBO":
+										$id= "id_ensayoCubo";
+										$table="ensayoCubo";
+									break;
+									case "VIGAS":
+										$id= "id_ensayoViga";
+										$table="ensayoViga";
+									break;
 								}
+								$dbS->squery(
+									"UPDATE
+										1QQ
+									SET
+										status = 6
+									WHERE
+										formatoCampo_id = 1QQ
+									"
+									,array($table,$formato['id_formatoCampo']),
+									"UPDATE -- ordenDeTrabajo :: completeOrden : 5",$usuario_id
+								);
+								if($dbS->didQuerydied){
+									$dbS->rollbackTransaction();
+									$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en completar formato , verifica tus datos y vuelve a intentarlo','error' => 40);
+									return json_encode($arr);
+								}
+								$dbS->squery(
+								"	UPDATE 
+										registrosCampo
+									SET
+										status = 6
+									WHERE
+										formatoCampo_id = 1QQ
+								",array($formato['id_formatoCampo']),
+								"UPDATE -- ordenDeTrabajo :: completeOrden : 6",$usuario_id
+								);
+								//Por cada iteracion validamos si no ocurrio algun error en la query y devolvemos el id de donde ocurrio el error
+								if($dbS->didQuerydied){
+									$dbS->rollbackTransaction();
+									$arr = array('id_formatoCampo' => $formato['id_formatoCampo'],'estatus' => 'Ocurrio un error en ese id, con respecto a la actualizacion del registro','error' => 6); //Error pendiente
+									return json_encode($arr); //Hacemos un return para romper el ciclo y regresar la respuesta
+								}
+								
+							}
 
-								//Como se evaluaron todas las iteracion no necesitamos validar mas, pasamos directo a regresar el resultado
-								$dbS->commitTransaction();
-								$arr = array('id_ordenDeTrabajo' => $id_ordenDeTrabajo,'estatus' => 'Se completo exitosamente la ordenDeTrabajo','error' => 0);	
+							//Como se evaluaron todas las iteracion no necesitamos validar mas, pasamos directo a regresar el resultado
+							$dbS->commitTransaction();
+							$arr = array('id_ordenDeTrabajo' => $id_ordenDeTrabajo,'estatus' => 'Se completo exitosamente la ordenDeTrabajo','error' => 0);	
 						}
 						else{
 							$dbS->rollbackTransaction();

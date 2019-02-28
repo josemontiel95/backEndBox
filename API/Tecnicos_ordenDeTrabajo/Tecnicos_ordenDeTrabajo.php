@@ -367,26 +367,45 @@ class Tecnicos_ordenDeTrabajo{
 				if($usuario->getByEmail($email)=="success"){
 					$contrasenaSHA= hash('sha512', $contrasena);
 					if($usuario->validatedContrasena($contrasenaSHA) && ($usuario->id_usuario == $tec_info['tecnico_id'])){
-						$dbS->squery("
-							INSERT INTO
-							listaAsistencia(tecnicos_ordenDeTrabajo_id)
-
-							VALUES
-							(1QQ)
+						$number= $dbS->qvalue(
+							"	SELECT
+									COUNT(*) AS No
+								FROM
+									listaAsistencia
+								WHERE
+									DATE(createdON) = CURDATE()
+									AND tecnicos_ordenDeTrabajo_id =1QQ
 							",array($id_tecnicos_ordenDeTrabajo),
-							"INSERT -- Tecnicos_ordenDeTrabajo :: pasarLista : 2");
+							"SELECT -- Tecnicos_ordenDeTrabajo :: pasarLista : 2"
+						);
+						if($dbS->didQuerydied || ($number == "empty")){
+							$dbS->rollbackTransaction();
+							$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Error en  pase de lista, verifica tus datos y vuelve a intentarlo','error' => 34);
+							return json_encode($arr);
+						}else if($number > 0){
+							$dbS->rollbackTransaction();
+							$arr = array('id_usuario' => 'NULL', 'nombre' => 'NULL', 'token' => $token,	'estatus' => 'Ya has pasado lista hoy.','error' => 34);
+							return json_encode($arr);
+						}
+						
+						$dbS->squery(
+							"INSERT INTO
+								listaAsistencia(tecnicos_ordenDeTrabajo_id)
+							VALUES
+								(1QQ)
+							",array($id_tecnicos_ordenDeTrabajo),
+							"INSERT -- Tecnicos_ordenDeTrabajo :: pasarLista : 3");
 						if(!$dbS->didQuerydied){
-							 $dbS->squery(" 
-										UPDATE
-											tecnicos_ordenDeTrabajo
-										SET
-											asistencias = asistencias+1
-										WHERE
-											id_tecnicos_ordenDeTrabajo = 1QQ
-
-										",
-										array($id_tecnicos_ordenDeTrabajo),
-										"UPDATE -- Tecnicos_ordenDeTrabajo :: pasarLista : 3");
+							$dbS->squery(
+								"UPDATE
+									tecnicos_ordenDeTrabajo
+								SET
+									asistencias = asistencias+1
+								WHERE
+									id_tecnicos_ordenDeTrabajo = 1QQ
+								",
+								array($id_tecnicos_ordenDeTrabajo),
+							"UPDATE -- Tecnicos_ordenDeTrabajo :: pasarLista : 4");
 							if (!$dbS->didQuerydied) {
 								$dbS->commitTransaction();
 							 	$arr = array('id_tecnicos_ordenDeTrabajo' => $id_tecnicos_ordenDeTrabajo, 'estatus' => 'Exito en el inicio de sesión', 'error' => 0);

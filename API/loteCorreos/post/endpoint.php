@@ -30,7 +30,7 @@
 		break;
 		case 'deleteCorreoLote':
 			$lote = new loteCorreos();
-			echo $lote->deleteCorreoLote($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_correoDeLote']);		
+			echo $lote->deleteCorreoLote($_POST['token'],$_POST['rol_usuario_id'],$_POST['id_correoDeLote'],$_POST['id_lote']);		
 		break;
 		case 'upLoadDoc':
 			$fileName="";

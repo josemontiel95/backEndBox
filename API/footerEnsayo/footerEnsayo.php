@@ -1116,6 +1116,8 @@ class footerEnsayo{
 						WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval IS NULL  THEN 'Revisar cambios JB'
 						WHEN notVistoJLForBrigadaApproval = 1 AND ensayosAwaitingApproval > 0      THEN 'Autorizar y generar PDF'
 						WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval > 0      THEN 'Autorizar y generar PDF'
+						WHEN notVistoJLForBrigadaApproval = 0 AND ensayosAwaitingApproval = 0 AND  formatoCampo.status = 1 AND formatoCampo.ensayadoFin = 0  THEN 'Completar Informe'
+						ELSE CONCAT('Algo salio mal... contacte a soporte (ERR-',notVistoJLForBrigadaApproval,ensayosAwaitingApproval,formatoCampo.status,formatoCampo.ensayadoFin,')')
 					END AS accReq,
 					informeNo AS informeNo,
 					ordenDeTrabajo_id,
@@ -1133,8 +1135,13 @@ class footerEnsayo{
 				WHERE
 					id_ordenDeTrabajo = ordenDeTrabajo_id 
 					AND formatoCampo.status > 0 
-					AND footerEnsayo.ensayosAwaitingApproval > 0 
 					AND notVistoJLForEnsayoApproval = 0
+					AND 
+						(
+							footerEnsayo.ensayosAwaitingApproval > 0 OR 
+							(footerEnsayo.ensayosAwaitingApproval = 0 AND formatoCampo.status = 1 AND formatoCampo.ensayadoFin = 0)
+						)
+
 					AND ordenDeTrabajo.laboratorio_id = 1QQ
 				UNION
 				SELECT 
