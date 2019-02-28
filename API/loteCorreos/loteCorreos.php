@@ -200,10 +200,8 @@ class loteCorreos{
 					correosNo= correosNo + 1QQ
 				WHERE
 					id_loteCorreos = 1QQ
-				"
-				,
-				array($no,$lote)
-				,
+				",
+				array($no,$lote),
 				"UPDATE -- loteCorreos :: agregaFormatos"
 			);
 			if($dbS->didQuerydied){
@@ -748,23 +746,117 @@ class loteCorreos{
 		return json_encode($arr);
 	}
 
-	public function deleteCorreoLote($token,$rol_usuario_id,$id_correoDeLote){
+	public function deleteCorreoLote($token,$rol_usuario_id,$id_correoDeLote,$id_lote){
 		global $dbS;
 		$usuario = new Usuario();
 
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
+			//recolectamos info de tipo de formato para rollback
+			$info = $dbS->qarrayA(
+				"   SELECT
+						CASE 
+							WHEN registrosCampo_id IS NOT NULL THEN registrosCampo_id
+							WHEN formatoRegistroRev_id IS NOT NULL THEN formatoRegistroRev_id
+							ELSE -1
+						END AS formato,
+						CASE 
+							WHEN registrosCampo_id IS NOT NULL THEN 1
+							WHEN formatoRegistroRev_id IS NOT NULL THEN 2
+							ELSE -1
+						END AS formatoTipo
+					FROM
+						correoDeLote
+					WHERE
+					id_correoDeLote = 1QQ
+				",array($id_correoDeLote),
+			"SELECT -- loteCorreos :: deleteCorreoLote :: 1"
+			);
+			if($dbS->didQuerydied || $info == "empty" || $info["formatoTipo"]==-1){
+				$dbS->rollbackTransaction();
+				$arr = array('lote' => $lote,'token' => $token,	'estatus' => 'Error, verifica tus datos y vuelve a intentarlo','error' => 16);
+				return json_encode($arr);				
+			}
+			/* Comenzamos rollback */
+			//Se disminuye el numero de correos que enviar.
+			$dbS->squery(
+				"UPDATE
+					loteCorreos
+				SET
+					correosNo= correosNo - 1
+				WHERE
+					id_loteCorreos = 1QQ
+				",array($id_lote),
+				"UPDATE -- loteCorreos :: deleteCorreoLote :: 2"
+			);
+			if($dbS->didQuerydied){
+				$dbS->rollbackTransaction();
+				$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error, verifica tus datos y vuelve a intentarlo','error' => 11);
+				return json_encode($arr);				
+			}
+			if($info["formatoTipo"]==1){ // formatoCampo
+				$formatoCampo_id = $dbS->qvalue(
+					"   SELECT
+							formatoCampo_id
+						FROM
+							registrosCampo
+						WHERE
+							id_registrosCampo = 1QQ
+				",array($info["formato"]),
+				"SELECT -- loteCorreos :: deleteCorreoLote :: 3"
+				);
+				if($dbS->didQuerydied || $formatoCampo_id == "empty"){
+					$dbS->rollbackTransaction();
+					$arr = array('lote' => $lote,'token' => $token,	'estatus' => 'Error, verifica tus datos y vuelve a intentarlo','error' => 16);
+					return json_encode($arr);				
+				}
+				$dbS->squery(
+					"UPDATE
+						formatoCampo
+					SET
+						loteStatus= loteStatus - 1
+					WHERE
+						id_formatoCampo = 1QQ
+					",
+					array($formatoCampo_id),
+					"UPDATE -- loteCorreos :: deleteCorreoLote :: 4"
+				);
+				if($dbS->didQuerydied){
+					$dbS->rollbackTransaction();
+					$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error, verifica tus datos y vuelve a intentarlo','error' => 13);
+					return json_encode($arr);				
+				}
+			}else if($info["formatoTipo"]==2){ // Revenimiento
+				$dbS->squery(
+					"UPDATE
+						formatoRegistroRev
+					SET
+						loteStatus= loteStatus - 1
+					WHERE
+						id_formatoRegistroRev = 1QQ
+					",
+					array($info["formato"]),
+					"UPDATE -- loteCorreos :: deleteCorreoLote :: 5"
+				);
+				if($dbS->didQuerydied){
+					$dbS->rollbackTransaction();
+					$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error, verifica tus datos y vuelve a intentarlo','error' => 13);
+					return json_encode($arr);				
+				}
+			}else{
+				$dbS->rollbackTransaction();
+				$arr = array('id_formatoCampo' => 'NULL','token' => $token,	'estatus' => 'Error, verifica tus datos y vuelve a intentarlo','error' => 11);
+				return json_encode($arr);	
+			}
 			$dbS->squery(
 				"DELETE FROM 
 					correoDeLote 
 				WHERE
 					id_correoDeLote = 1QQ
-				"
-				,
-				array($id_correoDeLote)
-				,
-				"UPDATE -- loteCorreos :: sentAllEmailFormatosByLote"
+				",array($id_correoDeLote),
+				"UPDATE -- loteCorreos :: deleteCorreoLote :: 6"
 			);
+
 			if($dbS->didQuerydied){
 				$arr = array('lote' => $lote,'token' => $token,	'estatus' => 'Error, verifica tus datos y vuelve a intentarlo','error' => 10);
 				return json_encode($arr);				
@@ -1498,7 +1590,7 @@ class loteCorreos{
 						fc.id_formatoCampo AS id_formato,
 						fc.informeNo,
 						fc.tipo AS tipo,
-						1 AS tipoNo,
+						3 AS tipoNo,
 						fc.ensayadoFin,
 						rc.id_registrosCampo,
 						rc.fecha AS fechaColado,
@@ -1633,10 +1725,11 @@ class loteCorreos{
 		return json_encode($arr);	
 	}
 	
-	public function getAllAdministrativoFULL($token,$rol_usuario_id,$id_obra){
+	public function getAllAdministrativoFULL($token,$rol_usuario_id,$id_cliente){
 		global $dbS;
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
+		$usuario_id=$usuario->id_usuario;
 		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
 			$arr= $dbS->qAll(
@@ -1683,7 +1776,7 @@ class loteCorreos{
 					WHERE
 						rc.status > 3 AND 
 						ot.laboratorio_id = 1QQ AND
-						id_obra = 1QQ
+						id_cliente = 1QQ
 					UNION
 					SELECT
 						c.razonSocial,
@@ -1728,7 +1821,7 @@ class loteCorreos{
 					WHERE
 						rc.status > 3 AND 
 						ot.laboratorio_id = 1QQ AND
-						id_obra = 1QQ
+						id_cliente = 1QQ
 					UNION
 					SELECT
 						c.razonSocial,
@@ -1773,7 +1866,7 @@ class loteCorreos{
 					WHERE
 						rc.status > 3 AND 
 						ot.laboratorio_id = 1QQ AND
-						id_obra = 1QQ
+						id_cliente = 1QQ
 					UNION
 					SELECT 
 						c.razonSocial,
@@ -1814,10 +1907,10 @@ class loteCorreos{
 					WHERE
 						fr.status > 1 AND 
 						ot.laboratorio_id = 1QQ AND
-						id_obra = 1QQ
+						id_cliente = 1QQ
 			      ",
-			      array($laboratorio_id,$id_obra,$laboratorio_id,$id_obra,$laboratorio_id,$id_obra,$laboratorio_id,$id_obra),
-			      "SELECT -- LoteCorreos :: getAllAdministrativo : 1 "
+			      array($laboratorio_id,$id_cliente,$laboratorio_id,$id_cliente,$laboratorio_id,$id_cliente,$laboratorio_id,$id_cliente),
+			      "SELECT -- LoteCorreos :: getAllAdministrativo : 1 ",$usuario_id
 			      );
 
 			if(!$dbS->didQuerydied){

@@ -8,9 +8,17 @@ class MySQLSystem{
 	private $dbsrvr = "mysqlcluster14.registeredsite.com";*/
 	
 
-	/* Variables de BDD  Nueva*/
+	/* Variables de BDD  Nueva
 	private $dbname = "lacocspuedic";
 	private $dbuser = "lacocsdbadic";
+	private $dbpssw = "Diciembre2018%";
+	private $dbsrvr = "mysqlcluster9.registeredsite.com";
+
+	*/
+
+	/* Variables de BDD  After DownTime Feb 7 2019*/
+	private $dbname = "lacocspue";
+	private $dbuser = "lacocsdba";
 	private $dbpssw = "Diciembre2018%";
 	private $dbsrvr = "mysqlcluster9.registeredsite.com";
 	
@@ -25,6 +33,7 @@ class MySQLSystem{
 	/* Variables de utilería */
 	private $wc = '/1QQ/';
 	private $queryType;
+	private $usuario_id;
 
 	public function MySQLSystem(){
 		$this->connection =
@@ -101,7 +110,7 @@ class MySQLSystem{
 	}
 	public function logQuery($q){
 		$query='
-			INSERT INTO log(query, queryType) VALUES("'.$q.'", "'.$this->queryType.'") 
+			INSERT INTO log(query, queryType, usuario_id) VALUES("'.$q.'", "'.$this->queryType.'","'.$this->usuario_id.'") 
 		';//Aqui ingresa la query al registro de querys
 		//echo '<p>LOG-'.$query.'-</p>';
 		mysqli_query($this->connection,$query);
@@ -150,9 +159,10 @@ class MySQLSystem{
 		Funciones que podemos llamar
 	*/
 	
-	public function qarray($q = "eempty", $arr = array(), $queryType="NS"){
+	public function qarray($q = "eempty", $arr = array(), $queryType="NS", $usuario_id=-1){
 		$this->queryType= $queryType;
-		$this->squery($q,$arr, $queryType);
+		$this->usuario_id= $usuario_id;
+		$this->squery($q,$arr, $queryType, $usuario_id);
 		return $this->fetch();
 	}
 	
@@ -160,21 +170,24 @@ class MySQLSystem{
 	/*
 		Devuelve un array Asociatvo con los campos de la tabla usuario
 	*/
-	public function qarrayA($q = "eempty", $arr = array(), $queryType="NS"){
+	public function qarrayA($q = "eempty", $arr = array(), $queryType="NS", $usuario_id=-1){
 		$this->queryType= $queryType;
-		$this->squery($q,$arr,$queryType);
+		$this->usuario_id= $usuario_id;
+		$this->squery($q,$arr,$queryType, $usuario_id);
 		return $this->fetchA();
 	}
 
-	public function qAll($q = "eempty", $arr = array(), $queryType="NS"){
+	public function qAll($q = "eempty", $arr = array(), $queryType="NS", $usuario_id=-1){
 		$this->queryType= $queryType;
-		$this->squery($q,$arr, $queryType);
+		$this->usuario_id= $usuario_id;
+		$this->squery($q,$arr, $queryType, $usuario_id);
 		return $this->fetchAll(); //Devuelve los valores de la consulta en caso de exito
 	}
 	
-	public function qvalue($q = "eempty", $arr = array(), $queryType="NS"){
+	public function qvalue($q = "eempty", $arr = array(), $queryType="NS", $usuario_id=-1){
 		$this->queryType= $queryType;
-		$tmp= $this->qarray($q,$arr,$queryType);
+		$this->usuario_id= $usuario_id;
+		$tmp= $this->qarray($q,$arr,$queryType, $usuario_id);
 		if($tmp == "empty"){
 			return "empty";
 		}else{
@@ -204,8 +217,10 @@ class MySQLSystem{
 		return $str; // Devuelve una sentencia legal para realizar el query
 	}
 	
-	public function squery($q = "eempty", $arr = array(), $queryType="NS"){
+	public function squery($q = "eempty", $arr = array(), $queryType="NS",$usuario_id=-1){
 		$this->queryType= $queryType;
+		$this->usuario_id= $usuario_id;
+
 		if(count($arr) == 0)
 			$this->query($q);
 		else

@@ -32,7 +32,7 @@
 		
 		case 'getAllAdministrativoFULL':
 			$lote = new loteCorreos();
-			echo $lote->getAllAdministrativoFULL($_GET['token'],$_GET['rol_usuario_id'],$_GET['obra_id']);
+			echo $lote->getAllAdministrativoFULL($_GET['token'],$_GET['rol_usuario_id'],$_GET['id_cliente']);
 		break;
 		case 'getAllFormatosByLote':
 			$lote = new loteCorreos();

@@ -115,8 +115,8 @@ class Obra{
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		$laboratorio_id=$usuario->laboratorio_id;
 		if($arr['error'] == 0){
-			$arr= $dbS->qAll("
-			      SELECT 
+			$arr= $dbS->qAll(
+				"SELECT 
 			        id_obra,
 					obra,
 					prefijo,
@@ -139,14 +139,16 @@ class Obra{
 					cliente.active AS isClienteActive,
 					concretera.active AS isConcreteraActive,
 					IF(obra.active = 1,'Si','No') AS active,
-					l.laboratorio
+					l.laboratorio,
+					obra.active AS oActive
 			      FROM 
 			        cliente,concretera, obra, laboratorio AS l
 				  WHERE
 				  	obra.laboratorio_id=l.id_laboratorio AND
 				  	cliente_id = id_cliente AND
 					concretera_id = id_concretera AND 
-					laboratorio_id= 1QQ
+					laboratorio_id= 1QQ AND
+					obra.active = 1
 			      ",
 			      array($laboratorio_id),
 			      "SELECT"
@@ -166,8 +168,8 @@ class Obra{
 		$usuario = new Usuario();
 		$arr = json_decode($usuario->validateSesion($token, $rol_usuario_id),true);
 		if($arr['error'] == 0){
-			$arr= $dbS->qAll("
-			      SELECT 
+			$arr= $dbS->qAll(
+				"SELECT 
 			        id_obra,
 					obra,
 					prefijo,
@@ -190,7 +192,8 @@ class Obra{
 					cliente.active AS isClienteActive,
 					concretera.active AS isConcreteraActive,
 					IF(obra.active = 1,'Si','No') AS active,
-					l.laboratorio
+					l.laboratorio,
+					obra.active AS oActive
 			      FROM 
 			        cliente,concretera, obra, laboratorio AS l
 				  WHERE
