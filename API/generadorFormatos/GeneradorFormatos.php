@@ -967,50 +967,67 @@
 			if($arr['error'] == 0){
 				$s= $dbS->qarrayA(
 					"SELECT
-				      		cliente.razonSocial,
-							obra.obra,
-							obra.localizacion AS obraLocalizacion,
-							registrosCampo.localizacion AS eleColado,
-							formatoCampo.tipoConcreto,
-							formatoCampo.informeNo,
-							registrosCampo.fprima,
-							regVerFle.placas AS regVerFle_id_placas,		
-							prensas.placas AS prensa_placas
-						FROM
-							formatoCampo,
-							ordenDeTrabajo,
-							obra,
-							cliente,
-							registrosCampo,
-							ensayoViga,
-							(
-						  		SELECT
-						  			id_herramienta,
-						  			placas
-						  		FROM
-						  			herramientas,footerEnsayo
-						  		WHERE
-						  			prensa_id = id_herramienta AND
-						  			id_footerEnsayo = 1QQ
-						  	)AS prensas,
-						  	(
-						  		SELECT
-						  			id_herramienta,
-						  			placas
-						  		FROM
-						  			herramientas,footerEnsayo
-						  		WHERE
-						  			regVerFle_id = id_herramienta AND
-						  			id_footerEnsayo = 1QQ
-						  	)AS regVerFle
-						WHERE
-							cliente.id_cliente = obra.cliente_id AND
-							obra.id_obra = ordenDeTrabajo.obra_id AND
-							ordenDeTrabajo.id_ordenDeTrabajo = formatoCampo.ordenDeTrabajo_id AND
-							registrosCampo.formatoCampo_id = formatoCampo.id_formatoCampo AND
-							ensayoViga.registrosCampo_id = registrosCampo.id_registrosCampo AND
-							ensayoViga.formatoCampo_id = formatoCampo.id_formatoCampo AND
-							ensayoViga.footerEnsayo_id = 1QQ
+						cliente.razonSocial,
+						obra.obra,
+						obra.localizacion AS obraLocalizacion,
+						registrosCampo.localizacion AS eleColado,
+						formatoCampo.tipoConcreto,
+						formatoCampo.informeNo,
+						registrosCampo.fprima,
+						regVerFle.placas AS regVerFle_id_placas,		
+						prensas.placas AS prensa_placas,
+						cronometros.placas AS cronometro_placas
+					FROM
+						formatoCampo,
+						ordenDeTrabajo,
+						obra,
+						cliente,
+						registrosCampo,
+						ensayoViga,
+						(
+					  		SELECT
+								id_footerEnsayo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS placas
+							FROM
+								footerEnsayo
+							LEFT JOIN
+								herramientas
+							ON
+								footerEnsayo.prensa_id = herramientas.id_herramienta
+					  	)AS prensas,
+					  	(
+					  		SELECT
+								id_footerEnsayo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS placas
+							FROM
+								footerEnsayo
+							LEFT JOIN
+								herramientas
+							ON
+								footerEnsayo.regVerFle_id = herramientas.id_herramienta
+						)AS regVerFle,
+					  	(
+							SELECT
+								id_footerEnsayo,
+								IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS placas
+							FROM
+								footerEnsayo
+							LEFT JOIN
+								herramientas
+							ON
+								footerEnsayo.cronometro_id = herramientas.id_herramienta
+						)AS cronometros
+					WHERE
+						prensas.id_footerEnsayo = ensayoViga.footerEnsayo_id AND
+						regVerFle.id_footerEnsayo = ensayoViga.footerEnsayo_id AND 
+						cronometros.id_footerEnsayo = ensayoViga.footerEnsayo_id AND 
+						cliente.id_cliente = obra.cliente_id AND
+						obra.id_obra = ordenDeTrabajo.obra_id AND
+						ordenDeTrabajo.id_ordenDeTrabajo = formatoCampo.ordenDeTrabajo_id AND
+						registrosCampo.formatoCampo_id = formatoCampo.id_formatoCampo AND
+						ensayoViga.registrosCampo_id = registrosCampo.id_registrosCampo AND
+						ensayoViga.formatoCampo_id = formatoCampo.id_formatoCampo AND
+						ensayoViga.footerEnsayo_id = 1QQ
 
 				      ",
 				      array($id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo,$id_footerEnsayo),
@@ -1176,6 +1193,7 @@
 							basculas.placas AS buscula_placas,
 							regVerFle.placas AS regVerFle_id_placas,		
 							prensas.placas AS prensa_placas,
+							cronometros.placas AS cronometro_placas,
 							observaciones,
 							encargado_id,
 							CONCAT(nombre,' ',apellido) AS nombre
@@ -1185,35 +1203,53 @@
 							usuario,
 							(
 								SELECT
-						  			id_herramienta,
-						  			placas 
-						  		FROM
-						  			herramientas,footerEnsayo
-						  		WHERE
-						  			buscula_id = id_herramienta AND
-						  			id_footerEnsayo = 1QQ 
+									id_footerEnsayo,
+									IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS placas
+								FROM
+									footerEnsayo
+								LEFT JOIN
+									herramientas
+								ON
+									footerEnsayo.buscula_id = herramientas.id_herramienta 
 							)AS basculas,
 							(
 						  		SELECT
-						  			id_herramienta,
-						  			placas
-						  		FROM
-						  			herramientas,footerEnsayo
-						  		WHERE
-						  			prensa_id = id_herramienta AND
-						  			id_footerEnsayo = 1QQ
+									id_footerEnsayo,
+									IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS placas
+								FROM
+									footerEnsayo
+								LEFT JOIN
+									herramientas
+								ON
+									footerEnsayo.prensa_id = herramientas.id_herramienta
 						  	)AS prensas,
 						  	(
 						  		SELECT
-						  			id_herramienta,
-						  			placas
-						  		FROM
-						  			herramientas,footerEnsayo
-						  		WHERE
-						  			regVerFle_id = id_herramienta AND
-						  			id_footerEnsayo = 1QQ
-						  	)AS regVerFle
+									id_footerEnsayo,
+									IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS placas
+								FROM
+									footerEnsayo
+								LEFT JOIN
+									herramientas
+								ON
+									footerEnsayo.regVerFle_id = herramientas.id_herramienta
+						  	)AS regVerFle,
+						  	(
+								SELECT
+									id_footerEnsayo,
+									IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS placas
+								FROM
+									footerEnsayo
+								LEFT JOIN
+									herramientas
+								ON
+									footerEnsayo.cronometro_id = herramientas.id_herramienta
+							)AS cronometros
 						WHERE
+							basculas.id_footerEnsayo = ensayoCilindro.footerEnsayo_id AND 
+							prensas.id_footerEnsayo = ensayoCilindro.footerEnsayo_id AND 
+							regVerFle.id_footerEnsayo = ensayoCilindro.footerEnsayo_id AND 
+							cronometros.id_footerEnsayo = ensayoCilindro.footerEnsayo_id AND 
 							encargado_id = id_usuario AND
 							footerEnsayo.active = 1 AND
 							ensayoCilindro.footerEnsayo_id = footerEnsayo.id_footerEnsayo AND
@@ -1327,6 +1363,7 @@
 							basculas.placas AS buscula_placas,
 							regVerFle.placas AS regVerFle_id_placas,		
 							prensas.placas AS prensa_placas,
+							cronometros.placas AS cronometro_placas,
 							observaciones,
 							encargado_id,
 							CONCAT(nombre,' ',apellido) AS nombre
@@ -1336,35 +1373,53 @@
 							usuario,
 							(
 								SELECT
-						  			id_herramienta,
-						  			placas 
-						  		FROM
-						  			herramientas,footerEnsayo
-						  		WHERE
-						  			buscula_id = id_herramienta AND
-						  			id_footerEnsayo = 1QQ 
+									id_footerEnsayo,
+									IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS placas
+								FROM
+									footerEnsayo
+								LEFT JOIN
+									herramientas
+								ON
+									footerEnsayo.buscula_id = herramientas.id_herramienta
 							)AS basculas,
 							(
 						  		SELECT
-						  			id_herramienta,
-						  			placas
-						  		FROM
-						  			herramientas,footerEnsayo
-						  		WHERE
-						  			prensa_id = id_herramienta AND
-						  			id_footerEnsayo = 1QQ
+									id_footerEnsayo,
+									IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS placas
+								FROM
+									footerEnsayo
+								LEFT JOIN
+									herramientas
+								ON
+									footerEnsayo.prensa_id = herramientas.id_herramienta
 						  	)AS prensas,
 						  	(
 						  		SELECT
-						  			id_herramienta,
-						  			placas
-						  		FROM
-						  			herramientas,footerEnsayo
-						  		WHERE
-						  			regVerFle_id = id_herramienta AND
-						  			id_footerEnsayo = 1QQ
-						  	)AS regVerFle
+									id_footerEnsayo,
+									IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS placas
+								FROM
+									footerEnsayo
+								LEFT JOIN
+									herramientas
+								ON
+									footerEnsayo.regVerFle_id = herramientas.id_herramienta
+						  	)AS regVerFle,
+						  	(
+								SELECT
+									id_footerEnsayo,
+									IF(herramientas.placas IS NULL,'NO HAY',herramientas.placas) AS placas
+								FROM
+									footerEnsayo
+								LEFT JOIN
+									herramientas
+								ON
+									footerEnsayo.cronometro_id = herramientas.id_herramienta
+							)AS cronometros
 						WHERE
+							basculas.id_footerEnsayo = ensayoCubo.footerEnsayo_id AND 
+							prensas.id_footerEnsayo = ensayoCubo.footerEnsayo_id AND 
+							regVerFle.id_footerEnsayo = ensayoCubo.footerEnsayo_id AND 
+							cronometros.id_footerEnsayo = ensayoCubo.footerEnsayo_id AND 
 							encargado_id = id_usuario AND
 							footerEnsayo.active = 1 AND
 							ensayoCubo.footerEnsayo_id = footerEnsayo.id_footerEnsayo AND
